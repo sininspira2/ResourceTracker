@@ -1,8 +1,12 @@
 import { createClient } from '@libsql/client'
 import { drizzle } from 'drizzle-orm/libsql'
-import { drizzle as drizzleSqlite } from 'drizzle-orm/better-sqlite3'
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
-import Database from 'better-sqlite3'
+
+// Create Turso client
+const client = createClient({
+  url: process.env.TURSO_DATABASE_URL!,
+  authToken: process.env.TURSO_AUTH_TOKEN!,
+})
 
 // Database schema
 export const users = sqliteTable('users', {
@@ -67,29 +71,4 @@ export const leaderboard = sqliteTable('leaderboard', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 })
 
-// Schema for type inference
-export const schema = {
-  users,
-  userSessions,
-  resources,
-  resourceHistory,
-  leaderboard,
-}
-
-function createDbClient() {
-  // Check if using Turso (remote) or local SQLite
-  if (process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN) {
-    // Use Turso client
-    const client = createClient({
-      url: process.env.TURSO_DATABASE_URL,
-      authToken: process.env.TURSO_AUTH_TOKEN,
-    })
-    return drizzle(client, { schema })
-  } else {
-    // Use local SQLite
-    const sqlite = new Database(process.env.SQLITE_DATABASE || 'resource-tracker.db')
-    return drizzleSqlite(sqlite, { schema })
-  }
-}
-
-export const db = createDbClient()
+export const db = drizzle(client, { schema: { users, userSessions, resources, resourceHistory, leaderboard } }) 
