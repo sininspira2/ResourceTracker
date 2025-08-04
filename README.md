@@ -1,6 +1,15 @@
 # Resource Tracker
 
 A comprehensive resource management and tracking portal with Discord authentication and role-based access control. Perfect for gaming communities, organizations, and teams that need to track shared resources, inventory, or assets.
+It was designed for Dune Awakening, but technically this could be used to track anything. Currently the only auth is Discord and it works with a TursoDB (Which you can get for free) but in the future maybe we can add more database types.
+I originall made this for [https://www.silverorder.org)](https://www.silverorder.org) there shouldn't be any references to that, but if there is feel free to submit a PR to fix them.
+
+Honestly I leave this project in the hands of the open source community, if you can build it and it works, I'll approve the pull request 🙏
+
+If you like what i did feel free to 
+
+[![Buy Me A Coffee](https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=☕&slug=yetty&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff)](https://www.buymeacoffee.com/yetty)
+
 ![alt text](image.png)
 
 ## Features
