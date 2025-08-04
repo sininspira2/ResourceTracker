@@ -187,6 +187,16 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const isTargetAdmin = hasTargetEditAccess(userRoles)
   const isResourceAdmin = hasResourceAdminAccess(userRoles)
   
+  // 🐛 TEMPORARY DEBUG - Remove after fixing
+  console.log('🔍 ResourceTable Debug:', {
+    session: !!session,
+    userRoles,
+    canEdit,
+    isTargetAdmin,
+    isResourceAdmin,
+    userId
+  })
+  
   const [resources, setResources] = useState<Resource[]>([])
   const [editedResources, setEditedResources] = useState<Map<string, ResourceUpdate>>(new Map())
   const [editedTargets, setEditedTargets] = useState<Map<string, number>>(new Map())

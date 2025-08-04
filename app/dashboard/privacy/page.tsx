@@ -15,7 +15,16 @@ export default function PrivacyPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
   useEffect(() => {
+    // 🐛 TEMPORARY DEBUG - Remove after fixing
+    console.log('🔍 Privacy Page Debug:', {
+      status,
+      session: !!session,
+      userRoles: session?.user?.roles || [],
+      hasResourceAccess: session ? hasResourceAccess(session.user.roles) : false
+    })
+
     if (status === 'unauthenticated') {
+      console.log('🚨 Privacy: Redirecting - unauthenticated')
       router.push('/')
       return
     }
@@ -25,6 +34,11 @@ export default function PrivacyPage() {
     }
 
     if (status === 'authenticated' && (!session || !hasResourceAccess(session.user.roles))) {
+      console.log('🚨 Privacy: Redirecting - no resource access', {
+        hasSession: !!session,
+        roles: session?.user?.roles || [],
+        hasResourceAccess: session ? hasResourceAccess(session.user.roles) : false
+      })
       router.push('/')
       return
     }
