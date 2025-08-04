@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { ResourceHistoryChart } from '@/app/components/ResourceHistoryChart'
 import { CongratulationsPopup } from '@/app/components/CongratulationsPopup'
-import { hasResourceAccess } from '@/lib/discord-roles'
+import { hasResourceAccess, hasResourceAdminAccess } from '@/lib/discord-roles'
 import { getUserIdentifier } from '@/lib/auth'
 
 // Utility function to format numbers with commas
