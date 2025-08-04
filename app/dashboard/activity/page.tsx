@@ -57,17 +57,7 @@ export default function ActivityLogPage() {
   const [currentTime, setCurrentTime] = useState(new Date())
 
   useEffect(() => {
-    // 🐛 TEMPORARY DEBUG - Remove after fixing
-    console.log('🔍 Activity Page Debug (Fixed):', {
-      status,
-      session: !!session,
-      userRoles: session?.user?.roles || [],
-      permissions: session?.user?.permissions,
-      hasResourceAccess: session?.user?.permissions?.hasResourceAccess ?? false
-    })
-
     if (status === 'unauthenticated') {
-      console.log('🚨 Activity: Redirecting - unauthenticated')
       router.push('/')
       return
     }
@@ -77,12 +67,6 @@ export default function ActivityLogPage() {
     }
 
     if (status === 'authenticated' && (!session || !session.user?.permissions?.hasResourceAccess)) {
-      console.log('🚨 Activity: Redirecting - no resource access', {
-        hasSession: !!session,
-        roles: session?.user?.roles || [],
-        permissions: session?.user?.permissions,
-        hasResourceAccess: session?.user?.permissions?.hasResourceAccess ?? false
-      })
       router.push('/')
       return
     }
