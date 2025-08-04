@@ -1,6 +1,6 @@
 import { withAuth } from "next-auth/middleware"
 import { hasResourceAccess } from './lib/discord-roles'
-
+ 
 // Define protected routes that require authentication
 const protectedRoutes = [
   '/dashboard',
