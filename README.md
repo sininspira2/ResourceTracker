@@ -22,53 +22,132 @@ A comprehensive resource management and tracking portal with Discord authenticat
 - **Activity Transparency** - View complete history of actions taken
 - **Privacy Controls** - Clear data retention policies and user rights
 
-## Setup
+## 🆓 Deploy for Free (Recommended)
+
+### Step 1: Fork the Repository
+1. Click the "Fork" button at the top of this GitHub repository
+2. Clone your fork to your local machine:
+```bash
+git clone https://github.com/YOUR_USERNAME/ResourceTracker.git
+cd ResourceTracker
+```
+
+### Step 2: Set up Discord OAuth Application
+1. Go to https://discord.com/developers/applications
+2. Click "New Application" and give it a name
+3. Go to **OAuth2 → General**:
+   - Copy the **Client ID** and **Client Secret** (save these for later)
+4. Go to **OAuth2 → Redirects**:
+   - Add redirect URI: `https://your-app-name.vercel.app/api/auth/callback/discord`
+   - Replace `your-app-name` with your planned Vercel app name
+5. Go to **Bot** (optional, for advanced Discord integration)
+
+### Step 3: Get Discord Server Details
+1. Enable Developer Mode in Discord (User Settings → Advanced → Developer Mode)
+2. Right-click your Discord server → "Copy Server ID" (this is your `DISCORD_GUILD_ID`)
+3. Right-click on roles you want to use → "Copy ID" (for `DISCORD_ROLES_CONFIG`)
+
+### Step 4: Create Free Turso Database
+1. Go to https://turso.tech and sign up (free tier: 500 databases, 1B row reads/month)
+2. Click "Create Database"
+3. Choose a database name (e.g., `resource-tracker-db`)
+4. Select the closest region to your users
+5. After creation, click on your database
+6. Copy the **Database URL** (starts with `libsql://`)
+7. Click "Create Token" and copy the **Auth Token**
+
+### Step 5: Deploy to Vercel
+1. Go to https://vercel.com and sign up with your GitHub account
+2. Click "New Project" and import your forked repository
+3. In the deployment settings, add these **Environment Variables**:
+
+```bash
+# Discord OAuth (from Step 2)
+DISCORD_CLIENT_ID=your_discord_client_id
+DISCORD_CLIENT_SECRET=your_discord_client_secret
+DISCORD_GUILD_ID=your_discord_server_id
+
+# Discord Roles (single line JSON - see ENVIRONMENT.md for details)
+DISCORD_ROLES_CONFIG=[{"id":"your_role_id","name":"Admin","level":100,"isAdmin":true,"canAccessResources":true}]
+
+# NextAuth (generate with: openssl rand -base64 32)
+NEXTAUTH_URL=https://your-app-name.vercel.app
+NEXTAUTH_SECRET=your_long_random_secret_here
+
+# Turso Database (from Step 4)
+TURSO_DATABASE_URL=libsql://your-database.turso.io
+TURSO_AUTH_TOKEN=your_turso_auth_token
+
+# Optional: Customize branding
+NEXT_PUBLIC_ORG_NAME=Your Community Name
+```
+
+4. Click **Deploy**
+
+### Step 6: Initialize Database Schema
+After deployment, you need to set up your database tables:
+
+1. Install Drizzle CLI locally:
+```bash
+npm install -g drizzle-kit
+```
+
+2. Clone your repository and install dependencies:
+```bash
+git clone https://github.com/YOUR_USERNAME/ResourceTracker.git
+cd ResourceTracker
+npm install
+```
+
+3. Create a `.env.local` file with your Turso credentials:
+```bash
+TURSO_DATABASE_URL=your_turso_database_url
+TURSO_AUTH_TOKEN=your_turso_auth_token
+```
+
+4. Run the database migration:
+```bash
+npm run db:push
+```
+
+### Step 7: Populate with Sample Data (Optional)
+Add some initial resources to test the app:
+
+```bash
+npm run populate-resources-safe
+```
+
+### Step 8: Update Discord OAuth Redirect
+Go back to your Discord application and update the redirect URI to match your deployed Vercel URL:
+- `https://your-actual-vercel-url.vercel.app/api/auth/callback/discord`
+
+### 🎉 You're Done!
+Your Resource Tracker is now running for free! Visit your Vercel URL and sign in with Discord.
+
+**Free Tier Limits:**
+- **Vercel**: 100GB bandwidth, unlimited projects
+- **Turso**: 500 databases, 1B row reads, 1M row writes/month
+- **Discord**: Unlimited OAuth usage
+
+---
+
+## 🛠️ Local Development Setup
+
+For local development:
 
 1. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Create a `.env.local` file with the required environment variables. See [ENVIRONMENT.md](./ENVIRONMENT.md) for detailed configuration options.
+2. Create a `.env.local` file with the environment variables (see [ENVIRONMENT.md](./ENVIRONMENT.md) for details)
 
-**Quick Start Configuration:**
-```
-# Discord OAuth
-DISCORD_CLIENT_ID=your_discord_client_id
-DISCORD_CLIENT_SECRET=your_discord_client_secret
-
-# Discord Server ID for role checking
-DISCORD_GUILD_ID=your_discord_server_id
-
-# Discord Roles Configuration (JSON array of role objects)
-DISCORD_ROLES_CONFIG=[{"id":"role_id","name":"Role Name","level":1,"canAccessResources":true,"isAdmin":false,"canEditTargets":false}]
-
-# Organization Branding (Optional)
-NEXT_PUBLIC_ORG_NAME=Your Organization Name
-NEXT_PUBLIC_ORG_DESCRIPTION=Your organization description
-
-# NextAuth
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_nextauth_secret
-
-# Turso Database
-TURSO_DATABASE_URL=your_turso_database_url
-TURSO_AUTH_TOKEN=your_turso_auth_token
+3. Run database migrations:
+```bash
+npm run db:push
 ```
 
-3. Set up Discord OAuth Application:
-   - Go to https://discord.com/developers/applications
-   - Create a new application
-   - Go to OAuth2 settings
-   - Add redirect URI: `http://localhost:3000/api/auth/callback/discord`
-   - Copy Client ID and Client Secret to your `.env.local`
-
-4. Set up Turso Database:
-   - Go to https://turso.tech
-   - Create a new database
-   - Copy the database URL and auth token to your `.env.local`
-
-5. Run the development server:
+4. Start the development server:
 ```bash
 npm run dev
 ```
