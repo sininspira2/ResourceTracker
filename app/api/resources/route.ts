@@ -1,0 +1,207 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions, getUserIdentifier } from '@/lib/auth'
+import { db, resources, resourceHistory } from '@/lib/db'
+import { eq } from 'drizzle-orm'
+import { hasResourceAccess, hasResourceAdminAccess } from '@/lib/discord-roles'
+import { nanoid } from 'nanoid'
+import { awardPoints } from '@/lib/leaderboard'
+
+// Calculate status based on quantity vs target
+const calculateResourceStatus = (quantity: number, targetQuantity: number | null): 'above_target' | 'at_target' | 'below_target' | 'critical' => {
+  if (!targetQuantity || targetQuantity <= 0) return 'at_target'
+
+  const percentage = (quantity / targetQuantity) * 100
+  if (percentage >= 150) return 'above_target'    // Purple - well above target
+  if (percentage >= 100) return 'at_target'       // Green - at or above target
+  if (percentage >= 50) return 'below_target'     // Orange - below target but not critical
+  return 'critical'                               // Red - very much below target
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const allResources = await db.select().from(resources)
+    
+    return NextResponse.json(allResources, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching resources:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch resources' },
+      { status: 500 })
+  }
+}
+
+// POST /api/resources - Create new resource (admin only)
+export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions)
+
+  if (!session || !hasResourceAdminAccess(session.user.roles)) {
+    return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+  }
+
+  try {
+    const { name, category, description, imageUrl, quantity, targetQuantity, multiplier } = await request.json()
+    const userId = getUserIdentifier(session)
+
+    if (!name || !category) {
+      return NextResponse.json({ error: 'Name and category are required' }, { status: 400 })
+    }
+
+    const newResource = {
+      id: nanoid(),
+      name,
+      quantity: quantity || 0,
+      description: description || null,
+      category,
+      imageUrl: imageUrl || null,
+      targetQuantity: targetQuantity || null,
+      multiplier: multiplier || 1.0,
+      lastUpdatedBy: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    await db.insert(resources).values(newResource)
+
+    // Log the creation in history
+    await db.insert(resourceHistory).values({
+      id: nanoid(),
+      resourceId: newResource.id,
+      previousQuantity: 0,
+      newQuantity: newResource.quantity,
+      changeAmount: newResource.quantity,
+      changeType: 'absolute',
+      updatedBy: userId,
+      reason: 'Resource created',
+      createdAt: new Date(),
+    })
+
+    return NextResponse.json(newResource, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    })
+  } catch (error) {
+    console.error('Error creating resource:', error)
+    return NextResponse.json({ error: 'Failed to create resource' }, { status: 500 })
+  }
+}
+
+// PUT /api/resources - Update multiple resources
+export async function PUT(request: NextRequest) {
+  const session = await getServerSession(authOptions)
+
+  if (!session || !hasResourceAccess(session.user.roles)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const { resourceUpdates } = await request.json()
+    const userId = getUserIdentifier(session)
+
+    if (!Array.isArray(resourceUpdates) || resourceUpdates.length === 0) {
+      return NextResponse.json(
+        { error: 'Invalid request format' },
+        { status: 400 }
+      )
+    }
+    
+    // Handle quantity updates with points calculation
+    const updatePromises = resourceUpdates.map(async (update: { 
+      id: string; 
+      quantity: number; 
+      updateType: 'absolute' | 'relative';
+      value: number;
+      reason?: string;
+    }) => {
+      // Get current resource for history logging and points calculation
+      const currentResource = await db.select().from(resources).where(eq(resources.id, update.id))
+      if (currentResource.length === 0) return null
+
+      const resource = currentResource[0]
+      const previousQuantity = resource.quantity
+      const changeAmount = update.updateType === 'relative' ? update.value : update.quantity - previousQuantity
+
+      // Update the resource
+      await db.update(resources)
+        .set({
+          quantity: update.quantity,
+          lastUpdatedBy: userId,
+          updatedAt: new Date(),
+        })
+        .where(eq(resources.id, update.id))
+
+      // Log the change in history
+      await db.insert(resourceHistory).values({
+        id: nanoid(),
+        resourceId: update.id,
+        previousQuantity,
+        newQuantity: update.quantity,
+        changeAmount,
+        changeType: update.updateType,
+        updatedBy: userId,
+        reason: update.reason,
+        createdAt: new Date(),
+      })
+
+      // Calculate and award points for eligible actions
+      let pointsCalculation = null
+      if (changeAmount !== 0) {
+        let actionType: 'ADD' | 'SET' | 'REMOVE'
+        
+        if (update.updateType === 'absolute') {
+          actionType = 'SET'
+        } else if (changeAmount > 0) {
+          actionType = 'ADD'
+        } else {
+          actionType = 'REMOVE'
+        }
+
+        pointsCalculation = await awardPoints(
+          userId,
+          update.id,
+          actionType,
+          Math.abs(changeAmount),
+          {
+            name: resource.name,
+            category: resource.category || 'Other',
+            status: calculateResourceStatus(resource.quantity, resource.targetQuantity),
+            multiplier: resource.multiplier || 1.0
+          }
+        )
+      }
+
+      return pointsCalculation
+    })
+
+    const pointsResults = await Promise.all(updatePromises)
+    const totalPointsEarned = pointsResults
+      .filter(result => result !== null)
+      .reduce((total, result) => total + (result?.finalPoints || 0), 0)
+
+    const updatedResources = await db.select().from(resources)
+    
+    return NextResponse.json({
+      resources: updatedResources,
+      totalPointsEarned,
+      pointsBreakdown: pointsResults.filter(result => result !== null)
+    }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    })
+  } catch (error) {
+    console.error('Error updating resources:', error)
+    return NextResponse.json({ error: 'Failed to update resources' }, { status: 500 })
+  }
+} 

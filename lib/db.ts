@@ -1,0 +1,95 @@
+import { createClient } from '@libsql/client'
+import { drizzle } from 'drizzle-orm/libsql'
+import { drizzle as drizzleSqlite } from 'drizzle-orm/better-sqlite3'
+import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
+import Database from 'better-sqlite3'
+
+// Database schema
+export const users = sqliteTable('users', {
+  id: text('id').primaryKey(),
+  discordId: text('discord_id').unique().notNull(),
+  username: text('username').notNull(),
+  avatar: text('avatar'),
+  customNickname: text('custom_nickname'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  lastLogin: integer('last_login', { mode: 'timestamp' }).notNull(),
+})
+
+export const userSessions = sqliteTable('user_sessions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id),
+  roles: text('roles').notNull(), // JSON string of roles array
+  isInGuild: integer('is_in_guild', { mode: 'boolean' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})
+
+export const resources = sqliteTable('resources', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  quantity: integer('quantity').notNull().default(0),
+  description: text('description'),
+  category: text('category'),
+  icon: text('icon'), // Emoji or icon identifier like ':Corpse:', ':PlantFiber:'
+  imageUrl: text('image_url'), // URL to resource image
+  status: text('status'), // 'at_target', 'below_target', 'critical'
+  targetQuantity: integer('target_quantity'), // Target/threshold quantity for status calculation
+  multiplier: real('multiplier').notNull().default(1.0), // Points multiplier for this resource
+  lastUpdatedBy: text('last_updated_by').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+})
+
+export const resourceHistory = sqliteTable('resource_history', {
+  id: text('id').primaryKey(),
+  resourceId: text('resource_id').notNull().references(() => resources.id),
+  previousQuantity: integer('previous_quantity').notNull(),
+  newQuantity: integer('new_quantity').notNull(),
+  changeAmount: integer('change_amount').notNull(), // +/- amount
+  changeType: text('change_type').notNull(), // 'absolute' or 'relative'
+  updatedBy: text('updated_by').notNull(),
+  reason: text('reason'), // Optional reason for the change
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})
+
+export const leaderboard = sqliteTable('leaderboard', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull(),
+  resourceId: text('resource_id').notNull().references(() => resources.id),
+  actionType: text('action_type').notNull(), // 'ADD', 'SET', 'REMOVE'
+  quantityChanged: integer('quantity_changed').notNull(),
+  basePoints: real('base_points').notNull(), // Points before multipliers
+  resourceMultiplier: real('resource_multiplier').notNull(),
+  statusBonus: real('status_bonus').notNull(), // Percentage bonus (0.0, 0.05, 0.10)
+  finalPoints: real('final_points').notNull(), // Final calculated points
+  resourceName: text('resource_name').notNull(),
+  resourceCategory: text('resource_category').notNull(),
+  resourceStatus: text('resource_status').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})
+
+// Schema for type inference
+export const schema = {
+  users,
+  userSessions,
+  resources,
+  resourceHistory,
+  leaderboard,
+}
+
+function createDbClient() {
+  // Check if using Turso (remote) or local SQLite
+  if (process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN) {
+    // Use Turso client
+    const client = createClient({
+      url: process.env.TURSO_DATABASE_URL,
+      authToken: process.env.TURSO_AUTH_TOKEN,
+    })
+    return drizzle(client, { schema })
+  } else {
+    // Use local SQLite
+    const sqlite = new Database(process.env.SQLITE_DATABASE || 'resource-tracker.db')
+    return drizzleSqlite(sqlite, { schema })
+  }
+}
+
+export const db = createDbClient()

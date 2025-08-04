@@ -1,0 +1,117 @@
+{
+  "currentVersion": "2.0.0",
+  "releases": [
+    {
+      "version": "2.0.0",
+      "date": "2025-01-04",
+      "title": "Comprehensive Leaderboard System",
+      "type": "major",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added comprehensive points-based leaderboard system to track user contributions"
+        },
+        {
+          "type": "feature",
+          "description": "Created new leaderboard database table to track all point-earning actions"
+        },
+        {
+          "type": "feature",
+          "description": "Added resource multiplier system (0.1x to 5x+) affecting points earned"
+        },
+        {
+          "type": "feature",
+          "description": "Implemented intelligent points calculation: 0.1 base points per resource, multiplied by resource multiplier and status bonus"
+        },
+        {
+          "type": "feature",
+          "description": "Added status-based point bonuses: +10% for Critical resources, +5% for Below Target resources"
+        },
+        {
+          "type": "feature",
+          "description": "Created special point rules: SET actions earn fixed 1 point, Refined category actions earn fixed 2 points"
+        },
+        {
+          "type": "feature",
+          "description": "Added congratulations popup showing points earned when updating resources"
+        },
+        {
+          "type": "feature",
+          "description": "Replaced top contributors section with expandable global leaderboard on resources page"
+        },
+        {
+          "type": "feature",
+          "description": "Created dedicated full leaderboard page (/dashboard/leaderboard) with comprehensive rankings"
+        },
+        {
+          "type": "feature",
+          "description": "Added user contributions page (/dashboard/contributions/[userId]) showing detailed point history"
+        },
+        {
+          "type": "feature",
+          "description": "Implemented time-based filtering for leaderboards (last 24 hours, 7 days, 30 days, all time)"
+        },
+        {
+          "type": "feature",
+          "description": "Added pagination to both leaderboard and contributions pages (20 items per page)"
+        },
+        {
+          "type": "feature",
+          "description": "Restored resource-specific Top Contributors/Consumers alongside global points leaderboard on individual resource pages"
+        },
+        {
+          "type": "improvement",
+          "description": "Added new Multiplier column to resource table view with color-coded display (purple 3x+, blue 2x+, green 1x+, orange <1x, gray 0x)"
+        },
+        {
+          "type": "improvement",
+          "description": "Enhanced grid view with multiplier badges using same color-coding system"
+        },
+        {
+          "type": "improvement",
+          "description": "Added multiplier input fields to admin resource creation and editing forms"
+        },
+        {
+          "type": "improvement",
+          "description": "Optimized table layout by removing Last Updated column and reducing padding for better fit"
+        },
+        {
+          "type": "improvement",
+          "description": "Enhanced dark mode compatibility for all new UI components"
+        },
+        {
+          "type": "improvement",
+          "description": "Added automatic leaderboard refresh when history entries are deleted"
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed user ID tracking to properly use Discord nicknames instead of 'unknown'"
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed status bonus calculation to use real-time resource status rather than cached database values"
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed congratulations popup text visibility in dark mode"
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed status text color in table view for proper dark mode display"
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed multiplier display for 0x multipliers to show '0x' instead of '1.0x'"
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed date handling errors on individual resource pages"
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed null pointer errors in user contributions summary calculations"
+        }
+      ]
+    }
+  ]
+} 
