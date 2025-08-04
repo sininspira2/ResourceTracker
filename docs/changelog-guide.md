@@ -1,10 +1,10 @@
 # 📝 Changelog System Guide
 
-The Silver Portal now includes a comprehensive changelog system that automatically shows users what's new when they visit after an update!
+The Resource Tracker now includes a comprehensive changelog system that automatically shows users what's new when they visit after an update!
 
 ## ✨ Features
 
-- **Version display** in the top navigation next to "Silver Portal"
+- **Version display** in the top navigation next to the organization name
 - **"What's New" modal** that appears when users visit after a version update
 - **Smart tracking** - remembers what version each user last saw
 - **Easy updates** with a simple script and JSON file

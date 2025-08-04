@@ -42,7 +42,7 @@ async function updateChangelog() {
     const changelog = JSON.parse(fs.readFileSync(changelogPath, 'utf8'))
     const currentVersion = changelog.currentVersion
     
-    console.log(`🚀 Silver Portal Changelog Updater`)
+    console.log(`🚀 Resource Tracker Changelog Updater`)
     console.log(`Current version: v${currentVersion}\n`)
     
     // Get version type

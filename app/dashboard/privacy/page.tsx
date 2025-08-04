@@ -175,7 +175,7 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Your Data Rights</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               Under GDPR and other privacy regulations, you have certain rights regarding your personal data. 
-              Silver Portal is committed to protecting your privacy and giving you control over your information.
+              {process.env.NEXT_PUBLIC_ORG_NAME || 'Resource Tracker'} is committed to protecting your privacy and giving you control over your information.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

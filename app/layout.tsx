@@ -8,7 +8,7 @@ import { WhatsNewModal } from './components/WhatsNewModal'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Silver Portal',
+  title: process.env.NEXT_PUBLIC_ORG_NAME || 'Resource Tracker',
   description: 'Resource management and Discord integration portal',
 }
 
