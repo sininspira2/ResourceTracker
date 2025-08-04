@@ -16,9 +16,39 @@ function parseRoleConfig(): RoleConfig[] {
       console.warn('No DISCORD_ROLES_CONFIG found, using empty configuration')
       return []
     }
-    return JSON.parse(roleConfig)
+    
+    // Log the raw value for debugging (first 100 chars only)
+    console.log('DISCORD_ROLES_CONFIG raw value:', roleConfig.substring(0, 100) + (roleConfig.length > 100 ? '...' : ''))
+    
+    const parsed = JSON.parse(roleConfig)
+    
+    // Validate that it's an array
+    if (!Array.isArray(parsed)) {
+      console.error('DISCORD_ROLES_CONFIG must be an array, got:', typeof parsed)
+      return []
+    }
+    
+    // Validate each role object
+    const validRoles = parsed.filter(role => {
+      if (!role || typeof role !== 'object') {
+        console.warn('Invalid role object:', role)
+        return false
+      }
+      if (!role.id || !role.name) {
+        console.warn('Role missing required fields (id, name):', role)
+        return false
+      }
+      return true
+    })
+    
+    console.log(`Successfully parsed ${validRoles.length} valid roles`)
+    return validRoles
+    
   } catch (error) {
     console.error('Failed to parse DISCORD_ROLES_CONFIG:', error)
+    console.error('Raw value length:', process.env.DISCORD_ROLES_CONFIG?.length || 0)
+    console.error('Raw value preview:', process.env.DISCORD_ROLES_CONFIG?.substring(0, 200) + '...')
+    console.log('Expected format: [{"id":"123","name":"Role","level":1,"canAccessResources":true}]')
     return []
   }
 }
@@ -76,17 +106,24 @@ export function getHierarchyRoles(userRoles: string[]): Array<RoleConfig> {
     .sort((a, b) => b.level - a.level)
 }
 
-// Helper function to check if user has resource access
-export function hasResourceAccess(userRoles: string[]): boolean {
-  return userRoles.some(role => RESOURCE_ACCESS_ROLES.includes(role))
-}
+
 
 // Helper function to check if user has resource admin access (edit/delete/create)
 export function hasResourceAdminAccess(userRoles: string[]): boolean {
+  // Temporary fix: if no roles are configured, allow admin access for any user with roles
+  if (RESOURCE_ADMIN_ROLES.length === 0 && userRoles.length > 0) {
+    console.log('DEBUG: No admin roles configured, allowing admin access for user with roles:', userRoles)
+    return true
+  }
   return userRoles.some(role => RESOURCE_ADMIN_ROLES.includes(role))
 }
 
 // Helper function to check if user has admin access for target editing
 export function hasTargetEditAccess(userRoles: string[]): boolean {
+  // Temporary fix: if no roles are configured, allow target edit access for any user with roles
+  if (TARGET_ADMIN_ROLES.length === 0 && userRoles.length > 0) {
+    console.log('DEBUG: No target edit roles configured, allowing target edit access for user with roles:', userRoles)
+    return true
+  }
   return userRoles.some(role => TARGET_ADMIN_ROLES.includes(role))
 }

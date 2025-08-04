@@ -96,3 +96,64 @@ TURSO_AUTH_TOKEN=your_turso_auth_token
 - Use strong, unique values for `NEXTAUTH_SECRET`
 - Regularly rotate your Discord client secret and database tokens
 - Consider using a secret management service for production deployments
+
+## Troubleshooting
+
+### OAuth Callback Error: "State cookie was missing"
+
+This is a common NextAuth.js error. Try these solutions:
+
+#### 1. Check NEXTAUTH_URL
+```bash
+# Development
+NEXTAUTH_URL=http://localhost:3000
+
+# Production
+NEXTAUTH_URL=https://yourdomain.com
+```
+
+**Important**: 
+- Do NOT end with a slash (`/`)
+- Must match exactly where your app is running
+- Must match the callback URL in Discord
+
+#### 2. Discord App Configuration
+In your Discord Developer Portal:
+- **Redirect URI**: `http://localhost:3000/api/auth/callback/discord` (dev)
+- **Redirect URI**: `https://yourdomain.com/api/auth/callback/discord` (prod)
+
+#### 3. NEXTAUTH_SECRET
+Generate a strong secret:
+```bash
+# Generate a random secret
+openssl rand -base64 32
+```
+
+#### 4. Clear Browser Data
+- Clear cookies for your domain
+- Try incognito/private browsing
+- Disable browser extensions that might block cookies
+
+#### 5. Check Environment Variables
+Ensure all required variables are loaded:
+```bash
+# In your .env.local file (no spaces around =)
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_generated_secret_here
+DISCORD_CLIENT_ID=your_client_id
+DISCORD_CLIENT_SECRET=your_client_secret
+```
+
+### Other Common Issues
+
+#### "CSRF token mismatch"
+- Usually fixed by clearing cookies
+- Ensure NEXTAUTH_SECRET is set
+
+#### "OAuth app not found"
+- Check DISCORD_CLIENT_ID is correct
+- Verify Discord app is not deleted
+
+#### "Invalid redirect URI"
+- Discord callback URL must exactly match NEXTAUTH_URL + `/api/auth/callback/discord`
+- No trailing slashes allowed
