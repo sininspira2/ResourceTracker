@@ -3,13 +3,12 @@ import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { LoginButton } from './components/LoginButton'
 import { LogoutButton } from './components/LogoutButton'
-import { hasResourceAccess } from '@/lib/discord-roles'
 
 export default async function Home() {
   const session = await getServerSession(authOptions)
 
   // Redirect authenticated users with access directly to dashboard
-  if (session && hasResourceAccess(session.user.roles)) {
+  if (session && session.user.permissions?.hasResourceAccess) {
     redirect('/dashboard')
   }
 

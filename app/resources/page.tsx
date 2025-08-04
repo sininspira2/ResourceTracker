@@ -2,7 +2,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { ClientNavigation } from '../components/ClientNavigation'
-import { hasResourceAccess } from '@/lib/discord-roles'
 import { ResourceTable } from '../components/ResourceTable'
 
 export default async function ResourcesPage() {
@@ -12,7 +11,7 @@ export default async function ResourcesPage() {
     redirect('/')
   }
 
-  if (!hasResourceAccess(session.user.roles)) {
+  if (!session.user.permissions?.hasResourceAccess) {
     redirect('/dashboard')
   }
 

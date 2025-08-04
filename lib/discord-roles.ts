@@ -16,20 +16,12 @@ type RoleConfig = {
 function parseRoleConfig(): RoleConfig[] {
   try {
     const roleConfig = process.env.DISCORD_ROLES_CONFIG
-    console.log('🔍 DISCORD_ROLES_CONFIG debug:')
-    console.log('  - Environment variable exists:', !!roleConfig)
-    console.log('  - Raw value length:', roleConfig?.length || 0)
-    console.log('  - Raw value (first 200 chars):', roleConfig?.substring(0, 200) || 'undefined')
-    
     if (!roleConfig) {
       console.warn('No DISCORD_ROLES_CONFIG found, using empty configuration')
       return []
     }
     
     const parsed = JSON.parse(roleConfig)
-    console.log('  - JSON parsed successfully')
-    console.log('  - Parsed type:', typeof parsed)
-    console.log('  - Is array:', Array.isArray(parsed))
     
     // Validate that it's an array
     if (!Array.isArray(parsed)) {
@@ -52,11 +44,6 @@ function parseRoleConfig(): RoleConfig[] {
     
     if (validRoles.length === 0) {
       console.warn('No valid roles found in DISCORD_ROLES_CONFIG')
-    } else {
-      console.log('  - Valid roles found:', validRoles.length)
-      validRoles.forEach((role, index) => {
-        console.log(`    Role ${index + 1}: ${role.name} (${role.id})`)
-      })
     }
     
     return validRoles

@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { RefreshRolesButton } from '../components/RefreshRolesButton'
 import { ClientNavigation } from '../components/ClientNavigation'
 import { NicknameSettings } from '../components/NicknameSettings'
-import { getRoleName, hasResourceAccess, getHighestRole, getHierarchyRoles } from '@/lib/discord-roles'
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions)
@@ -15,12 +14,10 @@ export default async function Dashboard() {
   }
 
   // Check if user has any required roles for site access
-  if (!hasResourceAccess(session.user.roles)) {
+  if (!session.user.permissions?.hasResourceAccess) {
     redirect('/')
   }
 
-  const highestRole = getHighestRole(session.user.roles)
-  const hierarchyRoles = getHierarchyRoles(session.user.roles)
   const displayName = getDisplayName(session.user)
 
   return (
@@ -37,7 +34,7 @@ export default async function Dashboard() {
           </header>
 
           {/* Resource Management - Prominent Section */}
-          {hasResourceAccess(session.user.roles) && (
+          {session.user.permissions?.hasResourceAccess && (
             <div className="mb-8">
               <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-6 text-white">
                 <div className="flex items-center justify-between">
@@ -102,10 +99,10 @@ export default async function Dashboard() {
                     {session.user.isInGuild ? 'Community Member' : 'Not in Community'}
                   </span>
                 </div>
-                {highestRole && (
+                {session.user.roles && session.user.roles.length > 0 && (
                   <div>
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Highest Role:</span>
-                    <span className="text-sm text-blue-600 dark:text-blue-400 ml-1">{highestRole.name}</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Roles:</span>
+                    <span className="text-sm text-blue-600 dark:text-blue-400 ml-1">{session.user.roles.length} role(s)</span>
                   </div>
                 )}
               </div>
@@ -118,17 +115,17 @@ export default async function Dashboard() {
                 <RefreshRolesButton />
               </div>
               <div className="space-y-2">
-                {hierarchyRoles.length > 0 ? (
-                  hierarchyRoles.map((role) => (
-                    <div key={role.id} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-900 dark:text-gray-100">{role.name}</span>
+                {session.user.roles && session.user.roles.length > 0 ? (
+                  session.user.roles.map((roleId: string) => (
+                    <div key={roleId} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-900 dark:text-gray-100">Role ID: {roleId}</span>
                       <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
-                        Level {role.level}
+                        Discord Role
                       </span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">No hierarchy roles found</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">No roles found</p>
                 )}
               </div>
             </div>
