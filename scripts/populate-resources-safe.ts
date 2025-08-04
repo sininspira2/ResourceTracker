@@ -1,3 +1,15 @@
+/**
+ * SAFE EXAMPLE RESOURCE POPULATION SCRIPT
+ * 
+ * This script contains example resource data and gracefully handles database connection issues.
+ * 
+ * ⚠️  CUSTOMIZE FOR YOUR ORGANIZATION:
+ * - Replace the resource arrays below with your own data
+ * - Update user names to match your Discord server
+ * - Change icons to match your Discord emojis  
+ * - Modify categories for your specific use case
+ */
+
 import { nanoid } from 'nanoid'
 
 // Function to determine status based on quantity and target
@@ -22,22 +34,18 @@ function estimateTarget(quantity: number, statusFromEmoji: string): number {
   }
 }
 
+// EXAMPLE DATA - Replace with your own resources!
 const rawResources = [
-  { name: 'Corpse', quantity: 14, icon: ':Corpse:', status: 'critical', lastUpdatedBy: 'Mother Y\'thelia (Yetty)' },
-  { name: 'Plant Fiber', quantity: 964, icon: ':PlantFiber:', status: 'critical', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Salvaged Metal', quantity: 13331, icon: ':SalvagedMetal:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Water', quantity: 888586, icon: ':ocean:', status: 'at_target', lastUpdatedBy: 'Mother Y\'thelia (Yetty)' },
-  { name: 'Fuel Cell', quantity: 7456, icon: ':FuelCell:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Flour Sand', quantity: 5789, icon: ':FlourSand:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Iron Ore', quantity: 5804, icon: ':IronOre:', status: 'below_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Spice Sand', quantity: 405, icon: ':spice:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Carbon Ore', quantity: 6154, icon: ':CarbonOre:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Erythrite Crystal', quantity: 3541, icon: ':ErythriteCrystal:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Aluminum Ore', quantity: 5418, icon: ':AllumniumCore:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Basalt Stone', quantity: 78, icon: ':Basalt:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Jasmium Crystal', quantity: 2891, icon: ':JasmiumCrystal:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Stravidium Mass', quantity: 0, icon: ':StravidiumMass:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Titanium Ore', quantity: 0, icon: ':TitaniumOre:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' }
+  { name: 'Wood', quantity: 1250, icon: '🪵', status: 'at_target', lastUpdatedBy: 'Admin User' },
+  { name: 'Stone', quantity: 850, icon: '🪨', status: 'below_target', lastUpdatedBy: 'Collector Alpha' },
+  { name: 'Iron Ore', quantity: 450, icon: '⛏️', status: 'critical', lastUpdatedBy: 'Miner Beta' },
+  { name: 'Cotton', quantity: 2100, icon: '🌱', status: 'at_target', lastUpdatedBy: 'Farmer Gamma' },
+  { name: 'Water', quantity: 5000, icon: '💧', status: 'at_target', lastUpdatedBy: 'Gatherer Delta' },
+  { name: 'Clay', quantity: 120, icon: '🏺', status: 'critical', lastUpdatedBy: 'Crafter Epsilon' },
+  { name: 'Sand', quantity: 800, icon: '⏳', status: 'below_target', lastUpdatedBy: 'Builder Zeta' },
+  { name: 'Coal', quantity: 600, icon: '⚫', status: 'below_target', lastUpdatedBy: 'Miner Beta' },
+  { name: 'Copper Ore', quantity: 300, icon: '🟤', status: 'critical', lastUpdatedBy: 'Prospector Eta' },
+  { name: 'Leather', quantity: 180, icon: '🦬', status: 'critical', lastUpdatedBy: 'Hunter Theta' }
 ]
 
 const refinedResources = [

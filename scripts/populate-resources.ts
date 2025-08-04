@@ -23,70 +23,49 @@ function estimateTarget(quantity: number, statusFromEmoji: string): number {
   }
 }
 
+// EXAMPLE DATA - Replace with your own resources!
+// This is sample data for demonstration. Customize for your organization.
+
 const rawResources = [
-  { name: 'Corpse', quantity: 14, icon: ':Corpse:', status: 'critical', lastUpdatedBy: 'Mother Y\'thelia (Yetty)' },
-  { name: 'Plant Fiber', quantity: 964, icon: ':PlantFiber:', status: 'critical', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Salvaged Metal', quantity: 13331, icon: ':SalvagedMetal:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Water', quantity: 888586, icon: ':ocean:', status: 'at_target', lastUpdatedBy: 'Mother Y\'thelia (Yetty)' },
-  { name: 'Fuel Cell', quantity: 7456, icon: ':FuelCell:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Flour Sand', quantity: 5789, icon: ':FlourSand:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Iron Ore', quantity: 5804, icon: ':IronOre:', status: 'below_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Spice Sand', quantity: 405, icon: ':spice:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Carbon Ore', quantity: 6154, icon: ':CarbonOre:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Erythrite Crystal', quantity: 3541, icon: ':ErythriteCrystal:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Aluminum Ore', quantity: 5418, icon: ':AllumniumCore:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Basalt Stone', quantity: 78, icon: ':Basalt:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Jasmium Crystal', quantity: 2891, icon: ':JasmiumCrystal:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Stravidium Mass', quantity: 0, icon: ':StravidiumMass:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Titanium Ore', quantity: 0, icon: ':TitaniumOre:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' }
+  { name: 'Wood', quantity: 1250, icon: '🪵', status: 'at_target', lastUpdatedBy: 'Admin User' },
+  { name: 'Stone', quantity: 850, icon: '🪨', status: 'below_target', lastUpdatedBy: 'Collector Alpha' },
+  { name: 'Iron Ore', quantity: 450, icon: '⛏️', status: 'critical', lastUpdatedBy: 'Miner Beta' },
+  { name: 'Cotton', quantity: 2100, icon: '🌱', status: 'at_target', lastUpdatedBy: 'Farmer Gamma' },
+  { name: 'Water', quantity: 5000, icon: '💧', status: 'at_target', lastUpdatedBy: 'Gatherer Delta' },
+  { name: 'Clay', quantity: 120, icon: '🏺', status: 'critical', lastUpdatedBy: 'Crafter Epsilon' },
+  { name: 'Sand', quantity: 800, icon: '⏳', status: 'below_target', lastUpdatedBy: 'Builder Zeta' },
+  { name: 'Coal', quantity: 600, icon: '⚫', status: 'below_target', lastUpdatedBy: 'Miner Beta' },
+  { name: 'Copper Ore', quantity: 300, icon: '🟤', status: 'critical', lastUpdatedBy: 'Prospector Eta' },
+  { name: 'Leather', quantity: 180, icon: '🦬', status: 'critical', lastUpdatedBy: 'Hunter Theta' }
 ]
 
 const refinedResources = [
-  { name: 'Copper Ingot', quantity: 2119, icon: ':CopperIngot:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Iron Ingot', quantity: 1000, icon: ':IronIngot:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Silicone Block', quantity: 4687, icon: ':SiliconeBlock:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Cobalt Paste', quantity: 1579, icon: ':ColbaltPaste:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Low-grade Lubricant', quantity: 0, icon: ':LowGradeLubricant:', status: 'critical', lastUpdatedBy: 'Mother Y\'thelia (Yetty)' },
-  { name: 'Medium Sized Vehicle Fuel Cell', quantity: 32, icon: ':LargeVehicleFuelCell:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Spice Melange', quantity: 0, icon: ':spice:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Steel Ingot', quantity: 3113, icon: ':SteelIngot:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Aluminum Ingot', quantity: 598, icon: ':AluminumIngot:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Large Vehicle Fuel Cell', quantity: 12, icon: ':LargeVehicleFuelCell:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Plastone', quantity: 8122, icon: ':Plastone:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Standard Filter', quantity: 0, icon: ':StandardFilter:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Duraluminum Ingot', quantity: 882, icon: ':DuraluminumIngot:', status: 'below_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Industrial-grade Lubricant', quantity: 208, icon: ':IndustrialGradeLubricant:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Solaris', quantity: 8350, icon: ':Solaris:', status: 'critical', lastUpdatedBy: 'Mother Y\'thelia (Yetty)' },
-  { name: 'Plastanium Ingot', quantity: 0, icon: ':PlastaniumIngot:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Spice-infused Fuel Cell', quantity: 0, icon: ':SpiceInfusedFuelCell:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Stravidium Fiber', quantity: 0, icon: ':StravidiumFiber:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' }
+  { name: 'Iron Ingot', quantity: 250, icon: '🔩', status: 'at_target', lastUpdatedBy: 'Blacksmith Alpha' },
+  { name: 'Steel Bars', quantity: 150, icon: '⚡', status: 'below_target', lastUpdatedBy: 'Forger Beta' },
+  { name: 'Copper Wire', quantity: 400, icon: '🟫', status: 'at_target', lastUpdatedBy: 'Electrician Gamma' },
+  { name: 'Glass Sheets', quantity: 80, icon: '🪟', status: 'critical', lastUpdatedBy: 'Glassblower Delta' },
+  { name: 'Fabric Bolts', quantity: 320, icon: '🧵', status: 'at_target', lastUpdatedBy: 'Weaver Epsilon' },
+  { name: 'Processed Food', quantity: 500, icon: '🥫', status: 'at_target', lastUpdatedBy: 'Chef Zeta' },
+  { name: 'Refined Oil', quantity: 120, icon: '🛢️', status: 'below_target', lastUpdatedBy: 'Refiner Eta' },
+  { name: 'Plastic Pellets', quantity: 200, icon: '🔸', status: 'critical', lastUpdatedBy: 'Processor Theta' }
 ]
 
 const components = [
-  { name: 'Advanced Servoks Components', quantity: 6482, icon: ':AdvancedServoks:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'EMF Generator Components', quantity: 1119, icon: ':EMFGenerators:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Holtzman Actuator Components', quantity: 6147, icon: ':HoltzmanActuator:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Micro-sandwich Fabric Components', quantity: 330, icon: ':MicroSandwichFabric:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Particle Capacitor Components', quantity: 871, icon: ':ParticleCapacitor:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Ray Amplifier Components', quantity: 1163, icon: ':RayAmplifiers:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Carbide Scraps Components', quantity: 704, icon: ':CarbideScraps:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Diamondine Dust Components', quantity: 232, icon: ':DiamondineDust:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Industrial Pump Components', quantity: 221, icon: ':IndustrialPumpComponents:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Hydraulic Piston Components', quantity: 935, icon: ':HydraulicPistonComponents:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Thermoelectric Cooler Components', quantity: 1611, icon: ':ThermoElectricCooler:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Spice-infused Duraluminum Dust Components', quantity: 4783, icon: ':SpiceinfusedDuraluminumDustC:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Advanced Machinery Components', quantity: 25, icon: ':AdvancedMachineryComponents:', status: 'critical', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Fluid Efficient Industrial Pump Components', quantity: 100, icon: ':FluidEfficientIndustrialPump:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Fluted Heavy Caliber Compressor Components', quantity: 361, icon: ':FlutedHeavyCaliberCompressor:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Fluted Light Caliber Compressor Components', quantity: 532, icon: ':FlutedLightCaliberCompressor:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Overclocked Power Regulator Components', quantity: 283, icon: ':OverclockedPowerRegulatorComp:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Plasteel Plate Components', quantity: 1833, icon: ':PlasteelPlateComponents:', status: 'at_target', lastUpdatedBy: 'Dominic [Quartermaster]' },
-  { name: 'Spice-infused Plastanium Dust Components', quantity: 255, icon: ':SpiceinfusedPlastaniumDustCo:', status: 'at_target', lastUpdatedBy: 'Dominic [Quartermaster]' }
+  { name: 'Electronic Circuits', quantity: 150, icon: '🔌', status: 'at_target', lastUpdatedBy: 'Technician Alpha' },
+  { name: 'Mechanical Gears', quantity: 80, icon: '⚙️', status: 'below_target', lastUpdatedBy: 'Engineer Beta' },
+  { name: 'Power Cells', quantity: 60, icon: '🔋', status: 'critical', lastUpdatedBy: 'Supplier Gamma' },
+  { name: 'Control Modules', quantity: 45, icon: '🎛️', status: 'critical', lastUpdatedBy: 'Specialist Delta' },
+  { name: 'Display Screens', quantity: 25, icon: '📺', status: 'critical', lastUpdatedBy: 'Vendor Epsilon' },
+  { name: 'Sensor Arrays', quantity: 35, icon: '📡', status: 'critical', lastUpdatedBy: 'Installer Zeta' },
+  { name: 'Motor Assemblies', quantity: 90, icon: '🔧', status: 'below_target', lastUpdatedBy: 'Mechanic Eta' },
+  { name: 'Filter Systems', quantity: 120, icon: '🔍', status: 'at_target', lastUpdatedBy: 'Maintenance Theta' }
 ]
 
 async function populateResources() {
   try {
-    console.log('Starting to populate resources...')
+    console.log('🚀 Starting to populate example resources...')
+    console.log('⚠️  WARNING: This will add example data to your database!')
+    console.log('   Customize the resource arrays above for your organization.')
     
     // Clear existing resources (optional - remove if you want to keep existing ones)
     // await db.delete(resources)

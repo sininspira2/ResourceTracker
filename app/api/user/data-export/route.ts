@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Content-Disposition': `attachment; filename="silver-portal-data-${userId}-${new Date().toISOString().split('T')[0]}.json"`,
+        'Content-Disposition': `attachment; filename="resource-tracker-data-${userId}-${new Date().toISOString().split('T')[0]}.json"`,
         'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'

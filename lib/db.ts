@@ -33,7 +33,7 @@ export const resources = sqliteTable('resources', {
   quantity: integer('quantity').notNull().default(0),
   description: text('description'),
   category: text('category'),
-  icon: text('icon'), // Emoji or icon identifier like ':Corpse:', ':PlantFiber:'
+  icon: text('icon'), // Emoji or icon identifier like '🪵', '🪨', or ':CustomEmoji:'
   imageUrl: text('image_url'), // URL to resource image
   status: text('status'), // 'at_target', 'below_target', 'critical'
   targetQuantity: integer('target_quantity'), // Target/threshold quantity for status calculation
