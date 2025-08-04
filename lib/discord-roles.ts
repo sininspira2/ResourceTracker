@@ -17,9 +17,6 @@ function parseRoleConfig(): RoleConfig[] {
       return []
     }
     
-    // Log the raw value for debugging (first 100 chars only)
-    console.log('DISCORD_ROLES_CONFIG raw value:', roleConfig.substring(0, 100) + (roleConfig.length > 100 ? '...' : ''))
-    
     const parsed = JSON.parse(roleConfig)
     
     // Validate that it's an array
@@ -31,24 +28,25 @@ function parseRoleConfig(): RoleConfig[] {
     // Validate each role object
     const validRoles = parsed.filter(role => {
       if (!role || typeof role !== 'object') {
-        console.warn('Invalid role object:', role)
+        console.warn('Invalid role object in DISCORD_ROLES_CONFIG')
         return false
       }
       if (!role.id || !role.name) {
-        console.warn('Role missing required fields (id, name):', role)
+        console.warn('Role missing required fields (id, name) in DISCORD_ROLES_CONFIG')
         return false
       }
       return true
     })
     
-    console.log(`Successfully parsed ${validRoles.length} valid roles`)
+    if (validRoles.length === 0) {
+      console.warn('No valid roles found in DISCORD_ROLES_CONFIG')
+    }
+    
     return validRoles
     
   } catch (error) {
-    console.error('Failed to parse DISCORD_ROLES_CONFIG:', error)
-    console.error('Raw value length:', process.env.DISCORD_ROLES_CONFIG?.length || 0)
-    console.error('Raw value preview:', process.env.DISCORD_ROLES_CONFIG?.substring(0, 200) + '...')
-    console.log('Expected format: [{"id":"123","name":"Role","level":1,"canAccessResources":true}]')
+    console.error('Failed to parse DISCORD_ROLES_CONFIG:', error instanceof Error ? error.message : 'Invalid JSON')
+    console.error('Expected format: [{"id":"123","name":"Role","level":1,"canAccessResources":true}]')
     return []
   }
 }
@@ -110,30 +108,27 @@ export function getHierarchyRoles(userRoles: string[]): Array<RoleConfig> {
 
 // Helper function to check if user has resource access
 export function hasResourceAccess(userRoles: string[]): boolean {
-  // Temporary fix: if no roles are configured, allow access for any user with roles
-  if (RESOURCE_ACCESS_ROLES.length === 0 && userRoles.length > 0) {
-    console.log('DEBUG: No roles configured, allowing access for user with roles:', userRoles)
-    return true
+  if (RESOURCE_ACCESS_ROLES.length === 0) {
+    console.warn('DISCORD_ROLES_CONFIG not configured - no users will have access. Please configure roles.')
+    return false
   }
   return userRoles.some(role => RESOURCE_ACCESS_ROLES.includes(role))
 }
 
 // Helper function to check if user has resource admin access (edit/delete/create)
 export function hasResourceAdminAccess(userRoles: string[]): boolean {
-  // Temporary fix: if no roles are configured, allow admin access for any user with roles
-  if (RESOURCE_ADMIN_ROLES.length === 0 && userRoles.length > 0) {
-    console.log('DEBUG: No admin roles configured, allowing admin access for user with roles:', userRoles)
-    return true
+  if (RESOURCE_ADMIN_ROLES.length === 0) {
+    console.warn('No admin roles configured in DISCORD_ROLES_CONFIG - no users will have admin access.')
+    return false
   }
   return userRoles.some(role => RESOURCE_ADMIN_ROLES.includes(role))
 }
 
 // Helper function to check if user has admin access for target editing
 export function hasTargetEditAccess(userRoles: string[]): boolean {
-  // Temporary fix: if no roles are configured, allow target edit access for any user with roles
-  if (TARGET_ADMIN_ROLES.length === 0 && userRoles.length > 0) {
-    console.log('DEBUG: No target edit roles configured, allowing target edit access for user with roles:', userRoles)
-    return true
+  if (TARGET_ADMIN_ROLES.length === 0) {
+    console.warn('No target edit roles configured in DISCORD_ROLES_CONFIG - no users will have target edit access.')
+    return false
   }
   return userRoles.some(role => TARGET_ADMIN_ROLES.includes(role))
 }

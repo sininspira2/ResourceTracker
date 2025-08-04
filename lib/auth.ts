@@ -79,11 +79,15 @@ export const authOptions: NextAuthOptions = {
             token.isInGuild = true
             // Prioritize nickname over username
             token.discordNickname = member.nick || null
-            console.log('Discord member data:', { 
-              nick: member.nick, 
-              username: member.user?.username,
-              global_name: member.user?.global_name 
-            })
+            
+            // Log member data in development only
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Discord member data:', { 
+                nick: member.nick, 
+                username: member.user?.username,
+                global_name: member.user?.global_name 
+              })
+            }
           } else {
             console.warn('Failed to fetch Discord member data:', response.status, response.statusText)
             token.userRoles = []

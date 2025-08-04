@@ -213,4 +213,4 @@ This error occurs when the JSON in `DISCORD_ROLES_CONFIG` is malformed:
 
 4. **Check logs:** The enhanced error messages will show the exact issue with your JSON
 
-**Temporary workaround:** The app will work without `DISCORD_ROLES_CONFIG` due to the built-in bypass, but you won't have proper role-based permissions.
+**Important:** The app requires proper `DISCORD_ROLES_CONFIG` configuration. Without it, no users will have access to protected features. This ensures security by default.

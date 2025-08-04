@@ -18,26 +18,19 @@ export default withAuth(
       authorized: ({ token, req }) => {
         const { pathname } = req.nextUrl
         
-        // Allow public routes and debug endpoints
-        if (!protectedRoutes.some(route => pathname.startsWith(route)) || pathname.startsWith('/api/debug')) {
+        // Allow public routes
+        if (!protectedRoutes.some(route => pathname.startsWith(route))) {
           return true
         }
         
         // Check if user is authenticated first
         if (!token) {
-          console.log('DEBUG: No token found, redirecting to sign-in')
           return false
         }
         
         // Check if user has required roles
         const userRoles = (token.userRoles as string[]) || []
-        if (hasResourceAccess(userRoles)) {
-          console.log('DEBUG: Access granted for user with roles:', userRoles)
-          return true
-        }
-        
-        console.log('DEBUG: Access denied for user with roles:', userRoles)
-        return false
+        return hasResourceAccess(userRoles)
       },
     },
   }
