@@ -6,6 +6,10 @@ type RoleConfig = {
   isAdmin?: boolean;
   canEditTargets?: boolean;
   canAccessResources?: boolean;
+  // 🆕 Add new permissions here:
+  canViewReports?: boolean;     // Example: View analytics/reports
+  canManageUsers?: boolean;     // Example: Manage user accounts
+  canExportData?: boolean;      // Example: Export system data
 }
 
 // Parse the JSON role configuration from environment variable
@@ -131,4 +135,24 @@ export function hasTargetEditAccess(userRoles: string[]): boolean {
     return false
   }
   return userRoles.some(role => TARGET_ADMIN_ROLES.includes(role))
+}
+
+// 🆕 Add new permission check functions:
+
+// Helper function to check if user can view reports
+export function hasReportAccess(userRoles: string[]): boolean {
+  const reportRoles = ROLE_HIERARCHY.filter(role => role.canViewReports).map(role => role.id)
+  return userRoles.some(role => reportRoles.includes(role))
+}
+
+// Helper function to check if user can manage users
+export function hasUserManagementAccess(userRoles: string[]): boolean {
+  const userManagementRoles = ROLE_HIERARCHY.filter(role => role.canManageUsers).map(role => role.id)
+  return userRoles.some(role => userManagementRoles.includes(role))
+}
+
+// Helper function to check if user can export data
+export function hasDataExportAccess(userRoles: string[]): boolean {
+  const dataExportRoles = ROLE_HIERARCHY.filter(role => role.canExportData).map(role => role.id)
+  return userRoles.some(role => dataExportRoles.includes(role))
 }

@@ -1,6 +1,16 @@
 import { NextAuthOptions } from "next-auth"
 import DiscordProvider from "next-auth/providers/discord"
 import { Session } from "next-auth"
+import { hasResourceAccess, hasResourceAdminAccess, hasTargetEditAccess, hasReportAccess, hasUserManagementAccess, hasDataExportAccess } from './discord-roles'
+
+interface UserPermissions {
+  hasResourceAccess: boolean
+  hasResourceAdminAccess: boolean
+  hasTargetEditAccess: boolean
+  hasReportAccess: boolean
+  hasUserManagementAccess: boolean
+  hasDataExportAccess: boolean
+}
 
 // Discord API scopes needed for role checking
 const scopes = ['identify', 'guilds.members.read'].join(' ')
@@ -103,6 +113,18 @@ export const authOptions: NextAuthOptions = {
         
         // Mark roles as fetched to prevent future API calls (unless explicitly triggered)
         token.rolesFetched = true
+        
+        // Compute permissions server-side to avoid client-side environment variable issues
+        const userRoles = (token.userRoles || []) as string[]
+        token.permissions = {
+          hasResourceAccess: hasResourceAccess(userRoles),
+          hasResourceAdminAccess: hasResourceAdminAccess(userRoles),
+          hasTargetEditAccess: hasTargetEditAccess(userRoles),
+          // 🆕 Add new permission computations:
+          hasReportAccess: hasReportAccess(userRoles),
+          hasUserManagementAccess: hasUserManagementAccess(userRoles),
+          hasDataExportAccess: hasDataExportAccess(userRoles)
+        }
       }
 
       return token
@@ -113,7 +135,16 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         roles: (token.userRoles || []) as string[],
         isInGuild: Boolean(token.isInGuild),
-        discordNickname: token.discordNickname as string | null
+        discordNickname: token.discordNickname as string | null,
+        // Include pre-computed permissions to avoid client-side env var issues
+        permissions: token.permissions as UserPermissions || {
+          hasResourceAccess: false,
+          hasResourceAdminAccess: false,
+          hasTargetEditAccess: false,
+          hasReportAccess: false,
+          hasUserManagementAccess: false,
+          hasDataExportAccess: false
+        }
       }
 
       return session

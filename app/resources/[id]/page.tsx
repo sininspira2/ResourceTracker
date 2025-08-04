@@ -343,7 +343,7 @@ export default function ResourceDetailPage() {
     }
 
     // Check for resource access once session is loaded
-    if (sessionStatus === 'authenticated' && (!session || !hasResourceAccess(session.user.roles))) {
+    if (sessionStatus === 'authenticated' && (!session || !session.user?.permissions?.hasResourceAccess)) {
       router.push('/')
       return
     }

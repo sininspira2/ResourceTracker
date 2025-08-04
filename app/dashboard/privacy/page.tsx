@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { hasResourceAccess } from '@/lib/discord-roles'
+// Note: hasResourceAccess now computed server-side and available in session.user.permissions
 import { getDisplayName } from '@/lib/auth'
 
 export default function PrivacyPage() {
@@ -16,11 +16,12 @@ export default function PrivacyPage() {
 
   useEffect(() => {
     // 🐛 TEMPORARY DEBUG - Remove after fixing
-    console.log('🔍 Privacy Page Debug:', {
+    console.log('🔍 Privacy Page Debug (Fixed):', {
       status,
       session: !!session,
       userRoles: session?.user?.roles || [],
-      hasResourceAccess: session ? hasResourceAccess(session.user.roles) : false
+      permissions: session?.user?.permissions,
+      hasResourceAccess: session?.user?.permissions?.hasResourceAccess ?? false
     })
 
     if (status === 'unauthenticated') {
@@ -33,11 +34,12 @@ export default function PrivacyPage() {
       return
     }
 
-    if (status === 'authenticated' && (!session || !hasResourceAccess(session.user.roles))) {
+    if (status === 'authenticated' && (!session || !session.user?.permissions?.hasResourceAccess)) {
       console.log('🚨 Privacy: Redirecting - no resource access', {
         hasSession: !!session,
         roles: session?.user?.roles || [],
-        hasResourceAccess: session ? hasResourceAccess(session.user.roles) : false
+        permissions: session?.user?.permissions,
+        hasResourceAccess: session?.user?.permissions?.hasResourceAccess ?? false
       })
       router.push('/')
       return
