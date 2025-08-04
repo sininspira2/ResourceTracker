@@ -1,6 +1,6 @@
-# Silver Portal
+# Resource Tracker
 
-A comprehensive resource management and tracking portal with Discord authentication and role-based access control.
+A comprehensive resource management and tracking portal with Discord authentication and role-based access control. Perfect for gaming communities, organizations, and teams that need to track shared resources, inventory, or assets.
 
 ## Features
 
@@ -29,7 +29,9 @@ A comprehensive resource management and tracking portal with Discord authenticat
 npm install
 ```
 
-2. Create a `.env.local` file with the following environment variables:
+2. Create a `.env.local` file with the required environment variables. See [ENVIRONMENT.md](./ENVIRONMENT.md) for detailed configuration options.
+
+**Quick Start Configuration:**
 ```
 # Discord OAuth
 DISCORD_CLIENT_ID=your_discord_client_id
@@ -37,6 +39,13 @@ DISCORD_CLIENT_SECRET=your_discord_client_secret
 
 # Discord Server ID for role checking
 DISCORD_GUILD_ID=your_discord_server_id
+
+# Discord Roles Configuration (JSON array of role objects)
+DISCORD_ROLES_CONFIG=[{"id":"role_id","name":"Role Name","level":1,"canAccessResources":true,"isAdmin":false,"canEditTargets":false}]
+
+# Organization Branding (Optional)
+NEXT_PUBLIC_ORG_NAME=Your Organization Name
+NEXT_PUBLIC_ORG_DESCRIPTION=Your organization description
 
 # NextAuth
 NEXTAUTH_URL=http://localhost:3000
@@ -64,10 +73,29 @@ TURSO_AUTH_TOKEN=your_turso_auth_token
 npm run dev
 ```
 
+## Customization
+
+This application is designed to be easily customizable for any organization or community:
+
+- **Branding**: Set `NEXT_PUBLIC_ORG_NAME` to customize organization name
+- **Roles**: Configure Discord roles via `DISCORD_ROLES_CONFIG` 
+- **Resources**: Modify resource categories and types to fit your needs
+- **Styling**: Update themes and colors in Tailwind configuration
+
+See [ENVIRONMENT.md](./ENVIRONMENT.md) for all configuration options.
+
 ## Tech Stack
 
 - **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
 - **Authentication**: NextAuth.js with Discord provider
 - **Database**: Turso (SQLite), Drizzle ORM
 - **Deployment**: Vercel-ready
-- **Privacy**: GDPR-compliant data handling 
+- **Privacy**: GDPR-compliant data handling
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on how to contribute to this project.
+
+## License
+
+This project is open source. See [LICENSE](./LICENSE) for more information. 

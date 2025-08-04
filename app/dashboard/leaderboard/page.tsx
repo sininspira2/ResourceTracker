@@ -105,7 +105,7 @@ export default function LeaderboardPage() {
                 🏆 Leaderboard
               </h1>
               <p className="text-gray-600 dark:text-gray-300 mt-1">
-                Top contributors in the Silver Order community
+                Top contributors in the {process.env.NEXT_PUBLIC_ORG_NAME || 'community'}
               </p>
             </div>
             <button

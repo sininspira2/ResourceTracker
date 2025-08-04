@@ -90,16 +90,16 @@ export default async function Dashboard() {
               </div>
             </div>
 
-            {/* Guild Status Card */}
+            {/* Community Status Card */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Guild Status</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Community Status</h2>
               <div className="space-y-3">
                 <div className="flex items-center">
                   <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
                     session.user.isInGuild ? 'bg-green-500' : 'bg-red-500'
                   }`}></span>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {session.user.isInGuild ? 'Guild Member' : 'Not in Guild'}
+                    {session.user.isInGuild ? 'Community Member' : 'Not in Community'}
                   </span>
                 </div>
                 {highestRole && (
