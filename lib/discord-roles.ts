@@ -108,6 +108,16 @@ export function getHierarchyRoles(userRoles: string[]): Array<RoleConfig> {
 
 
 
+// Helper function to check if user has resource access
+export function hasResourceAccess(userRoles: string[]): boolean {
+  // Temporary fix: if no roles are configured, allow access for any user with roles
+  if (RESOURCE_ACCESS_ROLES.length === 0 && userRoles.length > 0) {
+    console.log('DEBUG: No roles configured, allowing access for user with roles:', userRoles)
+    return true
+  }
+  return userRoles.some(role => RESOURCE_ACCESS_ROLES.includes(role))
+}
+
 // Helper function to check if user has resource admin access (edit/delete/create)
 export function hasResourceAdminAccess(userRoles: string[]): boolean {
   // Temporary fix: if no roles are configured, allow admin access for any user with roles
