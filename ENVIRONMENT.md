@@ -28,8 +28,9 @@ This document describes all environment variables that can be configured to cust
 
 ## Role Configuration
 
-The `DISCORD_ROLES_CONFIG` environment variable should contain a JSON array of role objects with the following structure:
+The `DISCORD_ROLES_CONFIG` environment variable should contain a JSON array of role objects. **This is the most complex environment variable to configure correctly.**
 
+#### JSON Structure:
 ```json
 [
   {
@@ -49,6 +50,32 @@ The `DISCORD_ROLES_CONFIG` environment variable should contain a JSON array of r
     "canAccessResources": true
   }
 ]
+```
+
+#### Setting in Different Environments:
+
+**Local Development (.env.local):**
+```bash
+DISCORD_ROLES_CONFIG=[{"id":"123456789","name":"Admin","level":100,"isAdmin":true,"canEditTargets":true,"canAccessResources":true},{"id":"987654321","name":"Member","level":1,"isAdmin":false,"canEditTargets":false,"canAccessResources":true}]
+```
+
+**Vercel Dashboard:**
+When setting this in Vercel's environment variables UI, use the **single-line minified format**:
+```
+[{"id":"123456789","name":"Admin","level":100,"isAdmin":true,"canEditTargets":true,"canAccessResources":true},{"id":"987654321","name":"Member","level":1,"isAdmin":false,"canEditTargets":false,"canAccessResources":true}]
+```
+
+**⚠️ Important for Vercel:**
+- **No spaces or newlines** in the JSON
+- **No extra quotes** around the entire value
+- Use the Vercel CLI for complex values: `vercel env add DISCORD_ROLES_CONFIG`
+- Test locally first to ensure your JSON is valid
+
+#### Quick Validation:
+Test your JSON before deploying:
+```bash
+# Test if your JSON is valid
+node -e "console.log(JSON.parse('YOUR_JSON_HERE'))"
 ```
 
 ### Role Properties
@@ -157,3 +184,33 @@ DISCORD_CLIENT_SECRET=your_client_secret
 #### "Invalid redirect URI"
 - Discord callback URL must exactly match NEXTAUTH_URL + `/api/auth/callback/discord`
 - No trailing slashes allowed
+
+#### "Failed to parse DISCORD_ROLES_CONFIG" JSON Error
+This error occurs when the JSON in `DISCORD_ROLES_CONFIG` is malformed:
+
+**Common Causes:**
+- Extra quotes around the JSON value
+- Newlines or spaces in the JSON when set in Vercel UI
+- Missing commas or brackets
+- Unescaped quotes in role names
+
+**Solutions:**
+1. **Validate JSON locally first:**
+   ```bash
+   node -e "console.log(JSON.parse('[{\"id\":\"123\",\"name\":\"Test\",\"level\":1,\"canAccessResources\":true}]'))"
+   ```
+
+2. **Use minified JSON (no spaces/newlines):**
+   ```
+   [{"id":"123456789","name":"Admin","level":100,"isAdmin":true,"canAccessResources":true}]
+   ```
+
+3. **Use Vercel CLI for complex values:**
+   ```bash
+   vercel env add DISCORD_ROLES_CONFIG
+   # Then paste your JSON when prompted
+   ```
+
+4. **Check logs:** The enhanced error messages will show the exact issue with your JSON
+
+**Temporary workaround:** The app will work without `DISCORD_ROLES_CONFIG` due to the built-in bypass, but you won't have proper role-based permissions.
