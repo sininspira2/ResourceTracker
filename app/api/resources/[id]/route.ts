@@ -34,7 +34,7 @@ export async function PUT(
   }
 
   try {
-    const { quantity, updateType = 'absolute', value, reason } = await request.json()
+    const { quantity, updateType = 'absolute', changeValue, reason } = await request.json()
     const userId = getUserIdentifier(session)
     
     // Get current resource for history logging and points calculation
@@ -45,7 +45,7 @@ export async function PUT(
 
     const resource = currentResource[0]
     const previousQuantity = resource.quantity
-    const changeAmount = updateType === 'relative' ? value : quantity - previousQuantity
+    const changeAmount = updateType === 'relative' ? changeValue : quantity - previousQuantity
 
     // Update the resource
     await db.update(resources)
