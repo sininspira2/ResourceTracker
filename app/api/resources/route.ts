@@ -144,7 +144,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Handle bulk quantity updates
-    if (body.resourceUpdates) {
+    else if (body.resourceUpdates) {
       if (!hasResourceAccess(session.user.roles)) {
         return NextResponse.json({ error: 'Resource access required' }, { status: 403 })
       }
