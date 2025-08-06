@@ -207,7 +207,7 @@ export default function ResourceDetailPage() {
         body: JSON.stringify({
           quantity: finalQuantity,
           updateType: updateType,
-          value: inputValue,
+          changeValue: inputValue,
           reason: updateType === 'relative' ? `${inputValue > 0 ? '+' : ''}${inputValue}` : undefined
         }),
       })

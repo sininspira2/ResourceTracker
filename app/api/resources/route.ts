@@ -95,111 +95,141 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT /api/resources - Update multiple resources
+// PUT /api/resources - Update multiple resources or single resource metadata
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions)
 
-  if (!session || !hasResourceAccess(session.user.roles)) {
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const userId = getUserIdentifier(session)
+
   try {
-    const { resourceUpdates } = await request.json()
-    const userId = getUserIdentifier(session)
+    const body = await request.json()
 
-    if (!Array.isArray(resourceUpdates) || resourceUpdates.length === 0) {
-      return NextResponse.json(
-        { error: 'Invalid request format' },
-        { status: 400 }
-      )
-    }
-    
-    // Handle quantity updates with points calculation
-    const updatePromises = resourceUpdates.map(async (update: { 
-      id: string; 
-      quantity: number; 
-      updateType: 'absolute' | 'relative';
-      value: number;
-      reason?: string;
-    }) => {
-      // Get current resource for history logging and points calculation
-      const currentResource = await db.select().from(resources).where(eq(resources.id, update.id))
-      if (currentResource.length === 0) return null
+    // Handle single resource metadata update (admin only)
+    if (body.resourceMetadata) {
+      if (!hasResourceAdminAccess(session.user.roles)) {
+        return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+      }
 
-      const resource = currentResource[0]
-      const previousQuantity = resource.quantity
-      const changeAmount = update.updateType === 'relative' ? update.value : update.quantity - previousQuantity
+      const { id, name, category, description, imageUrl, multiplier } = body.resourceMetadata
 
-      // Update the resource
+      if (!id || !name || !category) {
+        return NextResponse.json({ error: 'ID, name, and category are required' }, { status: 400 })
+      }
+
       await db.update(resources)
         .set({
-          quantity: update.quantity,
+          name,
+          category,
+          description: description || null,
+          imageUrl: imageUrl || null,
+          multiplier: multiplier || 1.0,
           lastUpdatedBy: userId,
           updatedAt: new Date(),
         })
-        .where(eq(resources.id, update.id))
+        .where(eq(resources.id, id))
 
-      // Log the change in history
-      await db.insert(resourceHistory).values({
-        id: nanoid(),
-        resourceId: update.id,
-        previousQuantity,
-        newQuantity: update.quantity,
-        changeAmount,
-        changeType: update.updateType,
-        updatedBy: userId,
-        reason: update.reason,
-        createdAt: new Date(),
+      const updatedResource = await db.select().from(resources).where(eq(resources.id, id))
+
+      return NextResponse.json(updatedResource[0], {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      })
+    }
+
+    // Handle bulk quantity updates
+    else if (body.resourceUpdates) {
+      if (!hasResourceAccess(session.user.roles)) {
+        return NextResponse.json({ error: 'Resource access required' }, { status: 403 })
+      }
+
+      const { resourceUpdates } = body
+      if (!Array.isArray(resourceUpdates) || resourceUpdates.length === 0) {
+        return NextResponse.json({ error: 'Invalid resourceUpdates format' }, { status: 400 })
+      }
+
+      const updatePromises = resourceUpdates.map(async (update: {
+        id: string;
+        quantity: number;
+        updateType: 'absolute' | 'relative';
+        value: number;
+        reason?: string;
+      }) => {
+        const currentResource = await db.select().from(resources).where(eq(resources.id, update.id))
+        if (currentResource.length === 0) return null
+
+        const resource = currentResource[0]
+        const previousQuantity = resource.quantity
+        const changeAmount = update.updateType === 'relative' ? update.value : update.quantity - previousQuantity
+
+        await db.update(resources)
+          .set({
+            quantity: update.quantity,
+            lastUpdatedBy: userId,
+            updatedAt: new Date(),
+          })
+          .where(eq(resources.id, update.id))
+
+        await db.insert(resourceHistory).values({
+          id: nanoid(),
+          resourceId: update.id,
+          previousQuantity,
+          newQuantity: update.quantity,
+          changeAmount,
+          changeType: update.updateType,
+          updatedBy: userId,
+          reason: update.reason,
+          createdAt: new Date(),
+        })
+
+        let pointsCalculation = null
+        if (changeAmount !== 0) {
+          const actionType = update.updateType === 'absolute' ? 'SET' : (changeAmount > 0 ? 'ADD' : 'REMOVE')
+          pointsCalculation = await awardPoints(
+            userId,
+            update.id,
+            actionType,
+            Math.abs(changeAmount),
+            {
+              name: resource.name,
+              category: resource.category || 'Other',
+              status: calculateResourceStatus(resource.quantity, resource.targetQuantity),
+              multiplier: resource.multiplier || 1.0
+            }
+          )
+        }
+        return pointsCalculation
       })
 
-      // Calculate and award points for eligible actions
-      let pointsCalculation = null
-      if (changeAmount !== 0) {
-        let actionType: 'ADD' | 'SET' | 'REMOVE'
-        
-        if (update.updateType === 'absolute') {
-          actionType = 'SET'
-        } else if (changeAmount > 0) {
-          actionType = 'ADD'
-        } else {
-          actionType = 'REMOVE'
+      const pointsResults = await Promise.all(updatePromises)
+      const totalPointsEarned = pointsResults
+        .filter(result => result !== null)
+        .reduce((total, result) => total + (result?.finalPoints || 0), 0)
+
+      const updatedResources = await db.select().from(resources)
+
+      return NextResponse.json({
+        resources: updatedResources,
+        totalPointsEarned,
+        pointsBreakdown: pointsResults.filter(result => result !== null)
+      }, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         }
+      })
+    }
 
-        pointsCalculation = await awardPoints(
-          userId,
-          update.id,
-          actionType,
-          Math.abs(changeAmount),
-          {
-            name: resource.name,
-            category: resource.category || 'Other',
-            status: calculateResourceStatus(resource.quantity, resource.targetQuantity),
-            multiplier: resource.multiplier || 1.0
-          }
-        )
-      }
+    // If neither update type is matched, it's a bad request
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
 
-      return pointsCalculation
-    })
-
-    const pointsResults = await Promise.all(updatePromises)
-    const totalPointsEarned = pointsResults
-      .filter(result => result !== null)
-      .reduce((total, result) => total + (result?.finalPoints || 0), 0)
-
-    const updatedResources = await db.select().from(resources)
-    
-    return NextResponse.json({
-      resources: updatedResources,
-      totalPointsEarned,
-      pointsBreakdown: pointsResults.filter(result => result !== null)
-    }, {
-      headers: {
-        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
-    })
   } catch (error) {
     console.error('Error updating resources:', error)
     return NextResponse.json({ error: 'Failed to update resources' }, { status: 500 })
