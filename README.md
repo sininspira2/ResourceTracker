@@ -2,7 +2,8 @@
 
 A comprehensive resource management and tracking portal with Discord authentication and role-based access control. Perfect for gaming communities, organizations, and teams that need to track shared resources, inventory, or assets.
 
-Made for Dune:Awakening. Originally forked from https://github.com/theyetty
+Made for Dune: Awakening. Originally forked from https://github.com/theyetty
+Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
 ## Features
 
