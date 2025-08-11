@@ -46,17 +46,21 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { name, category, description, imageUrl, quantity, targetQuantity, multiplier } = await request.json()
+    const { name, category, description, imageUrl, quantity, quantityHagga, quantityDeepDesert, targetQuantity, multiplier } = await request.json()
     const userId = getUserIdentifier(session)
 
     if (!name || !category) {
       return NextResponse.json({ error: 'Name and category are required' }, { status: 400 })
     }
 
+    const haggaQty = quantityHagga || quantity || 0;
+    const deepDesertQty = quantityDeepDesert || 0;
+
     const newResource = {
       id: nanoid(),
       name,
-      quantity: quantity || 0,
+      quantityHagga: haggaQty,
+      quantityDeepDesert: deepDesertQty,
       description: description || null,
       category,
       imageUrl: imageUrl || null,
@@ -73,9 +77,12 @@ export async function POST(request: NextRequest) {
     await db.insert(resourceHistory).values({
       id: nanoid(),
       resourceId: newResource.id,
-      previousQuantity: 0,
-      newQuantity: newResource.quantity,
-      changeAmount: newResource.quantity,
+      previousQuantityHagga: 0,
+      newQuantityHagga: newResource.quantityHagga,
+      changeAmountHagga: newResource.quantityHagga,
+      previousQuantityDeepDesert: 0,
+      newQuantityDeepDesert: newResource.quantityDeepDesert,
+      changeAmountDeepDesert: newResource.quantityDeepDesert,
       changeType: 'absolute',
       updatedBy: userId,
       reason: 'Resource created',
@@ -156,21 +163,21 @@ export async function PUT(request: NextRequest) {
 
       const updatePromises = resourceUpdates.map(async (update: {
         id: string;
-        quantity: number;
+        quantity: number; // This is the new total quantity for Hagga
         updateType: 'absolute' | 'relative';
-        value: number;
+        value: number; // This is the change amount for relative
         reason?: string;
       }) => {
         const currentResource = await db.select().from(resources).where(eq(resources.id, update.id))
         if (currentResource.length === 0) return null
 
         const resource = currentResource[0]
-        const previousQuantity = resource.quantity
-        const changeAmount = update.updateType === 'relative' ? update.value : update.quantity - previousQuantity
+        const previousQuantityHagga = resource.quantityHagga
+        const changeAmountHagga = update.updateType === 'relative' ? update.value : update.quantity - previousQuantityHagga
 
         await db.update(resources)
           .set({
-            quantity: update.quantity,
+            quantityHagga: update.quantity,
             lastUpdatedBy: userId,
             updatedAt: new Date(),
           })
@@ -179,9 +186,12 @@ export async function PUT(request: NextRequest) {
         await db.insert(resourceHistory).values({
           id: nanoid(),
           resourceId: update.id,
-          previousQuantity,
-          newQuantity: update.quantity,
-          changeAmount,
+          previousQuantityHagga: previousQuantityHagga,
+          newQuantityHagga: update.quantity,
+          changeAmountHagga: changeAmountHagga,
+          previousQuantityDeepDesert: resource.quantityDeepDesert,
+          newQuantityDeepDesert: resource.quantityDeepDesert, // unchanged
+          changeAmountDeepDesert: 0,
           changeType: update.updateType,
           updatedBy: userId,
           reason: update.reason,
@@ -189,17 +199,17 @@ export async function PUT(request: NextRequest) {
         })
 
         let pointsCalculation = null
-        if (changeAmount !== 0) {
-          const actionType = update.updateType === 'absolute' ? 'SET' : (changeAmount > 0 ? 'ADD' : 'REMOVE')
+        if (changeAmountHagga !== 0) {
+          const actionType = update.updateType === 'absolute' ? 'SET' : (changeAmountHagga > 0 ? 'ADD' : 'REMOVE')
           pointsCalculation = await awardPoints(
             userId,
             update.id,
             actionType,
-            Math.abs(changeAmount),
+            Math.abs(changeAmountHagga),
             {
               name: resource.name,
               category: resource.category || 'Other',
-              status: calculateResourceStatus(resource.quantity, resource.targetQuantity),
+              status: calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity),
               multiplier: resource.multiplier || 1.0
             }
           )

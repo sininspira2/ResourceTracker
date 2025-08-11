@@ -10,10 +10,15 @@ const formatNumber = (num: number): string => {
 interface HistoryEntry {
   id: string
   resourceId: string
-  previousQuantity: number
-  newQuantity: number
-  changeAmount: number
-  changeType: 'absolute' | 'relative'
+  previousQuantityHagga: number
+  newQuantityHagga: number
+  changeAmountHagga: number
+  previousQuantityDeepDesert: number
+  newQuantityDeepDesert: number
+  changeAmountDeepDesert: number
+  transferAmount?: number
+  transferDirection?: 'to_deep_desert' | 'to_hagga'
+  changeType: 'absolute' | 'relative' | 'transfer'
   updatedBy: string
   reason?: string
   createdAt: string
@@ -138,9 +143,9 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
                         const x1 = (index / (arr.length - 1)) * 100
                         const x2 = ((index + 1) / (arr.length - 1)) * 100
                         
-                        const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantity, h.newQuantity)))
-                        const y1 = 100 - (entry.newQuantity / maxQuantity) * 80
-                        const y2 = 100 - (nextEntry.newQuantity / maxQuantity) * 80
+                        const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
+                        const y1 = 100 - ((entry.newQuantityHagga + entry.newQuantityDeepDesert) / maxQuantity) * 80
+                        const y2 = 100 - ((nextEntry.newQuantityHagga + nextEntry.newQuantityDeepDesert) / maxQuantity) * 80
                         
                         return (
                           <line
@@ -158,8 +163,8 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
                       {/* Data points */}
                       {history.slice().reverse().map((entry, index, arr) => {
                         const x = (index / (arr.length - 1)) * 100
-                        const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantity, h.newQuantity)))
-                        const y = 100 - (entry.newQuantity / maxQuantity) * 80
+                        const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
+                        const y = 100 - ((entry.newQuantityHagga + entry.newQuantityDeepDesert) / maxQuantity) * 80
                         
                         return (
                           <circle
@@ -188,9 +193,9 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
                             transform: mousePosition.x > 200 ? 'translateX(-100%)' : 'none'
                           }}
                         >
-                          <div className="font-medium">{formatNumber(hoveredPoint.newQuantity)}</div>
+                          <div className="font-medium">{formatNumber(hoveredPoint.newQuantityHagga + hoveredPoint.newQuantityDeepDesert)}</div>
                           <div className="text-gray-300">
-                            {hoveredPoint.changeAmount > 0 ? '+' : ''}{formatNumber(hoveredPoint.changeAmount)}
+                            {hoveredPoint.changeAmountHagga + hoveredPoint.changeAmountDeepDesert > 0 ? '+' : ''}{formatNumber(hoveredPoint.changeAmountHagga + hoveredPoint.changeAmountDeepDesert)}
                           </div>
                           <div className="text-gray-300">By: {hoveredPoint.updatedBy}</div>
                           <div className="text-gray-300">
@@ -211,18 +216,25 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
                     <div key={entry.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-3">
                         <div className={`w-3 h-3 rounded-full ${
-                          entry.changeAmount > 0 ? 'bg-green-500' : 
-                          entry.changeAmount < 0 ? 'bg-red-500' : 'bg-gray-400'
+                          entry.changeAmountHagga + entry.changeAmountDeepDesert > 0 ? 'bg-green-500' :
+                          entry.changeAmountHagga + entry.changeAmountDeepDesert < 0 ? 'bg-red-500' : 'bg-gray-400'
                         }`}></div>
                         <div>
                           <div className="font-medium">
-                            {formatNumber(entry.previousQuantity)} → {formatNumber(entry.newQuantity)}
-                            <span className={`ml-2 text-sm ${
-                              entry.changeAmount > 0 ? 'text-green-600' : 
-                              entry.changeAmount < 0 ? 'text-red-600' : 'text-gray-600'
-                            }`}>
-                              ({entry.changeAmount > 0 ? '+' : ''}{formatNumber(entry.changeAmount)})
-                            </span>
+                            {entry.changeType === 'transfer' ? (
+                              <span>
+                                Transfer {entry.transferAmount} {entry.transferDirection === 'to_deep_desert' ? 'to Deep Desert' : 'to Hagga'}
+                              </span>
+                            ) : (
+                              <div>
+                                <div>
+                                  Hagga: {formatNumber(entry.previousQuantityHagga)} → {formatNumber(entry.newQuantityHagga)} ({entry.changeAmountHagga > 0 ? '+' : ''}{formatNumber(entry.changeAmountHagga)})
+                                </div>
+                                <div>
+                                  Deep Desert: {formatNumber(entry.previousQuantityDeepDesert)} → {formatNumber(entry.newQuantityDeepDesert)} ({entry.changeAmountDeepDesert > 0 ? '+' : ''}{formatNumber(entry.changeAmountDeepDesert)})
+                                </div>
+                              </div>
+                            )}
                           </div>
                           <div className="text-sm text-gray-600">
                             By {entry.updatedBy}

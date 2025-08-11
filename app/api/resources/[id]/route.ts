@@ -34,7 +34,7 @@ export async function PUT(
   }
 
   try {
-    const { quantity, updateType = 'absolute', changeValue, reason } = await request.json()
+    const { quantity, updateType = 'absolute', changeValue, reason, quantityField } = await request.json()
     const userId = getUserIdentifier(session)
     
     // Get current resource for history logging and points calculation
@@ -44,13 +44,26 @@ export async function PUT(
     }
 
     const resource = currentResource[0]
-    const previousQuantity = resource.quantity
-    const changeAmount = updateType === 'relative' ? changeValue : quantity - previousQuantity
+    let previousQuantityHagga = resource.quantityHagga
+    let newQuantityHagga = resource.quantityHagga
+    let changeAmountHagga = 0
+    let previousQuantityDeepDesert = resource.quantityDeepDesert
+    let newQuantityDeepDesert = resource.quantityDeepDesert
+    let changeAmountDeepDesert = 0
+
+    if (quantityField === 'quantityDeepDesert') {
+        changeAmountDeepDesert = updateType === 'relative' ? changeValue : quantity - previousQuantityDeepDesert
+        newQuantityDeepDesert = previousQuantityDeepDesert + changeAmountDeepDesert
+    } else { // default to hagga
+        changeAmountHagga = updateType === 'relative' ? changeValue : quantity - previousQuantityHagga
+        newQuantityHagga = previousQuantityHagga + changeAmountHagga
+    }
 
     // Update the resource
     await db.update(resources)
       .set({
-        quantity: quantity,
+        quantityHagga: newQuantityHagga,
+        quantityDeepDesert: newQuantityDeepDesert,
         lastUpdatedBy: userId,
         updatedAt: new Date(),
       })
@@ -60,9 +73,12 @@ export async function PUT(
     await db.insert(resourceHistory).values({
       id: nanoid(),
       resourceId: params.id,
-      previousQuantity,
-      newQuantity: quantity,
-      changeAmount,
+      previousQuantityHagga,
+      newQuantityHagga,
+      changeAmountHagga,
+      previousQuantityDeepDesert,
+      newQuantityDeepDesert,
+      changeAmountDeepDesert,
       changeType: updateType || 'absolute',
       updatedBy: userId,
       reason: reason,
@@ -70,20 +86,21 @@ export async function PUT(
     })
 
     // Award points if quantity changed
+    const totalChangeAmount = changeAmountHagga + changeAmountDeepDesert;
     let pointsCalculation = null
-    if (changeAmount !== 0) {
+    if (totalChangeAmount !== 0) {
       const actionType: 'ADD' | 'SET' | 'REMOVE' = 
         updateType === 'absolute' ? 'SET' :
-        changeAmount > 0 ? 'ADD' : 'REMOVE'
+        totalChangeAmount > 0 ? 'ADD' : 'REMOVE'
 
       // Calculate the current status for bonus calculation
-      const resourceStatus = calculateResourceStatus(resource.quantity, resource.targetQuantity)
+      const resourceStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity)
 
       pointsCalculation = await awardPoints(
         getUserIdentifier(session),
         params.id,
         actionType,
-        Math.abs(changeAmount),
+        Math.abs(totalChangeAmount),
         {
           name: resource.name,
           category: resource.category || 'Other',

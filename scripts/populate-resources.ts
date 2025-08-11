@@ -27,38 +27,38 @@ function estimateTarget(quantity: number, statusFromEmoji: string): number {
 // This is sample data for demonstration. Customize for your organization.
 
 const rawResources = [
-  { name: 'Wood', quantity: 1250, icon: '🪵', status: 'at_target', lastUpdatedBy: 'Admin User' },
-  { name: 'Stone', quantity: 850, icon: '🪨', status: 'below_target', lastUpdatedBy: 'Collector Alpha' },
-  { name: 'Iron Ore', quantity: 450, icon: '⛏️', status: 'critical', lastUpdatedBy: 'Miner Beta' },
-  { name: 'Cotton', quantity: 2100, icon: '🌱', status: 'at_target', lastUpdatedBy: 'Farmer Gamma' },
-  { name: 'Water', quantity: 5000, icon: '💧', status: 'at_target', lastUpdatedBy: 'Gatherer Delta' },
-  { name: 'Clay', quantity: 120, icon: '🏺', status: 'critical', lastUpdatedBy: 'Crafter Epsilon' },
-  { name: 'Sand', quantity: 800, icon: '⏳', status: 'below_target', lastUpdatedBy: 'Builder Zeta' },
-  { name: 'Coal', quantity: 600, icon: '⚫', status: 'below_target', lastUpdatedBy: 'Miner Beta' },
-  { name: 'Copper Ore', quantity: 300, icon: '🟤', status: 'critical', lastUpdatedBy: 'Prospector Eta' },
-  { name: 'Leather', quantity: 180, icon: '🦬', status: 'critical', lastUpdatedBy: 'Hunter Theta' }
+  { name: 'Wood', quantityHagga: 1250, quantityDeepDesert: 0, icon: '🪵', status: 'at_target', lastUpdatedBy: 'Admin User' },
+  { name: 'Stone', quantityHagga: 850, quantityDeepDesert: 0, icon: '🪨', status: 'below_target', lastUpdatedBy: 'Collector Alpha' },
+  { name: 'Iron Ore', quantityHagga: 450, quantityDeepDesert: 0, icon: '⛏️', status: 'critical', lastUpdatedBy: 'Miner Beta' },
+  { name: 'Cotton', quantityHagga: 2100, quantityDeepDesert: 0, icon: '🌱', status: 'at_target', lastUpdatedBy: 'Farmer Gamma' },
+  { name: 'Water', quantityHagga: 5000, quantityDeepDesert: 0, icon: '💧', status: 'at_target', lastUpdatedBy: 'Gatherer Delta' },
+  { name: 'Clay', quantityHagga: 120, quantityDeepDesert: 0, icon: '🏺', status: 'critical', lastUpdatedBy: 'Crafter Epsilon' },
+  { name: 'Sand', quantityHagga: 800, quantityDeepDesert: 0, icon: '⏳', status: 'below_target', lastUpdatedBy: 'Builder Zeta' },
+  { name: 'Coal', quantityHagga: 600, quantityDeepDesert: 0, icon: '⚫', status: 'below_target', lastUpdatedBy: 'Miner Beta' },
+  { name: 'Copper Ore', quantityHagga: 300, quantityDeepDesert: 0, icon: '🟤', status: 'critical', lastUpdatedBy: 'Prospector Eta' },
+  { name: 'Leather', quantityHagga: 180, quantityDeepDesert: 0, icon: '🦬', status: 'critical', lastUpdatedBy: 'Hunter Theta' }
 ]
 
 const refinedResources = [
-  { name: 'Iron Ingot', quantity: 250, icon: '🔩', status: 'at_target', lastUpdatedBy: 'Blacksmith Alpha' },
-  { name: 'Steel Bars', quantity: 150, icon: '⚡', status: 'below_target', lastUpdatedBy: 'Forger Beta' },
-  { name: 'Copper Wire', quantity: 400, icon: '🟫', status: 'at_target', lastUpdatedBy: 'Electrician Gamma' },
-  { name: 'Glass Sheets', quantity: 80, icon: '🪟', status: 'critical', lastUpdatedBy: 'Glassblower Delta' },
-  { name: 'Fabric Bolts', quantity: 320, icon: '🧵', status: 'at_target', lastUpdatedBy: 'Weaver Epsilon' },
-  { name: 'Processed Food', quantity: 500, icon: '🥫', status: 'at_target', lastUpdatedBy: 'Chef Zeta' },
-  { name: 'Refined Oil', quantity: 120, icon: '🛢️', status: 'below_target', lastUpdatedBy: 'Refiner Eta' },
-  { name: 'Plastic Pellets', quantity: 200, icon: '🔸', status: 'critical', lastUpdatedBy: 'Processor Theta' }
+  { name: 'Iron Ingot', quantityHagga: 250, quantityDeepDesert: 0, icon: '🔩', status: 'at_target', lastUpdatedBy: 'Blacksmith Alpha' },
+  { name: 'Steel Bars', quantityHagga: 150, quantityDeepDesert: 0, icon: '⚡', status: 'below_target', lastUpdatedBy: 'Forger Beta' },
+  { name: 'Copper Wire', quantityHagga: 400, quantityDeepDesert: 0, icon: '🟫', status: 'at_target', lastUpdatedBy: 'Electrician Gamma' },
+  { name: 'Glass Sheets', quantityHagga: 80, quantityDeepDesert: 0, icon: '🪟', status: 'critical', lastUpdatedBy: 'Glassblower Delta' },
+  { name: 'Fabric Bolts', quantityHagga: 320, quantityDeepDesert: 0, icon: '🧵', status: 'at_target', lastUpdatedBy: 'Weaver Epsilon' },
+  { name: 'Processed Food', quantityHagga: 500, quantityDeepDesert: 0, icon: '🥫', status: 'at_target', lastUpdatedBy: 'Chef Zeta' },
+  { name: 'Refined Oil', quantityHagga: 120, quantityDeepDesert: 0, icon: '🛢️', status: 'below_target', lastUpdatedBy: 'Refiner Eta' },
+  { name: 'Plastic Pellets', quantityHagga: 200, quantityDeepDesert: 0, icon: '🔸', status: 'critical', lastUpdatedBy: 'Processor Theta' }
 ]
 
 const components = [
-  { name: 'Electronic Circuits', quantity: 150, icon: '🔌', status: 'at_target', lastUpdatedBy: 'Technician Alpha' },
-  { name: 'Mechanical Gears', quantity: 80, icon: '⚙️', status: 'below_target', lastUpdatedBy: 'Engineer Beta' },
-  { name: 'Power Cells', quantity: 60, icon: '🔋', status: 'critical', lastUpdatedBy: 'Supplier Gamma' },
-  { name: 'Control Modules', quantity: 45, icon: '🎛️', status: 'critical', lastUpdatedBy: 'Specialist Delta' },
-  { name: 'Display Screens', quantity: 25, icon: '📺', status: 'critical', lastUpdatedBy: 'Vendor Epsilon' },
-  { name: 'Sensor Arrays', quantity: 35, icon: '📡', status: 'critical', lastUpdatedBy: 'Installer Zeta' },
-  { name: 'Motor Assemblies', quantity: 90, icon: '🔧', status: 'below_target', lastUpdatedBy: 'Mechanic Eta' },
-  { name: 'Filter Systems', quantity: 120, icon: '🔍', status: 'at_target', lastUpdatedBy: 'Maintenance Theta' }
+  { name: 'Electronic Circuits', quantityHagga: 150, quantityDeepDesert: 0, icon: '🔌', status: 'at_target', lastUpdatedBy: 'Technician Alpha' },
+  { name: 'Mechanical Gears', quantityHagga: 80, quantityDeepDesert: 0, icon: '⚙️', status: 'below_target', lastUpdatedBy: 'Engineer Beta' },
+  { name: 'Power Cells', quantityHagga: 60, quantityDeepDesert: 0, icon: '🔋', status: 'critical', lastUpdatedBy: 'Supplier Gamma' },
+  { name: 'Control Modules', quantityHagga: 45, quantityDeepDesert: 0, icon: '🎛️', status: 'critical', lastUpdatedBy: 'Specialist Delta' },
+  { name: 'Display Screens', quantityHagga: 25, quantityDeepDesert: 0, icon: '📺', status: 'critical', lastUpdatedBy: 'Vendor Epsilon' },
+  { name: 'Sensor Arrays', quantityHagga: 35, quantityDeepDesert: 0, icon: '📡', status: 'critical', lastUpdatedBy: 'Installer Zeta' },
+  { name: 'Motor Assemblies', quantityHagga: 90, quantityDeepDesert: 0, icon: '🔧', status: 'below_target', lastUpdatedBy: 'Mechanic Eta' },
+  { name: 'Filter Systems', quantityHagga: 120, quantityDeepDesert: 0, icon: '🔍', status: 'at_target', lastUpdatedBy: 'Maintenance Theta' }
 ]
 
 async function populateResources() {
@@ -77,13 +77,14 @@ async function populateResources() {
     ]
     
     const resourceData = allResources.map(resource => {
-      const targetQuantity = estimateTarget(resource.quantity, resource.status)
-      const actualStatus = calculateStatus(resource.quantity, targetQuantity)
+      const targetQuantity = estimateTarget(resource.quantityHagga, resource.status)
+      const actualStatus = calculateStatus(resource.quantityHagga, targetQuantity)
       
       return {
         id: nanoid(),
         name: resource.name,
-        quantity: resource.quantity,
+        quantityHagga: resource.quantityHagga,
+        quantityDeepDesert: resource.quantityDeepDesert || 0,
         description: `${resource.category} - ${resource.name}`,
         category: resource.category,
         icon: resource.icon,

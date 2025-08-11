@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { CongratulationsPopup } from './CongratulationsPopup'
+import { TransferModal } from './TransferModal'
+import { UpdateQuantityModal } from './UpdateQuantityModal'
 import { getUserIdentifier } from '@/lib/auth'
 
 // Utility function to format numbers with commas
@@ -128,7 +130,8 @@ const getStatusTableColor = (status: string): string => {
 interface Resource {
   id: string
   name: string
-  quantity: number
+  quantityHagga: number
+  quantityDeepDesert: number
   description?: string
   category?: string
   icon?: string
@@ -190,7 +193,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   
   const [resources, setResources] = useState<Resource[]>([])
-  const [editedResources, setEditedResources] = useState<Map<string, ResourceUpdate>>(new Map())
   const [editedTargets, setEditedTargets] = useState<Map<string, number>>(new Map())
   const [statusChanges, setStatusChanges] = useState<Map<string, { oldStatus: string, newStatus: string, timestamp: number }>>(new Map())
   const [loading, setLoading] = useState(true)
@@ -222,16 +224,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [needsUpdateFilter, setNeedsUpdateFilter] = useState(false)
 
-  // Add state for inline input
-  const [activeInput, setActiveInput] = useState<{
-    resourceId: string | null
-    type: 'relative' | 'absolute' | null
-    value: string
-  }>({
-    resourceId: null,
-    type: null,
-    value: ''
-  })
+  // Add state for update modal
+  const [updateModalState, setUpdateModalState] = useState<{
+    isOpen: boolean
+    resource: Resource | null
+    updateType: 'absolute' | 'relative'
+  }>({ isOpen: false, resource: null, updateType: 'absolute' })
 
   // Admin state for resource editing
   const [editingResource, setEditingResource] = useState<string | null>(null)
@@ -250,7 +248,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     category: 'Raw',
     description: '',
     imageUrl: '',
-    quantity: 0,
+    quantityHagga: 0,
+    quantityDeepDesert: 0,
     targetQuantity: 0,
     multiplier: 1.0
   })
@@ -261,6 +260,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     resourceName: '',
     showDialog: false
   })
+
+  const [transferModalState, setTransferModalState] = useState<{
+    isOpen: boolean
+    resource: Resource | null
+  }>({ isOpen: false, resource: null })
 
   // Load view preference
   useEffect(() => {
@@ -295,7 +299,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   // Calculate status counts
   const statusCounts = resources.reduce((acc, resource) => {
-    const status = calculateResourceStatus(resource.quantity, resource.targetQuantity ?? null)
+    const status = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity ?? null)
     acc[status] = (acc[status] || 0) + 1
     acc.all = (acc.all || 0) + 1
     return acc
@@ -368,7 +372,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     const resource = resources.find(r => r.id === resourceId)
     if (!resource) return
     
-    const oldStatus = calculateResourceStatus(resource.quantity, resource.targetQuantity || null)
+    const oldStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity || null)
     const newStatus = calculateResourceStatus(quantity, targetQuantity)
     
     if (oldStatus !== newStatus) {
@@ -416,73 +420,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     }
   }
 
-  // Update quantity value
-  const updateQuantity = (resourceId: string, newQuantity: number) => {
-    setResources(prev =>
-      prev.map(resource =>
-        resource.id === resourceId
-          ? { ...resource, quantity: newQuantity }
-          : resource
-      )
-    )
-  }
-
-  // Handle quantity change with different update types
-  const handleQuantityChange = (resourceId: string, value: number, updateType: 'absolute' | 'relative', reason?: string) => {
-    const resource = resources.find(r => r.id === resourceId)
-    if (!resource) return
-
-    let newQuantity: number
-    if (updateType === 'absolute') {
-      newQuantity = Math.max(0, value)
-    } else {
-      newQuantity = Math.max(0, resource.quantity + value)
-    }
-
-    updateQuantity(resourceId, newQuantity)
-    
-    setEditedResources(prev => new Map(prev).set(resourceId, {
-      id: resourceId,
-      updateType,
-      value,
-      reason,
-    }))
-
-    // Update status immediately based on new quantity and current target
-    updateResourceStatus(resourceId, newQuantity, resource.targetQuantity || null)
-  }
-
-  // Handle inline input submission for table view (stages change)
-  const handleInputSubmit = () => {
-    const { resourceId, type, value } = activeInput
-    if (!resourceId || !type || !value) return
-
-    const numValue = parseInt(value)
-    if (isNaN(numValue)) return
-
-    handleQuantityChange(resourceId, numValue, type)
-    setActiveInput({ resourceId: null, type: null, value: '' })
-  }
-
-  // Handle inline input submission for grid view (saves immediately)
-  const handleInputSubmitAndSave = async () => {
-    const { resourceId, type, value } = activeInput
-    if (!resourceId || !type || !value) return
-
-    const numValue = parseInt(value)
-    if (isNaN(numValue)) return
-
-    handleQuantityChange(resourceId, numValue, type)
-    setActiveInput({ resourceId: null, type: null, value: '' })
-    
-    // Save immediately for grid view
-    setTimeout(() => saveResource(resourceId), 100)
-  }
-
-  // Activate inline input
-  const activateInput = (resourceId: string, type: 'relative' | 'absolute') => {
-    setActiveInput({ resourceId, type, value: '' })
-  }
 
   // Handle target quantity change (admin only)
   const handleTargetQuantityChange = (resourceId: string, newTarget: number) => {
@@ -501,7 +438,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     )
     
     // Update status immediately based on current quantity and new target
-    updateResourceStatus(resourceId, resource.quantity, newTarget)
+    updateResourceStatus(resourceId, resource.quantityHagga + resource.quantityDeepDesert, newTarget)
   }
 
   const saveTargetQuantity = async (resourceId: string) => {
@@ -630,7 +567,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           category: 'Raw',
           description: '',
           imageUrl: '',
-          quantity: 0,
+          quantityHagga: 0,
+          quantityDeepDesert: 0,
           targetQuantity: 0,
           multiplier: 1.0
         })
@@ -645,9 +583,85 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   }
 
   // Admin function to delete resource
+  const handleTransfer = async (resourceId: string, amount: number, direction: 'to_deep_desert' | 'to_hagga') => {
+    try {
+      const response = await fetch(`/api/resources/${resourceId}/transfer`, {
+        method: 'PUT',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        body: JSON.stringify({
+          transferAmount: amount,
+          transferDirection: direction,
+        }),
+      })
+
+      if (response.ok) {
+        const { resource } = await response.json()
+        setResources(prev =>
+          prev.map(r =>
+            r.id === resourceId ? { ...r, ...resource } : r
+          )
+        )
+      } else {
+        const { error } = await response.json()
+        throw new Error(error || 'Failed to transfer quantity.')
+      }
+    } catch (error) {
+        console.error('Error transferring quantity:', error)
+        throw error
+    }
+  }
+
+  const handleUpdate = async (resourceId: string, amount: number, quantityField: 'quantityHagga' | 'quantityDeepDesert', updateType: 'absolute' | 'relative') => {
+    const resource = resources.find(r => r.id === resourceId)
+    if (!resource) return
+
+    let newQuantity: number;
+    if (updateType === 'relative') {
+        newQuantity = Math.max(0, resource[quantityField] + amount)
+    } else {
+        newQuantity = Math.max(0, amount)
+    }
+
+    try {
+      const response = await fetch(`/api/resources/${resourceId}`, {
+        method: 'PUT',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        body: JSON.stringify({
+          quantity: newQuantity,
+          updateType: updateType,
+          changeValue: amount,
+          quantityField: quantityField,
+        }),
+      })
+
+      if (response.ok) {
+        const { resource } = await response.json()
+        setResources(prev =>
+          prev.map(r =>
+            r.id === resourceId ? { ...r, ...resource } : r
+          )
+        )
+      } else {
+        const { error } = await response.json()
+        throw new Error(error || 'Failed to update quantity.')
+      }
+    } catch (error) {
+        console.error('Error updating quantity:', error)
+        throw error
+    }
+  }
+
   const deleteResource = async (resourceId: string) => {
     if (!isResourceAdmin) return
-    
+
     setSaving(true)
     try {
       const response = await fetch(`/api/resources/${resourceId}`, {
@@ -671,134 +685,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     }
   }
 
-  const saveResource = async (resourceId: string) => {
-    setSaving(true)
-    try {
-      const resource = resources.find(r => r.id === resourceId)
-      const updateInfo = editedResources.get(resourceId)
-      if (!resource || !updateInfo) return
 
-      const response = await fetch(`/api/resources/${resourceId}`, {
-        method: 'PUT',
-        cache: 'no-store',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
-        },
-        body: JSON.stringify({
-          quantity: resource.quantity,
-          updateType: updateInfo.updateType,
-          value: updateInfo.value,
-          reason: updateInfo.reason,
-        }),
-      })
-
-      if (response.ok) {
-        const responseData = await response.json()
-        setResources(prev =>
-          prev.map(r =>
-            r.id === resourceId
-              ? {
-                  ...responseData.resource,
-                  updatedAt: new Date(responseData.resource.updatedAt).toISOString(),
-                }
-              : r
-          )
-        )
-        
-        // Show congratulations popup if points were earned
-        if (responseData.pointsEarned > 0) {
-          const currentUserId = session ? getUserIdentifier(session) : userId
-          setCongratulationsState({
-            isVisible: true,
-            pointsEarned: responseData.pointsEarned,
-            pointsCalculation: responseData.pointsCalculation,
-            resourceName: resource.name,
-            actionType: updateInfo.updateType === 'absolute' ? 'SET' : (updateInfo.value > 0 ? 'ADD' : 'REMOVE'),
-            quantityChanged: Math.abs(updateInfo.value)
-          })
-        }
-        
-        setEditedResources(prev => {
-          const newMap = new Map(prev)
-          newMap.delete(resourceId)
-          return newMap
-        })
-        
-        // Clear status change indicator since the save was successful
-        setStatusChanges(prev => {
-          const newMap = new Map(prev)
-          newMap.delete(resourceId)
-          return newMap
-        })
-      } else {
-        console.error('Failed to save resource')
-      }
-      
-    } catch (error) {
-      console.error('Error saving resource:', error)
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const saveAllEdited = async () => {
-    setSaving(true)
-    try {
-      const resourceUpdates = Array.from(editedResources.entries()).map(([resourceId, updateInfo]) => {
-        const resource = resources.find(r => r.id === resourceId)
-        return {
-          id: resourceId,
-          quantity: resource?.quantity || 0,
-          updateType: updateInfo.updateType,
-          value: updateInfo.value,
-          reason: updateInfo.reason,
-        }
-      })
-
-      const response = await fetch('/api/resources', {
-        method: 'PUT',
-        cache: 'no-store',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
-        },
-        body: JSON.stringify({
-          resourceUpdates,
-        }),
-      })
-
-      if (response.ok) {
-        const responseData = await response.json()
-        setResources(responseData.resources.map((resource: any) => ({
-          ...resource,
-          updatedAt: new Date(resource.updatedAt).toISOString(),
-          createdAt: new Date(resource.createdAt).toISOString(),
-        })))
-        
-        // Show congratulations popup if points were earned
-        if (responseData.totalPointsEarned > 0) {
-          const currentUserId = session ? getUserIdentifier(session) : userId
-          setCongratulationsState({
-            isVisible: true,
-            pointsEarned: responseData.totalPointsEarned,
-            resourceName: `${resourceUpdates.length} resources`,
-            actionType: 'ADD',
-            quantityChanged: resourceUpdates.length
-          })
-        }
-        
-        setEditedResources(new Map())
-      } else {
-        console.error('Failed to save resources')
-      }
-      
-    } catch (error) {
-      console.error('Error saving resources:', error)
-    } finally {
-      setSaving(false)
-    }
-  }
 
   // Fetch leaderboard data
   const fetchLeaderboard = async () => {
@@ -867,7 +754,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     // Status filter
     let matchesStatus = true
     if (statusFilter !== 'all') {
-      const resourceStatus = calculateResourceStatus(resource.quantity, resource.targetQuantity ?? null)
+      const resourceStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity ?? null)
       matchesStatus = resourceStatus === statusFilter
     }
 
@@ -1152,13 +1039,25 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Initial Quantity
+                    Initial Quantity (Hagga)
                   </label>
                   <input
                     type="number"
                     min="0"
-                    value={createResourceForm.quantity}
-                    onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantity: parseInt(e.target.value) || 0 }))}
+                    value={createResourceForm.quantityHagga}
+                    onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantityHagga: parseInt(e.target.value) || 0 }))}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Initial Quantity (Deep Desert)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={createResourceForm.quantityDeepDesert}
+                    onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantityDeepDesert: parseInt(e.target.value) || 0 }))}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
@@ -1211,7 +1110,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       category: 'Raw',
                       description: '',
                       imageUrl: '',
-                      quantity: 0,
+                      quantityHagga: 0,
+                      quantityDeepDesert: 0,
                       targetQuantity: 0,
                       multiplier: 1.0
                     })
@@ -1409,13 +1309,25 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Initial Quantity
+                Initial Quantity (Hagga)
               </label>
               <input
                 type="number"
                 min="0"
-                value={createResourceForm.quantity}
-                onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantity: parseInt(e.target.value) || 0 }))}
+                value={createResourceForm.quantityHagga}
+                onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantityHagga: parseInt(e.target.value) || 0 }))}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Initial Quantity (Deep Desert)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={createResourceForm.quantityDeepDesert}
+                onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantityDeepDesert: parseInt(e.target.value) || 0 }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
@@ -1468,7 +1380,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   category: 'Raw',
                   description: '',
                   imageUrl: '',
-                  quantity: 0,
+          quantityHagga: 0,
+          quantityDeepDesert: 0,
                   targetQuantity: 0,
                   multiplier: 1.0
                 })
@@ -1481,28 +1394,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         </div>
       )}
 
-      {/* Save Actions */}
-      {editedResources.size > 0 && (
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.888-.833-2.664 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-              <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                You have {editedResources.size} unsaved change{editedResources.size === 1 ? '' : 's'}
-              </span>
-            </div>
-            <button
-              onClick={saveAllEdited}
-              disabled={saving}
-              className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            >
-              {saving ? 'Saving...' : 'Save All Changes'}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Grid View */}
       {viewMode === 'grid' && (
@@ -1531,7 +1422,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {categoryResources.map((resource) => {
-                  const status = calculateResourceStatus(resource.quantity, resource.targetQuantity || null)
+                  const status = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity || null)
                   const statusChange = statusChanges.get(resource.id)
                   const isStale = isResourceStale(resource.updatedAt)
                   
@@ -1599,8 +1490,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         
                         {/* Quantity Display */}
                         <div className="text-center">
-                          <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                            {formatNumber(resource.quantity)}
+                          <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                            Hagga: {formatNumber(resource.quantityHagga)}
+                          </div>
+                          <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                            Deep Desert: {formatNumber(resource.quantityDeepDesert)}
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
                             {resource.targetQuantity ? `Target: ${formatNumber(resource.targetQuantity)}` : 'No target set'}
@@ -1633,49 +1527,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                         {/* Simplified Quick Update Controls - Only show on hover for grid view */}
                         <div className="opacity-0 group-hover:opacity-100 transition-all duration-200 space-y-2">
-                          {/* Input field and buttons */}
-                          {activeInput.resourceId === resource.id ? (
-                            <div className="space-y-2">
-                              <input
-                                type="number"
-                                value={activeInput.value}
-                                onChange={(e) => setActiveInput(prev => ({ ...prev, value: e.target.value }))}
-                                placeholder={activeInput.type === 'relative' ? 'e.g. +5 or -3' : 'e.g. 25'}
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                autoFocus
-                                onKeyDown={(e) => {
-                                  e.stopPropagation()
-                                  if (e.key === 'Enter') {
-                                    handleInputSubmitAndSave()
-                                  } else if (e.key === 'Escape') {
-                                    setActiveInput({ resourceId: null, type: null, value: '' })
-                                  }
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              />
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleInputSubmitAndSave()
-                                  }}
-                                  disabled={!activeInput.value}
-                                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  {activeInput.type === 'relative' ? 'Apply' : 'Set'}
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setActiveInput({ resourceId: null, type: null, value: '' })
-                                  }}
-                                  className="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          ) : editingResource === resource.id ? (
+                          {editingResource === resource.id ? (
                             // Admin edit form
                             <div className="space-y-2">
                               <input
@@ -1751,7 +1603,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    activateInput(resource.id, 'relative')
+                                    setUpdateModalState({ isOpen: true, resource: resource, updateType: 'relative' })
                                   }}
                                   className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded text-xs font-medium transition-colors"
                                 >
@@ -1760,11 +1612,22 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    activateInput(resource.id, 'absolute')
+                                    setUpdateModalState({ isOpen: true, resource: resource, updateType: 'absolute' })
                                   }}
                                   className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded text-xs font-medium transition-colors"
                                 >
                                   Set
+                                </button>
+                              </div>
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setTransferModalState({ isOpen: true, resource: resource })
+                                  }}
+                                  className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                >
+                                  Transfer
                                 </button>
                               </div>
                               
@@ -1798,18 +1661,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             </div>
                           )}
                           
-                          {editedResources.has(resource.id) && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                saveResource(resource.id)
-                              }}
-                              disabled={saving}
-                              className="w-full bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 disabled:opacity-50 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                            >
-                              {saving ? 'Saving...' : 'Save'}
-                            </button>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -1855,7 +1706,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredResources.map((resource) => {
-                  const status = calculateResourceStatus(resource.quantity, resource.targetQuantity || 0)
+                  const status = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity || 0)
                   const statusChange = statusChanges.get(resource.id)
                   const pendingTarget = editedTargets.get(resource.id)
                   const isEdited = pendingTarget !== undefined
@@ -1924,7 +1775,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         </span>
                       </td>
                       <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                        {formatNumber(resource.quantity)}
+                        Hagga: {formatNumber(resource.quantityHagga)}
+                        <br />
+                        Deep Desert: {formatNumber(resource.quantityDeepDesert)}
                       </td>
                       {isTargetAdmin && (
                         <td className="px-3 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
@@ -1952,41 +1805,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                                               <td className="px-3 py-3 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                         <div className="space-y-2">
-                          {/* Input field and buttons */}
-                          {activeInput.resourceId === resource.id ? (
-                            <div className="space-y-2">
-                              <input
-                                type="number"
-                                value={activeInput.value}
-                                onChange={(e) => setActiveInput(prev => ({ ...prev, value: e.target.value }))}
-                                placeholder={activeInput.type === 'relative' ? '+5 or -3' : '25'}
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                autoFocus
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    handleInputSubmit()
-                                  } else if (e.key === 'Escape') {
-                                    setActiveInput({ resourceId: null, type: null, value: '' })
-                                  }
-                                }}
-                              />
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={handleInputSubmit}
-                                  disabled={!activeInput.value}
-                                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  {activeInput.type === 'relative' ? 'Apply' : 'Set'}
-                                </button>
-                                <button
-                                  onClick={() => setActiveInput({ resourceId: null, type: null, value: '' })}
-                                  className="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          ) : editingResource === resource.id ? (
+                          {editingResource === resource.id ? (
                             // Admin edit form for table view
                             <div className="space-y-2 w-48">
                               <input
@@ -2049,13 +1868,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               {/* Regular quantity update buttons */}
                               <div className="flex gap-1">
                                 <button
-                                  onClick={() => activateInput(resource.id, 'relative')}
+                                  onClick={() => setUpdateModalState({ isOpen: true, resource: resource, updateType: 'relative' })}
                                   className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded text-xs font-medium transition-colors"
                                 >
                                   Add/Remove
                                 </button>
                                 <button
-                                  onClick={() => activateInput(resource.id, 'absolute')}
+                                  onClick={() => setUpdateModalState({ isOpen: true, resource: resource, updateType: 'absolute' })}
                                   className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded text-xs font-medium transition-colors"
                                 >
                                   Set
@@ -2084,15 +1903,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 </div>
                               )}
 
-                              {editedResources.has(resource.id) && (
-                                <button
-                                  onClick={() => saveResource(resource.id)}
-                                  disabled={saving}
-                                  className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 disabled:opacity-50 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  Save
-                                </button>
-                              )}
                             </div>
                           )}
                         </div>
@@ -2182,6 +1992,23 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       )}
 
              {/* Congratulations Popup */}
+      {transferModalState.isOpen && transferModalState.resource && (
+        <TransferModal
+          isOpen={transferModalState.isOpen}
+          resource={transferModalState.resource}
+          onClose={() => setTransferModalState({ isOpen: false, resource: null })}
+          onTransfer={handleTransfer}
+        />
+      )}
+      {updateModalState.isOpen && updateModalState.resource && (
+        <UpdateQuantityModal
+          isOpen={updateModalState.isOpen}
+          resource={updateModalState.resource}
+          onClose={() => setUpdateModalState({ isOpen: false, resource: null, updateType: 'absolute' })}
+          onUpdate={handleUpdate}
+          updateType={updateModalState.updateType}
+        />
+      )}
        <CongratulationsPopup
          isVisible={congratulationsState.isVisible}
          pointsEarned={congratulationsState.pointsEarned}

@@ -22,7 +22,8 @@ Get all resources with current quantities and status.
   {
     "id": "resource_id",
     "name": "Resource Name",
-    "quantity": 1000,
+    "quantityHagga": 1000,
+    "quantityDeepDesert": 500,
     "description": "Resource description",
     "category": "Raw Materials",
     "icon": ":resource_icon:",
@@ -38,7 +39,7 @@ Get all resources with current quantities and status.
 ```
 
 ### PUT /api/resources/[id]
-Update resource quantity (requires admin permissions).
+Update resource quantity for the Hagga base (requires admin permissions).
 
 **Request Body:**
 ```json
@@ -46,6 +47,17 @@ Update resource quantity (requires admin permissions).
   "quantity": 1500,
   "changeType": "absolute", // or "relative"
   "reason": "Weekly inventory update"
+}
+```
+
+### PUT /api/resources/[id]/transfer
+Transfer resource quantity between bases.
+
+**Request Body:**
+```json
+{
+  "transferAmount": 100,
+  "transferDirection": "to_deep_desert" // or "to_hagga"
 }
 ```
 
@@ -73,9 +85,12 @@ Get resource change history.
   {
     "id": "history_id",
     "resourceId": "resource_id",
-    "previousQuantity": 800,
-    "newQuantity": 1000,
-    "changeAmount": 200,
+    "previousQuantityHagga": 800,
+    "newQuantityHagga": 1000,
+    "changeAmountHagga": 200,
+    "previousQuantityDeepDesert": 500,
+    "newQuantityDeepDesert": 500,
+    "changeAmountDeepDesert": 0,
     "changeType": "relative",
     "updatedBy": "User Name",
     "reason": "Weekly collection",
@@ -105,8 +120,12 @@ Get user's activity history.
     "resourceId": "resource_id",
     "resourceName": "Resource Name",
     "resourceCategory": "Raw Materials",
-    "previousQuantity": 800,
-    "newQuantity": 1000,
+    "previousQuantityHagga": 800,
+    "newQuantityHagga": 1000,
+    "changeAmountHagga": 200,
+    "previousQuantityDeepDesert": 500,
+    "newQuantityDeepDesert": 500,
+    "changeAmountDeepDesert": 0,
     "changeAmount": 200,
     "changeType": "relative",
     "reason": "Weekly collection",
