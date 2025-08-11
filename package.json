@@ -24,7 +24,7 @@
     "drizzle-kit": "^0.20.6",
     "drizzle-orm": "^0.29.1",
     "nanoid": "^5.1.5",
-    "next": "14.2.31",
+    "next": "^14.0.4",
     "next-auth": "^4.24.5",
     "postcss": "^8.4.32",
     "react": "^19.1.1",
