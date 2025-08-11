@@ -660,7 +660,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   const deleteResource = async (resourceId: string) => {
     if (!isResourceAdmin) return
-    
+
     setSaving(true)
     try {
       const response = await fetch(`/api/resources/${resourceId}`, {
@@ -684,76 +684,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     }
   }
 
-  const saveResource = async (resourceId: string) => {
-    setSaving(true)
-    try {
-      const resource = resources.find(r => r.id === resourceId)
-      const updateInfo = editedResources.get(resourceId)
-      if (!resource || !updateInfo) return
-
-      const response = await fetch(`/api/resources/${resourceId}`, {
-        method: 'PUT',
-        cache: 'no-store',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
-        },
-        body: JSON.stringify({
-          quantity: resource.quantityHagga,
-          updateType: updateInfo.updateType,
-          value: updateInfo.value,
-          reason: updateInfo.reason,
-        }),
-      })
-
-      if (response.ok) {
-        const responseData = await response.json()
-        setResources(prev =>
-          prev.map(r =>
-            r.id === resourceId
-              ? {
-                  ...responseData.resource,
-                  updatedAt: new Date(responseData.resource.updatedAt).toISOString(),
-                }
-              : r
-          )
-        )
-        
-        // Show congratulations popup if points were earned
-        if (responseData.pointsEarned > 0) {
-          const currentUserId = session ? getUserIdentifier(session) : userId
-          setCongratulationsState({
-            isVisible: true,
-            pointsEarned: responseData.pointsEarned,
-            pointsCalculation: responseData.pointsCalculation,
-            resourceName: resource.name,
-            actionType: updateInfo.updateType === 'absolute' ? 'SET' : (updateInfo.value > 0 ? 'ADD' : 'REMOVE'),
-            quantityChanged: Math.abs(updateInfo.value)
-          })
-        }
-        
-        setEditedResources(prev => {
-          const newMap = new Map(prev)
-          newMap.delete(resourceId)
-          return newMap
-        })
-        
-        // Clear status change indicator since the save was successful
-        setStatusChanges(prev => {
-          const newMap = new Map(prev)
-          newMap.delete(resourceId)
-          return newMap
-        })
-      } else {
-        console.error('Failed to save resource')
-      }
-      
-    } catch (error) {
-      console.error('Error saving resource:', error)
-    } finally {
-      setSaving(false)
-    }
-  }
 
 
   // Fetch leaderboard data
@@ -1772,18 +1702,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             </div>
                           )}
                           
-                          {editedResources.has(resource.id) && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                saveResource(resource.id)
-                              }}
-                              disabled={saving}
-                              className="w-full bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 disabled:opacity-50 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                            >
-                              {saving ? 'Saving...' : 'Save'}
-                            </button>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -2026,15 +1944,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 </div>
                               )}
 
-                              {editedResources.has(resource.id) && (
-                                <button
-                                  onClick={() => saveResource(resource.id)}
-                                  disabled={saving}
-                                  className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 disabled:opacity-50 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  Save
-                                </button>
-                              )}
                             </div>
                           )}
                         </div>
