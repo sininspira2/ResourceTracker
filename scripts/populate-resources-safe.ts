@@ -21,31 +21,26 @@ function calculateStatus(quantity: number, target: number): string {
 }
 
 // Function to estimate target quantities based on current quantities and status indicators
-function estimateTarget(quantity: number, statusFromEmoji: string): number {
+function estimateTarget(quantityHagga: number, statusFromEmoji: string): number {
   switch (statusFromEmoji) {
     case 'at_target': // 🟢
-      return Math.floor(quantity * 0.9) // Assuming current is slightly above target
+      return Math.floor(quantityHagga * 0.9) // Assuming current is slightly above target
     case 'below_target': // 🟠  
-      return Math.floor(quantity * 1.5) // Assuming current is 50-99% of target
+      return Math.floor(quantityHagga * 1.5) // Assuming current is 50-99% of target
     case 'critical': // 🔴
-      return quantity > 0 ? Math.floor(quantity * 3) : 1000 // Assuming current is <50% of target
+      return quantityHagga > 0 ? Math.floor(quantityHagga * 3) : 1000 // Assuming current is <50% of target
     default:
-      return quantity > 0 ? quantity : 1000
+      return quantityHagga > 0 ? quantityHagga : 1000
   }
 }
 
 // EXAMPLE DATA - Replace with your own resources!
 const rawResources = [
-  { name: 'Wood', quantityHagga: 1250, quantityDeepDesert: 0, icon: '🪵', status: 'at_target', lastUpdatedBy: 'Admin User' },
-  { name: 'Stone', quantityHagga: 850, quantityDeepDesert: 0, icon: '🪨', status: 'below_target', lastUpdatedBy: 'Collector Alpha' },
+  { name: 'Granite', quantityHagga: 850, quantityDeepDesert: 0, icon: '🪨', status: 'below_target', lastUpdatedBy: 'Collector Alpha' },
   { name: 'Iron Ore', quantityHagga: 450, quantityDeepDesert: 0, icon: '⛏️', status: 'critical', lastUpdatedBy: 'Miner Beta' },
-  { name: 'Cotton', quantityHagga: 2100, quantityDeepDesert: 0, icon: '🌱', status: 'at_target', lastUpdatedBy: 'Farmer Gamma' },
-  { name: 'Water', quantityHagga: 5000, quantityDeepDesert: 0, icon: '💧', status: 'at_target', lastUpdatedBy: 'Gatherer Delta' },
-  { name: 'Clay', quantityHagga: 120, quantityDeepDesert: 0, icon: '🏺', status: 'critical', lastUpdatedBy: 'Crafter Epsilon' },
-  { name: 'Sand', quantityHagga: 800, quantityDeepDesert: 0, icon: '⏳', status: 'below_target', lastUpdatedBy: 'Builder Zeta' },
-  { name: 'Coal', quantityHagga: 600, quantityDeepDesert: 0, icon: '⚫', status: 'below_target', lastUpdatedBy: 'Miner Beta' },
+  { name: 'Water', quantityHagga: 5000, quantityDeepDesert: 1000, icon: '💧', status: 'at_target', lastUpdatedBy: 'Gatherer Delta' },
   { name: 'Copper Ore', quantityHagga: 300, quantityDeepDesert: 0, icon: '🟤', status: 'critical', lastUpdatedBy: 'Prospector Eta' },
-  { name: 'Leather', quantityHagga: 180, quantityDeepDesert: 0, icon: '🦬', status: 'critical', lastUpdatedBy: 'Hunter Theta' }
+
 ]
 
 const refinedResources = [
