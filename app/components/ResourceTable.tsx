@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { CongratulationsPopup } from './CongratulationsPopup'
+import { TransferModal } from './TransferModal'
 import { getUserIdentifier } from '@/lib/auth'
 
 // Utility function to format numbers with commas
@@ -128,7 +129,8 @@ const getStatusTableColor = (status: string): string => {
 interface Resource {
   id: string
   name: string
-  quantity: number
+  quantityHagga: number
+  quantityDeepDesert: number
   description?: string
   category?: string
   icon?: string
@@ -250,7 +252,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     category: 'Raw',
     description: '',
     imageUrl: '',
-    quantity: 0,
+    quantityHagga: 0,
+    quantityDeepDesert: 0,
     targetQuantity: 0,
     multiplier: 1.0
   })
@@ -261,6 +264,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     resourceName: '',
     showDialog: false
   })
+
+  const [transferModalState, setTransferModalState] = useState<{
+    isOpen: boolean
+    resource: Resource | null
+  }>({ isOpen: false, resource: null })
 
   // Load view preference
   useEffect(() => {
@@ -295,7 +303,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   // Calculate status counts
   const statusCounts = resources.reduce((acc, resource) => {
-    const status = calculateResourceStatus(resource.quantity, resource.targetQuantity ?? null)
+    const status = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity ?? null)
     acc[status] = (acc[status] || 0) + 1
     acc.all = (acc.all || 0) + 1
     return acc
@@ -421,7 +429,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     setResources(prev =>
       prev.map(resource =>
         resource.id === resourceId
-          ? { ...resource, quantity: newQuantity }
+          ? { ...resource, quantityHagga: newQuantity }
           : resource
       )
     )
@@ -436,7 +444,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     if (updateType === 'absolute') {
       newQuantity = Math.max(0, value)
     } else {
-      newQuantity = Math.max(0, resource.quantity + value)
+      newQuantity = Math.max(0, resource.quantityHagga + value)
     }
 
     updateQuantity(resourceId, newQuantity)
@@ -645,6 +653,38 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   }
 
   // Admin function to delete resource
+  const handleTransfer = async (resourceId: string, amount: number, direction: 'to_deep_desert' | 'to_hagga') => {
+    try {
+      const response = await fetch(`/api/resources/${resourceId}/transfer`, {
+        method: 'PUT',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        body: JSON.stringify({
+          transferAmount: amount,
+          transferDirection: direction,
+        }),
+      })
+
+      if (response.ok) {
+        const { resource } = await response.json()
+        setResources(prev =>
+          prev.map(r =>
+            r.id === resourceId ? { ...r, ...resource } : r
+          )
+        )
+      } else {
+        const { error } = await response.json()
+        throw new Error(error || 'Failed to transfer quantity.')
+      }
+    } catch (error) {
+        console.error('Error transferring quantity:', error)
+        throw error
+    }
+  }
+
   const deleteResource = async (resourceId: string) => {
     if (!isResourceAdmin) return
     
@@ -686,7 +726,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           'Cache-Control': 'no-cache',
         },
         body: JSON.stringify({
-          quantity: resource.quantity,
+          quantity: resource.quantityHagga,
           updateType: updateInfo.updateType,
           value: updateInfo.value,
           reason: updateInfo.reason,
@@ -749,7 +789,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         const resource = resources.find(r => r.id === resourceId)
         return {
           id: resourceId,
-          quantity: resource?.quantity || 0,
+          quantity: resource?.quantityHagga || 0,
           updateType: updateInfo.updateType,
           value: updateInfo.value,
           reason: updateInfo.reason,
@@ -867,7 +907,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     // Status filter
     let matchesStatus = true
     if (statusFilter !== 'all') {
-      const resourceStatus = calculateResourceStatus(resource.quantity, resource.targetQuantity ?? null)
+      const resourceStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity ?? null)
       matchesStatus = resourceStatus === statusFilter
     }
 
@@ -1152,13 +1192,25 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Initial Quantity
+                    Initial Quantity (Hagga)
                   </label>
                   <input
                     type="number"
                     min="0"
-                    value={createResourceForm.quantity}
-                    onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantity: parseInt(e.target.value) || 0 }))}
+                    value={createResourceForm.quantityHagga}
+                    onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantityHagga: parseInt(e.target.value) || 0 }))}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Initial Quantity (Deep Desert)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={createResourceForm.quantityDeepDesert}
+                    onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantityDeepDesert: parseInt(e.target.value) || 0 }))}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
@@ -1409,13 +1461,25 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Initial Quantity
+                Initial Quantity (Hagga)
               </label>
               <input
                 type="number"
                 min="0"
-                value={createResourceForm.quantity}
-                onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantity: parseInt(e.target.value) || 0 }))}
+                value={createResourceForm.quantityHagga}
+                onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantityHagga: parseInt(e.target.value) || 0 }))}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Initial Quantity (Deep Desert)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={createResourceForm.quantityDeepDesert}
+                onChange={(e) => setCreateResourceForm(prev => ({ ...prev, quantityDeepDesert: parseInt(e.target.value) || 0 }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
@@ -1599,8 +1663,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         
                         {/* Quantity Display */}
                         <div className="text-center">
-                          <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                            {formatNumber(resource.quantity)}
+                          <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                            Hagga: {formatNumber(resource.quantityHagga)}
+                          </div>
+                          <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                            Deep Desert: {formatNumber(resource.quantityDeepDesert)}
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
                             {resource.targetQuantity ? `Target: ${formatNumber(resource.targetQuantity)}` : 'No target set'}
@@ -1767,6 +1834,25 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                   Set
                                 </button>
                               </div>
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={() => setTransferModalState({ isOpen: true, resource: resource })}
+                                  className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                >
+                                  Transfer
+                                </button>
+                              </div>
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setTransferModalState({ isOpen: true, resource: resource })
+                                  }}
+                                  className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                >
+                                  Transfer
+                                </button>
+                              </div>
                               
                               {/* Admin buttons */}
                               {isResourceAdmin && (
@@ -1855,7 +1941,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredResources.map((resource) => {
-                  const status = calculateResourceStatus(resource.quantity, resource.targetQuantity || 0)
+                  const status = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity || 0)
                   const statusChange = statusChanges.get(resource.id)
                   const pendingTarget = editedTargets.get(resource.id)
                   const isEdited = pendingTarget !== undefined
@@ -1924,7 +2010,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         </span>
                       </td>
                       <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                        {formatNumber(resource.quantity)}
+                        Hagga: {formatNumber(resource.quantityHagga)}
+                        <br />
+                        Deep Desert: {formatNumber(resource.quantityDeepDesert)}
                       </td>
                       {isTargetAdmin && (
                         <td className="px-3 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
@@ -2182,6 +2270,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       )}
 
              {/* Congratulations Popup */}
+      <TransferModal
+        isOpen={transferModalState.isOpen}
+        resource={transferModalState.resource}
+        onClose={() => setTransferModalState({ isOpen: false, resource: null })}
+        onTransfer={handleTransfer}
+      />
        <CongratulationsPopup
          isVisible={congratulationsState.isVisible}
          pointsEarned={congratulationsState.pointsEarned}

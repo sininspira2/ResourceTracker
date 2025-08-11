@@ -30,7 +30,8 @@ export const userSessions = sqliteTable('user_sessions', {
 export const resources = sqliteTable('resources', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
-  quantity: integer('quantity').notNull().default(0),
+  quantityHagga: integer('quantity_hagga').notNull().default(0),
+  quantityDeepDesert: integer('quantity_deep_desert').notNull().default(0),
   description: text('description'),
   category: text('category'),
   icon: text('icon'), // Emoji or icon identifier like '🪵', '🪨', or ':CustomEmoji:'
@@ -46,13 +47,18 @@ export const resources = sqliteTable('resources', {
 export const resourceHistory = sqliteTable('resource_history', {
   id: text('id').primaryKey(),
   resourceId: text('resource_id').notNull().references(() => resources.id),
-  previousQuantity: integer('previous_quantity').notNull(),
-  newQuantity: integer('new_quantity').notNull(),
-  changeAmount: integer('change_amount').notNull(), // +/- amount
-  changeType: text('change_type').notNull(), // 'absolute' or 'relative'
+  previousQuantityHagga: integer('previous_quantity_hagga').notNull(),
+  newQuantityHagga: integer('new_quantity_hagga').notNull(),
+  changeAmountHagga: integer('change_amount_hagga').notNull(),
+  previousQuantityDeepDesert: integer('previous_quantity_deep_desert').notNull(),
+  newQuantityDeepDesert: integer('new_quantity_deep_desert').notNull(),
+  changeAmountDeepDesert: integer('change_amount_deep_desert').notNull(),
+  changeType: text('change_type').notNull(), // 'absolute', 'relative', or 'transfer'
   updatedBy: text('updated_by').notNull(),
   reason: text('reason'), // Optional reason for the change
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  transferAmount: integer('transfer_amount'),
+  transferDirection: text('transfer_direction'), // 'to_deep_desert' or 'to_hagga'
 })
 
 export const leaderboard = sqliteTable('leaderboard', {

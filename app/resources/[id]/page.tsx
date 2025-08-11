@@ -61,7 +61,8 @@ const getRelativeTime = (date: string | Date, now = new Date()): string => {
 interface Resource {
   id: string
   name: string
-  quantity: number
+  quantityHagga: number
+  quantityDeepDesert: number
   description?: string
   category?: string
   icon?: string
@@ -194,7 +195,7 @@ export default function ResourceDetailPage() {
       const inputValue = newQuantityInput === '' || newQuantityInput === '-' ? 0 : (parseInt(newQuantityInput) || 0)
 
       const finalQuantity = updateType === 'relative'
-        ? Math.max(0, resource.quantity + inputValue)
+        ? Math.max(0, resource.quantityHagga + inputValue)
         : Math.max(0, inputValue)
 
       const response = await fetch(`/api/resources/${resourceId}`, {
@@ -290,7 +291,7 @@ export default function ResourceDetailPage() {
         // If this was the most recent entry, we need to revert the resource quantity
         if (isLatestEntry && resource) {
           // Update the resource quantity to the previous quantity from the deleted entry
-          const revertedQuantity = entryToDelete.previousQuantity
+          const revertedQuantityHagga = entryToDelete.previousQuantityHagga
 
           // Update the resource in the backend
           await fetch(`/api/resources/${resourceId}`, {
@@ -299,9 +300,9 @@ export default function ResourceDetailPage() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              quantity: revertedQuantity,
+              quantity: revertedQuantityHagga,
               updateType: 'absolute',
-              value: revertedQuantity,
+              value: revertedQuantityHagga,
               reason: `Reverted from deleted entry`
             }),
           })
@@ -309,7 +310,7 @@ export default function ResourceDetailPage() {
           // Update local state
           setResource({
             ...resource,
-            quantity: revertedQuantity,
+            quantityHagga: revertedQuantityHagga,
             updatedAt: new Date().toISOString(),
           })
         }
@@ -373,8 +374,8 @@ export default function ResourceDetailPage() {
                 ? foundResource.createdAt 
                 : new Date(foundResource.createdAt).toISOString(),
             })
-            setNewQuantity(foundResource.quantity) // Initialize edit form
-            setNewQuantityInput(foundResource.quantity.toString())
+            setNewQuantity(foundResource.quantityHagga) // Initialize edit form
+            setNewQuantityInput(foundResource.quantityHagga.toString())
           } else {
             setError('Resource not found')
           }
@@ -458,8 +459,8 @@ export default function ResourceDetailPage() {
     )
   }
 
-  const status = calculateResourceStatus(resource.quantity, resource.targetQuantity || null)
-  const percentage = resource.targetQuantity ? Math.round((resource.quantity / resource.targetQuantity) * 100) : null
+  const status = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity || null)
+  const percentage = resource.targetQuantity ? Math.round(((resource.quantityHagga + resource.quantityDeepDesert) / resource.targetQuantity) * 100) : null
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -561,25 +562,9 @@ export default function ResourceDetailPage() {
                     {/* Quantities */}
                     <div className="flex flex-col sm:flex-row gap-6 text-center">
                       <div>
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{formatNumber(resource.quantity)}</div>
-                          {canEdit && (
-                            <button
-                              onClick={() => {
-                                setEditMode(true)
-                                setNewQuantity(resource.quantity)
-                                setNewQuantityInput(resource.quantity.toString())
-                              }}
-                              className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
-                              title="Edit quantity"
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </button>
-                          )}
-                        </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">Current Quantity</div>
+                        <div className="text-xl font-bold text-gray-900 dark:text-gray-100">Hagga: {formatNumber(resource.quantityHagga)}</div>
+                        <div className="text-xl font-bold text-gray-900 dark:text-gray-100">Deep Desert: {formatNumber(resource.quantityDeepDesert)}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Current Quantities</div>
                       </div>
                       <div>
                         <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
@@ -1083,18 +1068,28 @@ export default function ResourceDetailPage() {
                           } ${isHighlighted ? 'ring-2 ring-blue-400 dark:ring-blue-500' : ''}`}></div>
                         <div>
                           <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                            {formatNumber(entry.previousQuantity)} → {formatNumber(entry.newQuantity)}
-                            <span className={`text-sm font-medium ${entry.changeAmount > 0 ? 'text-green-600 dark:text-green-400' :
-                                entry.changeAmount < 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'
-                              }`}>
-                              ({entry.changeAmount > 0 ? '+' : ''}{formatNumber(entry.changeAmount)})
-                            </span>
+                            {entry.changeType === 'transfer' ? (
+                              <span>
+                                Transfer {entry.transferAmount} {entry.transferDirection === 'to_deep_desert' ? 'to Deep Desert' : 'to Hagga'}
+                              </span>
+                            ) : (
+                              <div>
+                                <div>
+                                  Hagga: {formatNumber(entry.previousQuantityHagga)} → {formatNumber(entry.newQuantityHagga)} ({entry.changeAmountHagga > 0 ? '+' : ''}{formatNumber(entry.changeAmountHagga)})
+                                </div>
+                                <div>
+                                  Deep Desert: {formatNumber(entry.previousQuantityDeepDesert)} → {formatNumber(entry.newQuantityDeepDesert)} ({entry.changeAmountDeepDesert > 0 ? '+' : ''}{formatNumber(entry.changeAmountDeepDesert)})
+                                </div>
+                              </div>
+                            )}
                             {/* Change Type Indicator */}
                             <span className={`text-xs px-2 py-0.5 rounded-full ${entry.changeType === 'relative'
                                 ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
+                                : entry.changeType === 'transfer'
+                                ? 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300'
                                 : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                               }`}>
-                              {entry.changeType === 'relative' ? '+/-' : 'Set'}
+                              {entry.changeType}
                             </span>
                             {isHighlighted && (
                               <span className="text-xs px-2 py-0.5 rounded-full bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 animate-pulse">

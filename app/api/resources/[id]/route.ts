@@ -44,13 +44,13 @@ export async function PUT(
     }
 
     const resource = currentResource[0]
-    const previousQuantity = resource.quantity
-    const changeAmount = updateType === 'relative' ? changeValue : quantity - previousQuantity
+    const previousQuantityHagga = resource.quantityHagga
+    const changeAmountHagga = updateType === 'relative' ? changeValue : quantity - previousQuantityHagga
 
     // Update the resource
     await db.update(resources)
       .set({
-        quantity: quantity,
+        quantityHagga: quantity,
         lastUpdatedBy: userId,
         updatedAt: new Date(),
       })
@@ -60,9 +60,12 @@ export async function PUT(
     await db.insert(resourceHistory).values({
       id: nanoid(),
       resourceId: params.id,
-      previousQuantity,
-      newQuantity: quantity,
-      changeAmount,
+      previousQuantityHagga,
+      newQuantityHagga: quantity,
+      changeAmountHagga,
+      previousQuantityDeepDesert: resource.quantityDeepDesert,
+      newQuantityDeepDesert: resource.quantityDeepDesert,
+      changeAmountDeepDesert: 0,
       changeType: updateType || 'absolute',
       updatedBy: userId,
       reason: reason,
@@ -71,19 +74,19 @@ export async function PUT(
 
     // Award points if quantity changed
     let pointsCalculation = null
-    if (changeAmount !== 0) {
+    if (changeAmountHagga !== 0) {
       const actionType: 'ADD' | 'SET' | 'REMOVE' = 
         updateType === 'absolute' ? 'SET' :
-        changeAmount > 0 ? 'ADD' : 'REMOVE'
+        changeAmountHagga > 0 ? 'ADD' : 'REMOVE'
 
       // Calculate the current status for bonus calculation
-      const resourceStatus = calculateResourceStatus(resource.quantity, resource.targetQuantity)
+      const resourceStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity)
 
       pointsCalculation = await awardPoints(
         getUserIdentifier(session),
         params.id,
         actionType,
-        Math.abs(changeAmount),
+        Math.abs(changeAmountHagga),
         {
           name: resource.name,
           category: resource.category || 'Other',
