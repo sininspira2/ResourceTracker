@@ -376,7 +376,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     const resource = resources.find(r => r.id === resourceId)
     if (!resource) return
     
-    const oldStatus = calculateResourceStatus(resource.quantity, resource.targetQuantity || null)
+    const oldStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity || null)
     const newStatus = calculateResourceStatus(quantity, targetQuantity)
     
     if (oldStatus !== newStatus) {
@@ -509,7 +509,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     )
     
     // Update status immediately based on current quantity and new target
-    updateResourceStatus(resourceId, resource.quantity, newTarget)
+    updateResourceStatus(resourceId, resource.quantityHagga + resource.quantityDeepDesert, newTarget)
   }
 
   const saveTargetQuantity = async (resourceId: string) => {
@@ -1597,7 +1597,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {categoryResources.map((resource) => {
-                  const status = calculateResourceStatus(resource.quantity, resource.targetQuantity || null)
+                  const status = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity || null)
                   const statusChange = statusChanges.get(resource.id)
                   const isStale = isResourceStale(resource.updatedAt)
                   
