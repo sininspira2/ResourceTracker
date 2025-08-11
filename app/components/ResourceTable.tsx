@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { CongratulationsPopup } from './CongratulationsPopup'
 import { TransferModal } from './TransferModal'
+import { UpdateQuantityModal } from './UpdateQuantityModal'
 import { getUserIdentifier } from '@/lib/auth'
 
 // Utility function to format numbers with commas
