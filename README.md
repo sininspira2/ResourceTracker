@@ -11,7 +11,8 @@ Removed from fork network due to original author repository being deleted, and d
 - **Transfer between inventory** - Modal to transfer inventory amounts between DD and Hagga
 - **Metadata bulk update fix** - Fixed Error 400 when attempting to edit resource metadata
 - **Updated "populate-resources-safe" script** - Adds more game resources; deleted example resources.
-  
+- **Updated vulnerable dependencies**
+
 ## Features
 
 - **Discord OAuth Authentication** - Secure login with Discord
