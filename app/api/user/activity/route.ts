@@ -39,9 +39,14 @@ export async function GET(request: NextRequest) {
         resourceId: resourceHistory.resourceId,
         resourceName: resources.name,
         resourceCategory: resources.category,
-        previousQuantity: resourceHistory.previousQuantity,
-        newQuantity: resourceHistory.newQuantity,
-        changeAmount: resourceHistory.changeAmount,
+        previousQuantityHagga: resourceHistory.previousQuantityHagga,
+        newQuantityHagga: resourceHistory.newQuantityHagga,
+        changeAmountHagga: resourceHistory.changeAmountHagga,
+        previousQuantityDeepDesert: resourceHistory.previousQuantityDeepDesert,
+        newQuantityDeepDesert: resourceHistory.newQuantityDeepDesert,
+        changeAmountDeepDesert: resourceHistory.changeAmountDeepDesert,
+        transferAmount: resourceHistory.transferAmount,
+        transferDirection: resourceHistory.transferDirection,
         changeType: resourceHistory.changeType,
         reason: resourceHistory.reason,
         updatedBy: resourceHistory.updatedBy,
@@ -64,7 +69,15 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(resourceHistory.createdAt))
       .limit(limit)
 
-    return NextResponse.json(activity, {
+    const processedActivity = activity.map(entry => {
+      const totalChangeAmount = (entry.changeAmountHagga || 0) + (entry.changeAmountDeepDesert || 0);
+      return {
+        ...entry,
+        changeAmount: totalChangeAmount,
+      };
+    });
+
+    return NextResponse.json(processedActivity, {
       headers: {
         'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
         'Pragma': 'no-cache',
