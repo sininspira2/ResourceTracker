@@ -25,14 +25,17 @@ export async function GET(request: NextRequest) {
     ].filter(Boolean)
 
     // Fetch all user activity (current and legacy identifiers)
-    const activity = await db
+    const activityRaw = await db
       .select({
         id: resourceHistory.id,
         resourceId: resourceHistory.resourceId,
         resourceName: resources.name,
-        previousQuantity: resourceHistory.previousQuantity,
-        newQuantity: resourceHistory.newQuantity,
-        changeAmount: resourceHistory.changeAmount,
+        previousQuantityHagga: resourceHistory.previousQuantityHagga,
+        newQuantityHagga: resourceHistory.newQuantityHagga,
+        changeAmountHagga: resourceHistory.changeAmountHagga,
+        previousQuantityDeepDesert: resourceHistory.previousQuantityDeepDesert,
+        newQuantityDeepDesert: resourceHistory.newQuantityDeepDesert,
+        changeAmountDeepDesert: resourceHistory.changeAmountDeepDesert,
         changeType: resourceHistory.changeType,
         reason: resourceHistory.reason,
         createdAt: resourceHistory.createdAt,
@@ -46,6 +49,14 @@ export async function GET(request: NextRequest) {
         )
       )
       .orderBy(desc(resourceHistory.createdAt))
+
+    const activity = activityRaw.map(entry => {
+      const totalChangeAmount = (entry.changeAmountHagga || 0) + (entry.changeAmountDeepDesert || 0);
+      return {
+        ...entry,
+        changeAmount: totalChangeAmount,
+      };
+    });
 
     // Prepare complete data export
     const exportData = {

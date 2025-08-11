@@ -40,10 +40,16 @@ interface ActivityEntry {
   id: string
   resourceId: string
   resourceName: string
-  previousQuantity: number
-  newQuantity: number
-  changeAmount: number
-  changeType: 'absolute' | 'relative'
+  previousQuantityHagga: number
+  newQuantityHagga: number
+  changeAmountHagga: number
+  previousQuantityDeepDesert: number
+  newQuantityDeepDesert: number
+  changeAmountDeepDesert: number
+  transferAmount?: number
+  transferDirection?: 'to_deep_desert' | 'to_hagga'
+  changeAmount: number // This is the total change amount, added in the API
+  changeType: 'absolute' | 'relative' | 'transfer'
   reason?: string
   createdAt: string
 }
@@ -227,12 +233,25 @@ export default function ActivityLogPage() {
                             </span>
                           </div>
                           <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {formatNumber(activity.previousQuantity)} → {formatNumber(activity.newQuantity)}
+                            {activity.changeType === 'transfer' ? (
+                                <span>
+                                    Transfer {activity.transferAmount} {activity.transferDirection === 'to_deep_desert' ? 'to Deep Desert' : 'to Hagga'}
+                                </span>
+                            ) : (
+                                <div>
+                                    <div>
+                                        Hagga: {formatNumber(activity.previousQuantityHagga)} → {formatNumber(activity.newQuantityHagga)}
+                                    </div>
+                                    <div>
+                                        Deep Desert: {formatNumber(activity.previousQuantityDeepDesert)} → {formatNumber(activity.newQuantityDeepDesert)}
+                                    </div>
+                                </div>
+                            )}
                             <span className={`ml-2 font-medium ${
                               activity.changeAmount > 0 ? 'text-green-600' : 
                               activity.changeAmount < 0 ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'
                             }`}>
-                              ({activity.changeAmount > 0 ? '+' : ''}{formatNumber(activity.changeAmount)})
+                              (Total change: {activity.changeAmount > 0 ? '+' : ''}{formatNumber(activity.changeAmount)})
                             </span>
                           </div>
                           {activity.reason && (

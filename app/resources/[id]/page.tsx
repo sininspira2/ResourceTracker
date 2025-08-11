@@ -172,13 +172,14 @@ export default function ResourceDetailPage() {
           userStats[user] = { contributed: 0, taken: 0, netChange: 0, changeCount: 0 }
         }
 
-        if (entry.changeAmount > 0) {
-          userStats[user].contributed += entry.changeAmount
-        } else if (entry.changeAmount < 0) {
-          userStats[user].taken += Math.abs(entry.changeAmount)
+        const totalChange = entry.changeAmountHagga + entry.changeAmountDeepDesert;
+        if (totalChange > 0) {
+          userStats[user].contributed += totalChange
+        } else if (totalChange < 0) {
+          userStats[user].taken += Math.abs(totalChange)
         }
 
-        userStats[user].netChange += entry.changeAmount
+        userStats[user].netChange += totalChange
         userStats[user].changeCount += 1
       })
 
@@ -635,8 +636,8 @@ export default function ResourceDetailPage() {
                           setNewQuantity(0)
                           setNewQuantityInput('0')
                         } else {
-                          setNewQuantity(resource.quantity)
-                          setNewQuantityInput(resource.quantity.toString())
+                          setNewQuantity(resource.quantityHagga)
+                          setNewQuantityInput(resource.quantityHagga.toString())
                         }
                       }}
                       className={`px-3 py-1 rounded text-sm font-medium ${updateType === 'relative'
@@ -673,7 +674,7 @@ export default function ResourceDetailPage() {
                     />
                     {updateType === 'relative' && (
                       <div className="text-xs text-gray-500 mt-1">
-                        New quantity: {formatNumber(Math.max(0, resource.quantity + newQuantity))}
+                        New quantity: {formatNumber(Math.max(0, resource.quantityHagga + newQuantity))}
                       </div>
                     )}
                   </div>
@@ -739,12 +740,12 @@ export default function ResourceDetailPage() {
                       const x1 = 10 + (index / Math.max(arr.length - 1, 1)) * 80
                       const x2 = 10 + ((index + 1) / Math.max(arr.length - 1, 1)) * 80
 
-                      const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantity, h.newQuantity)))
-                      const minQuantity = Math.min(...history.map(h => Math.min(h.previousQuantity, h.newQuantity)))
+                      const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
+                      const minQuantity = Math.min(...history.map(h => Math.min(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
                       const range = maxQuantity - minQuantity || 1
 
-                      const y1 = 80 - ((entry.newQuantity - minQuantity) / range) * 60
-                      const y2 = 80 - ((nextEntry.newQuantity - minQuantity) / range) * 60
+                      const y1 = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
+                      const y2 = 80 - (((nextEntry.newQuantityHagga + nextEntry.newQuantityDeepDesert) - minQuantity) / range) * 60
 
                       return (
                         <line
@@ -762,10 +763,10 @@ export default function ResourceDetailPage() {
                     {/* Chart Points */}
                     {history.slice().reverse().map((entry, index, arr) => {
                       const x = 10 + (index / Math.max(arr.length - 1, 1)) * 80
-                      const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantity, h.newQuantity)))
-                      const minQuantity = Math.min(...history.map(h => Math.min(h.previousQuantity, h.newQuantity)))
+                      const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
+                      const minQuantity = Math.min(...history.map(h => Math.min(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
                       const range = maxQuantity - minQuantity || 1
-                      const y = 80 - ((entry.newQuantity - minQuantity) / range) * 60
+                      const y = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
 
                       const isSelected = selectedPointId === entry.id
                       const isHovered = hoveredPoint?.id === entry.id
@@ -776,7 +777,7 @@ export default function ResourceDetailPage() {
                             cx={`${x}%`}
                             cy={`${y}%`}
                             r={isSelected ? "6" : isHovered ? "5" : "4"}
-                            fill={entry.changeAmount > 0 ? '#10b981' : entry.changeAmount < 0 ? '#ef4444' : '#6b7280'}
+                            fill={entry.changeAmountHagga + entry.changeAmountDeepDesert > 0 ? '#10b981' : entry.changeAmountHagga + entry.changeAmountDeepDesert < 0 ? '#ef4444' : '#6b7280'}
                             stroke={isSelected ? '#3b82f6' : 'white'}
                             strokeWidth={isSelected ? "3" : "2"}
                             className="hover:cursor-pointer transition-all"
@@ -792,10 +793,10 @@ export default function ResourceDetailPage() {
                     {history.length > 0 && (
                       <>
                         <text x="5" y="15" fontSize="10" fill="#6b7280" className="text-xs">
-                          {formatNumber(Math.max(...history.map(h => Math.max(h.previousQuantity, h.newQuantity))))}
+                          {formatNumber(Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert))))}
                         </text>
                         <text x="5" y="85" fontSize="10" fill="#6b7280" className="text-xs">
-                          {formatNumber(Math.min(...history.map(h => Math.min(h.previousQuantity, h.newQuantity))))}
+                          {formatNumber(Math.min(...history.map(h => Math.min(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert))))}
                         </text>
                       </>
                     )}
@@ -836,9 +837,9 @@ export default function ResourceDetailPage() {
                         transform: mousePosition.x > 200 ? 'translateX(-100%)' : 'none'
                       }}
                     >
-                      <div className="font-medium">{formatNumber(hoveredPoint.newQuantity)}</div>
+                      <div className="font-medium">{formatNumber(hoveredPoint.newQuantityHagga + hoveredPoint.newQuantityDeepDesert)}</div>
                       <div className="text-gray-300">
-                        {hoveredPoint.changeAmount > 0 ? '+' : ''}{formatNumber(hoveredPoint.changeAmount)}
+                        {hoveredPoint.changeAmountHagga + hoveredPoint.changeAmountDeepDesert > 0 ? '+' : ''}{formatNumber(hoveredPoint.changeAmountHagga + hoveredPoint.changeAmountDeepDesert)}
                       </div>
                       <div className="text-gray-300">By: {hoveredPoint.updatedBy}</div>
                       <div className="text-gray-300">{getRelativeTime(hoveredPoint.createdAt, currentTime)}</div>
@@ -1063,8 +1064,8 @@ export default function ResourceDetailPage() {
                       onClick={() => setSelectedPointId(selectedPointId === entry.id ? null : entry.id)}
                     >
                       <div className="flex items-center gap-4">
-                        <div className={`w-3 h-3 rounded-full ${entry.changeAmount > 0 ? 'bg-green-500' :
-                            entry.changeAmount < 0 ? 'bg-red-500' : 'bg-gray-400'
+                        <div className={`w-3 h-3 rounded-full ${entry.changeAmountHagga + entry.changeAmountDeepDesert > 0 ? 'bg-green-500' :
+                            entry.changeAmountHagga + entry.changeAmountDeepDesert < 0 ? 'bg-red-500' : 'bg-gray-400'
                           } ${isHighlighted ? 'ring-2 ring-blue-400 dark:ring-blue-500' : ''}`}></div>
                         <div>
                           <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
