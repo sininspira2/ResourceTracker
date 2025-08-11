@@ -1,22 +1,21 @@
 {
-  "currentVersion": "3.0.0",
-  "releases": [
-    {
-      "version": "3.0.0",
-      "date": "2025-11-07",
-      "title": "Dual-inventory tracking addition",
-      "type": "major",
-      "changes": [
+    "currentVersion": "3.0.0",
+    "releases": [
         {
-          "type": "feature",
-          "description": "Added dual-tracking for DD and Hagga Bases"
-        },
-        {
-          "type": "bugfix",
-          "description": "Fixed bulk metadata update"
-        },
-
-      ]
-    }
-  ]
-} 
+            "version": "3.0.0",
+            "date": "2025-11-07",
+            "title": "Dual-inventory tracking addition",
+            "type": "major",
+            "changes": [
+                {
+                    "type": "feature",
+                    "description": "Added dual-tracking for DD and Hagga Bases"
+                },
+                {
+                    "type": "bugfix",
+                    "description": "Fixed bulk metadata update"
+                }
+            ]
+        }
+    ]
+}
