@@ -2,10 +2,16 @@
 
 A comprehensive resource management and tracking portal with Discord authentication and role-based access control. Perfect for gaming communities, organizations, and teams that need to track shared resources, inventory, or assets.
 
-Made for Dune: Awakening. Originally forked from https://github.com/theyetty
+Made for Dune: Awakening. Originally forked from https://github.com/theyetty and adapted to the specific needs of my guild.
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
+## What's New 11 AUG 2025
+- **Dual-inventory tracking** - Track inventory of a Hagga guild base as well as a Deep Desert base
+- **Transfer between inventory** - Modal to transfer inventory amounts between DD and Hagga
+- **Metadata bulk update fix** - Fixed Error 400 when attempting to edit resource metadata
+- **Updated "populate-resources-safe" script** - Adds more game resources; deleted example resources.
+  
 ## Features
 
 - **Discord OAuth Authentication** - Secure login with Discord
