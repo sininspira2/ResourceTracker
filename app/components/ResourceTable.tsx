@@ -2273,12 +2273,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       )}
 
              {/* Congratulations Popup */}
-      <TransferModal
-        isOpen={transferModalState.isOpen}
-        resource={transferModalState.resource}
-        onClose={() => setTransferModalState({ isOpen: false, resource: null })}
-        onTransfer={handleTransfer}
-      />
+      {transferModalState.isOpen && transferModalState.resource && (
+        <TransferModal
+          isOpen={transferModalState.isOpen}
+          resource={transferModalState.resource}
+          onClose={() => setTransferModalState({ isOpen: false, resource: null })}
+          onTransfer={handleTransfer}
+        />
+      )}
        <CongratulationsPopup
          isVisible={congratulationsState.isVisible}
          pointsEarned={congratulationsState.pointsEarned}
