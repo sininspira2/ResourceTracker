@@ -192,7 +192,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   
   const [resources, setResources] = useState<Resource[]>([])
-  const [editedResources, setEditedResources] = useState<Map<string, ResourceUpdate>>(new Map())
   const [editedTargets, setEditedTargets] = useState<Map<string, number>>(new Map())
   const [statusChanges, setStatusChanges] = useState<Map<string, { oldStatus: string, newStatus: string, timestamp: number }>>(new Map())
   const [loading, setLoading] = useState(true)
@@ -224,16 +223,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [needsUpdateFilter, setNeedsUpdateFilter] = useState(false)
 
-  // Add state for inline input
-  const [activeInput, setActiveInput] = useState<{
-    resourceId: string | null
-    type: 'relative' | 'absolute' | null
-    value: string
-  }>({
-    resourceId: null,
-    type: null,
-    value: ''
-  })
+  // Add state for update modal
+  const [updateModalState, setUpdateModalState] = useState<{
+    isOpen: boolean
+    resource: Resource | null
+    updateType: 'absolute' | 'relative'
+  }>({ isOpen: false, resource: null, updateType: 'absolute' })
 
   // Admin state for resource editing
   const [editingResource, setEditingResource] = useState<string | null>(null)
@@ -424,73 +419,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     }
   }
 
-  // Update quantity value
-  const updateQuantity = (resourceId: string, newQuantity: number) => {
-    setResources(prev =>
-      prev.map(resource =>
-        resource.id === resourceId
-          ? { ...resource, quantityHagga: newQuantity }
-          : resource
-      )
-    )
-  }
-
-  // Handle quantity change with different update types
-  const handleQuantityChange = (resourceId: string, value: number, updateType: 'absolute' | 'relative', reason?: string) => {
-    const resource = resources.find(r => r.id === resourceId)
-    if (!resource) return
-
-    let newQuantity: number
-    if (updateType === 'absolute') {
-      newQuantity = Math.max(0, value)
-    } else {
-      newQuantity = Math.max(0, resource.quantityHagga + value)
-    }
-
-    updateQuantity(resourceId, newQuantity)
-    
-    setEditedResources(prev => new Map(prev).set(resourceId, {
-      id: resourceId,
-      updateType,
-      value,
-      reason,
-    }))
-
-    // Update status immediately based on new quantity and current target
-    updateResourceStatus(resourceId, newQuantity, resource.targetQuantity || null)
-  }
-
-  // Handle inline input submission for table view (stages change)
-  const handleInputSubmit = () => {
-    const { resourceId, type, value } = activeInput
-    if (!resourceId || !type || !value) return
-
-    const numValue = parseInt(value)
-    if (isNaN(numValue)) return
-
-    handleQuantityChange(resourceId, numValue, type)
-    setActiveInput({ resourceId: null, type: null, value: '' })
-  }
-
-  // Handle inline input submission for grid view (saves immediately)
-  const handleInputSubmitAndSave = async () => {
-    const { resourceId, type, value } = activeInput
-    if (!resourceId || !type || !value) return
-
-    const numValue = parseInt(value)
-    if (isNaN(numValue)) return
-
-    handleQuantityChange(resourceId, numValue, type)
-    setActiveInput({ resourceId: null, type: null, value: '' })
-    
-    // Save immediately for grid view
-    setTimeout(() => saveResource(resourceId), 100)
-  }
-
-  // Activate inline input
-  const activateInput = (resourceId: string, type: 'relative' | 'absolute') => {
-    setActiveInput({ resourceId, type, value: '' })
-  }
 
   // Handle target quantity change (admin only)
   const handleTargetQuantityChange = (resourceId: string, newTarget: number) => {
@@ -686,6 +614,50 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     }
   }
 
+  const handleUpdate = async (resourceId: string, amount: number, quantityField: 'quantityHagga' | 'quantityDeepDesert', updateType: 'absolute' | 'relative') => {
+    const resource = resources.find(r => r.id === resourceId)
+    if (!resource) return
+
+    let newQuantity: number;
+    if (updateType === 'relative') {
+        newQuantity = Math.max(0, resource[quantityField] + amount)
+    } else {
+        newQuantity = Math.max(0, amount)
+    }
+
+    try {
+      const response = await fetch(`/api/resources/${resourceId}`, {
+        method: 'PUT',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        body: JSON.stringify({
+          quantity: newQuantity,
+          updateType: updateType,
+          changeValue: amount,
+          quantityField: quantityField,
+        }),
+      })
+
+      if (response.ok) {
+        const { resource } = await response.json()
+        setResources(prev =>
+          prev.map(r =>
+            r.id === resourceId ? { ...r, ...resource } : r
+          )
+        )
+      } else {
+        const { error } = await response.json()
+        throw new Error(error || 'Failed to update quantity.')
+      }
+    } catch (error) {
+        console.error('Error updating quantity:', error)
+        throw error
+    }
+  }
+
   const deleteResource = async (resourceId: string) => {
     if (!isResourceAdmin) return
     
@@ -783,63 +755,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     }
   }
 
-  const saveAllEdited = async () => {
-    setSaving(true)
-    try {
-      const resourceUpdates = Array.from(editedResources.entries()).map(([resourceId, updateInfo]) => {
-        const resource = resources.find(r => r.id === resourceId)
-        return {
-          id: resourceId,
-          quantity: resource?.quantityHagga || 0,
-          updateType: updateInfo.updateType,
-          value: updateInfo.value,
-          reason: updateInfo.reason,
-        }
-      })
-
-      const response = await fetch('/api/resources', {
-        method: 'PUT',
-        cache: 'no-store',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
-        },
-        body: JSON.stringify({
-          resourceUpdates,
-        }),
-      })
-
-      if (response.ok) {
-        const responseData = await response.json()
-        setResources(responseData.resources.map((resource: any) => ({
-          ...resource,
-          updatedAt: new Date(resource.updatedAt).toISOString(),
-          createdAt: new Date(resource.createdAt).toISOString(),
-        })))
-        
-        // Show congratulations popup if points were earned
-        if (responseData.totalPointsEarned > 0) {
-          const currentUserId = session ? getUserIdentifier(session) : userId
-          setCongratulationsState({
-            isVisible: true,
-            pointsEarned: responseData.totalPointsEarned,
-            resourceName: `${resourceUpdates.length} resources`,
-            actionType: 'ADD',
-            quantityChanged: resourceUpdates.length
-          })
-        }
-        
-        setEditedResources(new Map())
-      } else {
-        console.error('Failed to save resources')
-      }
-      
-    } catch (error) {
-      console.error('Error saving resources:', error)
-    } finally {
-      setSaving(false)
-    }
-  }
 
   // Fetch leaderboard data
   const fetchLeaderboard = async () => {
@@ -1548,28 +1463,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         </div>
       )}
 
-      {/* Save Actions */}
-      {editedResources.size > 0 && (
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.888-.833-2.664 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-              <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                You have {editedResources.size} unsaved change{editedResources.size === 1 ? '' : 's'}
-              </span>
-            </div>
-            <button
-              onClick={saveAllEdited}
-              disabled={saving}
-              className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            >
-              {saving ? 'Saving...' : 'Save All Changes'}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Grid View */}
       {viewMode === 'grid' && (
@@ -1821,7 +1714,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    activateInput(resource.id, 'relative')
+                                    setUpdateModalState({ isOpen: true, resource: resource, updateType: 'relative' })
                                   }}
                                   className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded text-xs font-medium transition-colors"
                                 >
@@ -1830,19 +1723,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    activateInput(resource.id, 'absolute')
+                                    setUpdateModalState({ isOpen: true, resource: resource, updateType: 'absolute' })
                                   }}
                                   className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded text-xs font-medium transition-colors"
                                 >
                                   Set
-                                </button>
-                              </div>
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={() => setTransferModalState({ isOpen: true, resource: resource })}
-                                  className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  Transfer
                                 </button>
                               </div>
                               <div className="flex gap-1">
@@ -2043,41 +1928,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                                               <td className="px-3 py-3 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                         <div className="space-y-2">
-                          {/* Input field and buttons */}
-                          {activeInput.resourceId === resource.id ? (
-                            <div className="space-y-2">
-                              <input
-                                type="number"
-                                value={activeInput.value}
-                                onChange={(e) => setActiveInput(prev => ({ ...prev, value: e.target.value }))}
-                                placeholder={activeInput.type === 'relative' ? '+5 or -3' : '25'}
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                autoFocus
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    handleInputSubmit()
-                                  } else if (e.key === 'Escape') {
-                                    setActiveInput({ resourceId: null, type: null, value: '' })
-                                  }
-                                }}
-                              />
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={handleInputSubmit}
-                                  disabled={!activeInput.value}
-                                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  {activeInput.type === 'relative' ? 'Apply' : 'Set'}
-                                </button>
-                                <button
-                                  onClick={() => setActiveInput({ resourceId: null, type: null, value: '' })}
-                                  className="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          ) : editingResource === resource.id ? (
+                          {editingResource === resource.id ? (
                             // Admin edit form for table view
                             <div className="space-y-2 w-48">
                               <input
@@ -2140,13 +1991,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               {/* Regular quantity update buttons */}
                               <div className="flex gap-1">
                                 <button
-                                  onClick={() => activateInput(resource.id, 'relative')}
+                                  onClick={() => setUpdateModalState({ isOpen: true, resource: resource, updateType: 'relative' })}
                                   className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded text-xs font-medium transition-colors"
                                 >
                                   Add/Remove
                                 </button>
                                 <button
-                                  onClick={() => activateInput(resource.id, 'absolute')}
+                                  onClick={() => setUpdateModalState({ isOpen: true, resource: resource, updateType: 'absolute' })}
                                   className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded text-xs font-medium transition-colors"
                                 >
                                   Set
@@ -2279,6 +2130,15 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           resource={transferModalState.resource}
           onClose={() => setTransferModalState({ isOpen: false, resource: null })}
           onTransfer={handleTransfer}
+        />
+      )}
+      {updateModalState.isOpen && updateModalState.resource && (
+        <UpdateQuantityModal
+          isOpen={updateModalState.isOpen}
+          resource={updateModalState.resource}
+          onClose={() => setUpdateModalState({ isOpen: false, resource: null, updateType: 'absolute' })}
+          onUpdate={handleUpdate}
+          updateType={updateModalState.updateType}
         />
       )}
        <CongratulationsPopup
