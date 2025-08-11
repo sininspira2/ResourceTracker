@@ -1526,49 +1526,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                         {/* Simplified Quick Update Controls - Only show on hover for grid view */}
                         <div className="opacity-0 group-hover:opacity-100 transition-all duration-200 space-y-2">
-                          {/* Input field and buttons */}
-                          {activeInput.resourceId === resource.id ? (
-                            <div className="space-y-2">
-                              <input
-                                type="number"
-                                value={activeInput.value}
-                                onChange={(e) => setActiveInput(prev => ({ ...prev, value: e.target.value }))}
-                                placeholder={activeInput.type === 'relative' ? 'e.g. +5 or -3' : 'e.g. 25'}
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                autoFocus
-                                onKeyDown={(e) => {
-                                  e.stopPropagation()
-                                  if (e.key === 'Enter') {
-                                    handleInputSubmitAndSave()
-                                  } else if (e.key === 'Escape') {
-                                    setActiveInput({ resourceId: null, type: null, value: '' })
-                                  }
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              />
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleInputSubmitAndSave()
-                                  }}
-                                  disabled={!activeInput.value}
-                                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  {activeInput.type === 'relative' ? 'Apply' : 'Set'}
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setActiveInput({ resourceId: null, type: null, value: '' })
-                                  }}
-                                  className="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          ) : editingResource === resource.id ? (
+                          {editingResource === resource.id ? (
                             // Admin edit form
                             <div className="space-y-2">
                               <input
