@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { CongratulationsPopup } from './CongratulationsPopup'
 import { TransferModal } from './TransferModal'
 import { UpdateQuantityModal } from './UpdateQuantityModal'
+import { EditResourceModal } from './EditResourceModal'
 import { getUserIdentifier } from '@/lib/auth'
 
 // Utility function to format numbers with commas
@@ -232,14 +233,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   }>({ isOpen: false, resource: null, updateType: 'absolute' })
 
   // Admin state for resource editing
-  const [editingResource, setEditingResource] = useState<string | null>(null)
-  const [editResourceForm, setEditResourceForm] = useState({
-    name: '',
-    category: '',
-    description: '',
-    imageUrl: '',
-    multiplier: 1.0
-  })
+  const [editModalState, setEditModalState] = useState<{
+    isOpen: boolean
+    resource: Resource | null
+  }>({ isOpen: false, resource: null })
 
   // Create new resource state
   const [showCreateForm, setShowCreateForm] = useState(false)
@@ -487,20 +484,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   // Admin function to start editing a resource
   const startEditResource = (resource: Resource) => {
     if (!isResourceAdmin) return
-    setEditingResource(resource.id)
-    setEditResourceForm({
-      name: resource.name,
-      category: resource.category || 'Raw',
-      description: resource.description || '',
-      imageUrl: resource.imageUrl || '',
-      multiplier: resource.multiplier || 1.0
-    })
+    setEditModalState({ isOpen: true, resource: resource })
   }
 
   // Admin function to save resource metadata changes
-  const saveResourceMetadata = async (resourceId: string) => {
+  const saveResourceMetadata = async (resourceId: string, formData: any) => {
     if (!isResourceAdmin) return
-    
+
     setSaving(true)
     try {
       const response = await fetch('/api/resources', {
@@ -513,8 +503,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         body: JSON.stringify({
           resourceMetadata: {
             id: resourceId,
-            ...editResourceForm
-          }
+            ...formData,
+          },
         }),
       })
 
@@ -525,13 +515,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             r.id === resourceId ? { ...r, ...updatedResource } : r
           )
         )
-        setEditingResource(null)
-        setEditResourceForm({ name: '', category: '', description: '', imageUrl: '', multiplier: 1.0 })
+        setEditModalState({ isOpen: false, resource: null })
       } else {
         console.error('Failed to update resource metadata')
+        throw new Error('Failed to update resource metadata.')
       }
     } catch (error) {
       console.error('Error updating resource metadata:', error)
+      throw error
     } finally {
       setSaving(false)
     }
@@ -1527,76 +1518,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                         {/* Simplified Quick Update Controls - Only show on hover for grid view */}
                         <div className="opacity-0 group-hover:opacity-100 transition-all duration-200 space-y-2">
-                          {editingResource === resource.id ? (
-                            // Admin edit form
-                            <div className="space-y-2">
-                              <input
-                                type="text"
-                                value={editResourceForm.name}
-                                onChange={(e) => setEditResourceForm(prev => ({ ...prev, name: e.target.value }))}
-                                placeholder="Name"
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                onClick={(e) => e.stopPropagation()}
-                              />
-                              <select
-                                value={editResourceForm.category}
-                                onChange={(e) => setEditResourceForm(prev => ({ ...prev, category: e.target.value }))}
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                {CATEGORY_OPTIONS.map(cat => (
-                                  <option key={cat} value={cat}>{cat}</option>
-                                ))}
-                              </select>
-                              <input
-                                type="text"
-                                value={editResourceForm.description}
-                                onChange={(e) => setEditResourceForm(prev => ({ ...prev, description: e.target.value }))}
-                                placeholder="Description"
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                onClick={(e) => e.stopPropagation()}
-                              />
-                              <input
-                                type="url"
-                                value={editResourceForm.imageUrl}
-                                onChange={(e) => setEditResourceForm(prev => ({ ...prev, imageUrl: e.target.value }))}
-                                placeholder="Image URL"
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                onClick={(e) => e.stopPropagation()}
-                              />
-                              <input
-                                type="number"
-                                step="0.1"
-                                min="0"
-                                value={editResourceForm.multiplier}
-                                onChange={(e) => setEditResourceForm(prev => ({ ...prev, multiplier: parseFloat(e.target.value) || 1.0 }))}
-                                placeholder="Points Multiplier (e.g., 1.0)"
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                onClick={(e) => e.stopPropagation()}
-                              />
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    saveResourceMetadata(resource.id)
-                                  }}
-                                  disabled={saving || !editResourceForm.name}
-                                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  {saving ? 'Saving...' : 'Save'}
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setEditingResource(null)
-                                  }}
-                                  className="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
                             <div className="space-y-2">
                               {/* Regular quantity update buttons */}
                               <div className="flex gap-1">
@@ -1659,8 +1580,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 </div>
                               )}
                             </div>
-                          )}
-                          
                         </div>
                       </div>
                     </div>
@@ -1805,65 +1724,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                                               <td className="px-3 py-3 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                         <div className="space-y-2">
-                          {editingResource === resource.id ? (
-                            // Admin edit form for table view
-                            <div className="space-y-2 w-48">
-                              <input
-                                type="text"
-                                value={editResourceForm.name}
-                                onChange={(e) => setEditResourceForm(prev => ({ ...prev, name: e.target.value }))}
-                                placeholder="Name"
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                              />
-                              <select
-                                value={editResourceForm.category}
-                                onChange={(e) => setEditResourceForm(prev => ({ ...prev, category: e.target.value }))}
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                              >
-                                {CATEGORY_OPTIONS.map(cat => (
-                                  <option key={cat} value={cat}>{cat}</option>
-                                ))}
-                              </select>
-                              <input
-                                type="text"
-                                value={editResourceForm.description}
-                                onChange={(e) => setEditResourceForm(prev => ({ ...prev, description: e.target.value }))}
-                                placeholder="Description"
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                              />
-                              <input
-                                type="url"
-                                value={editResourceForm.imageUrl}
-                                onChange={(e) => setEditResourceForm(prev => ({ ...prev, imageUrl: e.target.value }))}
-                                placeholder="Image URL"
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                              />
-                              <input
-                                type="number"
-                                step="0.1"
-                                min="0"
-                                value={editResourceForm.multiplier}
-                                onChange={(e) => setEditResourceForm(prev => ({ ...prev, multiplier: parseFloat(e.target.value) || 1.0 }))}
-                                placeholder="Points Multiplier (e.g., 1.0)"
-                                className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                              />
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={() => saveResourceMetadata(resource.id)}
-                                  disabled={saving || !editResourceForm.name}
-                                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  {saving ? 'Saving...' : 'Save'}
-                                </button>
-                                <button
-                                  onClick={() => setEditingResource(null)}
-                                  className="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs font-medium transition-colors"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
                             <div className="space-y-2">
                               {/* Regular quantity update buttons */}
                               <div className="flex gap-1">
@@ -1904,7 +1764,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               )}
 
                             </div>
-                          )}
                         </div>
                       </td>
                     </tr>
@@ -2009,6 +1868,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           updateType={updateModalState.updateType}
         />
       )}
+      <EditResourceModal
+        isOpen={editModalState.isOpen}
+        onClose={() => setEditModalState({ isOpen: false, resource: null })}
+        onSave={saveResourceMetadata}
+        resource={editModalState.resource}
+      />
        <CongratulationsPopup
          isVisible={congratulationsState.isVisible}
          pointsEarned={congratulationsState.pointsEarned}
