@@ -20,55 +20,74 @@ interface WhatsNewModalProps {
 
 export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose, forceShow = false }: WhatsNewModalProps) {
   const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useState(false)
+  const [internalIsOpen, setInternalIsOpen] = useState(false)
   const [releases, setReleases] = useState<any[]>([])
+  const [showModal, setShowModal] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
+
+  const effectiveIsOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen
 
   useEffect(() => {
     if (!session) return
 
-    // If externally controlled, use external state
-    if (externalIsOpen !== undefined) {
-      setIsOpen(externalIsOpen)
-      if (externalIsOpen) {
-        // When manually opened, show all recent releases (last 3)
-        const allReleases = getReleasesSince('0.0.0') // Use a very old version to get all
-        setReleases(allReleases.slice(0, 3))
-      }
-      return
-    }
+    // Automatic detection logic
+    if (externalIsOpen === undefined && !forceShow) {
+      const currentVersion = getCurrentVersion()
+      const lastSeenVersion = localStorage.getItem(LAST_SEEN_VERSION_KEY)
 
-    // Otherwise, use automatic detection
-    if (forceShow) return // Skip automatic detection if force showing
-
-    const currentVersion = getCurrentVersion()
-    const lastSeenVersion = localStorage.getItem(LAST_SEEN_VERSION_KEY)
-    
-    if (shouldShowChangelog(lastSeenVersion)) {
-      const newReleases = getReleasesSince(lastSeenVersion || '0.0.0')
-      if (newReleases.length > 0) {
-        setReleases(newReleases)
-        setIsOpen(true)
+      if (shouldShowChangelog(lastSeenVersion)) {
+        const newReleases = getReleasesSince(lastSeenVersion || '0.0.0')
+        if (newReleases.length > 0) {
+          setReleases(newReleases)
+          setInternalIsOpen(true)
+        }
       }
     }
   }, [session, externalIsOpen, forceShow])
+
+  useEffect(() => {
+    if (effectiveIsOpen) {
+      setShowModal(true)
+      // When manually opened, show all recent releases (last 3)
+      if (externalIsOpen) {
+        const allReleases = getReleasesSince('0.0.0')
+        setReleases(allReleases.slice(0, 3))
+      }
+      const timer = setTimeout(() => setIsAnimating(true), 10)
+      return () => clearTimeout(timer)
+    } else {
+      setIsAnimating(false)
+      const timer = setTimeout(() => setShowModal(false), 300) // Animation duration
+      return () => clearTimeout(timer)
+    }
+  }, [effectiveIsOpen, externalIsOpen])
 
   const handleClose = (markAsSeen: boolean = false) => {
     if (markAsSeen) {
       const currentVersion = getCurrentVersion()
       localStorage.setItem(LAST_SEEN_VERSION_KEY, currentVersion)
     }
-    
-    setIsOpen(false)
+
     if (externalOnClose) {
       externalOnClose()
+    } else {
+      setInternalIsOpen(false)
     }
   }
 
-  if (!isOpen || releases.length === 0) return null
+  if (!showModal || releases.length === 0) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+    <div
+      className={`fixed inset-0 bg-black flex items-center justify-center p-4 z-50 transition-opacity duration-300 ease-in-out ${
+        isAnimating ? 'bg-opacity-50' : 'bg-opacity-0'
+      }`}
+    >
+      <div
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto transition-all duration-300 ease-in-out transform ${
+          isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        }`}
+      >
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
           <div className="flex items-center justify-between">

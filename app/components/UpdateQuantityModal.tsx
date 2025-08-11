@@ -19,6 +19,20 @@ export function UpdateQuantityModal({ resource, isOpen, onClose, onUpdate, updat
   const [amount, setAmount] = useState(0)
   const [quantityField, setQuantityField] = useState<'quantityHagga' | 'quantityDeepDesert'>('quantityHagga')
   const [error, setError] = useState<string | null>(null)
+  const [showModal, setShowModal] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
+
+  useEffect(() => {
+    if (isOpen) {
+      setShowModal(true)
+      const timer = setTimeout(() => setIsAnimating(true), 10)
+      return () => clearTimeout(timer)
+    } else {
+      setIsAnimating(false)
+      const timer = setTimeout(() => setShowModal(false), 300) // Animation duration
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen])
 
   useEffect(() => {
     if (isOpen) {
@@ -46,11 +60,19 @@ export function UpdateQuantityModal({ resource, isOpen, onClose, onUpdate, updat
     }
   }
 
-  if (!isOpen) return null
+  if (!showModal) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4 border border-gray-200 dark:border-gray-700">
+    <div
+      className={`fixed inset-0 bg-black flex items-center justify-center z-50 transition-opacity duration-300 ease-in-out ${
+        isAnimating ? 'bg-opacity-50' : 'bg-opacity-0'
+      }`}
+    >
+      <div
+        className={`bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4 border border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out transform ${
+          isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        }`}
+      >
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{updateType === 'absolute' ? 'Set' : 'Add/Remove'} {resource.name}</h3>
         <div className="space-y-4">
           <div>
