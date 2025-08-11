@@ -638,7 +638,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           category: 'Raw',
           description: '',
           imageUrl: '',
-          quantity: 0,
+          quantityHagga: 0,
+          quantityDeepDesert: 0,
           targetQuantity: 0,
           multiplier: 1.0
         })
@@ -1263,7 +1264,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       category: 'Raw',
                       description: '',
                       imageUrl: '',
-                      quantity: 0,
+                      quantityHagga: 0,
+                      quantityDeepDesert: 0,
                       targetQuantity: 0,
                       multiplier: 1.0
                     })

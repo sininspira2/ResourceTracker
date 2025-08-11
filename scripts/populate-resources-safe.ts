@@ -36,59 +36,59 @@ function estimateTarget(quantity: number, statusFromEmoji: string): number {
 
 // EXAMPLE DATA - Replace with your own resources!
 const rawResources = [
-  { name: 'Wood', quantity: 1250, icon: '🪵', status: 'at_target', lastUpdatedBy: 'Admin User' },
-  { name: 'Stone', quantity: 850, icon: '🪨', status: 'below_target', lastUpdatedBy: 'Collector Alpha' },
-  { name: 'Iron Ore', quantity: 450, icon: '⛏️', status: 'critical', lastUpdatedBy: 'Miner Beta' },
-  { name: 'Cotton', quantity: 2100, icon: '🌱', status: 'at_target', lastUpdatedBy: 'Farmer Gamma' },
-  { name: 'Water', quantity: 5000, icon: '💧', status: 'at_target', lastUpdatedBy: 'Gatherer Delta' },
-  { name: 'Clay', quantity: 120, icon: '🏺', status: 'critical', lastUpdatedBy: 'Crafter Epsilon' },
-  { name: 'Sand', quantity: 800, icon: '⏳', status: 'below_target', lastUpdatedBy: 'Builder Zeta' },
-  { name: 'Coal', quantity: 600, icon: '⚫', status: 'below_target', lastUpdatedBy: 'Miner Beta' },
-  { name: 'Copper Ore', quantity: 300, icon: '🟤', status: 'critical', lastUpdatedBy: 'Prospector Eta' },
-  { name: 'Leather', quantity: 180, icon: '🦬', status: 'critical', lastUpdatedBy: 'Hunter Theta' }
+  { name: 'Wood', quantityHagga: 1250, quantityDeepDesert: 0, icon: '🪵', status: 'at_target', lastUpdatedBy: 'Admin User' },
+  { name: 'Stone', quantityHagga: 850, quantityDeepDesert: 0, icon: '🪨', status: 'below_target', lastUpdatedBy: 'Collector Alpha' },
+  { name: 'Iron Ore', quantityHagga: 450, quantityDeepDesert: 0, icon: '⛏️', status: 'critical', lastUpdatedBy: 'Miner Beta' },
+  { name: 'Cotton', quantityHagga: 2100, quantityDeepDesert: 0, icon: '🌱', status: 'at_target', lastUpdatedBy: 'Farmer Gamma' },
+  { name: 'Water', quantityHagga: 5000, quantityDeepDesert: 0, icon: '💧', status: 'at_target', lastUpdatedBy: 'Gatherer Delta' },
+  { name: 'Clay', quantityHagga: 120, quantityDeepDesert: 0, icon: '🏺', status: 'critical', lastUpdatedBy: 'Crafter Epsilon' },
+  { name: 'Sand', quantityHagga: 800, quantityDeepDesert: 0, icon: '⏳', status: 'below_target', lastUpdatedBy: 'Builder Zeta' },
+  { name: 'Coal', quantityHagga: 600, quantityDeepDesert: 0, icon: '⚫', status: 'below_target', lastUpdatedBy: 'Miner Beta' },
+  { name: 'Copper Ore', quantityHagga: 300, quantityDeepDesert: 0, icon: '🟤', status: 'critical', lastUpdatedBy: 'Prospector Eta' },
+  { name: 'Leather', quantityHagga: 180, quantityDeepDesert: 0, icon: '🦬', status: 'critical', lastUpdatedBy: 'Hunter Theta' }
 ]
 
 const refinedResources = [
-  { name: 'Copper Ingot', quantity: 2119, icon: ':CopperIngot:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Iron Ingot', quantity: 1000, icon: ':IronIngot:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Silicone Block', quantity: 4687, icon: ':SiliconeBlock:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Cobalt Paste', quantity: 1579, icon: ':ColbaltPaste:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Low-grade Lubricant', quantity: 0, icon: ':LowGradeLubricant:', status: 'critical', lastUpdatedBy: 'Mother Y\'thelia (Yetty)' },
-  { name: 'Medium Sized Vehicle Fuel Cell', quantity: 32, icon: ':LargeVehicleFuelCell:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Spice Melange', quantity: 0, icon: ':spice:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Steel Ingot', quantity: 3113, icon: ':SteelIngot:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Aluminum Ingot', quantity: 598, icon: ':AluminumIngot:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Large Vehicle Fuel Cell', quantity: 12, icon: ':LargeVehicleFuelCell:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Plastone', quantity: 8122, icon: ':Plastone:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Standard Filter', quantity: 0, icon: ':StandardFilter:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Duraluminum Ingot', quantity: 882, icon: ':DuraluminumIngot:', status: 'below_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Industrial-grade Lubricant', quantity: 208, icon: ':IndustrialGradeLubricant:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Solaris', quantity: 8350, icon: ':Solaris:', status: 'critical', lastUpdatedBy: 'Mother Y\'thelia (Yetty)' },
-  { name: 'Plastanium Ingot', quantity: 0, icon: ':PlastaniumIngot:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Spice-infused Fuel Cell', quantity: 0, icon: ':SpiceInfusedFuelCell:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Stravidium Fiber', quantity: 0, icon: ':StravidiumFiber:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' }
+  { name: 'Copper Ingot', quantityHagga: 2119, quantityDeepDesert: 0, icon: ':CopperIngot:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Iron Ingot', quantityHagga: 1000, quantityDeepDesert: 0, icon: ':IronIngot:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Silicone Block', quantityHagga: 4687, quantityDeepDesert: 0, icon: ':SiliconeBlock:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Cobalt Paste', quantityHagga: 1579, quantityDeepDesert: 0, icon: ':ColbaltPaste:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
+  { name: 'Low-grade Lubricant', quantityHagga: 0, quantityDeepDesert: 0, icon: ':LowGradeLubricant:', status: 'critical', lastUpdatedBy: 'Mother Y\'thelia (Yetty)' },
+  { name: 'Medium Sized Vehicle Fuel Cell', quantityHagga: 32, quantityDeepDesert: 0, icon: ':LargeVehicleFuelCell:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Spice Melange', quantityHagga: 0, quantityDeepDesert: 0, icon: ':spice:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Steel Ingot', quantityHagga: 3113, quantityDeepDesert: 0, icon: ':SteelIngot:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Aluminum Ingot', quantityHagga: 598, quantityDeepDesert: 0, icon: ':AluminumIngot:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Large Vehicle Fuel Cell', quantityHagga: 12, quantityDeepDesert: 0, icon: ':LargeVehicleFuelCell:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Plastone', quantityHagga: 8122, quantityDeepDesert: 0, icon: ':Plastone:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Standard Filter', quantityHagga: 0, quantityDeepDesert: 0, icon: ':StandardFilter:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Duraluminum Ingot', quantityHagga: 882, quantityDeepDesert: 0, icon: ':DuraluminumIngot:', status: 'below_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Industrial-grade Lubricant', quantityHagga: 208, quantityDeepDesert: 0, icon: ':IndustrialGradeLubricant:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Solaris', quantityHagga: 8350, quantityDeepDesert: 0, icon: ':Solaris:', status: 'critical', lastUpdatedBy: 'Mother Y\'thelia (Yetty)' },
+  { name: 'Plastanium Ingot', quantityHagga: 0, quantityDeepDesert: 0, icon: ':PlastaniumIngot:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Spice-infused Fuel Cell', quantityHagga: 0, quantityDeepDesert: 0, icon: ':SpiceInfusedFuelCell:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Stravidium Fiber', quantityHagga: 0, quantityDeepDesert: 0, icon: ':StravidiumFiber:', status: 'critical', lastUpdatedBy: 'Magdalena ((Pheebs))' }
 ]
 
 const components = [
-  { name: 'Advanced Servoks Components', quantity: 6482, icon: ':AdvancedServoks:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'EMF Generator Components', quantity: 1119, icon: ':EMFGenerators:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Holtzman Actuator Components', quantity: 6147, icon: ':HoltzmanActuator:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Micro-sandwich Fabric Components', quantity: 330, icon: ':MicroSandwichFabric:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Particle Capacitor Components', quantity: 871, icon: ':ParticleCapacitor:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Ray Amplifier Components', quantity: 1163, icon: ':RayAmplifiers:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Carbide Scraps Components', quantity: 704, icon: ':CarbideScraps:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Diamondine Dust Components', quantity: 232, icon: ':DiamondineDust:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Industrial Pump Components', quantity: 221, icon: ':IndustrialPumpComponents:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Hydraulic Piston Components', quantity: 935, icon: ':HydraulicPistonComponents:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Thermoelectric Cooler Components', quantity: 1611, icon: ':ThermoElectricCooler:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Spice-infused Duraluminum Dust Components', quantity: 4783, icon: ':SpiceinfusedDuraluminumDustC:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Advanced Machinery Components', quantity: 25, icon: ':AdvancedMachineryComponents:', status: 'critical', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Fluid Efficient Industrial Pump Components', quantity: 100, icon: ':FluidEfficientIndustrialPump:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
-  { name: 'Fluted Heavy Caliber Compressor Components', quantity: 361, icon: ':FlutedHeavyCaliberCompressor:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Fluted Light Caliber Compressor Components', quantity: 532, icon: ':FlutedLightCaliberCompressor:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Overclocked Power Regulator Components', quantity: 283, icon: ':OverclockedPowerRegulatorComp:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
-  { name: 'Plasteel Plate Components', quantity: 1833, icon: ':PlasteelPlateComponents:', status: 'at_target', lastUpdatedBy: 'Dominic [Quartermaster]' },
-  { name: 'Spice-infused Plastanium Dust Components', quantity: 255, icon: ':SpiceinfusedPlastaniumDustCo:', status: 'at_target', lastUpdatedBy: 'Dominic [Quartermaster]' }
+  { name: 'Advanced Servoks Components', quantityHagga: 6482, quantityDeepDesert: 0, icon: ':AdvancedServoks:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'EMF Generator Components', quantityHagga: 1119, quantityDeepDesert: 0, icon: ':EMFGenerators:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Holtzman Actuator Components', quantityHagga: 6147, quantityDeepDesert: 0, icon: ':HoltzmanActuator:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Micro-sandwich Fabric Components', quantityHagga: 330, quantityDeepDesert: 0, icon: ':MicroSandwichFabric:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
+  { name: 'Particle Capacitor Components', quantityHagga: 871, quantityDeepDesert: 0, icon: ':ParticleCapacitor:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Ray Amplifier Components', quantityHagga: 1163, quantityDeepDesert: 0, icon: ':RayAmplifiers:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Carbide Scraps Components', quantityHagga: 704, quantityDeepDesert: 0, icon: ':CarbideScraps:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
+  { name: 'Diamondine Dust Components', quantityHagga: 232, quantityDeepDesert: 0, icon: ':DiamondineDust:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
+  { name: 'Industrial Pump Components', quantityHagga: 221, quantityDeepDesert: 0, icon: ':IndustrialPumpComponents:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
+  { name: 'Hydraulic Piston Components', quantityHagga: 935, quantityDeepDesert: 0, icon: ':HydraulicPistonComponents:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Thermoelectric Cooler Components', quantityHagga: 1611, quantityDeepDesert: 0, icon: ':ThermoElectricCooler:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Spice-infused Duraluminum Dust Components', quantityHagga: 4783, quantityDeepDesert: 0, icon: ':SpiceinfusedDuraluminumDustC:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Advanced Machinery Components', quantityHagga: 25, quantityDeepDesert: 0, icon: ':AdvancedMachineryComponents:', status: 'critical', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
+  { name: 'Fluid Efficient Industrial Pump Components', quantityHagga: 100, quantityDeepDesert: 0, icon: ':FluidEfficientIndustrialPump:', status: 'at_target', lastUpdatedBy: 'Yasvahi Assuan (Nathrai)' },
+  { name: 'Fluted Heavy Caliber Compressor Components', quantityHagga: 361, quantityDeepDesert: 0, icon: ':FlutedHeavyCaliberCompressor:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Fluted Light Caliber Compressor Components', quantityHagga: 532, quantityDeepDesert: 0, icon: ':FlutedLightCaliberCompressor:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Overclocked Power Regulator Components', quantityHagga: 283, quantityDeepDesert: 0, icon: ':OverclockedPowerRegulatorComp:', status: 'at_target', lastUpdatedBy: 'Magdalena ((Pheebs))' },
+  { name: 'Plasteel Plate Components', quantityHagga: 1833, quantityDeepDesert: 0, icon: ':PlasteelPlateComponents:', status: 'at_target', lastUpdatedBy: 'Dominic [Quartermaster]' },
+  { name: 'Spice-infused Plastanium Dust Components', quantityHagga: 255, quantityDeepDesert: 0, icon: ':SpiceinfusedPlastaniumDustCo:', status: 'at_target', lastUpdatedBy: 'Dominic [Quartermaster]' }
 ]
 
 async function populateResourcesSafe() {
@@ -118,13 +118,14 @@ async function populateResourcesSafe() {
     ]
     
     const resourceData = allResources.map(resource => {
-      const targetQuantity = estimateTarget(resource.quantity, resource.status)
-      const actualStatus = calculateStatus(resource.quantity, targetQuantity)
+      const targetQuantity = estimateTarget(resource.quantityHagga, resource.status)
+      const actualStatus = calculateStatus(resource.quantityHagga, targetQuantity)
       
       return {
         id: nanoid(),
         name: resource.name,
-        quantity: resource.quantity,
+        quantityHagga: resource.quantityHagga,
+        quantityDeepDesert: resource.quantityDeepDesert || 0,
         description: `${resource.category} - ${resource.name}`,
         category: resource.category,
         icon: resource.icon,
@@ -171,15 +172,16 @@ function generateSQLStatements() {
   ]
   
   allResources.forEach(resource => {
-    const targetQuantity = estimateTarget(resource.quantity, resource.status)
-    const actualStatus = calculateStatus(resource.quantity, targetQuantity)
+    const targetQuantity = estimateTarget(resource.quantityHagga, resource.status)
+    const actualStatus = calculateStatus(resource.quantityHagga, targetQuantity)
     const id = nanoid()
     const now = Date.now()
     
-    const sql = `INSERT INTO resources (id, name, quantity, description, category, icon, status, target_quantity, last_updated_by, created_at, updated_at) VALUES (
+    const sql = `INSERT INTO resources (id, name, quantity_hagga, quantity_deep_desert, description, category, icon, status, target_quantity, last_updated_by, created_at, updated_at) VALUES (
   '${id}',
   '${resource.name.replace(/'/g, "''")}',
-  ${resource.quantity},
+  ${resource.quantityHagga},
+  ${resource.quantityDeepDesert || 0},
   '${resource.category} - ${resource.name.replace(/'/g, "''")}',
   '${resource.category}',
   '${resource.icon}',

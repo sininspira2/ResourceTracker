@@ -17,7 +17,8 @@ function estimateTarget(quantity: number): number {
 // Interface for new resources with images
 interface NewResource {
   name: string
-  quantity: number
+  quantityHagga: number
+  quantityDeepDesert: number
   description?: string
   category: string
   icon?: string // Optional emoji/icon identifier
@@ -30,7 +31,8 @@ interface NewResource {
 const newResourcesWithImages: NewResource[] = [
   {
     name: 'Diamond Ore',
-    quantity: 45,
+    quantityHagga: 45,
+    quantityDeepDesert: 0,
     description: 'Rare crystalline material for advanced manufacturing',
     category: 'Raw Resources',
     icon: ':gem:',
@@ -40,7 +42,8 @@ const newResourcesWithImages: NewResource[] = [
   },
   {
     name: 'Plasma Cell',
-    quantity: 12,
+    quantityHagga: 12,
+    quantityDeepDesert: 0,
     description: 'High-energy storage device',
     category: 'Technology',
     icon: ':zap:',
@@ -50,7 +53,8 @@ const newResourcesWithImages: NewResource[] = [
   },
   {
     name: 'Quantum Fabric',
-    quantity: 3,
+    quantityHagga: 3,
+    quantityDeepDesert: 0,
     description: 'Advanced textile with quantum properties',
     category: 'Components',
     icon: ':thread:',
@@ -67,13 +71,14 @@ async function addResourcesWithImages(customResources?: NewResource[]) {
     const resourcesToAdd = customResources || newResourcesWithImages
     
     const resourceData = resourcesToAdd.map(resource => {
-      const targetQuantity = resource.targetQuantity || estimateTarget(resource.quantity)
-      const status = calculateStatus(resource.quantity, targetQuantity)
+      const targetQuantity = resource.targetQuantity || estimateTarget(resource.quantityHagga)
+      const status = calculateStatus(resource.quantityHagga, targetQuantity)
       
       return {
         id: nanoid(),
         name: resource.name,
-        quantity: resource.quantity,
+        quantityHagga: resource.quantityHagga,
+        quantityDeepDesert: resource.quantityDeepDesert || 0,
         description: resource.description || `${resource.category} - ${resource.name}`,
         category: resource.category,
         icon: resource.icon || null,
@@ -94,7 +99,7 @@ async function addResourcesWithImages(customResources?: NewResource[]) {
     console.log('✅ Successfully added all resources with images!')
     console.log(`📈 Summary:`)
     resourceData.forEach(resource => {
-      console.log(`- ${resource.name}: ${resource.quantity} units${resource.imageUrl ? ' (with image)' : ''}`)
+      console.log(`- ${resource.name}: ${resource.quantityHagga} units (Hagga)${resource.imageUrl ? ' (with image)' : ''}`)
     })
     
     return resourceData
