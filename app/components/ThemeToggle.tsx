@@ -48,7 +48,7 @@ export function ThemeToggle() {
         </svg>
 
         {/* Hover effect */}
-        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 to-blue-500 opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
+        <div className="absolute inset-0 rounded-lg bg-linear-to-r from-yellow-400 to-blue-500 opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
       </button>
     )
   } catch (error) {

@@ -275,7 +275,7 @@ export default function UserContributionsPage() {
                   <div key={contribution.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                           {getActionIcon(contribution.actionType)}
                         </div>
                         <div>

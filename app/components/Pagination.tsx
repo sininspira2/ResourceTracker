@@ -94,7 +94,7 @@ export function Pagination({
           </p>
         </div>
         <div>
-          <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+          <nav className="isolate inline-flex -space-x-px rounded-md shadow-xs" aria-label="Pagination">
             {/* Previous button */}
             <button
               onClick={() => onPageChange(currentPage - 1)}
@@ -130,7 +130,7 @@ export function Pagination({
                   disabled={isLoading}
                   className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed ${
                     isCurrent
-                      ? 'z-10 bg-blue-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
+                      ? 'z-10 bg-blue-600 text-white focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
                       : 'text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                 >

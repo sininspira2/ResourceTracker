@@ -13,7 +13,7 @@ export default async function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 dark:from-gray-900 dark:to-blue-900 text-white transition-colors duration-300">
+    <main className="min-h-screen bg-linear-to-br from-blue-900 to-purple-900 dark:from-gray-900 dark:to-blue-900 text-white transition-colors duration-300">
       <div className="container mx-auto px-4 py-16">
         <header className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-4">{process.env.NEXT_PUBLIC_APP_NAME || 'Resource Tracker'}</h1>
@@ -52,7 +52,7 @@ export default async function Home() {
                     : 'You must be a member of the Discord server to access this portal.'
                   }
                 </p>
-                <div className="text-red-100 dark:text-red-200 text-xs bg-red-600/20 dark:bg-red-800/30 rounded px-3 py-2">
+                <div className="text-red-100 dark:text-red-200 text-xs bg-red-600/20 dark:bg-red-800/30 rounded-sm px-3 py-2">
                   <div className="font-medium mb-1">Requirements:</div>
                   <ul className="list-disc list-inside space-y-1">
                     <li>Be a member of the Discord server</li>

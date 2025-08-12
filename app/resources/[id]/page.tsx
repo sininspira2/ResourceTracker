@@ -485,7 +485,7 @@ export default function ResourceDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 shadow-xs border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <button
@@ -512,7 +512,7 @@ export default function ResourceDetailPage() {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Resource Image */}
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   {resource.imageUrl ? (
                     <img
                       src={resource.imageUrl}
@@ -640,7 +640,7 @@ export default function ResourceDetailPage() {
                           setNewQuantityInput(resource.quantityHagga.toString())
                         }
                       }}
-                      className={`px-3 py-1 rounded text-sm font-medium ${updateType === 'relative'
+                      className={`px-3 py-1 rounded-sm text-sm font-medium ${updateType === 'relative'
                           ? 'bg-blue-100 text-blue-800'
                           : 'bg-gray-100 text-gray-700'
                         }`}
@@ -704,7 +704,7 @@ export default function ResourceDetailPage() {
                 <select
                   value={timeFilter}
                   onChange={(e) => setTimeFilter(parseInt(e.target.value))}
-                  className="border border-gray-300 dark:border-gray-600 rounded px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="border border-gray-300 dark:border-gray-600 rounded-sm px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 >
                   <option value={1}>Last 24 hours</option>
                   <option value={3}>Last 3 days</option>
@@ -830,7 +830,7 @@ export default function ResourceDetailPage() {
                   {/* Hover Tooltip */}
                   {hoveredPoint && (
                     <div
-                      className="absolute bg-black text-white text-xs rounded px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
+                      className="absolute bg-black text-white text-xs rounded-sm px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
                       style={{
                         left: mousePosition.x + 10,
                         top: mousePosition.y - 10,
@@ -882,7 +882,7 @@ export default function ResourceDetailPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Contribution Leaderboard</h3>
-              <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+              <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-sm">
                 Only +/- changes count
               </div>
             </div>
@@ -910,7 +910,7 @@ export default function ResourceDetailPage() {
                       .sort((a, b) => b[1].contributed - a[1].contributed)
                       .slice(0, 5)
                       .map(([user, stats], index) => (
-                        <div key={user} className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded">
+                        <div key={user} className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-sm">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium text-gray-900 dark:text-gray-100">#{index + 1}</span>
                             <span className="text-sm text-gray-900 dark:text-gray-100">{user}</span>
@@ -930,7 +930,7 @@ export default function ResourceDetailPage() {
                       .sort((a, b) => b[1].taken - a[1].taken)
                       .slice(0, 5)
                       .map(([user, stats], index) => (
-                        <div key={user} className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-900/20 rounded">
+                        <div key={user} className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-900/20 rounded-sm">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium text-gray-900 dark:text-gray-100">#{index + 1}</span>
                             <span className="text-sm text-gray-900 dark:text-gray-100">{user}</span>
@@ -948,7 +948,7 @@ export default function ResourceDetailPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">🏆 Points Leaderboard</h3>
-              <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+              <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-sm">
                 Global rankings (last 7 days)
               </div>
             </div>
@@ -970,7 +970,7 @@ export default function ResourceDetailPage() {
                 {leaderboard.slice(0, 10).map((entry, index) => (
                   <div 
                     key={entry.userId} 
-                    className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:from-green-100 hover:to-blue-100 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all cursor-pointer"
+                    className="flex items-center justify-between p-3 bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:from-green-100 hover:to-blue-100 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all cursor-pointer"
                     onClick={() => router.push(`/dashboard/contributions/${entry.userId}`)}
                     title={`Click to view ${entry.userId}'s detailed contributions`}
                   >
@@ -1019,7 +1019,7 @@ export default function ResourceDetailPage() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Changes</h3>
               <div className="flex items-center gap-3">
                 {selectedPointId && (
-                  <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                  <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-sm">
                     Point selected on chart
                   </div>
                 )}
@@ -1130,7 +1130,7 @@ export default function ResourceDetailPage() {
                               deleteHistoryEntry(entry.id)
                             }}
                             disabled={saving}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-sm"
                             title="Delete this history entry"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

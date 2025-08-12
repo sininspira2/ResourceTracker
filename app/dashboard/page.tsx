@@ -36,7 +36,7 @@ export default async function Dashboard() {
           {/* Resource Management - Prominent Section */}
           {session.user.permissions?.hasResourceAccess && (
             <div className="mb-8">
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-6 text-white">
+              <div className="bg-linear-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold mb-2">Resource Management</h2>
@@ -65,7 +65,7 @@ export default async function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* User Info Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Profile</h2>
               <div className="space-y-3">
                 {session.user.image && (
@@ -88,7 +88,7 @@ export default async function Dashboard() {
             </div>
 
             {/* Community Status Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Community Status</h2>
               <div className="space-y-3">
                 <div className="flex items-center">
@@ -109,7 +109,7 @@ export default async function Dashboard() {
             </div>
 
             {/* Roles Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Your Roles</h2>
                 <RefreshRolesButton />
@@ -119,7 +119,7 @@ export default async function Dashboard() {
                   session.user.roles.map((roleId: string) => (
                     <div key={roleId} className="flex items-center justify-between">
                       <span className="text-sm text-gray-900 dark:text-gray-100">Role ID: {roleId}</span>
-                      <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
+                      <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-sm">
                         Discord Role
                       </span>
                     </div>
@@ -138,7 +138,7 @@ export default async function Dashboard() {
 
           {/* Quick Actions */}
           <div className="mt-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Quick Actions</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Link

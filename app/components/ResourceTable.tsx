@@ -811,7 +811,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       {/* Dashboard Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Updates */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Updates</h3>
             <svg className="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -860,14 +860,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         </div>
 
         {/* Leaderboard */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">🏆 Leaderboard</h3>
             <div className="flex items-center gap-2">
               <select
                 value={leaderboardTimeFilter}
                 onChange={(e) => setLeaderboardTimeFilter(e.target.value)}
-                className="text-xs bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1"
+                className="text-xs bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-sm px-2 py-1"
               >
                 <option value="24h">24h</option>
                 <option value="7d">7d</option>
@@ -894,7 +894,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               {leaderboard.slice(0, leaderboardExpanded ? leaderboard.length : 5).map((entry, index) => (
                 <div 
                   key={entry.userId} 
-                  className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:from-green-100 hover:to-blue-100 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all cursor-pointer"
+                  className="flex items-center justify-between p-3 bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:from-green-100 hover:to-blue-100 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all cursor-pointer"
                   onClick={() => router.push(`/dashboard/contributions/${entry.userId}`)}
                   title={`Click to view ${entry.userId}'s detailed contributions`}
                 >
@@ -1118,7 +1118,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       )}
 
       {/* Search and View Toggle */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col gap-4">
           {/* Search and Filters Row */}
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -1142,7 +1142,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 onClick={() => setAndSaveViewMode('table')}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   viewMode === 'table'
-                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm'
+                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-xs'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
@@ -1155,7 +1155,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 onClick={() => setAndSaveViewMode('grid')}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   viewMode === 'grid'
-                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm'
+                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-xs'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
@@ -1192,7 +1192,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   type="checkbox"
                   checked={needsUpdateFilter}
                   onChange={(e) => setNeedsUpdateFilter(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 />
                 <span>Needs updating ({needsUpdateCount})</span>
                 <span className="text-xs text-gray-500 dark:text-gray-400">(24+ hours)</span>
@@ -1367,7 +1367,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     e.stopPropagation()
                                     setUpdateModalState({ isOpen: true, resource: resource, updateType: 'relative' })
                                   }}
-                                  className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                  className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Add/Remove
                                 </button>
@@ -1376,7 +1376,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     e.stopPropagation()
                                     setUpdateModalState({ isOpen: true, resource: resource, updateType: 'absolute' })
                                   }}
-                                  className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                  className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Set
                                 </button>
@@ -1387,7 +1387,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     e.stopPropagation()
                                     setTransferModalState({ isOpen: true, resource: resource })
                                   }}
-                                  className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                  className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Transfer
                                 </button>
@@ -1401,7 +1401,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       e.stopPropagation()
                                       startEditResource(resource)
                                     }}
-                                    className="flex-1 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                    className="flex-1 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
                                     Edit
                                   </button>
@@ -1414,7 +1414,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                         showDialog: true
                                       })
                                     }}
-                                    className="flex-1 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                    className="flex-1 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
                                     Delete
                                   </button>
@@ -1434,7 +1434,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       {/* Table View */}
       {viewMode === 'table' && (
-        <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 shadow-xs rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-900">
@@ -1485,7 +1485,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     >
                       <td className="px-3 py-3 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-12 w-12">
+                          <div className="shrink-0 h-12 w-12">
                             {resource.imageUrl ? (
                               <img 
                                 className="h-12 w-12 rounded-lg object-cover"
@@ -1547,14 +1547,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               min="0"
                               value={pendingTarget ?? resource.targetQuantity ?? ''}
                               onChange={(e) => handleTargetQuantityChange(resource.id, parseInt(e.target.value) || 0)}
-                              className="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                              className="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                               placeholder="Target"
                             />
                             {isEdited && (
                               <button
                                 onClick={() => saveTargetQuantity(resource.id)}
                                 disabled={saving}
-                                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:opacity-50 text-white px-2 py-1 rounded text-xs transition-colors"
+                                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:opacity-50 text-white px-2 py-1 rounded-sm text-xs transition-colors"
                               >
                                 Save
                               </button>
@@ -1570,13 +1570,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               <div className="flex gap-1">
                                 <button
                                   onClick={() => setUpdateModalState({ isOpen: true, resource: resource, updateType: 'relative' })}
-                                  className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                  className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Add/Remove
                                 </button>
                                 <button
                                   onClick={() => setUpdateModalState({ isOpen: true, resource: resource, updateType: 'absolute' })}
-                                  className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                  className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Set
                                 </button>
@@ -1587,7 +1587,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 <div className="flex gap-1">
                                   <button
                                     onClick={() => startEditResource(resource)}
-                                    className="flex-1 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                    className="flex-1 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
                                     Edit
                                   </button>
@@ -1597,7 +1597,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       resourceName: resource.name,
                                       showDialog: true
                                     })}
-                                    className="flex-1 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded text-xs font-medium transition-colors"
+                                    className="flex-1 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
                                     Delete
                                   </button>
@@ -1652,7 +1652,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </p>
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3">
                 <div className="flex items-start gap-2">
-                  <svg className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.888-.833-2.664 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
                   <div className="text-sm">
