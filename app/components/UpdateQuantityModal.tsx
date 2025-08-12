@@ -64,8 +64,8 @@ export function UpdateQuantityModal({ resource, isOpen, onClose, onUpdate, updat
 
   return (
     <div
-      className={`fixed inset-0 bg-black flex items-center justify-center z-50 transition-opacity duration-300 ease-in-out ${
-        isAnimating ? 'bg-opacity-50' : 'bg-opacity-0'
+      className={`fixed inset-0 flex items-center justify-center z-50 transition-colors duration-300 ease-in-out ${
+        isAnimating ? 'bg-black/50' : 'bg-black/0'
       }`}
     >
       <div
