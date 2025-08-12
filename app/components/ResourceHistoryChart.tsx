@@ -66,7 +66,7 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className={customButton?.className || "text-gray-600 hover:text-blue-600 transition-colors p-1 rounded hover:bg-gray-100"}
+        className={customButton?.className || "text-gray-600 hover:text-blue-600 transition-colors p-1 rounded-sm hover:bg-gray-100"}
         title="View resource history"
       >
         {customButton?.children || (
@@ -90,7 +90,7 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
             <select
               value={days}
               onChange={(e) => setDays(parseInt(e.target.value))}
-              className="border rounded px-3 py-1 text-sm"
+              className="border rounded-sm px-3 py-1 text-sm"
             >
               <option value={1}>1 day</option>
               <option value={3}>3 days</option>
@@ -186,7 +186,7 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
                       {/* Tooltip */}
                       {hoveredPoint && (
                         <div 
-                          className="absolute bg-black text-white text-xs rounded px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
+                          className="absolute bg-black text-white text-xs rounded-sm px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
                           style={{
                             left: mousePosition.x + 10,
                             top: mousePosition.y - 10,

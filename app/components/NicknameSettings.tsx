@@ -10,7 +10,7 @@ export function NicknameSettings() {
   const displayName = session.user.discordNickname || session.user.name || 'Unknown User'
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
       <h2 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Display Name</h2>
       
       <div className="space-y-3">

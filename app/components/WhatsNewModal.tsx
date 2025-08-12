@@ -89,7 +89,7 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         }`}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
+        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold">What's New</h2>
@@ -117,7 +117,7 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
                     <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                       {release.title}
                     </h3>
-                    <span className="text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
+                    <span className="text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-sm">
                       v{release.version}
                     </span>
                   </div>
