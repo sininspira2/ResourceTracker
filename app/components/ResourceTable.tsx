@@ -1358,7 +1358,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         </div>
 
                         {/* Simplified Quick Update Controls - Only show on hover for grid view */}
-                        <div className="opacity-0 group-hover:opacity-100 transition-all duration-200 space-y-2">
+                        <div className="space-y-2 pt-2">
                             <div className="space-y-2">
                               {/* Regular quantity update buttons */}
                               <div className="flex gap-1">
