@@ -78,7 +78,8 @@ export default function PrivacyPage() {
   }
 
   const requestDataDeletion = async () => {
-    if (!confirm('Are you sure you want to request deletion of your data? This action will anonymize all your resource change history and cannot be undone.')) {
+    const confirmationMessage = 'Are you sure you want to request deletion of your data? This action will anonymize all your resource change history and cannot be undone.'
+    if (!confirm(confirmationMessage)) {
       return
     }
 
@@ -216,7 +217,7 @@ export default function PrivacyPage() {
               <div>
                 <h3 className="font-medium text-gray-900 dark:text-gray-100">Discord Authentication Data</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Your Discord username, server nickname, profile picture, and server roles (managed by Discord's privacy policy).
+                  Your Discord username, server nickname, profile picture, and server roles (managed by Discord&apos;s privacy policy).
                 </p>
               </div>
               <div>
@@ -253,7 +254,7 @@ export default function PrivacyPage() {
               <div>
                 <h3 className="font-medium text-gray-900 dark:text-gray-100">Discord Profile Information</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Refreshed on each login from Discord's servers. Not permanently stored.
+                  Refreshed on each login from Discord&apos;s servers. Not permanently stored.
                 </p>
               </div>
             </div>

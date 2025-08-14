@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Pagination } from '@/app/components/Pagination'
@@ -57,11 +57,7 @@ export default function UserContributionsPage() {
   const userId = params.userId as string
   const pageSize = 20
 
-  useEffect(() => {
-    fetchContributions()
-  }, [userId, timeFilter, currentPage])
-
-  const fetchContributions = async () => {
+  const fetchContributions = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -80,7 +76,11 @@ export default function UserContributionsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [userId, timeFilter, currentPage, pageSize])
+
+  useEffect(() => {
+    fetchContributions()
+  }, [fetchContributions])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)

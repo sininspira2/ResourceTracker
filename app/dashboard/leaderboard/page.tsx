@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Pagination } from '@/app/components/Pagination'
@@ -39,11 +39,7 @@ export default function LeaderboardPage() {
   
   const pageSize = 20
 
-  useEffect(() => {
-    fetchLeaderboard()
-  }, [timeFilter, currentPage])
-
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -66,7 +62,11 @@ export default function LeaderboardPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [timeFilter, currentPage, pageSize])
+
+  useEffect(() => {
+    fetchLeaderboard()
+  }, [fetchLeaderboard])
 
   const handleUserClick = (userId: string) => {
     router.push(`/dashboard/contributions/${userId}`)

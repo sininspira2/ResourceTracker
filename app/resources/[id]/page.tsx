@@ -268,7 +268,8 @@ export default function ResourceDetailPage() {
   const deleteHistoryEntry = async (entryId: string) => {
     if (!canDeleteHistory) return
 
-    if (!confirm('Are you sure you want to delete this history entry? This action cannot be undone.')) {
+    const confirmationMessage = 'Are you sure you want to delete this history entry? This action cannot be undone.'
+    if (!confirm(confirmationMessage)) {
       return
     }
 
@@ -441,7 +442,7 @@ export default function ResourceDetailPage() {
           </svg>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Resource Not Found</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            The resource you're looking for doesn't exist or you don't have permission to view it.
+            The resource you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.
             {!canEdit && (
               <>
                 <br />
@@ -972,7 +973,7 @@ export default function ResourceDetailPage() {
                     key={entry.userId} 
                     className="flex items-center justify-between p-3 bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:from-green-100 hover:to-blue-100 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all cursor-pointer"
                     onClick={() => router.push(`/dashboard/contributions/${entry.userId}`)}
-                    title={`Click to view ${entry.userId}'s detailed contributions`}
+                    title={`Click to view ${entry.userId}&apos;s detailed contributions`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${

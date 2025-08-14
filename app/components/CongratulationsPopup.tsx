@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface PointsCalculation {
@@ -34,6 +34,13 @@ export function CongratulationsPopup({
   const router = useRouter()
   const [isAnimating, setIsAnimating] = useState(false)
 
+  const handleClose = useCallback(() => {
+    setIsAnimating(false)
+    setTimeout(() => {
+      onClose()
+    }, 300) // Wait for animation to complete
+  }, [onClose])
+
   useEffect(() => {
     if (isVisible) {
       setIsAnimating(true)
@@ -43,14 +50,7 @@ export function CongratulationsPopup({
       }, 5000)
       return () => clearTimeout(timer)
     }
-  }, [isVisible])
-
-  const handleClose = () => {
-    setIsAnimating(false)
-    setTimeout(() => {
-      onClose()
-    }, 300) // Wait for animation to complete
-  }
+  }, [isVisible, handleClose])
 
   const handleViewContributions = () => {
     if (userId) {
