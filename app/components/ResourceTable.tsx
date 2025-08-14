@@ -706,8 +706,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   useEffect(() => {
     fetchResources()
     fetchRecentActivity()
-    fetchLeaderboard()
-  }, [fetchResources, fetchRecentActivity, fetchLeaderboard])
+  }, [fetchResources, fetchRecentActivity])
 
   // Fetch leaderboard when time filter changes
   useEffect(() => {
