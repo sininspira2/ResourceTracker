@@ -7,7 +7,7 @@ import { LogoutButton } from './LogoutButton'
 import { ThemeToggle } from './ThemeToggle'
 import { VersionDisplay } from './VersionDisplay'
 import { WhatsNewModal } from './WhatsNewModal'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface ClientNavigationProps {
   title: string
@@ -17,6 +17,11 @@ interface ClientNavigationProps {
 export function ClientNavigation({ title, showDashboardLink = true }: ClientNavigationProps) {
   const { data: session } = useSession()
   const [showChangelog, setShowChangelog] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   return (
     <>
@@ -42,7 +47,7 @@ export function ClientNavigation({ title, showDashboardLink = true }: ClientNavi
                 </Link>
               )}
               
-              <ThemeToggle />
+              {isMounted && <ThemeToggle />}
               
               {session ? <LogoutButton /> : <LoginButton />}
             </div>
