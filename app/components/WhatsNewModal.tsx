@@ -92,7 +92,7 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold">What's New</h2>
+              <h2 className="text-2xl font-bold">What&apos;s New</h2>
               <p className="text-blue-100 mt-1">Latest updates and improvements</p>
             </div>
             <button

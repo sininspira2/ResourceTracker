@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { CongratulationsPopup } from './CongratulationsPopup'
@@ -311,7 +311,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const needsUpdateCount = resources.filter(resource => needsUpdating(resource.updatedAt)).length
 
   // Fetch recent activity
-  const fetchRecentActivity = async () => {
+  const fetchRecentActivity = useCallback(async () => {
     try {
       setActivityLoading(true)
       const response = await fetch('/api/user/activity?global=true&limit=50', {
@@ -328,7 +328,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     } finally {
       setActivityLoading(false)
     }
-  }
+  }, [])
 
   // Calculate top contributors from last week
   const calculateTopContributors = () => {
@@ -391,7 +391,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   }
 
   // Fetch resources from API
-  const fetchResources = async () => {
+  const fetchResources = useCallback(async () => {
     try {
       setLoading(true)
       const timestamp = Date.now()
@@ -415,7 +415,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
 
   // Handle target quantity change (admin only)
@@ -679,7 +679,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
 
   // Fetch leaderboard data
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     try {
       setLeaderboardLoading(true)
       const response = await fetch(`/api/leaderboard?timeFilter=${leaderboardTimeFilter}&limit=10`, {
@@ -700,19 +700,19 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     } finally {
       setLeaderboardLoading(false)
     }
-  }
+  }, [leaderboardTimeFilter])
 
   // Fetch resources on component mount
   useEffect(() => {
     fetchResources()
     fetchRecentActivity()
     fetchLeaderboard()
-  }, [])
+  }, [fetchResources, fetchRecentActivity, fetchLeaderboard])
 
   // Fetch leaderboard when time filter changes
   useEffect(() => {
     fetchLeaderboard()
-  }, [leaderboardTimeFilter])
+  }, [fetchLeaderboard])
 
   // Filter resources based on search term and filters
   const filteredResources = resources.filter(resource => {
@@ -1621,7 +1621,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         <div className="text-center py-12">
           {searchTerm ? (
             <div>
-              <p className="text-gray-500 dark:text-gray-400">No resources found matching "{searchTerm}"</p>
+              <p className="text-gray-500 dark:text-gray-400">No resources found matching &quot;{searchTerm}&quot;</p>
               <button
                 onClick={() => setSearchTerm('')}
                 className="mt-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
@@ -1648,7 +1648,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             
             <div className="mb-6">
               <p className="text-gray-700 dark:text-gray-300 mb-2">
-                Are you sure you want to delete <strong>"{deleteConfirm.resourceName}"</strong>?
+                Are you sure you want to delete <strong>&quot;{deleteConfirm.resourceName}&quot;</strong>?
               </p>
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3">
                 <div className="flex items-start gap-2">

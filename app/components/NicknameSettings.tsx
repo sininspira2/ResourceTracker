@@ -25,7 +25,7 @@ export function NicknameSettings() {
             </span>
           </div>
           <p className="text-sm text-blue-700 dark:text-blue-300">
-            <strong>"{displayName}"</strong>
+            <strong>&quot;{displayName}&quot;</strong>
           </p>
           <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
             {session.user.discordNickname 
