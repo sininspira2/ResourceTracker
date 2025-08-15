@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { TRANSFER_DIRECTION, type TRANSFER_DIRECTION } from '@/lib/constants'
+import { TRANSFER_DIRECTION, type TransferDirection } from '@/lib/constants'
 
 interface TransferModalProps {
   resource: {
@@ -15,7 +15,7 @@ interface TransferModalProps {
   onTransfer: (
     resourceId: string,
     amount: number,
-    direction: TRANSFER_DIRECTION,
+    direction: TransferDirection,
   ) => Promise<void>
 }
 
@@ -29,7 +29,7 @@ export function TransferModal({
   const [
     direction,
     setDirection,
-  ] = useState<TRANSFER_DIRECTION>(
+  ] = useState<TransferDirection>(
     TRANSFER_DIRECTION.TO_DEEP_DESERT,
   )
   const [error, setError] = useState<string | null>(null)
@@ -114,7 +114,7 @@ export function TransferModal({
               value={direction}
               onChange={(e) =>
                 setDirection(
-                  e.target.value as TRANSFER_DIRECTION,
+                  e.target.value as TransferDirection,
                 )
               }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"

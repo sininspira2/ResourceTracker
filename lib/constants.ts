@@ -42,6 +42,8 @@ export const TRANSFER_DIRECTION = {
   TO_HAGGA: 'to_hagga',
 } as const;
 
+export type TransferDirection = (typeof TRANSFER_DIRECTION)[keyof typeof TRANSFER_DIRECTION];
+
 // Local Storage
 export const LOCAL_STORAGE_KEYS = {
   VIEW_MODE: 'resource-view-mode',
