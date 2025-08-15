@@ -1,6 +1,10 @@
 import { NextAuthOptions } from "next-auth"
 import DiscordProvider from "next-auth/providers/discord"
 import { Session } from "next-auth"
+import { db } from "@/lib/db"
+import { users } from "@/lib/db"
+import { eq } from "drizzle-orm"
+import { nanoid } from "nanoid"
 import { hasResourceAccess, hasResourceAdminAccess, hasTargetEditAccess, hasReportAccess, hasUserManagementAccess, hasDataExportAccess } from './discord-roles'
 
 interface UserPermissions {
@@ -21,6 +25,22 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
       authorization: { params: { scope: scopes } },
+      profile(profile) {
+        if (profile.avatar === null) {
+          const defaultAvatarNumber = parseInt(profile.discriminator) % 5
+          profile.image_url = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`
+        } else {
+          const format = profile.avatar.startsWith("a_") ? "gif" : "png"
+          profile.image_url = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.${format}`
+        }
+        return {
+          id: profile.id,
+          name: profile.username,
+          email: profile.email,
+          image: profile.image_url,
+          global_name: profile.global_name,
+        }
+      },
     })
   ],
   session: {
@@ -62,10 +82,12 @@ export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === 'development',
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async jwt({ token, account, trigger }) {
-      // Store access token from initial login
-      if (account) {
+    async jwt({ token, account, trigger, user }) {
+      // Store access token and global_name from initial login
+      if (account && user) {
         token.accessToken = account.access_token
+        // @ts-ignore
+        if (user.global_name) token.global_name = user.global_name
         // Mark that we need to fetch roles on the next session call
         token.rolesFetched = false
       }
@@ -97,6 +119,44 @@ export const authOptions: NextAuthOptions = {
                 username: member.user?.username,
                 global_name: member.user?.global_name 
               })
+            }
+
+            // Upsert user data in the database
+            if (token.sub) { // token.sub is the user's Discord ID
+              const discordId = token.sub
+              const username = token.name || 'unknown'
+              const avatar = token.picture || null
+              // Use server nickname if available, otherwise fall back to global name
+              const displayName = member.nick || token.global_name || username
+
+              const now = new Date()
+
+              try {
+                const existingUser = await db.select().from(users).where(eq(users.discordId, discordId)).limit(1)
+
+                if (existingUser.length > 0) {
+                  // Update existing user
+                  await db.update(users).set({
+                    username: username,
+                    avatar: avatar,
+                    customNickname: displayName,
+                    lastLogin: now,
+                  }).where(eq(users.discordId, discordId))
+                } else {
+                  // Create new user
+                  await db.insert(users).values({
+                    id: nanoid(),
+                    discordId: discordId,
+                    username: username,
+                    avatar: avatar,
+                    customNickname: displayName,
+                    createdAt: now,
+                    lastLogin: now,
+                  })
+                }
+              } catch (dbError) {
+                console.error("Database user upsert failed:", dbError)
+              }
             }
           } else {
             console.warn('Failed to fetch Discord member data:', response.status, response.statusText)
