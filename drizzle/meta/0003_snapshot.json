@@ -1,8 +1,6 @@
 {
-  "version": "5",
+  "version": "6",
   "dialect": "sqlite",
-  "id": "598b35fb-3581-4988-b27e-1f66bf938b92",
-  "prevId": "6edcfd76-8822-4a8e-884e-25bb29e29d7e",
   "tables": {
     "resource_history": {
       "name": "resource_history",
@@ -76,19 +74,20 @@
         "resource_history_resource_id_resources_id_fk": {
           "name": "resource_history_resource_id_resources_id_fk",
           "tableFrom": "resource_history",
-          "tableTo": "resources",
           "columnsFrom": [
             "resource_id"
           ],
+          "tableTo": "resources",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "resources": {
       "name": "resources",
@@ -182,7 +181,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "user_sessions": {
       "name": "user_sessions",
@@ -228,19 +228,20 @@
         "user_sessions_user_id_users_id_fk": {
           "name": "user_sessions_user_id_users_id_fk",
           "tableFrom": "user_sessions",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "users": {
       "name": "users",
@@ -299,13 +300,16 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
   "enums": {},
   "_meta": {
-    "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "598b35fb-3581-4988-b27e-1f66bf938b92",
+  "prevId": "6edcfd76-8822-4a8e-884e-25bb29e29d7e",
+  "views": {}
 }

@@ -37,94 +37,100 @@ export async function PUT(
     const { quantity, updateType = 'absolute', changeValue, reason, quantityField } = await request.json()
     const userId = getUserIdentifier(session)
     
-    // Get current resource for history logging and points calculation
-    const currentResource = await db.select().from(resources).where(eq(resources.id, params.id))
-    if (currentResource.length === 0) {
-      return NextResponse.json({ error: 'Resource not found' }, { status: 404 })
-    }
+    const result = await db.transaction(async (tx) => {
+      // Get current resource for history logging and points calculation
+      const currentResource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      if (currentResource.length === 0) {
+        throw new Error('ResourceNotFound')
+      }
 
-    const resource = currentResource[0]
-    let previousQuantityHagga = resource.quantityHagga
-    let newQuantityHagga = resource.quantityHagga
-    let changeAmountHagga = 0
-    let previousQuantityDeepDesert = resource.quantityDeepDesert
-    let newQuantityDeepDesert = resource.quantityDeepDesert
-    let changeAmountDeepDesert = 0
+      const resource = currentResource[0]
+      let previousQuantityHagga = resource.quantityHagga
+      let newQuantityHagga = resource.quantityHagga
+      let changeAmountHagga = 0
+      let previousQuantityDeepDesert = resource.quantityDeepDesert
+      let newQuantityDeepDesert = resource.quantityDeepDesert
+      let changeAmountDeepDesert = 0
 
-    if (quantityField === 'quantityDeepDesert') {
-        changeAmountDeepDesert = updateType === 'relative' ? changeValue : quantity - previousQuantityDeepDesert
-        newQuantityDeepDesert = previousQuantityDeepDesert + changeAmountDeepDesert
-    } else { // default to hagga
-        changeAmountHagga = updateType === 'relative' ? changeValue : quantity - previousQuantityHagga
-        newQuantityHagga = previousQuantityHagga + changeAmountHagga
-    }
+      if (quantityField === 'quantityDeepDesert') {
+          changeAmountDeepDesert = updateType === 'relative' ? changeValue : quantity - previousQuantityDeepDesert
+          newQuantityDeepDesert = previousQuantityDeepDesert + changeAmountDeepDesert
+      } else { // default to hagga
+          changeAmountHagga = updateType === 'relative' ? changeValue : quantity - previousQuantityHagga
+          newQuantityHagga = previousQuantityHagga + changeAmountHagga
+      }
 
-    // Update the resource
-    await db.update(resources)
-      .set({
-        quantityHagga: newQuantityHagga,
-        quantityDeepDesert: newQuantityDeepDesert,
-        lastUpdatedBy: userId,
-        updatedAt: new Date(),
+      // Update the resource
+      await tx.update(resources)
+        .set({
+          quantityHagga: newQuantityHagga,
+          quantityDeepDesert: newQuantityDeepDesert,
+          lastUpdatedBy: userId,
+          updatedAt: new Date(),
+        })
+        .where(eq(resources.id, params.id))
+
+      // Log the change in history
+      await tx.insert(resourceHistory).values({
+        id: nanoid(),
+        resourceId: params.id,
+        previousQuantityHagga,
+        newQuantityHagga,
+        changeAmountHagga,
+        previousQuantityDeepDesert,
+        newQuantityDeepDesert,
+        changeAmountDeepDesert,
+        changeType: updateType || 'absolute',
+        updatedBy: userId,
+        reason: reason,
+        createdAt: new Date(),
       })
-      .where(eq(resources.id, params.id))
 
-    // Log the change in history
-    await db.insert(resourceHistory).values({
-      id: nanoid(),
-      resourceId: params.id,
-      previousQuantityHagga,
-      newQuantityHagga,
-      changeAmountHagga,
-      previousQuantityDeepDesert,
-      newQuantityDeepDesert,
-      changeAmountDeepDesert,
-      changeType: updateType || 'absolute',
-      updatedBy: userId,
-      reason: reason,
-      createdAt: new Date(),
+      // Award points if quantity changed
+      const totalChangeAmount = changeAmountHagga + changeAmountDeepDesert;
+      let pointsCalculation = null
+      if (totalChangeAmount !== 0) {
+        const actionType: 'ADD' | 'SET' | 'REMOVE' =
+          updateType === 'absolute' ? 'SET' :
+          totalChangeAmount > 0 ? 'ADD' : 'REMOVE'
+
+        const resourceStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity)
+
+        pointsCalculation = await awardPoints(
+          getUserIdentifier(session),
+          params.id,
+          actionType,
+          Math.abs(totalChangeAmount),
+          {
+            name: resource.name,
+            category: resource.category || 'Other',
+            status: resourceStatus,
+            multiplier: resource.multiplier || 1.0
+          },
+          tx // Pass the transaction object
+        )
+      }
+
+      const updatedResource = await tx.select().from(resources).where(eq(resources.id, params.id))
+
+      return {
+        resource: updatedResource[0],
+        pointsEarned: pointsCalculation?.finalPoints || 0,
+        pointsCalculation
+      }
     })
 
-    // Award points if quantity changed
-    const totalChangeAmount = changeAmountHagga + changeAmountDeepDesert;
-    let pointsCalculation = null
-    if (totalChangeAmount !== 0) {
-      const actionType: 'ADD' | 'SET' | 'REMOVE' = 
-        updateType === 'absolute' ? 'SET' :
-        totalChangeAmount > 0 ? 'ADD' : 'REMOVE'
-
-      // Calculate the current status for bonus calculation
-      const resourceStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity)
-
-      pointsCalculation = await awardPoints(
-        getUserIdentifier(session),
-        params.id,
-        actionType,
-        Math.abs(totalChangeAmount),
-        {
-          name: resource.name,
-          category: resource.category || 'Other',
-          status: resourceStatus,
-          multiplier: resource.multiplier || 1.0
-        }
-      )
-    }
-
-    // Get the updated resource
-    const updatedResource = await db.select().from(resources).where(eq(resources.id, params.id))
-    
-    return NextResponse.json({
-      resource: updatedResource[0],
-      pointsEarned: pointsCalculation?.finalPoints || 0,
-      pointsCalculation
-    }, {
+    return NextResponse.json(result, {
       headers: {
         'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
       }
     })
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'ResourceNotFound') {
+      return NextResponse.json({ error: 'Resource not found' }, { status: 404 })
+    }
     console.error('Error updating resource:', error)
     return NextResponse.json({ error: 'Failed to update resource' }, { status: 500 })
   }
@@ -142,17 +148,15 @@ export async function DELETE(
   }
 
   try {
-    // Check if resource exists
-    const resource = await db.select().from(resources).where(eq(resources.id, params.id))
-    if (resource.length === 0) {
-      return NextResponse.json({ error: 'Resource not found' }, { status: 404 })
-    }
+    await db.transaction(async (tx) => {
+      const resource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      if (resource.length === 0) {
+        throw new Error('ResourceNotFound')
+      }
 
-    // Delete all history entries for this resource first (due to foreign key constraint)
-    await db.delete(resourceHistory).where(eq(resourceHistory.resourceId, params.id))
-    
-    // Delete the resource
-    await db.delete(resources).where(eq(resources.id, params.id))
+      await tx.delete(resourceHistory).where(eq(resourceHistory.resourceId, params.id))
+      await tx.delete(resources).where(eq(resources.id, params.id))
+    })
 
     return NextResponse.json({ message: 'Resource and its history deleted successfully' }, {
       headers: {
@@ -161,7 +165,10 @@ export async function DELETE(
         'Expires': '0'
       }
     })
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'ResourceNotFound') {
+      return NextResponse.json({ error: 'Resource not found' }, { status: 404 })
+    }
     console.error('Error deleting resource:', error)
     return NextResponse.json({ error: 'Failed to delete resource' }, { status: 500 })
   }
