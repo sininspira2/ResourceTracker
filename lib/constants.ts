@@ -32,10 +32,14 @@ export const UPDATE_TYPE = {
   RELATIVE: 'relative',
 } as const;
 
+export type UpdateType = (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE];
+
 export const QUANTITY_FIELD = {
   HAGGA: 'quantityHagga',
   DEEP_DESERT: 'quantityDeepDesert',
 } as const;
+
+export type QuantityField = (typeof QUANTITY_FIELD)[keyof typeof QUANTITY_FIELD];
 
 export const TRANSFER_DIRECTION = {
   TO_DEEP_DESERT: 'to_deep_desert',
