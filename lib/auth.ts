@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
         if (profile.avatar === null) {
           // Discord's new default avatar is based on user ID.
           // https://discord.com/developers/docs/reference#image-formatting
-          const defaultAvatarNumber = (BigInt(profile.id) >> 22n) % 6n;
+          const defaultAvatarNumber = (BigInt(profile.id) >> BigInt(22)) % BigInt(6);
           image_url = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`
         } else {
           const format = profile.avatar.startsWith("a_") ? "gif" : "png"
