@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { ResourceHistoryChart } from '@/app/components/ResourceHistoryChart'
 import { CongratulationsPopup } from '@/app/components/CongratulationsPopup'
-import { hasResourceAccess, hasResourceAdminAccess } from '@/lib/discord-roles'
 import { getUserIdentifier } from '@/lib/auth'
 
 // Utility function to format numbers with commas
@@ -112,11 +111,10 @@ export default function ResourceDetailPage() {
   })
 
   const resourceId = params.id as string
-  const userRoles = session?.user?.roles || []
-  const canEdit = hasResourceAccess(userRoles)
+  const canEdit = session?.user?.permissions?.hasResourceAccess ?? false
   
   // Check if user can delete history entries
-  const canDeleteHistory = hasResourceAdminAccess(userRoles)
+  const canDeleteHistory = session?.user?.permissions?.hasResourceAdminAccess ?? false
 
   // Fetch history data
   const fetchHistory = async (days: number) => {
