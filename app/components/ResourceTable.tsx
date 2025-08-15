@@ -248,9 +248,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   // Leaderboard states
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [leaderboardLoading, setLeaderboardLoading] = useState(true)
-  const [leaderboardTimeFilter, setLeaderboardTimeFilter] = useState(
-    LEADERBOARD_TIME_FILTERS['7D'],
-  )
+  const [
+    leaderboardTimeFilter,
+    setLeaderboardTimeFilter,
+  ] = useState<
+    (typeof LEADERBOARD_TIME_FILTERS)[keyof typeof LEADERBOARD_TIME_FILTERS]
+  >(LEADERBOARD_TIME_FILTERS['7D'])
   const [leaderboardExpanded, setLeaderboardExpanded] = useState(false)
 
   // Congratulations popup state
