@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 
-const CATEGORY_OPTIONS = ['Raw', 'Refined', 'Components', 'Other']
+const CATEGORY_OPTIONS = ['Raw', 'Refined', 'Components', 'Blueprints', 'Other']
 
 interface Resource {
   id: string

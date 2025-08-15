@@ -180,7 +180,7 @@ interface CongratulationsState {
 // Note: Role checking now done server-side in auth.ts and passed via session.user.permissions
 
 // Category options for dropdown
-const CATEGORY_OPTIONS = ['Raw', 'Refined', 'Components', 'Other']
+const CATEGORY_OPTIONS = ['Raw', 'Refined', 'Components', 'Blueprints', 'Other']
 
 export function ResourceTable({ userId }: ResourceTableProps) {
   const { data: session } = useSession()
