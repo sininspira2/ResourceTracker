@@ -1,0 +1,1 @@
+CREATE INDEX `leaderboard_created_at_idx` ON `leaderboard` (`created_at`);

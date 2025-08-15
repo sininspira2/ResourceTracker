@@ -29,71 +29,74 @@ export async function PUT(
         return NextResponse.json({ error: 'Invalid transferDirection' }, { status: 400 })
     }
 
-    const currentResource = await db.select().from(resources).where(eq(resources.id, params.id))
-    if (currentResource.length === 0) {
-      return NextResponse.json({ error: 'Resource not found' }, { status: 404 })
-    }
+    const result = await db.transaction(async (tx) => {
+      const currentResource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      if (currentResource.length === 0) {
+        throw new Error('ResourceNotFound')
+      }
 
-    const resource = currentResource[0]
+      const resource = currentResource[0]
+      let newQuantityHagga = resource.quantityHagga;
+      let newQuantityDeepDesert = resource.quantityDeepDesert;
 
-    let newQuantityHagga = resource.quantityHagga;
-    let newQuantityDeepDesert = resource.quantityDeepDesert;
+      if (transferDirection === 'to_deep_desert') {
+          if (resource.quantityHagga < transferAmount) {
+              throw new Error('Insufficient quantity in Hagga base')
+          }
+          newQuantityHagga = resource.quantityHagga - transferAmount;
+          newQuantityDeepDesert = resource.quantityDeepDesert + transferAmount;
+      } else { // to_hagga
+          if (resource.quantityDeepDesert < transferAmount) {
+              throw new Error('Insufficient quantity in Deep Desert base')
+          }
+          newQuantityHagga = resource.quantityHagga + transferAmount;
+          newQuantityDeepDesert = resource.quantityDeepDesert - transferAmount;
+      }
 
-    if (transferDirection === 'to_deep_desert') {
-        if (resource.quantityHagga < transferAmount) {
-            return NextResponse.json({ error: 'Insufficient quantity in Hagga base' }, { status: 400 })
-        }
-        newQuantityHagga = resource.quantityHagga - transferAmount;
-        newQuantityDeepDesert = resource.quantityDeepDesert + transferAmount;
-    } else { // to_hagga
-        if (resource.quantityDeepDesert < transferAmount) {
-            return NextResponse.json({ error: 'Insufficient quantity in Deep Desert base' }, { status: 400 })
-        }
-        newQuantityHagga = resource.quantityHagga + transferAmount;
-        newQuantityDeepDesert = resource.quantityDeepDesert - transferAmount;
-    }
+      await tx.update(resources)
+        .set({
+          quantityHagga: newQuantityHagga,
+          quantityDeepDesert: newQuantityDeepDesert,
+          lastUpdatedBy: userId,
+          updatedAt: new Date(),
+        })
+        .where(eq(resources.id, params.id))
 
-    // Update the resource
-    await db.update(resources)
-      .set({
-        quantityHagga: newQuantityHagga,
-        quantityDeepDesert: newQuantityDeepDesert,
-        lastUpdatedBy: userId,
-        updatedAt: new Date(),
+      await tx.insert(resourceHistory).values({
+        id: nanoid(),
+        resourceId: params.id,
+        previousQuantityHagga: resource.quantityHagga,
+        newQuantityHagga: newQuantityHagga,
+        changeAmountHagga: transferDirection === 'to_hagga' ? transferAmount : -transferAmount,
+        previousQuantityDeepDesert: resource.quantityDeepDesert,
+        newQuantityDeepDesert: newQuantityDeepDesert,
+        changeAmountDeepDesert: transferDirection === 'to_deep_desert' ? transferAmount : -transferAmount,
+        changeType: 'transfer',
+        updatedBy: userId,
+        reason: `Transfer ${transferAmount} ${transferDirection}`,
+        createdAt: new Date(),
+        transferAmount: transferAmount,
+        transferDirection: transferDirection
       })
-      .where(eq(resources.id, params.id))
 
-    // Log the change in history
-    await db.insert(resourceHistory).values({
-      id: nanoid(),
-      resourceId: params.id,
-      previousQuantityHagga: resource.quantityHagga,
-      newQuantityHagga: newQuantityHagga,
-      changeAmountHagga: transferDirection === 'to_hagga' ? transferAmount : -transferAmount,
-      previousQuantityDeepDesert: resource.quantityDeepDesert,
-      newQuantityDeepDesert: newQuantityDeepDesert,
-      changeAmountDeepDesert: transferDirection === 'to_deep_desert' ? transferAmount : -transferAmount,
-      changeType: 'transfer',
-      updatedBy: userId,
-      reason: `Transfer ${transferAmount} ${transferDirection}`,
-      createdAt: new Date(),
-      transferAmount: transferAmount,
-      transferDirection: transferDirection
+      const updatedResource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      return { resource: updatedResource[0] }
     })
 
-    // Get the updated resource
-    const updatedResource = await db.select().from(resources).where(eq(resources.id, params.id))
-
-    return NextResponse.json({
-      resource: updatedResource[0]
-    }, {
+    return NextResponse.json(result, {
       headers: {
-        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+        'Cache-control': 'no-cache, no-store, max-age=0, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
       }
     })
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message.startsWith('Insufficient quantity')) {
+      return NextResponse.json({ error: error.message }, { status: 400 })
+    }
+    if (error.message === 'ResourceNotFound') {
+      return NextResponse.json({ error: 'Resource not found' }, { status: 404 })
+    }
     console.error('Error transferring resource quantity:', error)
     return NextResponse.json({ error: 'Failed to transfer resource quantity' }, { status: 500 })
   }

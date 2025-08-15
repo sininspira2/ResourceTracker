@@ -103,7 +103,8 @@ export async function awardPoints(
     category: string
     status: string
     multiplier: number
-  }
+  },
+  dbInstance: any = db
 ): Promise<PointsCalculation> {
   const calculation = calculatePoints(
     actionType,
@@ -115,7 +116,7 @@ export async function awardPoints(
 
   // Only create leaderboard entry if points were earned
   if (calculation.finalPoints > 0) {
-    await db.insert(leaderboard).values({
+    await dbInstance.insert(leaderboard).values({
       id: nanoid(),
       userId,
       resourceId,
@@ -265,8 +266,42 @@ export async function getUserContributions(
  * Get user's rank in the leaderboard
  */
 export async function getUserRank(userId: string, timeFilter?: '24h' | '7d' | '30d' | 'all') {
-  const result = await getLeaderboard(timeFilter, 1000) // Get top 1000
-  const userRankIndex = result.rankings.findIndex(ranking => ranking.userId === userId)
-  
-  return userRankIndex === -1 ? null : userRankIndex + 1
+  let timeCondition = sql`1 = 1`
+  if (timeFilter && timeFilter !== 'all') {
+    const now = new Date()
+    let cutoffDate: Date;
+    switch (timeFilter) {
+      case '24h':
+        cutoffDate = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+        break
+      case '7d':
+        cutoffDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        break
+      case '30d':
+        cutoffDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+        break
+    }
+    timeCondition = gte(leaderboard.createdAt, cutoffDate!)
+  }
+
+  const rankedUsers = db
+    .select({
+      userId: leaderboard.userId,
+      rank: sql<number>`RANK() OVER (ORDER BY SUM(${leaderboard.finalPoints}) DESC)`.as('rank'),
+    })
+    .from(leaderboard)
+    .where(timeCondition)
+    .groupBy(leaderboard.userId)
+    .as('ranked_users');
+
+  const userRankResult = await db
+    .select({ rank: rankedUsers.rank })
+    .from(rankedUsers)
+    .where(eq(rankedUsers.userId, userId));
+
+  if (userRankResult.length === 0) {
+    return null;
+  }
+
+  return userRankResult[0].rank;
 } 

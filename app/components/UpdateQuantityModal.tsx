@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { QUANTITY_FIELD, UPDATE_TYPE } from '@/lib/constants'
+import { QUANTITY_FIELD, UPDATE_TYPE, type QuantityField, type UpdateType } from '@/lib/constants'
 
 interface UpdateQuantityModalProps {
   resource: {
@@ -15,10 +15,10 @@ interface UpdateQuantityModalProps {
   onUpdate: (
     resourceId: string,
     amount: number,
-    quantityField: (typeof QUANTITY_FIELD)[keyof typeof QUANTITY_FIELD],
-    updateType: (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE],
-  ) => Promise<void>
-  updateType: (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE]
+    quantityField: QuantityField,
+    updateType: UpdateType,
+  ) => Promise<void>,
+  updateType: UpdateType
 }
 
 export function UpdateQuantityModal({
@@ -32,7 +32,7 @@ export function UpdateQuantityModal({
   const [
     quantityField,
     setQuantityField,
-  ] = useState<(typeof QUANTITY_FIELD)[keyof typeof QUANTITY_FIELD]>(
+  ] = useState<QuantityField>(
     QUANTITY_FIELD.HAGGA,
   )
   const [error, setError] = useState<string | null>(null)
@@ -116,8 +116,7 @@ export function UpdateQuantityModal({
               value={quantityField}
               onChange={(e) =>
                 setQuantityField(
-                  e.target
-                    .value as (typeof QUANTITY_FIELD)[keyof typeof QUANTITY_FIELD],
+                  e.target.value as QuantityField,
                 )
               }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
