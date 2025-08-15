@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { TRANSFER_DIRECTION } from '@/lib/constants'
 
 interface TransferModalProps {
   resource: {
@@ -11,12 +12,26 @@ interface TransferModalProps {
   }
   isOpen: boolean
   onClose: () => void
-  onTransfer: (resourceId: string, amount: number, direction: 'to_deep_desert' | 'to_hagga') => Promise<void>
+  onTransfer: (
+    resourceId: string,
+    amount: number,
+    direction: (typeof TRANSFER_DIRECTION)[keyof typeof TRANSFER_DIRECTION],
+  ) => Promise<void>
 }
 
-export function TransferModal({ resource, isOpen, onClose, onTransfer }: TransferModalProps) {
+export function TransferModal({
+  resource,
+  isOpen,
+  onClose,
+  onTransfer,
+}: TransferModalProps) {
   const [amount, setAmount] = useState(0)
-  const [direction, setDirection] = useState<'to_deep_desert' | 'to_hagga'>('to_deep_desert')
+  const [
+    direction,
+    setDirection,
+  ] = useState<(typeof TRANSFER_DIRECTION)[keyof typeof TRANSFER_DIRECTION]>(
+    TRANSFER_DIRECTION.TO_DEEP_DESERT,
+  )
   const [error, setError] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -39,11 +54,17 @@ export function TransferModal({ resource, isOpen, onClose, onTransfer }: Transfe
       setError('Amount must be positive.')
       return
     }
-    if (direction === 'to_deep_desert' && amount > resource.quantityHagga) {
+    if (
+      direction === TRANSFER_DIRECTION.TO_DEEP_DESERT &&
+      amount > resource.quantityHagga
+    ) {
       setError('Insufficient quantity in Hagga base.')
       return
     }
-    if (direction === 'to_hagga' && amount > resource.quantityDeepDesert) {
+    if (
+      direction === TRANSFER_DIRECTION.TO_HAGGA &&
+      amount > resource.quantityDeepDesert
+    ) {
       setError('Insufficient quantity in Deep Desert base.')
       return
     }
@@ -69,10 +90,14 @@ export function TransferModal({ resource, isOpen, onClose, onTransfer }: Transfe
           isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Transfer {resource.name}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          Transfer {resource.name}
+        </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Amount
+            </label>
             <input
               type="number"
               min="1"
@@ -82,14 +107,25 @@ export function TransferModal({ resource, isOpen, onClose, onTransfer }: Transfe
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Direction</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Direction
+            </label>
             <select
               value={direction}
-              onChange={(e) => setDirection(e.target.value as 'to_deep_desert' | 'to_hagga')}
+              onChange={(e) =>
+                setDirection(
+                  e.target
+                    .value as (typeof TRANSFER_DIRECTION)[keyof typeof TRANSFER_DIRECTION],
+                )
+              }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
-              <option value="to_deep_desert">Hagga to Deep Desert</option>
-              <option value="to_hagga">Deep Desert to Hagga</option>
+              <option value={TRANSFER_DIRECTION.TO_DEEP_DESERT}>
+                Hagga to Deep Desert
+              </option>
+              <option value={TRANSFER_DIRECTION.TO_HAGGA}>
+                Deep Desert to Hagga
+              </option>
             </select>
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}

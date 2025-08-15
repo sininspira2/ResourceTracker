@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { QUANTITY_FIELD, UPDATE_TYPE } from '@/lib/constants'
 
 interface UpdateQuantityModalProps {
   resource: {
@@ -11,13 +12,29 @@ interface UpdateQuantityModalProps {
   }
   isOpen: boolean
   onClose: () => void
-  onUpdate: (resourceId: string, amount: number, quantityField: 'quantityHagga' | 'quantityDeepDesert', updateType: 'absolute' | 'relative') => Promise<void>
-  updateType: 'absolute' | 'relative'
+  onUpdate: (
+    resourceId: string,
+    amount: number,
+    quantityField: (typeof QUANTITY_FIELD)[keyof typeof QUANTITY_FIELD],
+    updateType: (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE],
+  ) => Promise<void>
+  updateType: (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE]
 }
 
-export function UpdateQuantityModal({ resource, isOpen, onClose, onUpdate, updateType }: UpdateQuantityModalProps) {
+export function UpdateQuantityModal({
+  resource,
+  isOpen,
+  onClose,
+  onUpdate,
+  updateType,
+}: UpdateQuantityModalProps) {
   const [amount, setAmount] = useState(0)
-  const [quantityField, setQuantityField] = useState<'quantityHagga' | 'quantityDeepDesert'>('quantityHagga')
+  const [
+    quantityField,
+    setQuantityField,
+  ] = useState<(typeof QUANTITY_FIELD)[keyof typeof QUANTITY_FIELD]>(
+    QUANTITY_FIELD.HAGGA,
+  )
   const [error, setError] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -43,13 +60,13 @@ export function UpdateQuantityModal({ resource, isOpen, onClose, onUpdate, updat
 
   const handleUpdate = async () => {
     setError(null)
-    if (updateType === 'relative' && amount === 0) {
+    if (updateType === UPDATE_TYPE.RELATIVE && amount === 0) {
       setError('Amount cannot be zero for relative updates.')
       return
     }
-    if (updateType === 'absolute' && amount < 0) {
-        setError('Amount must be positive for absolute updates.')
-        return
+    if (updateType === UPDATE_TYPE.ABSOLUTE && amount < 0) {
+      setError('Amount must be positive for absolute updates.')
+      return
     }
 
     try {
@@ -73,11 +90,16 @@ export function UpdateQuantityModal({ resource, isOpen, onClose, onUpdate, updat
           isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{updateType === 'absolute' ? 'Set' : 'Add/Remove'} {resource.name}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          {updateType === UPDATE_TYPE.ABSOLUTE ? 'Set' : 'Add/Remove'}{' '}
+          {resource.name}
+        </h3>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {updateType === 'absolute' ? 'New Quantity' : 'Amount to Add/Remove'}
+              {updateType === UPDATE_TYPE.ABSOLUTE
+                ? 'New Quantity'
+                : 'Amount to Add/Remove'}
             </label>
             <input
               type="number"
@@ -87,14 +109,21 @@ export function UpdateQuantityModal({ resource, isOpen, onClose, onUpdate, updat
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Base</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Base
+            </label>
             <select
               value={quantityField}
-              onChange={(e) => setQuantityField(e.target.value as 'quantityHagga' | 'quantityDeepDesert')}
+              onChange={(e) =>
+                setQuantityField(
+                  e.target
+                    .value as (typeof QUANTITY_FIELD)[keyof typeof QUANTITY_FIELD],
+                )
+              }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
-              <option value="quantityHagga">Hagga</option>
-              <option value="quantityDeepDesert">Deep Desert</option>
+              <option value={QUANTITY_FIELD.HAGGA}>Hagga</option>
+              <option value={QUANTITY_FIELD.DEEP_DESERT}>Deep Desert</option>
             </select>
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -110,7 +139,7 @@ export function UpdateQuantityModal({ resource, isOpen, onClose, onUpdate, updat
             onClick={handleUpdate}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-lg transition-colors"
           >
-            {updateType === 'absolute' ? 'Set' : 'Update'}
+            {updateType === UPDATE_TYPE.ABSOLUTE ? 'Set' : 'Update'}
           </button>
         </div>
       </div>
