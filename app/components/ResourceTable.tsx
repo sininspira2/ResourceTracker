@@ -828,10 +828,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         // Extended search: only for longer search terms (6+ characters) to avoid broad matches
         else if (searchLower.length >= 6) {
           matchesSearch =
-            resource.description?.toLowerCase().includes(searchLower) ??
-            false ||
-            resource.category?.toLowerCase().includes(searchLower) ??
-            false
+            (resource.description?.toLowerCase().includes(searchLower) ??
+              false) ||
+            (resource.category?.toLowerCase().includes(searchLower) ?? false)
         } else {
           matchesSearch = false
         }
