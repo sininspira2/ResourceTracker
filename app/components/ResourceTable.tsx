@@ -71,7 +71,7 @@ const getRelativeTime = (updatedAt: string): string => {
 const calculateResourceStatus = (
   quantity: number,
   targetQuantity: number | null,
-): keyof typeof RESOURCE_STATUS => {
+): (typeof RESOURCE_STATUS)[keyof typeof RESOURCE_STATUS] => {
   if (!targetQuantity || targetQuantity <= 0) return RESOURCE_STATUS.AT_TARGET
 
   const percentage = (quantity / targetQuantity) * 100
