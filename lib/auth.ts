@@ -26,18 +26,21 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
       authorization: { params: { scope: scopes } },
       profile(profile) {
+        let image_url: string;
         if (profile.avatar === null) {
-          const defaultAvatarNumber = parseInt(profile.discriminator) % 5
-          profile.image_url = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`
+          // Discord's new default avatar is based on user ID.
+          // https://discord.com/developers/docs/reference#image-formatting
+          const defaultAvatarNumber = (BigInt(profile.id) >> 22n) % 6n;
+          image_url = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`
         } else {
           const format = profile.avatar.startsWith("a_") ? "gif" : "png"
-          profile.image_url = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.${format}`
+          image_url = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.${format}`
         }
         return {
           id: profile.id,
           name: profile.username,
           email: profile.email,
-          image: profile.image_url,
+          image: image_url,
           global_name: profile.global_name,
         }
       },
@@ -86,7 +89,7 @@ export const authOptions: NextAuthOptions = {
       // Store access token and global_name from initial login
       if (account && user) {
         token.accessToken = account.access_token
-        // @ts-ignore
+
         if (user.global_name) token.global_name = user.global_name
         // Mark that we need to fetch roles on the next session call
         token.rolesFetched = false
@@ -132,28 +135,23 @@ export const authOptions: NextAuthOptions = {
               const now = new Date()
 
               try {
-                const existingUser = await db.select().from(users).where(eq(users.discordId, discordId)).limit(1)
-
-                if (existingUser.length > 0) {
-                  // Update existing user
-                  await db.update(users).set({
+                await db.insert(users).values({
+                  id: nanoid(),
+                  discordId: discordId,
+                  username: username,
+                  avatar: avatar,
+                  customNickname: displayName,
+                  createdAt: now,
+                  lastLogin: now,
+                }).onConflictDoUpdate({
+                  target: users.discordId,
+                  set: {
                     username: username,
                     avatar: avatar,
                     customNickname: displayName,
                     lastLogin: now,
-                  }).where(eq(users.discordId, discordId))
-                } else {
-                  // Create new user
-                  await db.insert(users).values({
-                    id: nanoid(),
-                    discordId: discordId,
-                    username: username,
-                    avatar: avatar,
-                    customNickname: displayName,
-                    createdAt: now,
-                    lastLogin: now,
-                  })
-                }
+                  }
+                })
               } catch (dbError) {
                 console.error("Database user upsert failed:", dbError)
               }
