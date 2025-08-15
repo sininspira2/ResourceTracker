@@ -11,6 +11,10 @@ interface UserPermissions {
 }
 
 declare module "next-auth" {
+  interface User {
+    global_name?: string | null
+  }
+  
   interface Session {
     user: {
       id: string
