@@ -1,12 +1,6 @@
-import { createClient } from '@libsql/client'
-import { drizzle } from 'drizzle-orm/libsql'
+import { createClient, Client } from '@libsql/client'
+import { drizzle, LibSQLDatabase } from 'drizzle-orm/libsql'
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
-
-// Create Turso client
-const client = createClient({
-  url: process.env.TURSO_DATABASE_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN!,
-})
 
 // Database schema
 export const users = sqliteTable('users', {
@@ -77,4 +71,37 @@ export const leaderboard = sqliteTable('leaderboard', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 })
 
-export const db = drizzle(client, { schema: { users, userSessions, resources, resourceHistory, leaderboard } }) 
+const schema = { users, userSessions, resources, resourceHistory, leaderboard };
+
+// --- LAZY INITIALIZATION OF DATABASE ---
+let _db: LibSQLDatabase<typeof schema> | null = null;
+
+const getDb = (): LibSQLDatabase<typeof schema> => {
+  if (_db === null) {
+    const url = process.env.TURSO_DATABASE_URL;
+    const authToken = process.env.TURSO_AUTH_TOKEN;
+
+    if (!url) {
+      throw new Error('TURSO_DATABASE_URL environment variable not provided.');
+    }
+
+    // Auth token is optional for local development
+    const client = createClient({ url, authToken });
+    _db = drizzle(client, { schema });
+  }
+  return _db;
+};
+
+// Use a proxy to lazily initialize the db connection.
+// This allows the db object to be imported and used anywhere
+// without causing an immediate connection. The connection is only
+// established when a property on the db object is accessed.
+export const db = new Proxy<LibSQLDatabase<typeof schema>>(
+  {} as LibSQLDatabase<typeof schema>,
+  {
+    get(target, prop, receiver) {
+      const dbInstance = getDb();
+      return Reflect.get(dbInstance, prop, receiver);
+    },
+  }
+);
