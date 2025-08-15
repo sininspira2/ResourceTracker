@@ -8,6 +8,7 @@ import { TransferModal } from './TransferModal'
 import { UpdateQuantityModal } from './UpdateQuantityModal'
 import { EditResourceModal } from './EditResourceModal'
 import { getUserIdentifier } from '@/lib/auth'
+import { CATEGORY_OPTIONS } from '@/lib/constants'
 
 // Utility function to format numbers with commas
 const formatNumber = (num: number): string => {
@@ -178,9 +179,6 @@ interface CongratulationsState {
 }
 
 // Note: Role checking now done server-side in auth.ts and passed via session.user.permissions
-
-// Category options for dropdown
-const CATEGORY_OPTIONS = ['Raw', 'Refined', 'Components', 'Other']
 
 export function ResourceTable({ userId }: ResourceTableProps) {
   const { data: session } = useSession()
