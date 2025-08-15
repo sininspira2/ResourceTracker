@@ -12,55 +12,69 @@ type RoleConfig = {
   canExportData?: boolean;      // Example: Export system data
 }
 
-// Cached roles to avoid re-parsing on every function call
+// Cached roles to avoid re-parsing on every function call.
+// This is intentionally a module-level variable to cache the config during the
+// lifetime of a serverless function invocation.
 let cachedRoles: RoleConfig[] | null = null;
 
-// Parse the JSON role configuration from environment variable with memoization
+/**
+ * Parses the role configuration from the DISCORD_ROLES_CONFIG environment variable.
+ * This function uses memoization (caching) to avoid re-parsing the JSON on every call.
+ *
+ * IMPORTANT: It only caches a SUCCESSFUL parse. If the environment variable is missing
+ * or invalid, it returns an empty array for the current call but does not cache the
+ * result. This allows subsequent calls within the same warm serverless function to
+ * retry parsing, which is crucial if environment variables are loaded with a slight delay.
+ */
 function getRoleHierarchy(): RoleConfig[] {
-  if (cachedRoles) {
+  // If we have a valid, cached configuration, return it immediately.
+  if (cachedRoles !== null) {
     return cachedRoles;
   }
 
+  const roleConfig = process.env.DISCORD_ROLES_CONFIG;
+
+  // If the environment variable is not set, log a warning and return an empty array for now.
+  // We do NOT cache this result, allowing for a retry on the next call.
+  if (!roleConfig) {
+    console.warn('No DISCORD_ROLES_CONFIG found. Using empty configuration for this call.');
+    return [];
+  }
+
   try {
-    const roleConfig = process.env.DISCORD_ROLES_CONFIG
-    if (!roleConfig) {
-      console.warn('No DISCORD_ROLES_CONFIG found, using empty configuration')
-      cachedRoles = [];
-      return []
-    }
-    
-    const parsed = JSON.parse(roleConfig)
-    
+    const parsed = JSON.parse(roleConfig);
+
+    // Validate that the parsed config is an array.
     if (!Array.isArray(parsed)) {
-      console.error('DISCORD_ROLES_CONFIG must be an array, got:', typeof parsed)
-      cachedRoles = [];
-      return []
+      console.error('DISCORD_ROLES_CONFIG must be an array, got:', typeof parsed);
+      return []; // Do not cache failure
     }
-    
+
+    // Validate each role object in the array.
     const validRoles = parsed.filter(role => {
       if (!role || typeof role !== 'object') {
-        console.warn('Invalid role object in DISCORD_ROLES_CONFIG')
-        return false
+        console.warn('Invalid role object in DISCORD_ROLES_CONFIG');
+        return false;
       }
       if (!role.id || !role.name) {
-        console.warn('Role missing required fields (id, name) in DISCORD_ROLES_CONFIG')
-        return false
+        console.warn('Role missing required fields (id, name) in DISCORD_ROLES_CONFIG');
+        return false;
       }
-      return true
-    })
-    
-    if (validRoles.length === 0) {
-      console.warn('No valid roles found in DISCORD_ROLES_CONFIG')
+      return true;
+    });
+
+    if (validRoles.length === 0 && parsed.length > 0) {
+      console.warn('No valid roles found in DISCORD_ROLES_CONFIG after filtering.');
     }
-    
+
+    // Cache the successfully parsed and validated roles.
     cachedRoles = validRoles;
-    return validRoles
-    
+    return validRoles;
+
   } catch (error) {
-    console.error('Failed to parse DISCORD_ROLES_CONFIG:', error instanceof Error ? error.message : 'Invalid JSON')
-    console.error('Expected format: [{"id":"123","name":"Role","level":1,"canAccessResources":true}]')
-    cachedRoles = [];
-    return []
+    console.error('Failed to parse DISCORD_ROLES_CONFIG:', error instanceof Error ? error.message : 'Invalid JSON');
+    console.error('Expected format: [{"id":"123","name":"Role","level":1,"canAccessResources":true}]');
+    return []; // Do not cache failure
   }
 }
 
