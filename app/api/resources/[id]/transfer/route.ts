@@ -85,7 +85,7 @@ export async function PUT(
 
     return NextResponse.json(result, {
       headers: {
-        'Cache-control': 'no-cache, no-store, max-age=0, must-revalidate',
+        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
       }

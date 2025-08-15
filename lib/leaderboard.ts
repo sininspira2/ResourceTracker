@@ -280,8 +280,12 @@ export async function getUserRank(userId: string, timeFilter?: '24h' | '7d' | '3
       case '30d':
         cutoffDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
         break
+      default:
+        // This case should not be reachable with the current type definitions,
+        // but it makes the code more robust against future changes.
+        return null;
     }
-    timeCondition = gte(leaderboard.createdAt, cutoffDate!)
+    timeCondition = gte(leaderboard.createdAt, cutoffDate)
   }
 
   const rankedUsers = db

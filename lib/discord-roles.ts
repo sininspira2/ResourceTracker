@@ -127,7 +127,7 @@ export function hasResourceAccess(userRoles: string[]): boolean {
 }
 
 // Helper function to check if user has resource admin access (edit/delete/create)
-export function hasResourceAdminAccess(userRoles:string[]): boolean {
+export function hasResourceAdminAccess(userRoles: string[]): boolean {
   const resourceAdminRoles = getRoleHierarchy()
     .filter(role => role.isAdmin)
     .map(role => role.id)
