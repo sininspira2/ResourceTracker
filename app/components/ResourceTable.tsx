@@ -1003,7 +1003,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             <div className="flex items-center gap-2">
               <select
                 value={leaderboardTimeFilter}
-                onChange={(e) => setLeaderboardTimeFilter(e.target.value)}
+                onChange={(e) =>
+                  setLeaderboardTimeFilter(
+                    e.target
+                      .value as (typeof LEADERBOARD_TIME_FILTERS)[keyof typeof LEADERBOARD_TIME_FILTERS],
+                  )
+                }
                 className="text-xs bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-sm px-2 py-1"
               >
                 <option value={LEADERBOARD_TIME_FILTERS['24H']}>24h</option>
