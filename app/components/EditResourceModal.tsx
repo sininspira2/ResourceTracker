@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-
-const CATEGORY_OPTIONS = ['Raw', 'Refined', 'Components', 'Blueprints', 'Other']
+import { CATEGORY_OPTIONS } from '@/lib/constants'
 
 interface Resource {
   id: string
