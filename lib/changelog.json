@@ -1,21 +1,57 @@
 {
-    "currentVersion": "3.0.0",
-    "releases": [
+  "currentVersion": "3.1.0",
+  "releases": [
+    {
+      "version": "3.1.0",
+      "date": "2025-08-19",
+      "title": "Database Performance and New Features",
+      "type": "minor",
+      "changes": [
         {
-            "version": "3.0.0",
-            "date": "2025-11-07",
-            "title": "Dual-inventory tracking addition",
-            "type": "major",
-            "changes": [
-                {
-                    "type": "feature",
-                    "description": "Added dual-tracking for DD and Hagga Bases"
-                },
-                {
-                    "type": "bugfix",
-                    "description": "Fixed bulk metadata update"
-                }
-            ]
+          "type": "feature",
+          "description": "Added a \"Blueprints\" category for organizing resources."
+        },
+        {
+          "type": "improvement",
+          "description": "Optimized database performance with atomic transactions for resource updates and faster leaderboard queries."
+        },
+        {
+          "type": "improvement",
+          "description": "Lazy-loaded the database connection to speed up initial application response."
+        },
+        {
+          "type": "improvement",
+          "description": "Refactored internal code by centralizing constants for better maintainability."
+        },
+        {
+          "type": "bugfix",
+          "description": "Corrected an issue where permissions were not being properly checked on the server side."
+        },
+        {
+          "type": "bugfix",
+          "description": "Resolved warnings related to Discord role configuration parsing."
+        },
+        {
+          "type": "bugfix",
+          "description": "Addressed minor issues in the new inventory transfer modal."
         }
-    ]
+      ]
+    },
+    {
+      "version": "3.0.0",
+      "date": "2025-08-11",
+      "title": "Dual-inventory tracking addition",
+      "type": "major",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added dual-tracking for DD and Hagga Bases"
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed bulk metadata update"
+        }
+      ]
+    }
+  ]
 }

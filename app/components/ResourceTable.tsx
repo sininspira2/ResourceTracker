@@ -272,6 +272,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     LEADERBOARD_TIME_FILTERS.ALL,
   )
   const [needsUpdateFilter, setNeedsUpdateFilter] = useState(false)
+  const [categoryFilter, setCategoryFilter] = useState('all')
 
   // Add state for update modal
   const [updateModalState, setUpdateModalState] = useState<{
@@ -356,6 +357,28 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   // Update status options with counts
   statusOptions.forEach((option) => {
     option.count = statusCounts[option.value] || 0
+  })
+
+  // Create category options for filter dropdown
+  const categoryOptions = [
+    { value: 'all', label: 'All Categories', count: 0 },
+    ...CATEGORY_OPTIONS.map((cat) => ({ value: cat, label: cat, count: 0 })),
+  ]
+
+  // Calculate category counts
+  const categoryCounts = resources.reduce(
+    (acc, resource) => {
+      const category = resource.category || UNCATEGORIZED
+      acc[category] = (acc[category] || 0) + 1
+      acc.all = (acc.all || 0) + 1
+      return acc
+    },
+    {} as Record<string, number>,
+  )
+
+  // Update category options with counts
+  categoryOptions.forEach((option) => {
+    option.count = categoryCounts[option.value] || 0
   })
 
   // Calculate needs updating count
@@ -855,7 +878,18 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         matchesNeedsUpdate = needsUpdating(resource.updatedAt)
       }
 
-      return matchesSearch && matchesStatus && matchesNeedsUpdate
+      // Category filter
+      let matchesCategory = true
+      if (categoryFilter !== 'all') {
+        matchesCategory = (resource.category || UNCATEGORIZED) === categoryFilter
+      }
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesNeedsUpdate &&
+        matchesCategory
+      )
     })
     .sort((a, b) => {
       // If there's a search term, sort by search relevance
@@ -1463,6 +1497,24 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </select>
             </div>
 
+            {/* Category Filter */}
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Category:
+              </label>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                {categoryOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label} ({option.count})
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {/* Needs Updating Filter */}
             <div className="flex items-center gap-2">
               <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
@@ -1480,7 +1532,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             </div>
 
             {/* Active Filters Indicator */}
-            {(statusFilter !== 'all' || needsUpdateFilter || searchTerm) && (
+            {(statusFilter !== 'all' ||
+              needsUpdateFilter ||
+              searchTerm ||
+              categoryFilter !== 'all') && (
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <span>
                   Showing {filteredResources.length} of {resources.length}{' '}
@@ -1491,6 +1546,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     setStatusFilter('all')
                     setNeedsUpdateFilter(false)
                     setSearchTerm('')
+                    setCategoryFilter('all')
                   }}
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
