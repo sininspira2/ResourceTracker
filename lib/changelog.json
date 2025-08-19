@@ -9,6 +9,10 @@
       "changes": [
         {
           "type": "feature",
+          "description": "Added a category filter to the resource table."
+        },        
+        {
+          "type": "feature",
           "description": "Added a \"Blueprints\" category for organizing resources."
         },
         {
