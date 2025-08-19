@@ -1607,10 +1607,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             : 'border-gray-200 dark:border-gray-700'
                         } ${
                           resource.category === BP_CATEGORY
-                            ? 'bg-purple-200 dark:bg-violet-900/30'
+                            ? 'bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50'
                             : isStale
-                            ? 'bg-amber-50/50 dark:bg-amber-900/10'
-                            : 'bg-white dark:bg-gray-800'
+                            ? 'bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20'
+                            : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
                         onClick={() => handleResourceClick(resource.id)}
                         title={
