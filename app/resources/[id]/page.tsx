@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { ResourceHistoryChart } from '@/app/components/ResourceHistoryChart'
 import { CongratulationsPopup } from '@/app/components/CongratulationsPopup'
+import LinkifiedText from '@/app/components/LinkifiedText'
 import { getUserIdentifier } from '@/lib/auth'
 
 // Utility function to format numbers with commas
@@ -554,7 +555,7 @@ export default function ResourceDetailPage() {
                       {/* Description */}
                       {resource.description && (
                         <p className="text-gray-600 dark:text-gray-400 text-center md:text-left">
-                          {resource.description}
+                          <LinkifiedText text={resource.description} />
                         </p>
                       )}
                     </div>
