@@ -1602,7 +1602,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         key={resource.id}
                         className={`${
                           resource.category === 'Blueprints'
-                            ? 'bg-purple-200 dark:bg-violet-900'
+                            ? 'bg-purple-200 dark:bg-violet-900/50'
                             : 'bg-white dark:bg-gray-800'
                         } border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer group ${
                           isStale
@@ -1896,7 +1896,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           : ''
                       } ${
                         resource.category === 'Blueprints'
-                          ? 'bg-purple-200 dark:bg-violet-900'
+                          ? 'bg-purple-200 dark:bg-violet-900/50'
                           : isStale
                           ? 'bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20'
                           : 'hover:bg-gray-50 dark:hover:bg-gray-700'
