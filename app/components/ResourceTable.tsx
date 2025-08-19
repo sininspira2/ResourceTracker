@@ -1600,18 +1600,16 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     return (
                       <div
                         key={resource.id}
-                        className={`${
-                          resource.category === 'Blueprints'
-                            ? 'bg-purple-200 dark:bg-violet-900/30'
-                            : 'bg-white dark:bg-gray-800'
-                        } border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer group ${
+                        className={`border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer group ${
                           isStale
                             ? 'border-amber-300 dark:border-amber-600 ring-1 ring-amber-200 dark:ring-amber-800'
                             : 'border-gray-200 dark:border-gray-700'
                         } ${
-                          isStale && resource.category !== 'Blueprints'
+                          resource.category === 'Blueprints'
+                            ? 'bg-purple-200 dark:bg-violet-900/30'
+                            : isStale
                             ? 'bg-amber-50/50 dark:bg-amber-900/10'
-                            : ''
+                            : 'bg-white dark:bg-gray-800'
                         }`}
                         onClick={() => handleResourceClick(resource.id)}
                         title={
