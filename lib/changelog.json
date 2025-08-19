@@ -17,6 +17,10 @@
         },
         {
           "type": "improvement",
+          "description": "Text added to the \"Description\" field of a resource is now parsed and automatically linkifieid with anchor tags."
+        },        
+        {
+          "type": "improvement",
           "description": "Optimized database performance with atomic transactions for resource updates and faster leaderboard queries."
         },
         {
