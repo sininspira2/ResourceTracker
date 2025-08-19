@@ -7,16 +7,16 @@ Made for Dune: Awakening. Originally forked from https://github.com/theyetty and
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
 ## What's New 19 AUG 2025
-- **Added a category filter to the resource table.** -
-- **Added a "Blueprints" category for organizing resources and gave the items a purple color scheme.** -
-- **Text added to the "Description" field of a resource is now parsed and automatically linkifieid with anchor tags.** -
-- **Optimized database performance with atomic transactions for resource updates and faster leaderboard queries.** -
-- **Refactored internal code by centralizing constants for better maintainability.** -
-- **Corrected an issue where permissions were not being properly checked on the server side.** -
-- **Resolved warnings related to Discord role configuration parsing.** -
-- **Addressed minor issues in the new inventory transfer modal.** -
-- **Lazy-loaded the database connection to speed up initial application response.** -
-- **A bunch of other tweaks, fixes, and improvements** -
+- **Added a category filter to the resource table.**
+- **Added a "Blueprints" category for organizing resources and gave the items a purple color scheme.**
+- **Text added to the "Description" field of a resource is now parsed and automatically linkifieid with anchor tags.**
+- **Optimized database performance with atomic transactions for resource updates and faster leaderboard queries.**
+- **Refactored internal code by centralizing constants for better maintainability.**
+- **Corrected an issue where permissions were not being properly checked on the server side.**
+- **Resolved warnings related to Discord role configuration parsing.**
+- **Addressed minor issues in the new inventory transfer modal.**
+- **Lazy-loaded the database connection to speed up initial application response.**
+- **A bunch of other tweaks, fixes, and improvements**
 
 ## What's New 11 AUG 2025
 - **Dual-inventory tracking** - Track inventory of a Hagga guild base as well as a Deep Desert base
