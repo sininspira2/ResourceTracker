@@ -1604,7 +1604,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         className={`border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer group ${
                           isStale
                             ? 'border-amber-300 dark:border-amber-600 ring-1 ring-amber-200 dark:ring-amber-800'
-                            : 'border-gray-200 dark:border-gray-700'
+                            : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700'
                         } ${
                           resource.category === BP_CATEGORY
                             ? 'bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50'
