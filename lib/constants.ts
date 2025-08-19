@@ -77,3 +77,4 @@ export const WATER_RESOURCE_ID = '45';
 export const UNCATEGORIZED = 'Uncategorized';
 export const RAW_CATEGORY = 'Raw';
 export const COMPONENTS_CATEGORY = 'Components';
+export const BP_CATEGORY = 'Blueprints';
