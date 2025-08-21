@@ -105,6 +105,7 @@ Customize roles for your Discord server:
     "name": "Administrators", 
     "level": 100,
     "isAdmin": true,
+    "canManageUsers": true,
     "canEditTargets": true,
     "canAccessResources": true
   },
@@ -113,6 +114,7 @@ Customize roles for your Discord server:
     "name": "Moderators",
     "level": 50, 
     "isAdmin": false,
+    "canManageUsers": true,
     "canEditTargets": true,
     "canAccessResources": true
   },
@@ -121,6 +123,7 @@ Customize roles for your Discord server:
     "name": "Members",
     "level": 1,
     "isAdmin": false,
+    "canManageUsers": false,    
     "canEditTargets": false,
     "canAccessResources": true
   }
@@ -129,6 +132,7 @@ Customize roles for your Discord server:
 
 ### Permission Levels
 - **isAdmin**: Can create/edit/delete resources and history
+- **canManageUsers**: Can access the User Management page to see users that have registered with the app and their last login time
 - **canEditTargets**: Can modify resource target quantities
 - **canAccessResources**: Can view and update resource quantities
 - **level**: Determines hierarchy for role display

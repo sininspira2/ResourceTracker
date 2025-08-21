@@ -16,15 +16,15 @@
 Replace `YOUR_ROLE_ID_HERE` with the actual role ID you copied:
 
 ```json
-[{"id":"YOUR_ROLE_ID_HERE","name":"Your Role Name","level":100,"isAdmin":true,"canAccessResources":true,"canEditTargets":true}]
+[{"id":"YOUR_ROLE_ID_HERE","name":"Your Role Name","level":100,"isAdmin":true,"canManageUsers":true,"canAccessResources":true,"canEditTargets":true}]
 ```
 
 ## Example with Real Role ID:
 ```json
-[{"id":"1234567890123456789","name":"Admin","level":100,"isAdmin":true,"canAccessResources":true,"canEditTargets":true}]
+[{"id":"1234567890123456789","name":"Admin","level":100,"isAdmin":true,"canManageUsers":true,"canAccessResources":true,"canEditTargets":true}]
 ```
 
 ## Multiple Roles Example:
 ```json
-[{"id":"1234567890123456789","name":"Admin","level":100,"isAdmin":true,"canAccessResources":true,"canEditTargets":true},{"id":"9876543210987654321","name":"Member","level":1,"isAdmin":false,"canAccessResources":true,"canEditTargets":false}]
+[{"id":"1234567890123456789","name":"Admin","level":100,"isAdmin":true,"canAccessResources":true,"canEditTargets":true},{"id":"9876543210987654321","name":"Member","level":1,"isAdmin":false,"canManageUsers":false,"canAccessResources":true,"canEditTargets":false}]
 ```
