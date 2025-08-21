@@ -6,6 +6,11 @@ Made for Dune: Awakening. Originally forked from https://github.com/theyetty and
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
+## What's New 21 AUG 2025
+- **Added a "User Management" page for users with canManageUsers permission set to True in environment variables.** *Check the documentation for updated examples!*
+- **Moved from Node.js 20.x (Maintenence LTS) to 22.x (Active LTS).**
+- **Bumped some minor package dependency versions and changed package.json and package-lock.json to better reflect application dependencies and dev dependencies.**
+
 ## What's New 19 AUG 2025
 - **Added a category filter to the resource table.**
 - **Added a "Blueprints" category for organizing resources and gave the items a purple color scheme.**
