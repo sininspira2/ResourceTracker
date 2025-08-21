@@ -63,6 +63,36 @@ export default async function Dashboard() {
             </div>
           )}
 
+          {/* User Management - Prominent Section */}
+          {session.user.permissions?.hasUserManagementAccess && (
+            <div className="mb-8">
+              <div className="bg-linear-to-r from-red-600 to-red-700 rounded-lg shadow-lg p-6 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold mb-2">User Management</h2>
+                    <p className="text-red-100 mb-4">
+                      View and manage user data
+                    </p>
+                    <Link
+                      href="/users"
+                      className="bg-white text-red-700 hover:bg-red-50 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 inline-flex"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.197-5.197" />
+                      </svg>
+                      Manage Users
+                    </Link>
+                  </div>
+                  <div className="hidden md:block">
+                    <svg className="w-20 h-20 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.197-5.197" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* User Info Card */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
