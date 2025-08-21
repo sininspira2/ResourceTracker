@@ -21,9 +21,12 @@ export function UserTable() {
         if (response.ok) {
           const data = await response.json()
           setUsers(data)
+        } else {
+          setError('Failed to load users.')
         }
       } catch (error) {
         console.error('Error fetching users:', error)
+        setError('An error occurred while fetching users.')
       } finally {
         setLoading(false)
       }
