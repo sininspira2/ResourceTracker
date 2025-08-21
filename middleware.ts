@@ -7,6 +7,7 @@ const protectedRoutes = [
   '/resources',
   '/api/resources',
   '/api/user',
+  '/api/users',
 ]
 
 export default withAuth(
@@ -37,5 +38,5 @@ export default withAuth(
 )
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/resources/:path*']
+  matcher: ['/dashboard/:path*', '/resources/:path*', '/users/:path*']
 } 
