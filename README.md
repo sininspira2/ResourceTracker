@@ -107,6 +107,8 @@ NEXT_PUBLIC_ORG_NAME=Your Community Name
 
 4. Click **Deploy**
 
+***Vercel Project Settings Note: Under "Settings" -> "Build and Deployment", make sure "Node.js Version" is set to "22.x". Redeploy the production build if necessary.***
+
 ### Step 6: Initialize Database Schema
 After deployment, you need to set up your database tables:
 
