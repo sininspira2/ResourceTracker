@@ -1,5 +1,5 @@
 import { withAuth } from "next-auth/middleware"
-import { hasResourceAccess } from './lib/discord-roles'
+import { hasResourceAccess, hasUserManagementAccess } from './lib/discord-roles'
  
 // Define protected routes that require authentication
 const protectedRoutes = [
@@ -31,6 +31,12 @@ export default withAuth(
         
         // Check if user has required roles
         const userRoles = (token.userRoles as string[]) || []
+
+        // Route-specific permission checks
+        if (pathname.startsWith('/users')) {
+          return hasUserManagementAccess(userRoles)
+        }
+
         return hasResourceAccess(userRoles)
       },
     },
