@@ -60,10 +60,6 @@ export function UpdateQuantityModal({
 
   const handleUpdate = async () => {
     setError(null)
-    if (updateType === UPDATE_TYPE.RELATIVE && amount === 0) {
-      setError('Amount cannot be zero for relative updates.')
-      return
-    }
     if (updateType === UPDATE_TYPE.ABSOLUTE && amount < 0) {
       setError('Amount must be positive for absolute updates.')
       return
@@ -71,6 +67,46 @@ export function UpdateQuantityModal({
 
     try {
       await onUpdate(resource.id, amount, quantityField, updateType)
+      onClose()
+    } catch (err: any) {
+      setError(err.message || 'An error occurred.')
+    }
+  }
+
+  const handleAdd = async () => {
+    setError(null)
+    if (amount <= 0) {
+      setError('Amount must be positive to add.')
+      return
+    }
+
+    try {
+      await onUpdate(resource.id, amount, quantityField, UPDATE_TYPE.RELATIVE)
+      onClose()
+    } catch (err: any) {
+      setError(err.message || 'An error occurred.')
+    }
+  }
+
+  const handleRemove = async () => {
+    setError(null)
+    if (amount <= 0) {
+      setError('Amount must be positive to remove.')
+      return
+    }
+
+    const currentQuantity =
+      quantityField === QUANTITY_FIELD.HAGGA
+        ? resource.quantityHagga
+        : resource.quantityDeepDesert
+
+    if (amount > currentQuantity) {
+      setError('Insufficient quantity.')
+      return
+    }
+
+    try {
+      await onUpdate(resource.id, -amount, quantityField, UPDATE_TYPE.RELATIVE)
       onClose()
     } catch (err: any) {
       setError(err.message || 'An error occurred.')
@@ -99,13 +135,16 @@ export function UpdateQuantityModal({
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {updateType === UPDATE_TYPE.ABSOLUTE
                 ? 'New Quantity'
-                : 'Amount to Add/Remove'}
+                : 'Amount'}
             </label>
             <input
               type="number"
               value={amount}
-              onChange={(e) => setAmount(parseInt(e.target.value) || 0)}
+              onChange={(e) =>
+                setAmount(Math.max(0, parseInt(e.target.value) || 0))
+              }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              min="0"
             />
           </div>
           <div>
@@ -134,12 +173,29 @@ export function UpdateQuantityModal({
           >
             Cancel
           </button>
-          <button
-            onClick={handleUpdate}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-lg transition-colors"
-          >
-            {updateType === UPDATE_TYPE.ABSOLUTE ? 'Set' : 'Update'}
-          </button>
+          {updateType === UPDATE_TYPE.ABSOLUTE ? (
+            <button
+              onClick={handleUpdate}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-lg transition-colors"
+            >
+              Set
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={handleRemove}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 rounded-lg transition-colors"
+              >
+                Remove
+              </button>
+              <button
+                onClick={handleAdd}
+                className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 rounded-lg transition-colors"
+              >
+                Add
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

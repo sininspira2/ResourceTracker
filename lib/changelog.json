@@ -1,6 +1,22 @@
 {
-  "currentVersion": "3.2.1",
+  "currentVersion": "3.2.2",
   "releases": [
+    {
+      "version": "3.2.2",
+      "date": "2025-08-21",
+      "title": "Improve UpdateQuantityModal functionality",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "improvement",
+          "description": "Replaced the 'Update' button in UpdateQuantityModal with distinct 'Add' and 'Remove' buttons for relative updates."
+        },
+        {
+          "type": "improvement",
+          "description": "The UpdateQuantityModal input field now prevents negative values, ensuring data integrity."
+        }
+      ]
+    },
     {
       "version": "3.2.1",
       "date": "2025-08-21",
