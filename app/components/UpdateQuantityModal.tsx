@@ -95,6 +95,16 @@ export function UpdateQuantityModal({
       return
     }
 
+    const currentQuantity =
+      quantityField === QUANTITY_FIELD.HAGGA
+        ? resource.quantityHagga
+        : resource.quantityDeepDesert
+
+    if (amount > currentQuantity) {
+      setError('Insufficient quantity.')
+      return
+    }
+
     try {
       await onUpdate(resource.id, -amount, quantityField, UPDATE_TYPE.RELATIVE)
       onClose()
