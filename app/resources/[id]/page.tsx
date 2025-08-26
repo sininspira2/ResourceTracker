@@ -396,11 +396,17 @@ export default function ResourceDetailPage() {
 
   // Fetch history when component mounts or time filter changes
   useEffect(() => {
-    if (resourceId && sessionStatus === 'authenticated') {
-      fetchHistory(timeFilter)
-      fetchLeaderboard()
-    }
-  }, [resourceId, timeFilter, sessionStatus, fetchHistory, fetchLeaderboard])
+  if (resourceId && sessionStatus === 'authenticated') {
+    fetchHistory(timeFilter)
+  }
+}, [resourceId, timeFilter, sessionStatus, fetchHistory])
+
+// Fetch leaderboard data when component mounts
+useEffect(() => {
+  if (resourceId && sessionStatus === 'authenticated') {
+    fetchLeaderboard()
+  }
+}, [resourceId, sessionStatus, fetchLeaderboard])
 
   // Scroll selected entry into view
   useEffect(() => {
