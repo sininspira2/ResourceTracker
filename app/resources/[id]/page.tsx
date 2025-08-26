@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { ResourceHistoryChart } from '@/app/components/ResourceHistoryChart'
@@ -118,7 +118,7 @@ export default function ResourceDetailPage() {
   const canDeleteHistory = session?.user?.permissions?.hasResourceAdminAccess ?? false
 
   // Fetch history data
-  const fetchHistory = async (days: number) => {
+  const fetchHistory = useCallback(async (days: number) => {
     setHistoryLoading(true)
     try {
       const response = await fetch(`/api/resources/${resourceId}/history?days=${days}`, {
@@ -136,10 +136,10 @@ export default function ResourceDetailPage() {
     } finally {
       setHistoryLoading(false)
     }
-  }
+  }, [resourceId])
 
   // Fetch leaderboard data
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     setLeaderboardLoading(true)
     try {
       const response = await fetch('/api/leaderboard?timeFilter=7d&limit=10', {
@@ -156,7 +156,7 @@ export default function ResourceDetailPage() {
     } finally {
       setLeaderboardLoading(false)
     }
-  }
+  }, [])
 
   // Calculate leaderboard from history (legacy - keeping for fallback)
   const calculateLeaderboard = () => {
@@ -400,7 +400,7 @@ export default function ResourceDetailPage() {
       fetchHistory(timeFilter)
       fetchLeaderboard()
     }
-  }, [resourceId, timeFilter, sessionStatus])
+  }, [resourceId, timeFilter, sessionStatus, fetchHistory, fetchLeaderboard])
 
   // Scroll selected entry into view
   useEffect(() => {
