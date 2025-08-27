@@ -47,7 +47,9 @@ export function UserTable() {
         document.body.appendChild(a)
         a.click()
         a.remove()
-      } else {
+        window.URL.revokeObjectURL(url) 
+      } 
+      else {
         console.error('Error exporting user data:', await response.json())
       }
     } catch (error) {
