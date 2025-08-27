@@ -22,10 +22,21 @@ export async function GET(request: NextRequest, { params }: { params: { userId: 
     }
 
     const user = targetUser[0]
-    const userIdentifier = getUserIdentifier({
-      user: { ...user, ...session.user },
+
+    const fakeSessionForTargetUser = {
+      user: {
+        id: user.id,
+        name: user.username,
+        discordNickname: user.customNickname,
+        email: null,
+        image: user.avatar,
+        roles: [],
+        isInGuild: false,
+        permissions: session.user.permissions,
+      },
       expires: session.expires,
-    })
+    }
+    const userIdentifier = getUserIdentifier(fakeSessionForTargetUser as any)
 
     // For backward compatibility, also check for old user identifiers
     const oldUserIds = [
