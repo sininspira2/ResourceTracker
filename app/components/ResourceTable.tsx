@@ -2060,6 +2060,19 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 Set
                               </button>
                             </div>
+                            <div className="flex gap-1">
+                              <button
+                                onClick={() =>
+                                  setTransferModalState({
+                                    isOpen: true,
+                                    resource: resource,
+                                  })
+                                }
+                                className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                              >
+                                Transfer
+                              </button>
+                            </div>
 
                             {/* Admin buttons */}
                             {isResourceAdmin && (
