@@ -1761,7 +1761,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                   }}
                                   className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
-                                  Set
+                                  Set Qty
                                 </button>
                               </div>
                               <div className="flex gap-1">
@@ -1786,7 +1786,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                         resource: resource,
                                       })
                                     }}
-                                    className="flex-1 bg-gray-100 dark:bg-gray-900/50 hover:bg-gray-200 dark:hover:bg-gray-900/70 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                    className="flex-1 bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
                                     Set Target
                                   </button>
@@ -1839,7 +1839,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-1/4">
                     Resource
                   </th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -1859,7 +1859,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       Target
                     </th>
                   )}
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-48">
                     Actions
                   </th>
                 </tr>
@@ -1894,7 +1894,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           : 'Click to view detailed resource information'
                       }
                     >
-                      <td className="px-3 py-3 whitespace-nowrap">
+                      <td className="px-3 py-3">
                         <div className="flex items-center">
                           <div className="shrink-0 h-12 w-12">
                             {resource.imageUrl ? (
@@ -1922,7 +1922,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-words">
                               {resource.name}
                               <svg
                                 className="w-3 h-3 inline ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -1989,7 +1989,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       )}
 
                       <td
-                        className="px-3 py-3 whitespace-nowrap text-sm"
+                        className="px-3 py-3 text-sm"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <div className="space-y-2">
@@ -2018,7 +2018,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 }
                                 className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                               >
-                                Set
+                                  Set Qty
                               </button>
                             </div>
                             <div className="flex gap-1">
@@ -2041,7 +2041,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       resource: resource,
                                     })
                                   }
-                                  className="flex-1 bg-gray-100 dark:bg-gray-900/50 hover:bg-gray-200 dark:hover:bg-gray-900/70 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="flex-1 bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Set Target
                                 </button>
