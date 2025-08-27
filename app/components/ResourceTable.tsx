@@ -7,6 +7,7 @@ import { CongratulationsPopup } from './CongratulationsPopup'
 import { TransferModal } from './TransferModal'
 import { UpdateQuantityModal } from './UpdateQuantityModal'
 import { EditResourceModal } from './EditResourceModal'
+import { ChangeTargetModal } from './ChangeTargetModal'
 import { getUserIdentifier } from '@/lib/auth'
 import {
   CATEGORY_OPTIONS,
@@ -222,9 +223,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     session?.user?.permissions?.hasResourceAdminAccess ?? false
 
   const [resources, setResources] = useState<Resource[]>([])
-  const [editedTargets, setEditedTargets] = useState<Map<string, number>>(
-    new Map(),
-  )
   const [
     statusChanges,
     setStatusChanges,
@@ -284,6 +282,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   // Admin state for resource editing
   const [editModalState, setEditModalState] = useState<{
+    isOpen: boolean
+    resource: Resource | null
+  }>({ isOpen: false, resource: null })
+
+  const [changeTargetModalState, setChangeTargetModalState] = useState<{
     isOpen: boolean
     resource: Resource | null
   }>({ isOpen: false, resource: null })
@@ -515,36 +518,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     }
   }, [])
 
-  // Handle target quantity change (admin only)
-  const handleTargetQuantityChange = (
+  const handleSaveTargetChange = async (
     resourceId: string,
     newTarget: number,
   ) => {
     if (!isTargetAdmin) return
-
-    const resource = resources.find((r) => r.id === resourceId)
-    if (!resource) return
-
-    setEditedTargets((prev) => new Map(prev).set(resourceId, newTarget))
-    setResources((prev) =>
-      prev.map((r) =>
-        r.id === resourceId ? { ...r, targetQuantity: newTarget } : r,
-      ),
-    )
-
-    // Update status immediately based on current quantity and new target
-    updateResourceStatus(
-      resourceId,
-      resource.quantityHagga + resource.quantityDeepDesert,
-      newTarget,
-    )
-  }
-
-  const saveTargetQuantity = async (resourceId: string) => {
-    if (!isTargetAdmin) return
-
-    const newTarget = editedTargets.get(resourceId)
-    if (newTarget === undefined) return
 
     setSaving(true)
     try {
@@ -564,23 +542,20 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       )
 
       if (response.ok) {
-        setEditedTargets((prev) => {
-          const newMap = new Map(prev)
-          newMap.delete(resourceId)
-          return newMap
-        })
-
-        // Clear status change indicator since the save was successful
-        setStatusChanges((prev) => {
-          const newMap = new Map(prev)
-          newMap.delete(resourceId)
-          return newMap
-        })
+        const updatedResource = await response.json()
+        setResources((prev) =>
+          prev.map((r) =>
+            r.id === resourceId ? { ...r, ...updatedResource } : r,
+          ),
+        )
+        setChangeTargetModalState({ isOpen: false, resource: null })
       } else {
         console.error('Failed to save target quantity')
+        throw new Error('Failed to save target quantity.')
       }
     } catch (error) {
       console.error('Error saving target quantity:', error)
+      throw error
     } finally {
       setSaving(false)
     }
@@ -1802,6 +1777,20 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 >
                                   Transfer
                                 </button>
+                                {isTargetAdmin && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setChangeTargetModalState({
+                                        isOpen: true,
+                                        resource: resource,
+                                      })
+                                    }}
+                                    className="flex-1 bg-gray-100 dark:bg-gray-900/50 hover:bg-gray-200 dark:hover:bg-gray-900/70 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  >
+                                    Set Target
+                                  </button>
+                                )}
                               </div>
 
                               {/* Admin buttons */}
@@ -1882,8 +1871,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     resource.targetQuantity || 0,
                   )
                   const statusChange = statusChanges.get(resource.id)
-                  const pendingTarget = editedTargets.get(resource.id)
-                  const isEdited = pendingTarget !== undefined
                   const isStale = isResourceStale(resource.updatedAt)
 
                   return (
@@ -1994,36 +1981,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         {formatNumber(resource.quantityDeepDesert)}
                       </td>
                       {isTargetAdmin && (
-                        <td
-                          className="px-3 py-3 whitespace-nowrap"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="number"
-                              min="0"
-                              value={
-                                pendingTarget ?? resource.targetQuantity ?? ''
-                              }
-                              onChange={(e) =>
-                                handleTargetQuantityChange(
-                                  resource.id,
-                                  parseInt(e.target.value) || 0,
-                                )
-                              }
-                              className="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                              placeholder="Target"
-                            />
-                            {isEdited && (
-                              <button
-                                onClick={() => saveTargetQuantity(resource.id)}
-                                disabled={saving}
-                                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:opacity-50 text-white px-2 py-1 rounded-sm text-xs transition-colors"
-                              >
-                                Save
-                              </button>
-                            )}
-                          </div>
+                        <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          {resource.targetQuantity
+                            ? formatNumber(resource.targetQuantity)
+                            : 'No target set'}
                         </td>
                       )}
 
@@ -2072,6 +2033,19 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               >
                                 Transfer
                               </button>
+                              {isTargetAdmin && (
+                                <button
+                                  onClick={() =>
+                                    setChangeTargetModalState({
+                                      isOpen: true,
+                                      resource: resource,
+                                    })
+                                  }
+                                  className="flex-1 bg-gray-100 dark:bg-gray-900/50 hover:bg-gray-200 dark:hover:bg-gray-900/70 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                >
+                                  Set Target
+                                </button>
+                              )}
                             </div>
 
                             {/* Admin buttons */}
@@ -2251,6 +2225,16 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         onSave={saveResourceMetadata}
         resource={editModalState.resource}
       />
+      {changeTargetModalState.isOpen && changeTargetModalState.resource && (
+        <ChangeTargetModal
+          isOpen={changeTargetModalState.isOpen}
+          onClose={() =>
+            setChangeTargetModalState({ isOpen: false, resource: null })
+          }
+          onSave={handleSaveTargetChange}
+          resource={changeTargetModalState.resource}
+        />
+      )}
       <CongratulationsPopup
         isVisible={congratulationsState.isVisible}
         pointsEarned={congratulationsState.pointsEarned}
