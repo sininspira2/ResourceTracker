@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const allUsers = await db.select({
+      id: users.id,
       username: users.username,
       customNickname: users.customNickname,
       createdAt: users.createdAt,
