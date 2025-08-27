@@ -43,7 +43,9 @@ export function UserTable() {
         const url = window.URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
-        a.download = `resource-tracker-data-${userId}-${new Date().toISOString().split('T')[0]}.json`
+        const disposition = response.headers.get('content-disposition');
+        const filenameMatch = disposition && disposition.match(/filename="(.+)"/);
+        a.download = filenameMatch ? filenameMatch[1] : `resource-tracker-data-${userId}-${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a)
         a.click()
         a.remove()
