@@ -2,6 +2,50 @@
   "currentVersion": "3.2.2",
   "releases": [
     {
+      "version": "3.2.4",
+      "date": "2025-08-27",
+      "title": "Improved Target Quantity Editing and User Data Export",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Replaced inline text input for editing a resource's target quantity with a new modal-based approach. The ResourceTable component now displays the target quantity as plain text in the table view. A new 'Set Target' button has been added next to the 'Transfer' button in both grid and table views for users with target editing permissions. Clicking this button opens a new ChangeTargetModal for inputting a new target quantity."
+        },
+        {
+          "type": "feature",
+          "description": "Added the ability for users with hasUserManagementAccess to export data for any user. A new API route app/api/users/[userId]/data-export/route.ts was added, and the UserTable component now includes an 'Export Data' button on each row for authorized users. The button triggers a download of the user's data as a JSON file."
+        },
+        {
+          "type": "improvement",
+          "description": "The 'Set' button for quantity is now labeled 'Set Qty'."
+        },
+        {
+          "type": "improvement",
+          "description": "The 'Set Target' button is now styled with an orange color."
+        },
+        {
+          "type": "improvement",
+          "description": "In the table view, the 'Resource' column is narrower with text wrapping, and the 'Actions' column is wider."
+        },
+        {
+          "type": "improvement",
+          "description": "The table layout is set to table-fixed to ensure column widths are respected."
+        },
+        {
+          "type": "improvement",
+          "description": "Action buttons in the table view have a min-w-20 to ensure they have a sensible minimum width."
+        },
+        {
+          "type": "improvement",
+          "description": "Bumped @libsql/client from 0.15.12 to 0.15.14, @types/node from 22.17.2 to 22.18.0, and drizzle-orm from 0.44.4 to 0.44.5."
+        },
+        {
+          "type": "bugfix",
+          "description": "Corrected missing useEffect dependencies in react."
+        }
+      ]
+    },
+    {
       "version": "3.2.2",
       "date": "2025-08-21",
       "title": "Improve UpdateQuantityModal functionality",
