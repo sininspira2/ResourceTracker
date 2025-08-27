@@ -2004,7 +2004,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     updateType: UPDATE_TYPE.RELATIVE,
                                   })
                                 }
-                                className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="flex-1 min-w-fit bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                               >
                                 Add/Remove
                               </button>
@@ -2016,7 +2016,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     updateType: UPDATE_TYPE.ABSOLUTE,
                                   })
                                 }
-                                className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="flex-1 min-w-fit bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                               >
                                   Set Qty
                               </button>
@@ -2029,7 +2029,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     resource: resource,
                                   })
                                 }
-                                className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="flex-1 min-w-fit bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                               >
                                 Transfer
                               </button>
@@ -2041,7 +2041,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       resource: resource,
                                     })
                                   }
-                                  className="flex-1 bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="flex-1 min-w-fit bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Set Target
                                 </button>
@@ -2053,7 +2053,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               <div className="flex gap-1">
                                 <button
                                   onClick={() => startEditResource(resource)}
-                                  className="flex-1 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="flex-1 min-w-fit bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Edit
                                 </button>
@@ -2065,7 +2065,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       showDialog: true,
                                     })
                                   }
-                                  className="flex-1 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="flex-1 min-w-fit bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Delete
                                 </button>
