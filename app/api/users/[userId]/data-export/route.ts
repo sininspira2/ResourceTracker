@@ -95,10 +95,29 @@ export async function GET(request: NextRequest, { params }: { params: { userId: 
         totalChanges: activity.length,
         firstActivity: activity.length > 0 ? activity[activity.length - 1].createdAt : null,
         lastActivity: activity.length > 0 ? activity[0].createdAt : null,
-        totalAdditions: activity.filter(a => a.changeAmount > 0).length,
-        totalRemovals: activity.filter(a => a.changeAmount < 0).length,
-        totalAbsoluteChanges: activity.filter(a => a.changeType === 'absolute').length,
-        totalRelativeChanges: activity.filter(a => a.changeType === 'relative').length,
+        ...activity.reduce(
+          (stats, item) => {
+            if (item.changeAmount > 0) {
+              stats.totalAdditions++
+            } else if (item.changeAmount < 0) {
+              stats.totalRemovals++
+            }
+
+            if (item.changeType === 'absolute') {
+              stats.totalAbsoluteChanges++
+            } else if (item.changeType === 'relative') {
+              stats.totalRelativeChanges++
+            }
+
+            return stats
+          },
+          {
+            totalAdditions: 0,
+            totalRemovals: 0,
+            totalAbsoluteChanges: 0,
+            totalRelativeChanges: 0,
+          }
+        ),
       },
       dataRetention: {
         resourceActivity: 'Indefinitely (until deletion request)',
