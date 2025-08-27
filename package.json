@@ -15,7 +15,7 @@
     "add-resources-with-images": "tsx scripts/add-resources-with-images.ts"
   },
   "dependencies": {
-    "@libsql/client": "^0.15.12",
+    "@libsql/client": "^0.15.14",
     "drizzle-orm": "^0.44.5",
     "nanoid": "^5.1.5",
     "next": "^14.2.32",
