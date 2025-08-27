@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 
 interface User {
+  id: string
   username: string
   customNickname: string
   createdAt: string
@@ -10,6 +12,7 @@ interface User {
 }
 
 export function UserTable() {
+  const { data: session } = useSession()
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -31,6 +34,30 @@ export function UserTable() {
 
     fetchUsers()
   }, [])
+
+  const handleExport = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/users/${userId}/data-export`)
+      if (response.ok) {
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        const disposition = response.headers.get('content-disposition');
+        const filenameMatch = disposition && disposition.match(/filename="(.+)"/);
+        a.download = filenameMatch ? filenameMatch[1] : `resource-tracker-data-${userId}-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        window.URL.revokeObjectURL(url) 
+      } 
+      else {
+        console.error('Error exporting user data:', await response.json())
+      }
+    } catch (error) {
+      console.error('Error exporting user data:', error)
+    }
+  }
 
   if (loading) {
     return (
@@ -61,11 +88,16 @@ export function UserTable() {
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Last Login
               </th>
+              {session?.user.permissions?.hasUserManagementAccess && (
+                <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {users.map((user) => (
-              <tr key={user.username}>
+              <tr key={user.id}>
                 <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                   {user.username}
                 </td>
@@ -78,6 +110,16 @@ export function UserTable() {
                 <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                   {new Date(user.lastLogin).toLocaleString()}
                 </td>
+                {session?.user.permissions?.hasUserManagementAccess && (
+                  <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 text-right">
+                    <button
+                      onClick={() => handleExport(user.id)}
+                      className="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      Export Data
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
