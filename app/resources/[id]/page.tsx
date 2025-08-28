@@ -828,16 +828,18 @@ useEffect(() => {
                       ]);
                       const maxQuantity = Math.max(...allQuantities);
                       const minQuantity = Math.min(...allQuantities);
-                      return (
-                        <>
-                          <text x="5" y="15" fontSize="10" fill="#6b7280" className="text-xs">
-                            {formatNumber(maxQuantity)}
+                      const range = maxQuantity - minQuantity || 1;
+                      const numLabels = 4;
+
+                      return Array.from({ length: numLabels }).map((_, i) => {
+                        const value = minQuantity + (range / (numLabels - 1)) * i;
+                        const y = 80 - ((value - minQuantity) / range) * 60;
+                        return (
+                          <text key={i} x="8" y={`${y}%`} dy=".3em" fontSize="10" fill="#6b7280" className="text-xs" textAnchor="end">
+                            {formatNumber(Math.round(value))}
                           </text>
-                          <text x="5" y="85" fontSize="10" fill="#6b7280" className="text-xs">
-                            {formatNumber(minQuantity)}
-                          </text>
-                        </>
-                      );
+                        )
+                      })
                     })()}
 
                     {/* X-axis time labels */}
