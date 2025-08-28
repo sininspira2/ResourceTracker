@@ -700,7 +700,7 @@ useEffect(() => {
         </div>
 
         {/* History and Leaderboard Section - Full Width */}
-        <div className="w-full space-y-8">
+        <div className="w-full space-y-8 mt-8">
           {/* Activity Timeline with Chart */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-6">
@@ -726,7 +726,7 @@ useEffect(() => {
             {!historyLoading && history.length > 1 && (
               <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
                 <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-4">Quantity Over Time</h4>
-                <div className="relative h-40">
+                <div className="relative h-72">
                   <svg
                     className="w-full h-full"
                     onMouseMove={(e) => {
@@ -738,7 +738,7 @@ useEffect(() => {
                     }}
                     onMouseLeave={() => setHoveredPoint(null)}
                   >
-                    {/* Chart Lines */}
+                    {/* Chart Lines and Points */}
                     {(() => {
                       const reversedHistory = history.slice().reverse()
                       const allQuantities = reversedHistory.flatMap(h => [
@@ -750,74 +750,57 @@ useEffect(() => {
                       const minQuantity = Math.min(...allQuantities)
                       const range = maxQuantity - minQuantity || 1
 
-                      return reversedHistory.map((entry, index, arr) => {
-                        if (index === arr.length - 1) return null
-                        const nextEntry = arr[index + 1]
-
-                        const x1 = 10 + (index / Math.max(arr.length - 1, 1)) * 80
-                        const x2 = 10 + ((index + 1) / Math.max(arr.length - 1, 1)) * 80
-
-                        const y1_total = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
-                        const y2_total = 80 - (((nextEntry.newQuantityHagga + nextEntry.newQuantityDeepDesert) - minQuantity) / range) * 60
-
-                        const y1_hagga = 80 - ((entry.newQuantityHagga - minQuantity) / range) * 60
-                        const y2_hagga = 80 - ((nextEntry.newQuantityHagga - minQuantity) / range) * 60
-
-                        const y1_deep_desert = 80 - ((entry.newQuantityDeepDesert - minQuantity) / range) * 60
-                        const y2_deep_desert = 80 - ((nextEntry.newQuantityDeepDesert - minQuantity) / range) * 60
-
-                        return (
-                          <g key={entry.id}>
-                            <line
-                              x1={`${x1}%`} y1={`${y1_total}%`}
-                              x2={`${x2}%`} y2={`${y2_total}%`}
-                              stroke="#3b82f6" strokeWidth="2" />
-                            <line
-                              x1={`${x1}%`} y1={`${y1_hagga}%`}
-                              x2={`${x2}%`} y2={`${y2_hagga}%`}
-                              stroke="#10b981" strokeWidth="2" />
-                            <line
-                              x1={`${x1}%`} y1={`${y1_deep_desert}%`}
-                              x2={`${x2}%`} y2={`${y2_deep_desert}%`}
-                              stroke="#f97316" strokeWidth="2" />
-                          </g>
-                        )
-                      })
-                    })()}
-
-                    {/* Chart Points */}
-                    {history.slice().reverse().map((entry, index, arr) => {
-                      const x = 10 + (index / Math.max(arr.length - 1, 1)) * 80
-                      const allQuantities = history.flatMap(h => [
-                        h.newQuantityHagga,
-                        h.newQuantityDeepDesert,
-                        h.newQuantityHagga + h.newQuantityDeepDesert
-                      ])
-                      const maxQuantity = Math.max(...allQuantities)
-                      const minQuantity = Math.min(...allQuantities)
-                      const range = maxQuantity - minQuantity || 1
-                      const y = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
-
-                      const isSelected = selectedPointId === entry.id
-                      const isHovered = hoveredPoint?.id === entry.id
-
                       return (
-                        <g key={`point-${entry.id}`}>
-                          <circle
-                            cx={`${x}%`}
-                            cy={`${y}%`}
-                            r={isSelected ? "6" : isHovered ? "5" : "4"}
-                            fill={entry.changeAmountHagga + entry.changeAmountDeepDesert > 0 ? '#10b981' : entry.changeAmountHagga + entry.changeAmountDeepDesert < 0 ? '#ef4444' : '#6b7280'}
-                            stroke={isSelected ? '#3b82f6' : 'white'}
-                            strokeWidth={isSelected ? "3" : "2"}
-                            className="hover:cursor-pointer transition-all"
-                            onMouseEnter={() => setHoveredPoint(entry)}
-                            onMouseLeave={() => setHoveredPoint(null)}
-                            onClick={() => setSelectedPointId(selectedPointId === entry.id ? null : entry.id)}
-                          />
-                        </g>
+                        <>
+                          {/* Lines */}
+                          {reversedHistory.map((entry, index, arr) => {
+                            if (index === arr.length - 1) return null
+                            const nextEntry = arr[index + 1]
+
+                            const x1 = 10 + (index / Math.max(arr.length - 1, 1)) * 80
+                            const x2 = 10 + ((index + 1) / Math.max(arr.length - 1, 1)) * 80
+
+                            const y1_total = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
+                            const y2_total = 80 - (((nextEntry.newQuantityHagga + nextEntry.newQuantityDeepDesert) - minQuantity) / range) * 60
+                            const y1_hagga = 80 - ((entry.newQuantityHagga - minQuantity) / range) * 60
+                            const y2_hagga = 80 - ((nextEntry.newQuantityHagga - minQuantity) / range) * 60
+                            const y1_deep_desert = 80 - ((entry.newQuantityDeepDesert - minQuantity) / range) * 60
+                            const y2_deep_desert = 80 - ((nextEntry.newQuantityDeepDesert - minQuantity) / range) * 60
+
+                            return (
+                              <g key={`line-${entry.id}`}>
+                                <line x1={`${x1}%`} y1={`${y1_total}%`} x2={`${x2}%`} y2={`${y2_total}%`} stroke="#3b82f6" strokeWidth="2" />
+                                <line x1={`${x1}%`} y1={`${y1_hagga}%`} x2={`${x2}%`} y2={`${y2_hagga}%`} stroke="#10b981" strokeWidth="2" />
+                                <line x1={`${x1}%`} y1={`${y1_deep_desert}%`} x2={`${x2}%`} y2={`${y2_deep_desert}%`} stroke="#f97316" strokeWidth="2" />
+                              </g>
+                            )
+                          })}
+                          {/* Points */}
+                          {reversedHistory.map((entry, index, arr) => {
+                            const x = 10 + (index / Math.max(arr.length - 1, 1)) * 80
+                            const y_total = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
+                            const y_hagga = 80 - ((entry.newQuantityHagga - minQuantity) / range) * 60
+                            const y_deep_desert = 80 - ((entry.newQuantityDeepDesert - minQuantity) / range) * 60
+
+                            const isSelected = selectedPointId === entry.id
+                            const isHovered = hoveredPoint?.id === entry.id
+                            const pointRadius = isSelected ? "6" : isHovered ? "5" : "4"
+
+                            return (
+                              <g key={`point-group-${entry.id}`}
+                                 onMouseEnter={() => setHoveredPoint(entry)}
+                                 onMouseLeave={() => setHoveredPoint(null)}
+                                 onClick={() => setSelectedPointId(selectedPointId === entry.id ? null : entry.id)}
+                                 className="cursor-pointer">
+                                <circle cx={`${x}%`} cy={`${y_total}%`} r={pointRadius} fill="#3b82f6" stroke={isSelected ? '#3b82f6' : 'white'} strokeWidth="2" />
+                                <circle cx={`${x}%`} cy={`${y_hagga}%`} r={pointRadius} fill="#10b981" stroke={isSelected ? '#10b981' : 'white'} strokeWidth="2" />
+                                <circle cx={`${x}%`} cy={`${y_deep_desert}%`} r={pointRadius} fill="#f97316" stroke={isSelected ? '#f97316' : 'white'} strokeWidth="2" />
+                              </g>
+                            )
+                          })}
+                        </>
                       )
-                    })}
+                    })()}
 
                     {/* Y-axis labels */}
                     {history.length > 0 && (() => {
