@@ -6,6 +6,18 @@ Made for Dune: Awakening. Originally forked from https://github.com/theyetty and
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
+## 🚀 Release Notes - Version 3.2.5
+
+**Release Date:** August 28, 2025
+
+---
+
+### New Features
+* **Improved Activity Chart:** The activity timeline chart on the resource detail page now shows three distinct lines—one for Deep Desert, one for Hagga, and a total quantity line—each with a unique color. The chart's scaling and y-axis labels have been optimized to better display all three data sets. A legend has also been added to help identify each line.
+
+### Bug Fixes
+* **Target Column Visibility:** Fixed a bug where the "Target" column was not showing for users who do not have permissions to edit targets.
+
 ## 🚀 Release Notes - Version 3.2.4
 
 **Release Date:** August 27, 2025

@@ -95,7 +95,7 @@ export default function ResourceDetailPage() {
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [currentTime, setCurrentTime] = useState(new Date())
-  
+
   // Congratulations popup state
   const [congratulationsState, setCongratulationsState] = useState({
     isVisible: false,
@@ -113,7 +113,7 @@ export default function ResourceDetailPage() {
 
   const resourceId = params.id as string
   const canEdit = session?.user?.permissions?.hasResourceAccess ?? false
-  
+
   // Check if user can delete history entries
   const canDeleteHistory = session?.user?.permissions?.hasResourceAdminAccess ?? false
 
@@ -215,18 +215,18 @@ export default function ResourceDetailPage() {
 
       if (response.ok) {
         const responseData = await response.json()
-        
+
         // Handle new API response format with points
         const updatedResource = responseData.resource || responseData
-        
+
         setResource({
           ...updatedResource,
           // Fix date parsing - only convert if it's not already a string
-          updatedAt: typeof updatedResource.updatedAt === 'string' 
-            ? updatedResource.updatedAt 
+          updatedAt: typeof updatedResource.updatedAt === 'string'
+            ? updatedResource.updatedAt
             : new Date(updatedResource.updatedAt).toISOString(),
         })
-        
+
         // Show congratulations popup if points were earned
         if (responseData.pointsEarned && responseData.pointsEarned > 0) {
           setCongratulationsState({
@@ -243,7 +243,7 @@ export default function ResourceDetailPage() {
             quantityChanged: Math.abs(inputValue)
           })
         }
-        
+
         setEditMode(false)
         setNewQuantity(0)
         setNewQuantityInput('')
@@ -368,11 +368,11 @@ export default function ResourceDetailPage() {
             setResource({
               ...foundResource,
               // Fix date parsing - only convert if it's not already a string
-              updatedAt: typeof foundResource.updatedAt === 'string' 
-                ? foundResource.updatedAt 
+              updatedAt: typeof foundResource.updatedAt === 'string'
+                ? foundResource.updatedAt
                 : new Date(foundResource.updatedAt).toISOString(),
-              createdAt: typeof foundResource.createdAt === 'string' 
-                ? foundResource.createdAt 
+              createdAt: typeof foundResource.createdAt === 'string'
+                ? foundResource.createdAt
                 : new Date(foundResource.createdAt).toISOString(),
             })
             setNewQuantity(foundResource.quantityHagga) // Initialize edit form
@@ -396,17 +396,17 @@ export default function ResourceDetailPage() {
 
   // Fetch history when component mounts or time filter changes
   useEffect(() => {
-  if (resourceId && sessionStatus === 'authenticated') {
-    fetchHistory(timeFilter)
-  }
-}, [resourceId, timeFilter, sessionStatus, fetchHistory])
+    if (resourceId && sessionStatus === 'authenticated') {
+      fetchHistory(timeFilter)
+    }
+  }, [resourceId, timeFilter, sessionStatus, fetchHistory])
 
-// Fetch leaderboard data when component mounts
-useEffect(() => {
-  if (resourceId && sessionStatus === 'authenticated') {
-    fetchLeaderboard()
-  }
-}, [resourceId, sessionStatus, fetchLeaderboard])
+  // Fetch leaderboard data when component mounts
+  useEffect(() => {
+    if (resourceId && sessionStatus === 'authenticated') {
+      fetchLeaderboard()
+    }
+  }, [resourceId, sessionStatus, fetchLeaderboard])
 
   // Scroll selected entry into view
   useEffect(() => {
@@ -592,7 +592,7 @@ useEffect(() => {
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                         <div
                           className={`h-3 rounded-full transition-all duration-500 ${percentage >= 100 ? 'bg-green-500' :
-                              percentage >= 50 ? 'bg-orange-500' : 'bg-red-500'
+                            percentage >= 50 ? 'bg-orange-500' : 'bg-red-500'
                             }`}
                           style={{ width: `${Math.min(percentage, 100)}%` }}
                         ></div>
@@ -647,8 +647,8 @@ useEffect(() => {
                         }
                       }}
                       className={`px-3 py-1 rounded-sm text-sm font-medium ${updateType === 'relative'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-700'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-gray-100 text-gray-700'
                         }`}
                     >
                       {updateType === 'relative' ? '+/-' : '='}
@@ -700,7 +700,7 @@ useEffect(() => {
         </div>
 
         {/* History and Leaderboard Section - Full Width */}
-        <div className="w-full space-y-8">
+        <div className="w-full space-y-8 mt-8">
           {/* Activity Timeline with Chart */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-6">
@@ -726,7 +726,7 @@ useEffect(() => {
             {!historyLoading && history.length > 1 && (
               <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
                 <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-4">Quantity Over Time</h4>
-                <div className="relative h-40">
+                <div className="relative h-72">
                   <svg
                     className="w-full h-full"
                     onMouseMove={(e) => {
@@ -738,74 +738,81 @@ useEffect(() => {
                     }}
                     onMouseLeave={() => setHoveredPoint(null)}
                   >
-                    {/* Chart Lines */}
-                    {history.slice().reverse().map((entry, index, arr) => {
-                      if (index === arr.length - 1) return null
-                      const nextEntry = arr[index + 1]
+                    {/* Chart Lines and Points */}
+                    {(() => {
+                      const reversedHistory = history.slice().reverse();
 
-                      const x1 = 10 + (index / Math.max(arr.length - 1, 1)) * 80
-                      const x2 = 10 + ((index + 1) / Math.max(arr.length - 1, 1)) * 80
+                      const { minQuantity, maxQuantity } = history.reduce((acc, h) => {
+                        const total = h.newQuantityHagga + h.newQuantityDeepDesert;
+                        acc.minQuantity = Math.min(acc.minQuantity, h.newQuantityHagga, h.newQuantityDeepDesert, total);
+                        acc.maxQuantity = Math.max(acc.maxQuantity, h.newQuantityHagga, h.newQuantityDeepDesert, total);
+                        return acc;
+                      }, { minQuantity: Infinity, maxQuantity: -Infinity });
 
-                      const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
-                      const minQuantity = Math.min(...history.map(h => Math.min(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
-                      const range = maxQuantity - minQuantity || 1
-
-                      const y1 = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
-                      const y2 = 80 - (((nextEntry.newQuantityHagga + nextEntry.newQuantityDeepDesert) - minQuantity) / range) * 60
+                      const range = (maxQuantity !== -Infinity && minQuantity !== Infinity) ? maxQuantity - minQuantity || 1 : 1;
 
                       return (
-                        <line
-                          key={entry.id}
-                          x1={`${x1}%`}
-                          y1={`${y1}%`}
-                          x2={`${x2}%`}
-                          y2={`${y2}%`}
-                          stroke="#3b82f6"
-                          strokeWidth="2"
-                        />
+                        <>
+                          {/* Lines */}
+                          {reversedHistory.map((entry, index, arr) => {
+                            if (index === arr.length - 1) return null
+                            const nextEntry = arr[index + 1]
+
+                            const x1 = 10 + (index / Math.max(arr.length - 1, 1)) * 80
+                            const x2 = 10 + ((index + 1) / Math.max(arr.length - 1, 1)) * 80
+
+                            const y1_total = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
+                            const y2_total = 80 - (((nextEntry.newQuantityHagga + nextEntry.newQuantityDeepDesert) - minQuantity) / range) * 60
+                            const y1_hagga = 80 - ((entry.newQuantityHagga - minQuantity) / range) * 60
+                            const y2_hagga = 80 - ((nextEntry.newQuantityHagga - minQuantity) / range) * 60
+                            const y1_deep_desert = 80 - ((entry.newQuantityDeepDesert - minQuantity) / range) * 60
+                            const y2_deep_desert = 80 - ((nextEntry.newQuantityDeepDesert - minQuantity) / range) * 60
+
+                            return (
+                              <g key={`line-${entry.id}`}>
+                                <line x1={`${x1}%`} y1={`${y1_total}%`} x2={`${x2}%`} y2={`${y2_total}%`} stroke="#3b82f6" strokeWidth="2" />
+                                <line x1={`${x1}%`} y1={`${y1_hagga}%`} x2={`${x2}%`} y2={`${y2_hagga}%`} stroke="#10b981" strokeWidth="2" />
+                                <line x1={`${x1}%`} y1={`${y1_deep_desert}%`} x2={`${x2}%`} y2={`${y2_deep_desert}%`} stroke="#f97316" strokeWidth="2" />
+                              </g>
+                            )
+                          })}
+                          {/* Points */}
+                          {reversedHistory.map((entry, index, arr) => {
+                            const x = 10 + (index / Math.max(arr.length - 1, 1)) * 80
+                            const y_total = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
+                            const y_hagga = 80 - ((entry.newQuantityHagga - minQuantity) / range) * 60
+                            const y_deep_desert = 80 - ((entry.newQuantityDeepDesert - minQuantity) / range) * 60
+
+                            const isSelected = selectedPointId === entry.id
+                            const isHovered = hoveredPoint?.id === entry.id
+                            const pointRadius = isSelected ? "6" : isHovered ? "5" : "4"
+
+                            return (
+                              <g key={`point-group-${entry.id}`}
+                                onMouseEnter={() => setHoveredPoint(entry)}
+                                onMouseLeave={() => setHoveredPoint(null)}
+                                onClick={() => setSelectedPointId(selectedPointId === entry.id ? null : entry.id)}
+                                className="cursor-pointer">
+                                <circle cx={`${x}%`} cy={`${y_total}%`} r={pointRadius} fill="#3b82f6" stroke={isSelected ? '#3b82f6' : 'white'} strokeWidth="2" />
+                                <circle cx={`${x}%`} cy={`${y_hagga}%`} r={pointRadius} fill="#10b981" stroke={isSelected ? '#10b981' : 'white'} strokeWidth="2" />
+                                <circle cx={`${x}%`} cy={`${y_deep_desert}%`} r={pointRadius} fill="#f97316" stroke={isSelected ? '#f97316' : 'white'} strokeWidth="2" />
+                              </g>
+                            )
+                          })}
+                          {/* Y-axis labels */}
+                          {Array.from({ length: 4 }).map((_, i) => {
+                            const numLabels = 4;
+                            const value = minQuantity + (range / (numLabels - 1)) * i;
+                            const y = 80 - ((value - minQuantity) / range) * 60;
+                            return (
+                              <text key={i} x="0" y={`${y}%`} dominant-baseline="middle" fontSize="10" fill="#6b7280" className="text-xs" textAnchor="start">
+                                {formatNumber(Math.round(value))}
+                              </text>
+                            )
+                          })}
+                        </>
                       )
-                    })}
-
-                    {/* Chart Points */}
-                    {history.slice().reverse().map((entry, index, arr) => {
-                      const x = 10 + (index / Math.max(arr.length - 1, 1)) * 80
-                      const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
-                      const minQuantity = Math.min(...history.map(h => Math.min(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
-                      const range = maxQuantity - minQuantity || 1
-                      const y = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
-
-                      const isSelected = selectedPointId === entry.id
-                      const isHovered = hoveredPoint?.id === entry.id
-
-                      return (
-                        <g key={`point-${entry.id}`}>
-                          <circle
-                            cx={`${x}%`}
-                            cy={`${y}%`}
-                            r={isSelected ? "6" : isHovered ? "5" : "4"}
-                            fill={entry.changeAmountHagga + entry.changeAmountDeepDesert > 0 ? '#10b981' : entry.changeAmountHagga + entry.changeAmountDeepDesert < 0 ? '#ef4444' : '#6b7280'}
-                            stroke={isSelected ? '#3b82f6' : 'white'}
-                            strokeWidth={isSelected ? "3" : "2"}
-                            className="hover:cursor-pointer transition-all"
-                            onMouseEnter={() => setHoveredPoint(entry)}
-                            onMouseLeave={() => setHoveredPoint(null)}
-                            onClick={() => setSelectedPointId(selectedPointId === entry.id ? null : entry.id)}
-                          />
-                        </g>
-                      )
-                    })}
-
-                    {/* Y-axis labels */}
-                    {history.length > 0 && (
-                      <>
-                        <text x="5" y="15" fontSize="10" fill="#6b7280" className="text-xs">
-                          {formatNumber(Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert))))}
-                        </text>
-                        <text x="5" y="85" fontSize="10" fill="#6b7280" className="text-xs">
-                          {formatNumber(Math.min(...history.map(h => Math.min(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert))))}
-                        </text>
-                      </>
-                    )}
+                    })()}
 
                     {/* X-axis time labels */}
                     {history.length > 1 && history.slice().reverse().map((entry, index, arr) => {
@@ -817,14 +824,18 @@ useEffect(() => {
                         ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                         : date.toLocaleDateString([], { month: 'short', day: 'numeric' })
 
+                      const isHovered = hoveredPoint?.id === entry.id
+                      const isSelected = selectedPointId === entry.id
+
                       return (
                         <text
                           key={`time-${entry.id}`}
                           x={`${x}%`}
-                          y="95"
+                          y="98%"
                           fontSize="9"
                           fill="#6b7280"
-                          className="text-xs"
+                          fontWeight={isHovered || isSelected ? 'bold' : 'normal'}
+                          className="text-xs transition-all"
                           textAnchor="middle"
                         >
                           {timeLabel}
@@ -853,18 +864,18 @@ useEffect(() => {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-600 dark:text-gray-400">
+                <div className="flex items-center justify-center gap-6 mt-4 text-xs text-gray-600 dark:text-gray-400">
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span>Increase</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#3b82f6' }}></div>
+                    <span>Total</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <span>Decrease</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#10b981' }}></div>
+                    <span>Hagga</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-gray-500"></div>
-                    <span>No Change</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#f97316' }}></div>
+                    <span>Deep Desert</span>
                   </div>
                   <div className="text-gray-500 dark:text-gray-400 ml-4">
                     💡 Hover points for details, click to highlight below • Times update automatically
@@ -974,19 +985,18 @@ useEffect(() => {
             ) : (
               <div className="space-y-3">
                 {leaderboard.slice(0, 10).map((entry, index) => (
-                  <div 
-                    key={entry.userId} 
+                  <div
+                    key={entry.userId}
                     className="flex items-center justify-between p-3 bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:from-green-100 hover:to-blue-100 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all cursor-pointer"
                     onClick={() => router.push(`/dashboard/contributions/${entry.userId}`)}
                     title={`Click to view ${entry.userId}&apos;s detailed contributions`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
-                        index === 0 ? 'bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200' :
-                        index === 1 ? 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200' :
-                        index === 2 ? 'bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200' :
-                        'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300'
-                      }`}>
+                      <div className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${index === 0 ? 'bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200' :
+                          index === 1 ? 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200' :
+                            index === 2 ? 'bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200' :
+                              'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300'
+                        }`}>
                         #{index + 1}
                       </div>
                       <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -1006,7 +1016,7 @@ useEffect(() => {
                     </div>
                   </div>
                 ))}
-                
+
                 <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                   <button
                     onClick={() => router.push('/dashboard/leaderboard')}
@@ -1064,14 +1074,14 @@ useEffect(() => {
                       key={entry.id}
                       id={`history-entry-${entry.id}`}
                       className={`group flex items-center justify-between p-4 rounded-lg transition-all duration-300 cursor-pointer ${isHighlighted
-                          ? 'bg-blue-100 dark:bg-blue-900/50 border-2 border-blue-300 dark:border-blue-500 shadow-md transform scale-[1.02]'
-                          : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                        ? 'bg-blue-100 dark:bg-blue-900/50 border-2 border-blue-300 dark:border-blue-500 shadow-md transform scale-[1.02]'
+                        : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
                         }`}
                       onClick={() => setSelectedPointId(selectedPointId === entry.id ? null : entry.id)}
                     >
                       <div className="flex items-center gap-4">
                         <div className={`w-3 h-3 rounded-full ${entry.changeAmountHagga + entry.changeAmountDeepDesert > 0 ? 'bg-green-500' :
-                            entry.changeAmountHagga + entry.changeAmountDeepDesert < 0 ? 'bg-red-500' : 'bg-gray-400'
+                          entry.changeAmountHagga + entry.changeAmountDeepDesert < 0 ? 'bg-red-500' : 'bg-gray-400'
                           } ${isHighlighted ? 'ring-2 ring-blue-400 dark:ring-blue-500' : ''}`}></div>
                         <div>
                           <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
@@ -1091,8 +1101,8 @@ useEffect(() => {
                             )}
                             {/* Change Type Indicator */}
                             <span className={`text-xs px-2 py-0.5 rounded-full ${entry.changeType === 'relative'
-                                ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
-                                : entry.changeType === 'transfer'
+                              ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
+                              : entry.changeType === 'transfer'
                                 ? 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300'
                                 : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                               }`}>
@@ -1127,7 +1137,7 @@ useEffect(() => {
                             <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">📍 Chart point</div>
                           )}
                         </div>
-                        
+
                         {/* Delete button for admin users */}
                         {canDeleteHistory && (
                           <button

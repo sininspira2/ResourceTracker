@@ -1,6 +1,22 @@
 {
-  "currentVersion": "3.2.4",
+  "currentVersion": "3.2.5",
   "releases": [
+    {
+      "version": "3.2.5",
+      "date": "2025-08-28",
+      "title": "Improved Activity Chart and Bug Fixes",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "The activity timeline chart on the resource detail page now displays three separate lines for Hagga, Deep Desert, and the total quantity. The chart's y-axis scaling is updated to accommodate all three data series, and a legend has been added. The y-axis now also displays four dynamically calculated labels."
+        },
+        {
+          "type": "bugfix",
+          "description": "Corrected an issue where the 'Target' column was not visible for users who lack edit target permissions."
+        }
+      ]
+    },
     {
       "version": "3.2.4",
       "date": "2025-08-27",
