@@ -1854,7 +1854,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Quantity
                   </th>
-                  {isTargetAdmin && (
+                  {canEdit && (
                     <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Target
                     </th>
@@ -1980,7 +1980,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         Deep Desert:{' '}
                         {formatNumber(resource.quantityDeepDesert)}
                       </td>
-                      {isTargetAdmin && (
+                      {canEdit && (
                         <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                           {resource.targetQuantity
                             ? formatNumber(resource.targetQuantity)
