@@ -739,38 +739,62 @@ useEffect(() => {
                     onMouseLeave={() => setHoveredPoint(null)}
                   >
                     {/* Chart Lines */}
-                    {history.slice().reverse().map((entry, index, arr) => {
-                      if (index === arr.length - 1) return null
-                      const nextEntry = arr[index + 1]
-
-                      const x1 = 10 + (index / Math.max(arr.length - 1, 1)) * 80
-                      const x2 = 10 + ((index + 1) / Math.max(arr.length - 1, 1)) * 80
-
-                      const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
-                      const minQuantity = Math.min(...history.map(h => Math.min(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
+                    {(() => {
+                      const reversedHistory = history.slice().reverse()
+                      const allQuantities = reversedHistory.flatMap(h => [
+                        h.newQuantityHagga,
+                        h.newQuantityDeepDesert,
+                        h.newQuantityHagga + h.newQuantityDeepDesert
+                      ])
+                      const maxQuantity = Math.max(...allQuantities)
+                      const minQuantity = Math.min(...allQuantities)
                       const range = maxQuantity - minQuantity || 1
 
-                      const y1 = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
-                      const y2 = 80 - (((nextEntry.newQuantityHagga + nextEntry.newQuantityDeepDesert) - minQuantity) / range) * 60
+                      return reversedHistory.map((entry, index, arr) => {
+                        if (index === arr.length - 1) return null
+                        const nextEntry = arr[index + 1]
 
-                      return (
-                        <line
-                          key={entry.id}
-                          x1={`${x1}%`}
-                          y1={`${y1}%`}
-                          x2={`${x2}%`}
-                          y2={`${y2}%`}
-                          stroke="#3b82f6"
-                          strokeWidth="2"
-                        />
-                      )
-                    })}
+                        const x1 = 10 + (index / Math.max(arr.length - 1, 1)) * 80
+                        const x2 = 10 + ((index + 1) / Math.max(arr.length - 1, 1)) * 80
+
+                        const y1_total = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
+                        const y2_total = 80 - (((nextEntry.newQuantityHagga + nextEntry.newQuantityDeepDesert) - minQuantity) / range) * 60
+
+                        const y1_hagga = 80 - ((entry.newQuantityHagga - minQuantity) / range) * 60
+                        const y2_hagga = 80 - ((nextEntry.newQuantityHagga - minQuantity) / range) * 60
+
+                        const y1_deep_desert = 80 - ((entry.newQuantityDeepDesert - minQuantity) / range) * 60
+                        const y2_deep_desert = 80 - ((nextEntry.newQuantityDeepDesert - minQuantity) / range) * 60
+
+                        return (
+                          <g key={entry.id}>
+                            <line
+                              x1={`${x1}%`} y1={`${y1_total}%`}
+                              x2={`${x2}%`} y2={`${y2_total}%`}
+                              stroke="#3b82f6" strokeWidth="2" />
+                            <line
+                              x1={`${x1}%`} y1={`${y1_hagga}%`}
+                              x2={`${x2}%`} y2={`${y2_hagga}%`}
+                              stroke="#10b981" strokeWidth="2" />
+                            <line
+                              x1={`${x1}%`} y1={`${y1_deep_desert}%`}
+                              x2={`${x2}%`} y2={`${y2_deep_desert}%`}
+                              stroke="#f97316" strokeWidth="2" />
+                          </g>
+                        )
+                      })
+                    })()}
 
                     {/* Chart Points */}
                     {history.slice().reverse().map((entry, index, arr) => {
                       const x = 10 + (index / Math.max(arr.length - 1, 1)) * 80
-                      const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
-                      const minQuantity = Math.min(...history.map(h => Math.min(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
+                      const allQuantities = history.flatMap(h => [
+                        h.newQuantityHagga,
+                        h.newQuantityDeepDesert,
+                        h.newQuantityHagga + h.newQuantityDeepDesert
+                      ])
+                      const maxQuantity = Math.max(...allQuantities)
+                      const minQuantity = Math.min(...allQuantities)
                       const range = maxQuantity - minQuantity || 1
                       const y = 80 - (((entry.newQuantityHagga + entry.newQuantityDeepDesert) - minQuantity) / range) * 60
 
@@ -796,16 +820,25 @@ useEffect(() => {
                     })}
 
                     {/* Y-axis labels */}
-                    {history.length > 0 && (
-                      <>
-                        <text x="5" y="15" fontSize="10" fill="#6b7280" className="text-xs">
-                          {formatNumber(Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert))))}
-                        </text>
-                        <text x="5" y="85" fontSize="10" fill="#6b7280" className="text-xs">
-                          {formatNumber(Math.min(...history.map(h => Math.min(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert))))}
-                        </text>
-                      </>
-                    )}
+                    {history.length > 0 && (() => {
+                      const allQuantities = history.flatMap(h => [
+                        h.newQuantityHagga,
+                        h.newQuantityDeepDesert,
+                        h.newQuantityHagga + h.newQuantityDeepDesert
+                      ]);
+                      const maxQuantity = Math.max(...allQuantities);
+                      const minQuantity = Math.min(...allQuantities);
+                      return (
+                        <>
+                          <text x="5" y="15" fontSize="10" fill="#6b7280" className="text-xs">
+                            {formatNumber(maxQuantity)}
+                          </text>
+                          <text x="5" y="85" fontSize="10" fill="#6b7280" className="text-xs">
+                            {formatNumber(minQuantity)}
+                          </text>
+                        </>
+                      );
+                    })()}
 
                     {/* X-axis time labels */}
                     {history.length > 1 && history.slice().reverse().map((entry, index, arr) => {
@@ -853,18 +886,18 @@ useEffect(() => {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-600 dark:text-gray-400">
+                <div className="flex items-center justify-center gap-6 mt-4 text-xs text-gray-600 dark:text-gray-400">
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span>Increase</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#3b82f6' }}></div>
+                    <span>Total</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <span>Decrease</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#10b981' }}></div>
+                    <span>Hagga</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-gray-500"></div>
-                    <span>No Change</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#f97316' }}></div>
+                    <span>Deep Desert</span>
                   </div>
                   <div className="text-gray-500 dark:text-gray-400 ml-4">
                     💡 Hover points for details, click to highlight below • Times update automatically
