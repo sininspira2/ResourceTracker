@@ -818,7 +818,7 @@ useEffect(() => {
                         const value = minQuantity + (range / (numLabels - 1)) * i;
                         const y = 80 - ((value - minQuantity) / range) * 60;
                         return (
-                          <text key={i} x="9%" y={`${y}%`} dy=".3em" fontSize="10" fill="#6b7280" className="text-xs" textAnchor="end">
+                          <text key={i} x="0" y={`${y}%`} dominant-baseline="middle" fontSize="10" fill="#6b7280" className="text-xs" textAnchor="start">
                             {formatNumber(Math.round(value))}
                           </text>
                         )
@@ -844,7 +844,7 @@ useEffect(() => {
                           x={`${x}%`}
                           y="98%"
                           fontSize="9"
-                          fill={isHovered || isSelected ? '#000' : '#6b7280'}
+                          fill="#6b7280"
                           fontWeight={isHovered || isSelected ? 'bold' : 'normal'}
                           className="text-xs transition-all"
                           textAnchor="middle"
