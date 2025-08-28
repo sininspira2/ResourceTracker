@@ -818,7 +818,7 @@ useEffect(() => {
                         const value = minQuantity + (range / (numLabels - 1)) * i;
                         const y = 80 - ((value - minQuantity) / range) * 60;
                         return (
-                          <text key={i} x="8" y={`${y}%`} dy=".3em" fontSize="10" fill="#6b7280" className="text-xs" textAnchor="end">
+                          <text key={i} x="9%" y={`${y}%`} dy=".3em" fontSize="10" fill="#6b7280" className="text-xs" textAnchor="end">
                             {formatNumber(Math.round(value))}
                           </text>
                         )
@@ -835,14 +835,18 @@ useEffect(() => {
                         ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                         : date.toLocaleDateString([], { month: 'short', day: 'numeric' })
 
+                      const isHovered = hoveredPoint?.id === entry.id
+                      const isSelected = selectedPointId === entry.id
+
                       return (
                         <text
                           key={`time-${entry.id}`}
                           x={`${x}%`}
-                          y="95"
+                          y="98%"
                           fontSize="9"
-                          fill="#6b7280"
-                          className="text-xs"
+                          fill={isHovered || isSelected ? '#000' : '#6b7280'}
+                          fontWeight={isHovered || isSelected ? 'bold' : 'normal'}
+                          className="text-xs transition-all"
                           textAnchor="middle"
                         >
                           {timeLabel}
