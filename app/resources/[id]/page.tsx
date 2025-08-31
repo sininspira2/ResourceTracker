@@ -7,6 +7,11 @@ import { ResourceHistoryChart } from '@/app/components/ResourceHistoryChart'
 import { CongratulationsPopup } from '@/app/components/CongratulationsPopup'
 import LinkifiedText from '@/app/components/LinkifiedText'
 import { getUserIdentifier } from '@/lib/auth'
+import { UpdateQuantityModal } from '@/app/components/UpdateQuantityModal'
+import { ChangeTargetModal } from '@/app/components/ChangeTargetModal'
+import { TransferModal } from '@/app/components/TransferModal'
+import { EditResourceModal } from '@/app/components/EditResourceModal'
+import { UPDATE_TYPE } from '@/lib/constants'
 
 // Utility function to format numbers with commas
 const formatNumber = (num: number): string => {
@@ -111,11 +116,47 @@ export default function ResourceDetailPage() {
     quantityChanged: 0
   })
 
+  // Modal states
+  const [updateModalState, setUpdateModalState] = useState<{
+    isOpen: boolean
+    resource: Resource | null
+    updateType: 'absolute' | 'relative'
+  }>({ isOpen: false, resource: null, updateType: 'absolute' })
+
+  const [changeTargetModalState, setChangeTargetModalState] = useState<{
+    isOpen: boolean
+    resource: Resource | null
+  }>({ isOpen: false, resource: null })
+
+  const [transferModalState, setTransferModalState] = useState<{
+    isOpen: boolean
+    resource: Resource | null
+  }>({ isOpen: false, resource: null })
+
+  const [editModalState, setEditModalState] = useState<{
+    isOpen: boolean
+    resource: Resource | null
+  }>({ isOpen: false, resource: null })
+
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    resourceId: string | null
+    resourceName: string
+    showDialog: boolean
+  }>({ resourceId: null, resourceName: '', showDialog: false })
+
+
   const resourceId = params.id as string
   const canEdit = session?.user?.permissions?.hasResourceAccess ?? false
+  const canChangeTarget = session?.user?.permissions?.hasResourceAdminAccess ?? false
 
   // Check if user can delete history entries
-  const canDeleteHistory = session?.user?.permissions?.hasResourceAdminAccess ?? false
+  const isResourceAdmin = session?.user?.permissions?.hasResourceAdminAccess ?? false
+
+  // Admin function to start editing a resource
+  const startEditResource = (resource: Resource) => {
+    if (!isResourceAdmin) return
+    setEditModalState({ isOpen: true, resource: resource })
+  }
 
   // Fetch history data
   const fetchHistory = useCallback(async (days: number) => {
@@ -248,8 +289,7 @@ export default function ResourceDetailPage() {
         setNewQuantity(0)
         setNewQuantityInput('')
         // Refresh history and leaderboard to show the new change
-        fetchHistory(timeFilter)
-        fetchLeaderboard()
+        handleResourceUpdate()
       } else {
         const errorData = await response.text()
         console.error('Failed to update resource:', errorData)
@@ -263,9 +303,110 @@ export default function ResourceDetailPage() {
     }
   }
 
+  const handleResourceUpdate = () => {
+    fetchHistory(timeFilter)
+    fetchLeaderboard()
+    // A simple way to refetch the resource is to just reload the main resource data
+    // This is less efficient than updating state directly, but safer
+    // and for a single resource page, performance impact is minimal.
+    const fetchResource = async () => {
+      try {
+        const response = await fetch(`/api/resources`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        })
+        if (response.ok) {
+          const resources = await response.json()
+          const foundResource = resources.find((r: Resource) => r.id === resourceId)
+          if (foundResource) {
+            setResource({
+              ...foundResource,
+              updatedAt: typeof foundResource.updatedAt === 'string'
+                ? foundResource.updatedAt
+                : new Date(foundResource.updatedAt).toISOString(),
+              createdAt: typeof foundResource.createdAt === 'string'
+                ? foundResource.createdAt
+                : new Date(foundResource.createdAt).toISOString(),
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Error refetching resource:', error)
+      }
+    }
+    fetchResource()
+  }
+
+  // Admin function to save resource metadata changes
+  const saveResourceMetadata = async (resourceId: string, formData: any) => {
+    if (!isResourceAdmin) return
+
+    setSaving(true)
+    try {
+      const response = await fetch(`/api/resources`, {
+        method: 'PUT',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        body: JSON.stringify({
+          resourceMetadata: {
+            id: resourceId,
+            ...formData,
+          },
+        }),
+      })
+
+      if (response.ok) {
+        const updatedResource = await response.json()
+        setResource({ ...resource, ...updatedResource })
+        setEditModalState({ isOpen: false, resource: null })
+      } else {
+        console.error('Failed to update resource metadata')
+        throw new Error('Failed to update resource metadata.')
+      }
+    } catch (error) {
+      console.error('Error updating resource metadata:', error)
+      throw error
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Admin function to delete resource
+  const deleteResource = async (resourceId: string) => {
+    if (!isResourceAdmin) return
+
+    setSaving(true)
+    try {
+      const response = await fetch(`/api/resources/${resourceId}`, {
+        method: 'DELETE',
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      })
+
+      if (response.ok) {
+        setDeleteConfirm({ resourceId: null, resourceName: '', showDialog: false })
+        router.push('/resources')
+      } else {
+        console.error('Failed to delete resource')
+        alert('Failed to delete resource')
+      }
+    } catch (error) {
+      console.error('Error deleting resource:', error)
+      alert('Error deleting resource')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+
   // Delete history entry
   const deleteHistoryEntry = async (entryId: string) => {
-    if (!canDeleteHistory) return
+    if (!isResourceAdmin) return
 
     const confirmationMessage = 'Are you sure you want to delete this history entry? This action cannot be undone.'
     if (!confirm(confirmationMessage)) {
@@ -493,18 +634,17 @@ export default function ResourceDetailPage() {
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-xs border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="relative flex items-center justify-center h-16">
             <button
               onClick={() => router.push('/resources')}
-              className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+              className="absolute left-0 flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
               Back to Resources
             </button>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Resource Details</h1>
-            <div></div>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 text-center">Resource Details</h1>
           </div>
         </div>
       </div>
@@ -600,14 +740,76 @@ export default function ResourceDetailPage() {
                     </div>
                   )}
 
-                  {/* Last Updated */}
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700 text-center md:text-left text-sm text-gray-600 dark:text-gray-400">
-                    <div>Last updated by: <span className="font-medium text-gray-900 dark:text-gray-100">{resource.lastUpdatedBy}</span></div>
-                    <div
-                      className="cursor-help hover:underline decoration-dotted"
-                      title={new Date(resource.updatedAt).toLocaleString()}
-                    >
-                      {getRelativeTime(resource.updatedAt, currentTime)}
+                  {/* Last Updated & Actions */}
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    <div className="text-center md:text-left text-sm text-gray-600 dark:text-gray-400">
+                      <div>Last updated by: <span className="font-medium text-gray-900 dark:text-gray-100">{resource.lastUpdatedBy}</span></div>
+                      <div
+                        className="cursor-help hover:underline decoration-dotted"
+                        title={new Date(resource.updatedAt).toLocaleString()}
+                      >
+                        {getRelativeTime(resource.updatedAt, currentTime)}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center justify-center md:justify-end gap-2">
+                      {canEdit && (
+                        <>
+                          <button
+                            onClick={() => setUpdateModalState({ isOpen: true, resource, updateType: 'relative' })}
+                            className="bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                            title="Add or remove from current quantity"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                            Add/Remove
+                          </button>
+                          <button
+                            onClick={() => setUpdateModalState({ isOpen: true, resource, updateType: 'absolute' })}
+                            className="bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                            title="Set a new absolute quantity"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                            Set Qty
+                          </button>
+                        </>
+                      )}
+                      {isResourceAdmin && (
+                        <>
+                          <button
+                            onClick={() => setTransferModalState({ isOpen: true, resource })}
+                            className="bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                            title="Transfer quantities between Hagga and Deep Desert"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                            Transfer
+                          </button>
+                          <button
+                            onClick={() => setChangeTargetModalState({ isOpen: true, resource })}
+                            className="bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                            title="Change the target quantity for this resource"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l-6-2m0 0l-3 9m12-9l-3 9m0 0l-3-9m-9 9h12" /></svg>
+                            Set Target
+                          </button>
+                          <button
+                            onClick={() => startEditResource(resource)}
+                            className="bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                            title="Edit resource metadata"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirm({ resourceId: resource.id, resourceName: resource.name, showDialog: true })}
+                            className="bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                            title="Delete this resource"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            Delete
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1176,6 +1378,71 @@ export default function ResourceDetailPage() {
           quantityChanged={congratulationsState.quantityChanged}
           userId={session ? getUserIdentifier(session) : undefined}
         />
+      )}
+
+      {/* Modals */}
+      {updateModalState.isOpen && updateModalState.resource && (
+        <UpdateQuantityModal
+          isOpen={updateModalState.isOpen}
+          resource={updateModalState.resource}
+          updateType={updateModalState.updateType}
+          onClose={() => setUpdateModalState({ isOpen: false, resource: null, updateType: 'absolute' })}
+          onResourceUpdate={handleResourceUpdate}
+          session={session}
+        />
+      )}
+
+      {changeTargetModalState.isOpen && changeTargetModalState.resource && (
+        <ChangeTargetModal
+          isOpen={changeTargetModalState.isOpen}
+          resource={changeTargetModalState.resource}
+          onClose={() => setChangeTargetModalState({ isOpen: false, resource: null })}
+          onResourceUpdate={handleResourceUpdate}
+        />
+      )}
+
+      {transferModalState.isOpen && transferModalState.resource && (
+        <TransferModal
+          isOpen={transferModalState.isOpen}
+          resource={transferModalState.resource}
+          onClose={() => setTransferModalState({ isOpen: false, resource: null })}
+          onResourceUpdate={handleResourceUpdate}
+        />
+      )}
+
+      {editModalState.isOpen && editModalState.resource && (
+        <EditResourceModal
+          isOpen={editModalState.isOpen}
+          resource={editModalState.resource}
+          onClose={() => setEditModalState({ isOpen: false, resource: null })}
+          onSave={saveResourceMetadata}
+        />
+      )}
+
+      {deleteConfirm.showDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4 border border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Delete Resource</h3>
+            <p className="text-gray-700 dark:text-gray-300 my-4">
+              Are you sure you want to delete &quot;{deleteConfirm.resourceName}&quot;? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteConfirm({ resourceId: null, resourceName: '', showDialog: false })}
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => deleteConfirm.resourceId && deleteResource(deleteConfirm.resourceId)}
+                disabled={saving}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 disabled:opacity-50 rounded-lg transition-colors"
+              >
+                {saving ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
