@@ -755,10 +755,10 @@ export default function ResourceDetailPage() {
               onClick={() => router.push('/resources')}
               className="absolute left-0 flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
             >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              Back to Resources
+              <span className="hidden md:inline">Back to Resources</span>
             </button>
             <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 text-center">Resource Details</h1>
           </div>
@@ -869,13 +869,13 @@ export default function ResourceDetailPage() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex flex-col items-center md:items-end gap-2">
-                      <div className="flex items-center justify-center md:justify-end gap-2">
+                    <div className="w-full md:w-auto flex flex-col items-center md:items-end gap-2">
+                      <div className="w-full flex items-center justify-center md:justify-end gap-2">
                         {canEdit && (
                           <>
                             <button
                               onClick={() => setUpdateModalState({ isOpen: true, resource, updateType: 'relative' })}
-                              className="bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-36"
+                              className="bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 flex-1 md:w-36"
                               title="Add or remove from current quantity"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
@@ -883,7 +883,7 @@ export default function ResourceDetailPage() {
                             </button>
                             <button
                               onClick={() => setUpdateModalState({ isOpen: true, resource, updateType: 'absolute' })}
-                              className="bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-36"
+                              className="bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 flex-1 md:w-36"
                               title="Set a new absolute quantity"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
@@ -894,7 +894,7 @@ export default function ResourceDetailPage() {
                         {isResourceAdmin && (
                           <button
                             onClick={() => setTransferModalState({ isOpen: true, resource })}
-                            className="bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-36"
+                            className="bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 flex-1 md:w-36"
                             title="Transfer quantities between Hagga and Deep Desert"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
@@ -902,12 +902,12 @@ export default function ResourceDetailPage() {
                           </button>
                         )}
                       </div>
-                      <div className="flex items-center justify-center md:justify-end gap-2">
+                      <div className="w-full flex items-center justify-center md:justify-end gap-2">
                         {isResourceAdmin && (
                           <>
                             <button
                               onClick={() => setChangeTargetModalState({ isOpen: true, resource })}
-                              className="bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-36"
+                              className="bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 flex-1 md:w-36"
                               title="Change the target quantity for this resource"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l-6-2m0 0l-3 9m12-9l-3 9m0 0l-3-9m-9 9h12" /></svg>
@@ -915,7 +915,7 @@ export default function ResourceDetailPage() {
                             </button>
                             <button
                               onClick={() => startEditResource(resource)}
-                              className="bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-36"
+                              className="bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 flex-1 md:w-36"
                               title="Edit resource metadata"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
@@ -923,7 +923,7 @@ export default function ResourceDetailPage() {
                             </button>
                             <button
                               onClick={() => setDeleteConfirm({ resourceId: resource.id, resourceName: resource.name, showDialog: true })}
-                              className="bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-36"
+                              className="bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 flex-1 md:w-36"
                               title="Delete this resource"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
