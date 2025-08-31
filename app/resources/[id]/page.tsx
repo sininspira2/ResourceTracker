@@ -1341,7 +1341,7 @@ export default function ResourceDetailPage() {
                         </div>
 
                         {/* Delete button for admin users */}
-                        {canDeleteHistory && (
+                        {isResourceAdmin && (
                           <button
                             onClick={(e) => {
                               e.stopPropagation()
