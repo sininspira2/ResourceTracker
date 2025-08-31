@@ -6,6 +6,29 @@ Made for Dune: Awakening. Originally forked from https://github.com/theyetty and
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
+## 🚀 Release Notes - Version 3.2.7
+
+**Release Date:** August 31, 2025
+
+---
+
+### ✨ New Features
+
+* **Full Action Controls on Resource Details Page:** The Resource Details page is now equipped with the complete set of action buttons previously only available on the main resource table. Users can now directly "Add/Remove", "Set Quantity", "Transfer", "Set Target", "Edit", and "Delete" resources from the details view, respecting all existing user permissions.
+
+### 🚀 Improvements
+
+* **Responsive Layout for Action Buttons:** The new action buttons on the details page feature a fully responsive layout. They are neatly arranged in a grid that works on both desktop and mobile, ensuring a great user experience on any device.
+* **Uniform Button Sizing:** The action buttons now maintain a uniform height and width, even on mobile devices where text wrapping might occur, providing a cleaner and more professional look.
+* **Cleaner Mobile Interface:** To optimize for smaller screens, the icons inside the action buttons on the Resource Details page are now hidden on mobile view, providing more space for the text labels.
+* **Improved Text Wrapping:** Long text and URLs in the resource description field will now correctly wrap to the next line, preventing horizontal overflow and improving readability on mobile devices.
+* **Centered Title:** The 'Resource Details' title is now centered on the page, particularly in desktop view.
+
+### 🐛 Bug Fixes
+
+* **Corrected "Transfer" Button Visibility:** Fixed a permission issue on the Resource Details page where the "Transfer" button was only visible to administrators. It is now correctly shown to all users with editing permissions, matching the behavior of the main resource table.
+* **Modal Prop and JSON Fixes:** Resolved several issues with modal components and their interaction with the API, including a JSON parsing error, incorrect prop names, and an unnecessary `session` prop.
+
 ## 🚀 Release Notes - Version 3.2.5
 
 **Release Date:** August 28, 2025
