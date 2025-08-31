@@ -337,6 +337,123 @@ export default function ResourceDetailPage() {
     fetchResource()
   }
 
+  const handleUpdate = async (
+    resourceId: string,
+    amount: number,
+    quantityField: 'quantityHagga' | 'quantityDeepDesert',
+    updateType: 'absolute' | 'relative',
+  ) => {
+    const resource = await (await fetch(`/api/resources/${resourceId}`)).json()
+    if (!resource) return
+
+    let newQuantity: number
+    if (updateType === 'relative') {
+      newQuantity = Math.max(0, resource[quantityField] + amount)
+    } else {
+      newQuantity = Math.max(0, amount)
+    }
+
+    try {
+      const response = await fetch(`/api/resources/${resourceId}`, {
+        method: 'PUT',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        body: JSON.stringify({
+          quantity: newQuantity,
+          updateType: updateType,
+          changeValue: amount,
+          quantityField: quantityField,
+        }),
+      })
+
+      if (response.ok) {
+        handleResourceUpdate()
+      } else {
+        const { error } = await response.json()
+        throw new Error(error || 'Failed to update quantity.')
+      }
+    } catch (error) {
+      console.error('Error updating quantity:', error)
+      throw error
+    }
+  }
+
+  const handleSaveTargetChange = async (
+    resourceId: string,
+    newTarget: number,
+  ) => {
+    if (!isResourceAdmin) return
+
+    setSaving(true)
+    try {
+      const response = await fetch(
+        `/api/resources/${resourceId}/target`,
+        {
+          method: 'PUT',
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+          },
+          body: JSON.stringify({
+            targetQuantity: newTarget,
+          }),
+        },
+      )
+
+      if (response.ok) {
+        handleResourceUpdate()
+        setChangeTargetModalState({ isOpen: false, resource: null })
+      } else {
+        console.error('Failed to save target quantity')
+        throw new Error('Failed to save target quantity.')
+      }
+    } catch (error) {
+      console.error('Error saving target quantity:', error)
+      throw error
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleTransfer = async (
+    resourceId: string,
+    amount: number,
+    direction: 'to_deep_desert' | 'to_hagga',
+  ) => {
+    try {
+      const response = await fetch(
+        `/api/resources/${resourceId}/transfer`,
+        {
+          method: 'PUT',
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+          },
+          body: JSON.stringify({
+            transferAmount: amount,
+            transferDirection: direction,
+          }),
+        },
+      )
+
+      if (response.ok) {
+        handleResourceUpdate()
+      } else {
+        const { error } = await response.json()
+        throw new Error(error || 'Failed to transfer quantity.')
+      }
+    } catch (error) {
+      console.error('Error transferring quantity:', error)
+      throw error
+    }
+  }
+
+
   // Admin function to save resource metadata changes
   const saveResourceMetadata = async (resourceId: string, formData: any) => {
     if (!isResourceAdmin) return
@@ -1387,7 +1504,7 @@ export default function ResourceDetailPage() {
           resource={updateModalState.resource}
           updateType={updateModalState.updateType}
           onClose={() => setUpdateModalState({ isOpen: false, resource: null, updateType: 'absolute' })}
-          onResourceUpdate={handleResourceUpdate}
+          onUpdate={handleUpdate}
           session={session}
         />
       )}
@@ -1397,7 +1514,7 @@ export default function ResourceDetailPage() {
           isOpen={changeTargetModalState.isOpen}
           resource={changeTargetModalState.resource}
           onClose={() => setChangeTargetModalState({ isOpen: false, resource: null })}
-          onResourceUpdate={handleResourceUpdate}
+          onSave={handleSaveTargetChange}
         />
       )}
 
@@ -1406,7 +1523,7 @@ export default function ResourceDetailPage() {
           isOpen={transferModalState.isOpen}
           resource={transferModalState.resource}
           onClose={() => setTransferModalState({ isOpen: false, resource: null })}
-          onResourceUpdate={handleResourceUpdate}
+          onTransfer={handleTransfer}
         />
       )}
 
