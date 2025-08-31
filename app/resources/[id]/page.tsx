@@ -343,7 +343,6 @@ export default function ResourceDetailPage() {
     quantityField: 'quantityHagga' | 'quantityDeepDesert',
     updateType: 'absolute' | 'relative',
   ) => {
-    const resource = await (await fetch(`/api/resources/${resourceId}`)).json()
     if (!resource) return
 
     let newQuantity: number
