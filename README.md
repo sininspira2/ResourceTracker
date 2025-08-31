@@ -6,7 +6,7 @@ Made for Dune: Awakening. Originally forked from https://github.com/theyetty and
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
-## 🚀 Release Notes - Version 3.2.7
+## 🚀 Release Notes - Version 3.2.6
 
 **Release Date:** August 31, 2025
 
