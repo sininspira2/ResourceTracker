@@ -8,6 +8,7 @@ import { ThemeToggle } from './ThemeToggle'
 import { VersionDisplay } from './VersionDisplay'
 import { WhatsNewModal } from './WhatsNewModal'
 import { useState, useEffect } from 'react'
+import { ArrowLeft } from 'lucide-react'
 
 interface ClientNavigationProps {
   title: string
@@ -30,8 +31,17 @@ export function ClientNavigation({ title, showDashboardLink = true }: ClientNavi
           <div className="flex items-center justify-between h-16">
             {/* Left side - Title and Version */}
             <div className="flex items-center gap-3">
-              <Link href="/" className="text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                {title}
+              {showDashboardLink && (
+                <Link href="/dashboard" className="sm:hidden text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                  <ArrowLeft size={24} />
+                </Link>
+              )}
+              <Link
+                href="/"
+                className="text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate"
+                title={title}
+              >
+                <span className="truncate">{title}</span>
               </Link>
               <VersionDisplay onClick={() => setShowChangelog(true)} />
             </div>
@@ -41,7 +51,7 @@ export function ClientNavigation({ title, showDashboardLink = true }: ClientNavi
               {session && showDashboardLink && (
                 <Link
                   href="/dashboard"
-                  className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-sm font-medium transition-colors"
+                  className="hidden sm:flex text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-sm font-medium transition-colors"
                 >
                   Dashboard
                 </Link>
