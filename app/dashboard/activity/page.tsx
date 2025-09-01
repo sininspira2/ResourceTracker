@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 // Note: hasResourceAccess now computed server-side and available in session.user.permissions
 
 // Utility function to format numbers with commas
@@ -138,10 +139,8 @@ export default function ActivityLogPage() {
                 href="/dashboard"
                 className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to Dashboard
+                <ArrowLeft className="w-5 h-5 sm:mr-2" />
+                <span className="hidden sm:inline">Back to Dashboard</span>
               </Link>
               <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Your Activity Log</h1>
