@@ -41,7 +41,7 @@ export function ClientNavigation({ title, showDashboardLink = true }: ClientNavi
                 className="text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate"
                 title={title}
               >
-                <span className="truncate">{title}</span>
+                {title}
               </Link>
               <VersionDisplay onClick={() => setShowChangelog(true)} />
             </div>
