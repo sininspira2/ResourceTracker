@@ -1,6 +1,26 @@
 {
-  "currentVersion": "3.2.6",
+  "currentVersion": "3.2.7",
   "releases": [
+    {
+      "version": "3.2.7",
+      "date": "2025-09-01",
+      "title": "Mobile View Navigation Bar Fixes",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "bugfix",
+          "description": "Fixed long organization names in the `ClientNavigation` component overflowing their container in mobile view."
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed 'Back to Dashboard' links on the activity and privacy pages to be more mobile-friendly."
+        },
+        {
+          "type": "enhancement",
+          "description": "Added lucide-react dependency. Necessary for above fixes, and enables access to a lightweight open-source vector graphic library for later updates."
+        }
+      ]
+    },
     {
       "version": "3.2.6",
       "date": "2025-08-31",
