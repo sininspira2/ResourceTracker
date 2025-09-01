@@ -33,6 +33,7 @@ export const resources = sqliteTable('resources', {
   status: text('status'), // 'at_target', 'below_target', 'critical'
   targetQuantity: integer('target_quantity'), // Target/threshold quantity for status calculation
   multiplier: real('multiplier').notNull().default(1.0), // Points multiplier for this resource
+  isPriority: integer('is_priority', { mode: 'boolean' }).notNull().default(false),
   lastUpdatedBy: text('last_updated_by').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),

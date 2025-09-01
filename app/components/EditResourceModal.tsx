@@ -10,6 +10,7 @@ interface Resource {
   description?: string
   imageUrl?: string
   multiplier?: number
+  isPriority?: boolean
 }
 
 interface EditResourceModalProps {
@@ -25,7 +26,8 @@ export function EditResourceModal({ isOpen, onClose, onSave, resource }: EditRes
     category: 'Raw',
     description: '',
     imageUrl: '',
-    multiplier: 1.0
+    multiplier: 1.0,
+    isPriority: false
   })
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -51,7 +53,8 @@ export function EditResourceModal({ isOpen, onClose, onSave, resource }: EditRes
         category: resource.category || 'Raw',
         description: resource.description || '',
         imageUrl: resource.imageUrl || '',
-        multiplier: resource.multiplier || 1.0
+        multiplier: resource.multiplier || 1.0,
+        isPriority: resource.isPriority || false,
       })
       setError(null)
       setSaving(false)
@@ -159,6 +162,19 @@ export function EditResourceModal({ isOpen, onClose, onSave, resource }: EditRes
               onChange={(e) => setFormData({ ...formData, multiplier: parseFloat(e.target.value) || 1.0 })}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
+          </div>
+
+          <div className="flex items-center">
+            <input
+              id="isPriority"
+              type="checkbox"
+              checked={formData.isPriority}
+              onChange={(e) => setFormData({ ...formData, isPriority: e.target.checked })}
+              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label htmlFor="isPriority" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+              Priority Resource
+            </label>
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}

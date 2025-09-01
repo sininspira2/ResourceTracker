@@ -172,6 +172,7 @@ interface Resource {
   status?: string // Optional since we calculate this dynamically
   targetQuantity?: number
   multiplier?: number // Points multiplier for this resource
+  isPriority?: boolean
   lastUpdatedBy: string
   updatedAt: string
 }
@@ -272,6 +273,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   )
   const [needsUpdateFilter, setNeedsUpdateFilter] = useState(false)
   const [categoryFilter, setCategoryFilter] = useState('all')
+  const [priorityFilter, setPriorityFilter] = useState(false)
 
   // Add state for update modal
   const [updateModalState, setUpdateModalState] = useState<{
@@ -860,11 +862,18 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         matchesCategory = (resource.category || UNCATEGORIZED) === categoryFilter
       }
 
+      // Priority filter
+      let matchesPriority = true
+      if (priorityFilter) {
+        matchesPriority = resource.isPriority === true
+      }
+
       return (
         matchesSearch &&
         matchesStatus &&
         matchesNeedsUpdate &&
-        matchesCategory
+        matchesCategory &&
+        matchesPriority
       )
     })
     .sort((a, b) => {
@@ -1507,11 +1516,25 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </label>
             </div>
 
+            {/* Priority Filter */}
+            <div className="flex items-center gap-2">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={priorityFilter}
+                  onChange={(e) => setPriorityFilter(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <span>Priority</span>
+              </label>
+            </div>
+
             {/* Active Filters Indicator */}
             {(statusFilter !== 'all' ||
               needsUpdateFilter ||
               searchTerm ||
-              categoryFilter !== 'all') && (
+              categoryFilter !== 'all' ||
+              priorityFilter) && (
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <span>
                   Showing {filteredResources.length} of {resources.length}{' '}
@@ -1523,6 +1546,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     setNeedsUpdateFilter(false)
                     setSearchTerm('')
                     setCategoryFilter('all')
+                    setPriorityFilter(false)
                   }}
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
@@ -1643,6 +1667,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           onClick={(e) => e.stopPropagation()}
                         >
                           <h4 className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            {resource.isPriority && (
+                              <span className="text-red-500">* </span>
+                            )}
                             {resource.name}
                           </h4>
 
@@ -1923,6 +1950,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-words">
+                              {resource.isPriority && (
+                                <span className="text-red-500">* </span>
+                              )}
                               {resource.name}
                               <svg
                                 className="w-3 h-3 inline ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
