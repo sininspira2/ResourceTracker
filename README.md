@@ -1,3 +1,5 @@
+# Users Moving from the old tracker, and those updating from 3.x to 4.x - please refer to the [Database Migration Guide](https://github.com/sininspira2/ResourceTracker/blob/10039cb54c2a1a5c04cae2102390d71bf391a529/DB_MIGRATION.md).
+
 # Resource Tracker
 
 A comprehensive resource management and tracking portal with Discord authentication and role-based access control. Perfect for gaming communities, organizations, and teams that need to track shared resources, inventory, or assets.
@@ -6,57 +8,15 @@ Made for Dune: Awakening. Originally forked from https://github.com/theyetty and
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
-## 🚀 Release Notes - Version 3.2.7
+## 🚀 Release Notes - Version 4.0.0
 
-**Release Date:** September 1, 2025
-
----
-
-### 🐛 Bug Fixes
-
-* **Navigation Bar Overflow:** Fixed an issue in the `ClientNavigation` component where long organization names would overflow their container on mobile devices.
-* **Mobile-Friendly Links:** The "Back to Dashboard" links on the activity and privacy pages are now more mobile-friendly.
-
-### ✨ Enhancements
-
-* **New Dependency:** Added the `lucide-react` dependency, which was necessary for the fixes above and provides a lightweight, open-source vector graphic library for future updates.
+**Release Date:** September 2, 2025
 
 ---
 
-## 🚀 Release Notes - Version 3.2.6
+### ✨ New Feature
 
-**Release Date:** August 31, 2025
-
----
-
-### ✨ New Features
-
-* **Full Action Controls on Resource Details Page:** The Resource Details page is now equipped with the complete set of action buttons previously only available on the main resource table. Users can now directly "Add/Remove", "Set Quantity", "Transfer", "Set Target", "Edit", and "Delete" resources from the details view, respecting all existing user permissions.
-
-### 🚀 Improvements
-
-* **Responsive Layout for Action Buttons:** The new action buttons on the details page feature a fully responsive layout. They are neatly arranged in a grid that works on both desktop and mobile, ensuring a great user experience on any device.
-* **Uniform Button Sizing:** The action buttons now maintain a uniform height and width, even on mobile devices where text wrapping might occur, providing a cleaner and more professional look.
-* **Cleaner Mobile Interface:** To optimize for smaller screens, the icons inside the action buttons on the Resource Details page are now hidden on mobile view, providing more space for the text labels.
-* **Improved Text Wrapping:** Long text and URLs in the resource description field will now correctly wrap to the next line, preventing horizontal overflow and improving readability on mobile devices.
-* **Centered Title:** The 'Resource Details' title is now centered on the page, particularly in desktop view.
-
-### 🐛 Bug Fixes
-
-* **Corrected "Transfer" Button Visibility:** Fixed a permission issue on the Resource Details page where the "Transfer" button was only visible to administrators. It is now correctly shown to all users with editing permissions, matching the behavior of the main resource table.
-* **Modal Prop and JSON Fixes:** Resolved several issues with modal components and their interaction with the API, including a JSON parsing error, incorrect prop names, and an unnecessary `session` prop.
-
-## 🚀 Release Notes - Version 3.2.5
-
-**Release Date:** August 28, 2025
-
----
-
-### New Features
-* **Improved Activity Chart:** The activity timeline chart on the resource detail page now shows three distinct lines—one for Deep Desert, one for Hagga, and a total quantity line—each with a unique color. The chart's scaling and y-axis labels have been optimized to better display all three data sets. A legend has also been added to help identify each line.
-
-### Bug Fixes
-* **Target Column Visibility:** Fixed a bug where the "Target" column was not showing for users who do not have permissions to edit targets.
+* **Priority Resource Flag:** Resources now have an `isPriority` boolean flag. This update includes adding a new column to the database, a checkbox in the **EditResourceModal** to set the status, and a visual indicator (an asterisk) in both the table and grid views. Additionally, a filter has been implemented to display only priority resources, and the API has been updated to support this new feature.
 
 
 *See lib/changelog.json for previous update history*
