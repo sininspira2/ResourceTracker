@@ -15,7 +15,7 @@ This guide provides manual SQL scripts to update your Turso database schema, ens
 5.  Clear any existing commands from the SQL editor text box.
 6.  Copy and paste the entire script below into the editor:
     ```sql
-    ALTER TABLE `resources` ADD `is_priority` integer DEFAULT false NOT NULL;
+    ALTER TABLE `resources` ADD `is_priority` integer DEFAULT 0 NOT NULL;
     ALTER TABLE `resource_history` RENAME COLUMN `previous_quantity` TO `previous_quantity_hagga`;
     ALTER TABLE `resource_history` RENAME COLUMN `new_quantity` TO `new_quantity_hagga`;
     ALTER TABLE `resource_history` RENAME COLUMN `change_amount` TO `change_amount_hagga`;
