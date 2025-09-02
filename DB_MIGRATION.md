@@ -38,6 +38,6 @@ If you upgraded from a `3.x` version to `4.x` and can no longer edit resource me
 1.  Follow steps 1-5 from the guide above to open the **SQL Console** for your database.
 2.  Copy and paste the following command into the editor:
     ```sql
-    ALTER TABLE `resources` ADD `is_priority` integer DEFAULT false NOT NULL;
+    ALTER TABLE `resources` ADD `is_priority` integer DEFAULT 0 NOT NULL;
     ```
 3.  Click the green **Run** button to execute the command.
