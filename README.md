@@ -168,9 +168,14 @@ TURSO_DATABASE_URL=your_turso_database_url
 TURSO_AUTH_TOKEN=your_turso_auth_token
 ```
 
-4. Run the database migration:
+4. Generate the database:
 ```bash
-npm run db:push
+npx drizzle-kit generate
+```
+
+5. Run the database migration:
+```bash
+npx drizzle-kit push
 ```
 
 ### Step 7: Populate with Sample Data (Optional)
@@ -205,12 +210,17 @@ npm install
 
 2. Create a `.env.local` file with the environment variables (see [ENVIRONMENT.md](./ENVIRONMENT.md) for details)
 
-3. Run database migrations:
+3. Generate the database:
 ```bash
-npm run db:push
+npx drizzle-kit generate
 ```
 
-4. Start the development server:
+4. Run the database migration:
+```bash
+npx drizzle-kit push
+```
+
+5. Start the development server:
 ```bash
 npm run dev
 ```
