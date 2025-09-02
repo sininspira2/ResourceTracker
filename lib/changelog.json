@@ -1,6 +1,22 @@
 {
-  "currentVersion": "3.2.7",
+  "currentVersion": "4.0.0",
   "releases": [
+    {
+      "version": "4.0.0",
+      "date": "2025-09-02",
+      "title": "Priority Resource Flag Addition",
+      "type": "major",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added a new 'isPriority' boolean flag for resources. This includes adding an 'isPriority' column to the database schema, updating the EditResourceModal with a checkbox, adding a visual indicator (asterisk) for priority resources, and implementing a filter to show only priority resources. The API has also been updated to handle this new field."
+        },
+        {
+          "type": "info",
+          "description": "If you upgraded from 3.x to 4.x, please refer to the [Database Migration Guide](https://github.com/sininspira2/ResourceTracker/blob/10039cb54c2a1a5c04cae2102390d71bf391a529/DB_MIGRATION.md)."
+        }
+      ]
+    },
     {
       "version": "3.2.7",
       "date": "2025-09-01",
