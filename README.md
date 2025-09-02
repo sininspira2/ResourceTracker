@@ -23,6 +23,9 @@ Removed from fork network due to original author repository being deleted, and d
 
 ----------------------------------------------------------------------------------------
 
+![Resource Page Example](ResourcesPageSample.png)
+
+
 ## Features
 
 - **Discord OAuth Authentication** - Secure login with Discord
