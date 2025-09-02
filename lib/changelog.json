@@ -1,6 +1,22 @@
 {
-  "currentVersion": "3.2.7",
+  "currentVersion": "4.0.0",
   "releases": [
+    {
+      "version": "4.0.0",
+      "date": "2025-09-02",
+      "title": "Priority Resource Flag Addition",
+      "type": "major",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added a new 'isPriority' boolean flag for resources. This includes adding an 'isPriority' column to the database schema, updating the EditResourceModal with a checkbox, adding a visual indicator (asterisk) for priority resources, and implementing a filter to show only priority resources. The API has also been updated to handle this new field."
+        },
+        {
+          "type": "info",
+          "description": "If you upgraded from 3.x to 4.x, please refer to the DB_MIGRATION.md file on the ResourceTracker Github."
+        }
+      ]
+    },
     {
       "version": "3.2.7",
       "date": "2025-09-01",

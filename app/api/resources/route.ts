@@ -121,7 +121,7 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
       }
 
-      const { id, name, category, description, imageUrl, multiplier } = body.resourceMetadata
+      const { id, name, category, description, imageUrl, multiplier, isPriority } = body.resourceMetadata
 
       if (!id || !name || !category) {
         return NextResponse.json({ error: 'ID, name, and category are required' }, { status: 400 })
@@ -134,6 +134,7 @@ export async function PUT(request: NextRequest) {
           description: description || null,
           imageUrl: imageUrl || null,
           multiplier: multiplier || 1.0,
+          isPriority: isPriority || false,
           lastUpdatedBy: userId,
           updatedAt: new Date(),
         })
