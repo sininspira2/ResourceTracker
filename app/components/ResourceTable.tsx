@@ -8,6 +8,7 @@ import { TransferModal } from './TransferModal'
 import { UpdateQuantityModal } from './UpdateQuantityModal'
 import { EditResourceModal } from './EditResourceModal'
 import { ChangeTargetModal } from './ChangeTargetModal'
+import { AlertTriangle, Trash2 } from 'lucide-react'
 import { getUserIdentifier } from '@/lib/auth'
 import {
   CATEGORY_OPTIONS,
@@ -2141,19 +2142,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-3 mb-4">
-              <svg
-                className="w-8 h-8 text-red-600 dark:text-red-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.888-.833-2.664 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
+              <Trash2 className="w-8 h-8 text-red-600 dark:text-red-400" />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Delete Resource
               </h3>
@@ -2166,19 +2155,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </p>
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3">
                 <div className="flex items-start gap-2">
-                  <svg
-                    className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.888-.833-2.664 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z"
-                    />
-                  </svg>
+                  <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
                   <div className="text-sm">
                     <p className="font-medium text-red-800 dark:text-red-200 mb-1">
                       Warning: This action cannot be undone

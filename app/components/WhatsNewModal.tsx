@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { 
   getCurrentVersion, 
@@ -24,6 +24,10 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
   const [releases, setReleases] = useState<any[]>([])
   const [showModal, setShowModal] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isOverflowing, setIsOverflowing] = useState(false)
+  const [isContentVisible, setIsContentVisible] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   const effectiveIsOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen
 
@@ -62,6 +66,30 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
     }
   }, [effectiveIsOpen, externalIsOpen])
 
+  useEffect(() => {
+    if (showModal) {
+      // We need to check for overflow after the modal's entry animation (300ms) has completed.
+      const timer = setTimeout(() => {
+        const contentElement = contentRef.current
+        if (contentElement) {
+          const hasOverflow = contentElement.scrollHeight > contentElement.clientHeight
+          setIsOverflowing(hasOverflow)
+        }
+        setIsContentVisible(true) // Fade in the content
+      }, 350) // A delay longer than the transition duration (300ms)
+
+      return () => clearTimeout(timer)
+    } else {
+      // Reset states when modal closes to ensure correct behavior on reopen
+      const timer = setTimeout(() => {
+        setIsContentVisible(false)
+        setIsExpanded(false)
+        setIsOverflowing(false)
+      }, 300) // Delay reset until after close animation
+      return () => clearTimeout(timer)
+    }
+  }, [showModal]) // Rerun only when modal visibility changes
+
   const handleClose = (markAsSeen: boolean = false) => {
     if (markAsSeen) {
       const currentVersion = getCurrentVersion()
@@ -82,21 +110,26 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
       className={`fixed inset-0 flex items-center justify-center p-4 z-50 transition-colors duration-300 ease-in-out ${
         isAnimating ? 'bg-black/50' : 'bg-black/0'
       }`}
+      onClick={() => handleClose(true)}
     >
       <div
-        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto transition-all duration-300 ease-in-out transform ${
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="whats-new-modal-title"
+        onClick={(e) => e.stopPropagation()}
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full flex flex-col max-h-[80vh] transition-all duration-300 ease-in-out transform ${
           isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
         {/* Header */}
-        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
+        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold">What&apos;s New</h2>
+              <h2 id="whats-new-modal-title" className="text-2xl font-bold">What&apos;s New</h2>
               <p className="text-blue-100 mt-1">Latest updates and improvements</p>
             </div>
             <button
-              onClick={() => handleClose(false)}
+              onClick={() => handleClose(true)}
               className="text-blue-100 hover:text-white p-1 rounded-full hover:bg-blue-600 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,7 +140,21 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div
+          ref={contentRef}
+          className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
+            isContentVisible ? 'opacity-100' : 'opacity-0'
+          } ${
+            isExpanded ? 'overflow-y-auto' : 'overflow-y-hidden'
+          } ${
+            // Height transition logic
+            !isExpanded && isOverflowing
+              ? 'max-h-80' // Collapsed state
+              : isOverflowing
+              ? 'max-h-[80vh]' // Expanded state, provide a concrete value for the animation
+              : '' // Default state for non-overflowing content
+          }`}
+        >
           {releases.map((release) => (
             <div key={release.version} className="mb-8 last:mb-0">
               {/* Release Header */}
@@ -145,7 +192,21 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 rounded-b-lg flex gap-3 justify-end">
+        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 rounded-b-lg flex gap-3 flex-shrink-0 items-center">
+          {/* See More button - aligned to the left */}
+          {isOverflowing && !isExpanded && (
+            <button
+              onClick={() => setIsExpanded(true)}
+              className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
+            >
+              See More
+            </button>
+          )}
+
+          {/* Spacer to push action buttons to the right */}
+          <div className="flex-grow" />
+
+          {/* Action Buttons - aligned to the right */}
           {!forceShow && externalIsOpen === undefined && (
             <>
               <button
