@@ -145,11 +145,14 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
           className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
             isContentVisible ? 'opacity-100' : 'opacity-0'
           } ${
-            isExpanded
-              ? 'overflow-y-auto'
-              : 'overflow-y-hidden'
+            isExpanded ? 'overflow-y-auto' : 'overflow-y-hidden'
           } ${
-            !isExpanded && isOverflowing ? 'max-h-80' : ''
+            // Height transition logic
+            !isExpanded && isOverflowing
+              ? 'max-h-80' // Collapsed state
+              : isOverflowing
+              ? 'max-h-[80vh]' // Expanded state, provide a concrete value for the animation
+              : '' // Default state for non-overflowing content
           }`}
         >
           {releases.map((release) => (
