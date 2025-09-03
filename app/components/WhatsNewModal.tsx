@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { 
   getCurrentVersion, 
@@ -24,6 +24,9 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
   const [releases, setReleases] = useState<any[]>([])
   const [showModal, setShowModal] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isOverflowing, setIsOverflowing] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   const effectiveIsOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen
 
@@ -62,6 +65,19 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
     }
   }, [effectiveIsOpen, externalIsOpen])
 
+  useEffect(() => {
+    // Using a timeout to ensure the DOM has been painted and dimensions are accurate before checking for overflow.
+    const timer = setTimeout(() => {
+      const contentElement = contentRef.current
+      if (contentElement) {
+        const hasOverflow = contentElement.scrollHeight > contentElement.clientHeight
+        setIsOverflowing(hasOverflow)
+      }
+    }, 100) // A small delay can be necessary for layout to stabilize
+
+    return () => clearTimeout(timer)
+  }, [releases, showModal]) // Rerun on content change or modal visibility change
+
   const handleClose = (markAsSeen: boolean = false) => {
     if (markAsSeen) {
       const currentVersion = getCurrentVersion()
@@ -89,12 +105,12 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         aria-modal="true"
         aria-labelledby="whats-new-modal-title"
         onClick={(e) => e.stopPropagation()}
-        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto transition-all duration-300 ease-in-out transform ${
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full flex flex-col max-h-[80vh] transition-all duration-300 ease-in-out transform ${
           isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
         {/* Header */}
-        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
+        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <h2 id="whats-new-modal-title" className="text-2xl font-bold">What&apos;s New</h2>
@@ -112,7 +128,10 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div
+          ref={contentRef}
+          className={`p-6 flex-grow ${isExpanded ? 'overflow-y-auto' : 'overflow-y-hidden'} ${!isExpanded && isOverflowing ? 'max-h-60' : ''}`}
+        >
           {releases.map((release) => (
             <div key={release.version} className="mb-8 last:mb-0">
               {/* Release Header */}
@@ -150,9 +169,17 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 rounded-b-lg flex gap-3 justify-end">
+        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 rounded-b-lg flex gap-3 justify-end flex-shrink-0 items-center">
           {!forceShow && externalIsOpen === undefined && (
             <>
+              {isOverflowing && !isExpanded && (
+                <button
+                  onClick={() => setIsExpanded(true)}
+                  className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors mr-auto"
+                >
+                  See More
+                </button>
+              )}
               <button
                 onClick={() => handleClose(false)}
                 className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-500 transition-colors"
