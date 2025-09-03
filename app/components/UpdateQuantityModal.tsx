@@ -120,13 +120,18 @@ export function UpdateQuantityModal({
       className={`fixed inset-0 flex items-center justify-center z-50 transition-colors duration-300 ease-in-out ${
         isAnimating ? 'bg-black/50' : 'bg-black/0'
       }`}
+      onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="update-quantity-modal-title"
+        onClick={(e) => e.stopPropagation()}
         className={`bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4 border border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out transform ${
           isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+        <h3 id="update-quantity-modal-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
           {updateType === UPDATE_TYPE.ABSOLUTE ? 'Set' : 'Add/Remove'}{' '}
           {resource.name}
         </h3>

@@ -82,8 +82,13 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
       className={`fixed inset-0 flex items-center justify-center p-4 z-50 transition-colors duration-300 ease-in-out ${
         isAnimating ? 'bg-black/50' : 'bg-black/0'
       }`}
+      onClick={() => handleClose(false)}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="whats-new-modal-title"
+        onClick={(e) => e.stopPropagation()}
         className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto transition-all duration-300 ease-in-out transform ${
           isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
@@ -92,7 +97,7 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold">What&apos;s New</h2>
+              <h2 id="whats-new-modal-title" className="text-2xl font-bold">What&apos;s New</h2>
               <p className="text-blue-100 mt-1">Latest updates and improvements</p>
             </div>
             <button
