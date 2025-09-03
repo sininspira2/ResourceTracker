@@ -14,6 +14,12 @@ import { EditResourceModal } from '@/app/components/EditResourceModal'
 import { UPDATE_TYPE } from '@/lib/constants'
 import { Plus, Baseline, ArrowRightLeft, Target, Pencil, Trash2 } from 'lucide-react'
 
+const CHART_COLORS = {
+  total: '#3b82f6',
+  hagga: '#10b981',
+  deepDesert: '#f97316',
+}
+
 // Utility function to format numbers with commas
 const formatNumber = (num: number): string => {
   return num.toLocaleString()
@@ -1089,9 +1095,9 @@ export default function ResourceDetailPage() {
 
                             return (
                               <g key={`line-${entry.id}`}>
-                                <line x1={`${x1}%`} y1={`${y1_total}%`} x2={`${x2}%`} y2={`${y2_total}%`} stroke="#3b82f6" strokeWidth="2" />
-                                <line x1={`${x1}%`} y1={`${y1_hagga}%`} x2={`${x2}%`} y2={`${y2_hagga}%`} stroke="#10b981" strokeWidth="2" />
-                                <line x1={`${x1}%`} y1={`${y1_deep_desert}%`} x2={`${x2}%`} y2={`${y2_deep_desert}%`} stroke="#f97316" strokeWidth="2" />
+                                <line x1={`${x1}%`} y1={`${y1_total}%`} x2={`${x2}%`} y2={`${y2_total}%`} stroke={CHART_COLORS.total} strokeWidth="2" />
+                                <line x1={`${x1}%`} y1={`${y1_hagga}%`} x2={`${x2}%`} y2={`${y2_hagga}%`} stroke={CHART_COLORS.hagga} strokeWidth="2" />
+                                <line x1={`${x1}%`} y1={`${y1_deep_desert}%`} x2={`${x2}%`} y2={`${y2_deep_desert}%`} stroke={CHART_COLORS.deepDesert} strokeWidth="2" />
                               </g>
                             )
                           })}
@@ -1112,9 +1118,9 @@ export default function ResourceDetailPage() {
                                 onMouseLeave={() => setHoveredPoint(null)}
                                 onClick={() => setSelectedPointId(selectedPointId === entry.id ? null : entry.id)}
                                 className="cursor-pointer">
-                                <circle cx={`${x}%`} cy={`${y_total}%`} r={pointRadius} fill="#3b82f6" stroke={isSelected ? '#3b82f6' : 'white'} strokeWidth="2" />
-                                <circle cx={`${x}%`} cy={`${y_hagga}%`} r={pointRadius} fill="#10b981" stroke={isSelected ? '#10b981' : 'white'} strokeWidth="2" />
-                                <circle cx={`${x}%`} cy={`${y_deep_desert}%`} r={pointRadius} fill="#f97316" stroke={isSelected ? '#f97316' : 'white'} strokeWidth="2" />
+                                <circle cx={`${x}%`} cy={`${y_total}%`} r={pointRadius} fill={CHART_COLORS.total} stroke={isSelected ? CHART_COLORS.total : 'white'} strokeWidth="2" />
+                                <circle cx={`${x}%`} cy={`${y_hagga}%`} r={pointRadius} fill={CHART_COLORS.hagga} stroke={isSelected ? CHART_COLORS.hagga : 'white'} strokeWidth="2" />
+                                <circle cx={`${x}%`} cy={`${y_deep_desert}%`} r={pointRadius} fill={CHART_COLORS.deepDesert} stroke={isSelected ? CHART_COLORS.deepDesert : 'white'} strokeWidth="2" />
                               </g>
                             )
                           })}
@@ -1185,15 +1191,15 @@ export default function ResourceDetailPage() {
                 </div>
                 <div className="flex items-center justify-center gap-6 mt-4 text-xs text-gray-600 dark:text-gray-400">
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#3b82f6' }}></div>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHART_COLORS.total }}></div>
                     <span>Total</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#10b981' }}></div>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHART_COLORS.hagga }}></div>
                     <span>Hagga</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#f97316' }}></div>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHART_COLORS.deepDesert }}></div>
                     <span>Deep Desert</span>
                   </div>
                   <div className="text-gray-500 dark:text-gray-400 ml-4">
