@@ -1,6 +1,38 @@
 {
-  "currentVersion": "4.0.0",
+  "currentVersion": "4.0.2",
   "releases": [
+    {
+      "version": "4.0.2",
+      "date": "2025-09-03",
+      "title": "Modal Overhaul, Accessibility Improvements, and Bug Fixes",
+      "type": "patch",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "The 'What's New' modal has been overhauled to handle long content gracefully. It now uses a flexbox layout to ensure the header and footer are always visible, and the content area is scrollable. Long content is initially collapsed with a 'See More' button to expand it. This also includes smooth expand/collapse animations and fixes for a visual flash on initial render. The modal also now correctly dismisses permanently when closed via the 'X' button or backdrop."
+        },
+        {
+          "type": "feature",
+          "description": "Replaced the hardcoded SVGs in the delete confirmation modal with `AlertTriangle` and `Trash2` icons from the `lucide-react` library. This ensures consistent icon usage across the application, including the `ResourceTable` component and the resource detail page."
+        },
+        {
+          "type": "improvement",
+          "description": "Improved the accessibility and user experience of all modals by adding `role=\"dialog\"`, `aria-modal=\"true\"`, and `aria-labelledby` attributes for better screen reader support. Modals can now be closed by clicking the overlay without closing when clicking the content itself."
+        },
+        {
+          "type": "improvement",
+          "description": "Refactored the activity chart colors on the resource detail page from hardcoded hex strings to a reusable `CHART_COLORS` constant object, which improves maintainability."
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed an issue where the legend circles on the activity timeline would get squished on narrower viewports by adding the `flex-shrink-0` utility class."
+        },
+        {
+          "type": "bugfix",
+          "description": "Ensured the progress bar is always visible on the resource detail page when a target is set, even if the progress is 0%, by correcting a conditional render check."
+        }
+      ]
+    },
     {
       "version": "4.0.0",
       "date": "2025-09-02",
