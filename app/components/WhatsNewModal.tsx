@@ -26,6 +26,7 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
   const [isAnimating, setIsAnimating] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
+  const [isContentVisible, setIsContentVisible] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
 
   const effectiveIsOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen
@@ -66,18 +67,27 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
   }, [effectiveIsOpen, externalIsOpen])
 
   useEffect(() => {
-    // We need to check for overflow after the modal's entry animation (300ms) has completed.
-    // A timeout ensures the DOM has been painted and dimensions are accurate before checking.
-    const timer = setTimeout(() => {
-      if (!showModal) return; // Don't run if modal was closed before timer fired
-      const contentElement = contentRef.current
-      if (contentElement) {
-        const hasOverflow = contentElement.scrollHeight > contentElement.clientHeight
-        setIsOverflowing(hasOverflow)
-      }
-    }, 350) // A delay longer than the transition duration (300ms)
+    if (showModal) {
+      // We need to check for overflow after the modal's entry animation (300ms) has completed.
+      const timer = setTimeout(() => {
+        const contentElement = contentRef.current
+        if (contentElement) {
+          const hasOverflow = contentElement.scrollHeight > contentElement.clientHeight
+          setIsOverflowing(hasOverflow)
+        }
+        setIsContentVisible(true) // Fade in the content
+      }, 350) // A delay longer than the transition duration (300ms)
 
-    return () => clearTimeout(timer)
+      return () => clearTimeout(timer)
+    } else {
+      // Reset states when modal closes to ensure correct behavior on reopen
+      const timer = setTimeout(() => {
+        setIsContentVisible(false)
+        setIsExpanded(false)
+        setIsOverflowing(false)
+      }, 300) // Delay reset until after close animation
+      return () => clearTimeout(timer)
+    }
   }, [showModal]) // Rerun only when modal visibility changes
 
   const handleClose = (markAsSeen: boolean = false) => {
@@ -132,7 +142,15 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         {/* Content */}
         <div
           ref={contentRef}
-          className={`p-6 flex-grow ${isExpanded ? 'overflow-y-auto' : 'overflow-y-hidden'} ${!isExpanded && isOverflowing ? 'max-h-80' : ''}`}
+          className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
+            isContentVisible ? 'opacity-100' : 'opacity-0'
+          } ${
+            isExpanded
+              ? 'overflow-y-auto'
+              : 'overflow-y-hidden'
+          } ${
+            !isExpanded && isOverflowing ? 'max-h-80' : ''
+          }`}
         >
           {releases.map((release) => (
             <div key={release.version} className="mb-8 last:mb-0">
