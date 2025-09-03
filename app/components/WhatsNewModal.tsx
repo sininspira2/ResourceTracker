@@ -107,7 +107,7 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         aria-modal="true"
         aria-labelledby="whats-new-modal-title"
         onClick={(e) => e.stopPropagation()}
-        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full flex flex-col max-h-[80vh] transition-all duration-300 ease-in-out transform ${
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full flex flex-col max-h-[80vh] transition-all duration-300 ease-in-out transform ${
           isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
@@ -132,7 +132,7 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         {/* Content */}
         <div
           ref={contentRef}
-          className={`p-6 flex-grow ${isExpanded ? 'overflow-y-auto' : 'overflow-y-hidden'} ${!isExpanded && isOverflowing ? 'max-h-60' : ''}`}
+          className={`p-6 flex-grow ${isExpanded ? 'overflow-y-auto' : 'overflow-y-hidden'} ${!isExpanded && isOverflowing ? 'max-h-80' : ''}`}
         >
           {releases.map((release) => (
             <div key={release.version} className="mb-8 last:mb-0">
@@ -171,17 +171,23 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 rounded-b-lg flex gap-3 justify-end flex-shrink-0 items-center">
+        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 rounded-b-lg flex gap-3 flex-shrink-0 items-center">
+          {/* See More button - aligned to the left */}
+          {isOverflowing && !isExpanded && (
+            <button
+              onClick={() => setIsExpanded(true)}
+              className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
+            >
+              See More
+            </button>
+          )}
+
+          {/* Spacer to push action buttons to the right */}
+          <div className="flex-grow" />
+
+          {/* Action Buttons - aligned to the right */}
           {!forceShow && externalIsOpen === undefined && (
             <>
-              {isOverflowing && !isExpanded && (
-                <button
-                  onClick={() => setIsExpanded(true)}
-                  className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors mr-auto"
-                >
-                  See More
-                </button>
-              )}
               <button
                 onClick={() => handleClose(false)}
                 className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-500 transition-colors"
