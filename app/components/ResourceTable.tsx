@@ -1387,7 +1387,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col gap-4">
           {/* Search and Filters Row */}
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center justify-between">
             {/* Search Bar */}
             <div className="relative flex-1 max-w-md">
               <svg
@@ -1464,7 +1464,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           </div>
 
           {/* Filters Row */}
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center">
             {/* Status Filter */}
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
