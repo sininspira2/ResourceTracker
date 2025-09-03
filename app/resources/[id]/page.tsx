@@ -1191,15 +1191,15 @@ export default function ResourceDetailPage() {
                 </div>
                 <div className="flex items-center justify-center gap-6 mt-4 text-xs text-gray-600 dark:text-gray-400">
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHART_COLORS.total }}></div>
+                    <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: CHART_COLORS.total }}></div>
                     <span>Total</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHART_COLORS.hagga }}></div>
+                    <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: CHART_COLORS.hagga }}></div>
                     <span>Hagga</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHART_COLORS.deepDesert }}></div>
+                    <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: CHART_COLORS.deepDesert }}></div>
                     <span>Deep Desert</span>
                   </div>
                   <div className="text-gray-500 dark:text-gray-400 ml-4">
