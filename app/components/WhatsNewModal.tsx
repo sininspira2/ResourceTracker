@@ -66,17 +66,19 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
   }, [effectiveIsOpen, externalIsOpen])
 
   useEffect(() => {
-    // Using a timeout to ensure the DOM has been painted and dimensions are accurate before checking for overflow.
+    // We need to check for overflow after the modal's entry animation (300ms) has completed.
+    // A timeout ensures the DOM has been painted and dimensions are accurate before checking.
     const timer = setTimeout(() => {
+      if (!showModal) return; // Don't run if modal was closed before timer fired
       const contentElement = contentRef.current
       if (contentElement) {
         const hasOverflow = contentElement.scrollHeight > contentElement.clientHeight
         setIsOverflowing(hasOverflow)
       }
-    }, 100) // A small delay can be necessary for layout to stabilize
+    }, 350) // A delay longer than the transition duration (300ms)
 
     return () => clearTimeout(timer)
-  }, [releases, showModal]) // Rerun on content change or modal visibility change
+  }, [showModal]) // Rerun only when modal visibility changes
 
   const handleClose = (markAsSeen: boolean = false) => {
     if (markAsSeen) {
