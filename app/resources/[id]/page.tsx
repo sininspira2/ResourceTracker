@@ -12,7 +12,7 @@ import { ChangeTargetModal } from '@/app/components/ChangeTargetModal'
 import { TransferModal } from '@/app/components/TransferModal'
 import { EditResourceModal } from '@/app/components/EditResourceModal'
 import { UPDATE_TYPE } from '@/lib/constants'
-import { Plus, Baseline, ArrowRightLeft, Target, Pencil, Trash2 } from 'lucide-react'
+import { Plus, Baseline, ArrowRightLeft, Target, Pencil, Trash2, AlertTriangle } from 'lucide-react'
 
 const CHART_COLORS = {
   total: '#3b82f6',
@@ -1544,23 +1544,59 @@ export default function ResourceDetailPage() {
       {deleteConfirm.showDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Delete Resource</h3>
-            <p className="text-gray-700 dark:text-gray-300 my-4">
-              Are you sure you want to delete &quot;{deleteConfirm.resourceName}&quot;? This action cannot be undone.
-            </p>
+            <div className="flex items-center gap-3 mb-4">
+              <Trash2 className="w-8 h-8 text-red-600 dark:text-red-400" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Delete Resource
+              </h3>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-700 dark:text-gray-300 mb-2">
+                Are you sure you want to delete{' '}
+                <strong>&quot;{deleteConfirm.resourceName}&quot;</strong>?
+              </p>
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+                  <div className="text-sm">
+                    <p className="font-medium text-red-800 dark:text-red-200 mb-1">
+                      Warning: This action cannot be undone
+                    </p>
+                    <p className="text-red-700 dark:text-red-300">
+                      This will permanently delete the resource and{' '}
+                      <strong>all its history data</strong>. All tracking
+                      records, changes, and analytics for this resource will be
+                      lost forever.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="flex gap-3 justify-end">
               <button
-                onClick={() => setDeleteConfirm({ resourceId: null, resourceName: '', showDialog: false })}
+                onClick={() =>
+                  setDeleteConfirm({
+                    resourceId: null,
+                    resourceName: '',
+                    showDialog: false,
+                  })
+                }
                 className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={() => deleteConfirm.resourceId && deleteResource(deleteConfirm.resourceId)}
+                onClick={() => {
+                  if (deleteConfirm.resourceId) {
+                    deleteResource(deleteConfirm.resourceId)
+                  }
+                }}
                 disabled={saving}
                 className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 disabled:opacity-50 rounded-lg transition-colors"
               >
-                {saving ? 'Deleting...' : 'Delete'}
+                {saving ? 'Deleting...' : 'Delete Resource'}
               </button>
             </div>
           </div>
