@@ -82,7 +82,7 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
       className={`fixed inset-0 flex items-center justify-center p-4 z-50 transition-colors duration-300 ease-in-out ${
         isAnimating ? 'bg-black/50' : 'bg-black/0'
       }`}
-      onClick={() => handleClose(false)}
+      onClick={() => handleClose(true)}
     >
       <div
         role="dialog"
@@ -101,7 +101,7 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
               <p className="text-blue-100 mt-1">Latest updates and improvements</p>
             </div>
             <button
-              onClick={() => handleClose(false)}
+              onClick={() => handleClose(true)}
               className="text-blue-100 hover:text-white p-1 rounded-full hover:bg-blue-600 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
