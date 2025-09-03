@@ -846,7 +846,7 @@ export default function ResourceDetailPage() {
                   </div>
 
                   {/* Progress Bar */}
-                  {percentage && (
+                  {percentage !== null && (
                     <div>
                       <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
                         <span>Progress to Target</span>
