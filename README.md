@@ -8,6 +8,26 @@ Made for Dune: Awakening. Originally forked from https://github.com/theyetty and
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
+## 🚀 Release Notes - Version 4.0.2
+
+**Release Date:** September 3, 2025
+
+---
+
+### ✨ New Features
+
+* **Modal Overhaul and Icon Consistency:** The `What's New` modal has been completely overhauled to better handle long content, including a new "See More" feature. This update also replaces hardcoded SVGs with consistent `lucide-react` icons for the delete confirmation modal across the application.
+
+### 🚀 Improvements
+
+* **Modal Accessibility:** All modals now have improved accessibility with added ARIA attributes, and users can close them by clicking the overlay without accidentally closing them by clicking inside the modal content.
+* **Code Maintainability:** The colors for the activity chart on the resource detail page have been refactored from hardcoded strings into a reusable `CHART_COLORS` constant, making the component easier to maintain.
+
+### 🐛 Bug Fixes
+
+* **Squished Legend Circles:** Fixed an issue where the activity timeline legend circles would get squished on narrower viewports.
+* **Invisible Progress Bar:** The progress bar on the resource details page now correctly appears at 0%, fixing a bug where it would disappear when the quantity was zero.
+* **WhatsNewModal Close Behavior:** The `What's New` modal's 'X' button and backdrop click now correctly dismiss the modal permanently, aligning with the behavior of the "Got It!" button.
 ## 🚀 Release Notes - Version 4.0.0
 
 **Release Date:** September 2, 2025
