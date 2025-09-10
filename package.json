@@ -17,7 +17,7 @@
   "dependencies": {
     "@libsql/client": "^0.15.15",
     "drizzle-orm": "^0.44.5",
-    "lucide-react": "^0.542.0",
+    "lucide-react": "^0.543.0",
     "nanoid": "^5.1.5",
     "next": "^14.2.32",
     "next-auth": "^4.24.5",
