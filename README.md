@@ -223,4 +223,6 @@ We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for gu
 
 ## License
 
-This project is open source. See [LICENSE](./LICENSE) for more information. 
+This project is open source. See [LICENSE](./LICENSE) for more information.
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sininspira2/ResourceTracker)
