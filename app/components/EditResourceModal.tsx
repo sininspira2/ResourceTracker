@@ -82,6 +82,13 @@ export function EditResourceModal({ isOpen, onClose, onSave, resource }: EditRes
     }
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSave()
+    }
+  }
+
   if (!showModal || !resource) return null
 
   return (
@@ -120,6 +127,7 @@ export function EditResourceModal({ isOpen, onClose, onSave, resource }: EditRes
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onKeyDown={handleKeyDown}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
           </div>
@@ -153,6 +161,7 @@ export function EditResourceModal({ isOpen, onClose, onSave, resource }: EditRes
               type="url"
               value={formData.imageUrl}
               onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+              onKeyDown={handleKeyDown}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
           </div>
@@ -165,6 +174,7 @@ export function EditResourceModal({ isOpen, onClose, onSave, resource }: EditRes
               min="0"
               value={formData.multiplier}
               onChange={(e) => setFormData({ ...formData, multiplier: parseFloat(e.target.value) || 1.0 })}
+              onKeyDown={handleKeyDown}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             />
           </div>
