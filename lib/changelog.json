@@ -1,6 +1,18 @@
 {
-  "currentVersion": "4.0.2",
+   "currentVersion": "4.0.3",
   "releases": [
+    {
+      "version": "4.0.3",
+      "date": "2025-09-22",
+      "title": "Enter Key Modal Submission",
+      "type": "patch",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added the ability to submit the edit, set quantity, set target, and transfer modals by pressing the Enter key in the text input fields."
+        }
+      ]
+    },
     {
       "version": "4.0.2",
       "date": "2025-09-03",
