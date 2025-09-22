@@ -8,36 +8,15 @@ Made for Dune: Awakening. Originally forked from https://github.com/theyetty and
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
-## 🚀 Release Notes - Version 4.0.2
+## 🚀 Release Notes - Version 4.0.3
 
-**Release Date:** September 3, 2025
+**Release Date:** 2025-09-22
 
 ---
 
 ### ✨ New Features
 
-* **Modal Overhaul and Icon Consistency:** The `What's New` modal has been completely overhauled to better handle long content, including a new "See More" feature. This update also replaces hardcoded SVGs with consistent `lucide-react` icons for the delete confirmation modal across the application.
-
-### 🚀 Improvements
-
-* **Modal Accessibility:** All modals now have improved accessibility with added ARIA attributes, and users can close them by clicking the overlay without accidentally closing them by clicking inside the modal content.
-* **Code Maintainability:** The colors for the activity chart on the resource detail page have been refactored from hardcoded strings into a reusable `CHART_COLORS` constant, making the component easier to maintain.
-
-### 🐛 Bug Fixes
-
-* **Squished Legend Circles:** Fixed an issue where the activity timeline legend circles would get squished on narrower viewports.
-* **Invisible Progress Bar:** The progress bar on the resource details page now correctly appears at 0%, fixing a bug where it would disappear when the quantity was zero.
-* **WhatsNewModal Close Behavior:** The `What's New` modal's 'X' button and backdrop click now correctly dismiss the modal permanently, aligning with the behavior of the "Got It!" button.
-## 🚀 Release Notes - Version 4.0.0
-
-**Release Date:** September 2, 2025
-
----
-
-### ✨ New Feature
-
-* **Priority Resource Flag:** Resources now have an `isPriority` boolean flag. This update includes adding a new column to the database, a checkbox in the **EditResourceModal** to set the status, and a visual indicator (an asterisk) in both the table and grid views. Additionally, a filter has been implemented to display only priority resources, and the API has been updated to support this new feature.
-
+* Added the ability to submit the edit, set quantity, set target, and transfer modals by pressing the Enter key in the text input fields.
 
 *See lib/changelog.json for previous update history*
 
