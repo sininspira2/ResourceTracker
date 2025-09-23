@@ -225,7 +225,7 @@ function generateSQLStatements() {
     ...rawResources.map(r => ({ ...r, category: 'Raw' })),
     ...refinedResources.map(r => ({ ...r, category: 'Refined' })),
     ...components.map(r => ({ ...r, category: 'Components' })),
-    ...otherResources.map(r => ({...r, category: 'Other' }))
+    ...otherResources.map(r => ({ ...r, category: 'Other' }))
   ]
   
   allResources.forEach(resource => {
