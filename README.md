@@ -139,7 +139,7 @@ npx drizzle-kit push
 Add some initial resources to test the app:
 
 ```bash
-npm run populate-resources-safe
+npm run populate-resources-dune
 ```
 
 ### Step 8: Update Discord OAuth Redirect
