@@ -1,5 +1,5 @@
 /**
- * SAFE EXAMPLE RESOURCE POPULATION SCRIPT
+ * DUNE EXAMPLE RESOURCE POPULATION SCRIPT
  * * This script contains example resource data and gracefully handles database connection issues.
  * * ⚠️  CUSTOMIZE FOR YOUR ORGANIZATION:
  * - Replace the resource arrays below with your own data
