@@ -32,7 +32,7 @@
     "dotenv": "^17.2.2",
     "drizzle-kit": "^0.31.4",
     "eslint": "^8.56.0",
-    "eslint-config-next": "^14.2.32",
+    "eslint-config-next": "^14.2.33",
     "postcss": "^8.4.32",
     "tailwindcss": "^4.1.13",
     "tsx": "^4.20.5",
