@@ -1,0 +1,48 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# A sample workflow which sets up periodic OSV-Scanner scanning for vulnerabilities,
+# in addition to a PR check which fails if new vulnerabilities are introduced.
+#
+# For more examples and options, including how to ignore specific vulnerabilities,
+# see https://google.github.io/osv-scanner/github-action/
+
+name: OSV-Scanner
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  merge_group:
+    branches: [ "main" ]
+  schedule:
+    - cron: '26 17 * * 3'
+  push:
+    branches: [ "main" ]
+
+permissions:
+      # required for all workflows
+  security-events: write
+
+      # required to fetch internal or private CodeQL packs
+  packages: read
+
+      # only required for workflows in private repositories
+  actions: read
+  contents: read
+
+jobs:
+  scan-scheduled:
+    if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.2.2" # v1.7.1
+    with:
+      # Set to false to prevent the workflow from failing on vulnerabilities
+      fail-on-vuln: false
+  scan-pr:
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.2.2" # v1.7.1
+    with:
+      # Set to false to prevent the workflow from failing on vulnerabilities
+      fail-on-vuln: false
+
