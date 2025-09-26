@@ -30,7 +30,7 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "dotenv": "^17.2.2",
-    "drizzle-kit": "^0.31.4",
+    "drizzle-kit": "^0.31.5",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.2.33",
     "postcss": "^8.4.32",
