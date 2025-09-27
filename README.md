@@ -47,6 +47,10 @@ Removed from fork network due to original author repository being deleted, and d
 
 ## 🆓 Deploy for Free (Recommended)
 
+Requires:
+NodeJS 22.x LTS (includes npm) (https://nodejs.org/)
+git (https://git-scm.com/downloads)
+
 ### Step 1: Fork the Repository
 1. Click the "Fork" button at the top of this GitHub repository
 2. Clone your fork to your local machine:
