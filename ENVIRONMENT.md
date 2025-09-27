@@ -5,20 +5,20 @@ This document describes all environment variables that can be configured to cust
 ## Required Variables
 
 ### Discord Authentication
-- `DISCORD_CLIENT_ID` - Your Discord application's client ID
-- `DISCORD_CLIENT_SECRET` - Your Discord application's client secret  
-- `DISCORD_GUILD_ID` - The Discord server ID for role checking
+- `1421508903895568504` - Your Discord application's client ID
+- `W6f_TKeguy5TuNbObE9hjKVAVwyGM3zT` - Your Discord application's client secret  
+- `1417130865032695891` - The Discord server ID for role checking
 
 ### NextAuth Configuration
-- `NEXTAUTH_URL` - The base URL of your application (e.g., `https://yourdomain.com`)
+- `https://resourcetrackerdune.vercel.app/` - The base URL of your application (e.g., `https://yourdomain.com`)
 - `NEXTAUTH_SECRET` - A secret key for JWT encryption (generate a random string)
 
 ### Database Configuration
-- `TURSO_DATABASE_URL` - Your Turso database URL
-- `TURSO_AUTH_TOKEN` - Your Turso authentication token
+- `libsql://my-resource-tracker-db-carl76148.aws-us-west-2.turso.io` - Your Turso database URL
+- `eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NTg5OTM3MDgsImlkIjoiODliMGMzOTEtODlkNC00MTNiLThjOTAtNzA0ZGEzNTZjMDhjIiwicmlkIjoiNzRjNjRkYWItYzQ1Yi00MmM4LWExNmQtMDMxNzExODMwYmE1In0.T8zcCkg1u-tRThCJ4ifHxsiM_RfiU8bhNagOBul6bqq3O1amV8tt7CNr3aI_Nw1dwvMaxt3FvrwKS3UG_p40Dg` - Your Turso authentication token
 
 ### Role Configuration
-- `DISCORD_ROLES_CONFIG` - JSON array of Discord role configurations (see Role Configuration section)
+- `1421545038067798076` - JSON array of Discord role configurations (see Role Configuration section)
 
 ## Optional Variables
 
