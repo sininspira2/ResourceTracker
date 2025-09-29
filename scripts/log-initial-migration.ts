@@ -38,7 +38,7 @@ async function logInitialMigration() {
     `))
     
     // Check if any rows were inserted (SQLite affectedRows check)
-    if (insertResult.changes && insertResult.changes > 0) {
+    if (insertResult.rowsAffected && insertResult.rowsAffected > 0) {
       console.log(`✅ Successfully logged initial migration to __drizzle_migrations with ID ${IDX}.`)
     } else {
       console.log(`✅ Migration entry for ${HASH} already existed. Skipping insertion.`)
