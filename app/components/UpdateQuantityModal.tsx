@@ -17,6 +17,7 @@ interface UpdateQuantityModalProps {
     amount: number,
     quantityField: QuantityField,
     updateType: UpdateType,
+    reason?: string,
   ) => Promise<void>,
   updateType: UpdateType
 }
@@ -35,6 +36,7 @@ export function UpdateQuantityModal({
   ] = useState<QuantityField>(
     QUANTITY_FIELD.HAGGA,
   )
+  const [reason, setReason] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -54,6 +56,7 @@ export function UpdateQuantityModal({
   useEffect(() => {
     if (isOpen) {
       setAmount(0)
+      setReason('')
       setError(null)
     }
   }, [isOpen])
@@ -66,7 +69,7 @@ export function UpdateQuantityModal({
     }
 
     try {
-      await onUpdate(resource.id, amount, quantityField, updateType)
+      await onUpdate(resource.id, amount, quantityField, updateType, reason)
       onClose()
     } catch (err: any) {
       setError(err.message || 'An error occurred.')
@@ -90,7 +93,7 @@ export function UpdateQuantityModal({
     }
 
     try {
-      await onUpdate(resource.id, amount, quantityField, UPDATE_TYPE.RELATIVE)
+      await onUpdate(resource.id, amount, quantityField, UPDATE_TYPE.RELATIVE, reason)
       onClose()
     } catch (err: any) {
       setError(err.message || 'An error occurred.')
@@ -115,7 +118,7 @@ export function UpdateQuantityModal({
     }
 
     try {
-      await onUpdate(resource.id, -amount, quantityField, UPDATE_TYPE.RELATIVE)
+      await onUpdate(resource.id, -amount, quantityField, UPDATE_TYPE.RELATIVE, reason)
       onClose()
     } catch (err: any) {
       setError(err.message || 'An error occurred.')
@@ -180,6 +183,21 @@ export function UpdateQuantityModal({
             </select>
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
+        </div>
+        <div className="space-y-4 mt-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Notes (Optional)
+            </label>
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              maxLength={250}
+              rows={3}
+              placeholder="Add a reason for the change..."
+            />
+          </div>
         </div>
         <div className="flex gap-3 justify-end mt-6">
           <button
