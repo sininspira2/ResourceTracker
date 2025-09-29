@@ -349,6 +349,7 @@ export default function ResourceDetailPage() {
     amount: number,
     quantityField: 'quantityHagga' | 'quantityDeepDesert',
     updateType: 'absolute' | 'relative',
+    reason?: string,
   ) => {
     if (!resource) return
 
@@ -372,6 +373,7 @@ export default function ResourceDetailPage() {
           updateType: updateType,
           changeValue: amount,
           quantityField: quantityField,
+          reason,
         }),
       })
 
@@ -1398,24 +1400,24 @@ export default function ResourceDetailPage() {
                     <div
                       key={entry.id}
                       id={`history-entry-${entry.id}`}
-                      className={`group flex items-center justify-between p-4 rounded-lg transition-all duration-300 cursor-pointer ${isHighlighted
+                      className={`group flex items-start justify-between p-4 rounded-lg transition-all duration-300 cursor-pointer ${isHighlighted
                         ? 'bg-blue-100 dark:bg-blue-900/50 border-2 border-blue-300 dark:border-blue-500 shadow-md transform scale-[1.02]'
                         : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
                         }`}
                       onClick={() => setSelectedPointId(selectedPointId === entry.id ? null : entry.id)}
                     >
-                      <div className="flex items-center gap-4">
-                        <div className={`w-3 h-3 rounded-full ${entry.changeAmountHagga + entry.changeAmountDeepDesert > 0 ? 'bg-green-500' :
+                      <div className="flex items-start gap-4 flex-1 min-w-0">
+                        <div className={`mt-1.5 w-3 h-3 rounded-full flex-shrink-0 ${entry.changeAmountHagga + entry.changeAmountDeepDesert > 0 ? 'bg-green-500' :
                           entry.changeAmountHagga + entry.changeAmountDeepDesert < 0 ? 'bg-red-500' : 'bg-gray-400'
                           } ${isHighlighted ? 'ring-2 ring-blue-400 dark:ring-blue-500' : ''}`}></div>
-                        <div>
-                          <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center flex-wrap gap-2">
                             {entry.changeType === 'transfer' ? (
                               <span>
                                 Transfer {entry.transferAmount} {entry.transferDirection === 'to_deep_desert' ? 'to Deep Desert' : 'to Hagga'}
                               </span>
                             ) : (
-                              <div>
+                              <div className="flex flex-col">
                                 <div>
                                   Hagga: {formatNumber(entry.previousQuantityHagga)} → {formatNumber(entry.newQuantityHagga)} ({entry.changeAmountHagga > 0 ? '+' : ''}{formatNumber(entry.changeAmountHagga)})
                                 </div>
@@ -1439,19 +1441,21 @@ export default function ResourceDetailPage() {
                               </span>
                             )}
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                          <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                             By <span className="font-medium">{entry.updatedBy}</span>
-                            {entry.reason && (
-                              <span className="ml-2 text-blue-600 dark:text-blue-400">• {entry.reason}</span>
-                            )}
                             {entry.changeType === 'relative' && (
                               <span className="ml-2 text-green-600 dark:text-green-400 text-xs">• Counts toward leaderboard</span>
                             )}
                           </div>
+                          {entry.reason && (
+                            <div className="mt-2 text-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-900/40 p-2 rounded-md whitespace-pre-wrap break-words">
+                              <LinkifiedText text={entry.reason} />
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="text-sm text-gray-500 dark:text-gray-400 text-right">
+                      <div className="flex items-start gap-3 pl-4">
+                        <div className="text-sm text-gray-500 dark:text-gray-400 text-right flex-shrink-0">
                           <div
                             className="cursor-help hover:underline decoration-dotted"
                             title={`${new Date(entry.createdAt).toLocaleDateString()} at ${new Date(entry.createdAt).toLocaleTimeString()}`}

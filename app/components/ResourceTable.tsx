@@ -699,6 +699,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     amount: number,
     quantityField: 'quantityHagga' | 'quantityDeepDesert',
     updateType: 'absolute' | 'relative',
+    reason?: string,
   ) => {
     const resource = resources.find((r) => r.id === resourceId)
     if (!resource) return
@@ -723,6 +724,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           updateType: updateType,
           changeValue: amount,
           quantityField: quantityField,
+          reason,
         }),
       })
 
