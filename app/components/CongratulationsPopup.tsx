@@ -89,7 +89,7 @@ export function CongratulationsPopup({
       <div
         className={`
           bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700
-          max-w-sm w-full transform transition-all duration-300 pointer-events-auto
+          max-w-sm md:max-w-md w-full transform transition-all duration-300 pointer-events-auto
           ${isAnimating ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}
         `}
       >
