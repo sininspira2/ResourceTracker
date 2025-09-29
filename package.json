@@ -9,6 +9,8 @@
     "lint": "next lint",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
+    "db:log-init": "tsx scripts/log-initial-migration.ts",
+    "db:migrate": "drizzle-kit migrate",
     "update-version": "node scripts/update-version.js",
     "populate-resources": "tsx scripts/populate-resources.ts",
     "populate-resources-dune": "tsx scripts/populate-resources-dune.ts",

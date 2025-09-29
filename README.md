@@ -148,7 +148,8 @@ TURSO_AUTH_TOKEN=your_turso_auth_token
 
 4. Run the database migration:
 ```bash
-npx drizzle-kit push
+npm run db:push
+npm run db:log-init
 ```
 
 ### Step 7: Populate with Sample Data (Optional)
