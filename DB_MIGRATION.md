@@ -27,8 +27,16 @@ This guide provides manual SQL scripts to update your Turso database schema, ens
     ALTER TABLE `resource_history` ADD COLUMN `transfer_direction` text;
     ALTER TABLE `resources` ADD COLUMN `quantity_deep_desert` integer DEFAULT 0 NOT NULL;
     ```
-7.  Click the dropdown arrow (`˅`) next to the **Run** button and select **Run All**.
+7. Click the dropdown arrow (`˅`) next to the **Run** button and select **Run All**.
+8. Also run this SQL command separately, after completing the above:
 
+   ```sql
+   DROP TABLE __drizzle_migrations
+   ```
+    *Note: (this may fail; that is okay)*
+
+10.  From your local git folder that you cloned during setup, run `git fetch`
+11.  Then run `npm run db:log-init`
 ---
 
 ## Fixing Metadata Editing After Upgrading to v4.x
@@ -41,3 +49,14 @@ If you upgraded from a `3.x` version to `4.x` and can no longer edit resource me
     ALTER TABLE `resources` ADD `is_priority` integer DEFAULT 0 NOT NULL;
     ```
 3.  Click the green **Run** button to execute the command.
+4.  Also run this SQL command separately, after completing the above:
+
+   ```sql
+   DROP TABLE __drizzle_migrations
+   ```
+*Note: (this may fail; that is okay)*
+
+5.  From your local git folder that you cloned during setup, run `git fetch`
+6.  Then run `npm run db:log-init`
+---
+
