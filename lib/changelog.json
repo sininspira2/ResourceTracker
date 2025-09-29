@@ -1,6 +1,30 @@
 {
-   "currentVersion": "4.0.3",
+  "currentVersion": "4.0.5",
   "releases": [
+    {
+      "version": "4.0.5",
+      "date": "2025-09-29",
+      "title": "Notes Feature, Modal Sizing, and Backdrop Fix",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "An optional 'Notes' textarea has been added to the 'Add/Remove' and 'Set Qty' modals, allowing users to provide a reason (up to 250 characters) for quantity changes. This input is saved to the `reason` column in the `resource_history` table, and the resource history display has been updated to ensure the text wraps and is fully visible."
+        },
+        {
+          "type": "improvement",
+          "description": "The width of `UpdateQuantityModal`, `ChangeTargetModal`, `TransferModal`, `EditResourceModal`, and `CongratulationsPopup` has been increased on desktop and larger screens to improve usability."
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed an issue where a modal could unintentionally close if a user clicked down on the modal content and released the click on the backdrop. This was resolved by replacing the `onClick` handler on modal backdrops with `onMouseDown`."
+        },
+        {
+          "type": "other",
+          "description": "Bumped drizzle-kit from 0.31.4 to 0.31.5."
+        }
+      ]
+    },
     {
       "version": "4.0.3",
       "date": "2025-09-22",
