@@ -8,27 +8,15 @@ Made for Dune: Awakening. Originally forked from https://github.com/theyetty and
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
 
-## 🚀 Release Notes - Version 4.0.5
+## 🚀 Release Notes - Version 4.0.3
 
-**Release Date:** September 29, 2025
+**Release Date:** 2025-09-22
 
 ---
 
 ### ✨ New Features
 
-* **Optional Notes for Quantity Changes:** An optional **'Notes' textarea** has been added to the **'Add/Remove'** and **'Set Qty'** modals. Users can now provide a reason (up to 250 characters) for any quantity changes, which is saved to the resource history. The resource history display has been updated to ensure the new reason text wraps correctly and is fully visible.
-
-### 🚀 Improvements
-
-* **Increased Modal Size:** The width of the **`UpdateQuantityModal`**, **`ChangeTargetModal`**, **`TransferModal`**, **`EditResourceModal`**, and **`CongratulationsPopup`** has been increased on desktop and larger screens to improve usability.
-
-### 🐛 Bug Fixes
-
-* **Modal Backdrop Click Fix:** The modal backdrop now uses the **`onMouseDown`** handler instead of `onClick`. This prevents the modal from unintentionally closing if a user clicks down on the modal content, drags their mouse outside of it, and then releases the click on the backdrop, thus improving the overall user experience.
-
-### 🛠️ Other
-
-* Updated **`drizzle-kit`** from `0.31.4` to `0.31.5`.
+* Added the ability to submit the edit, set quantity, set target, and transfer modals by pressing the Enter key in the text input fields.
 
 *See lib/changelog.json for previous update history*
 

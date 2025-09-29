@@ -349,6 +349,7 @@ export default function ResourceDetailPage() {
     amount: number,
     quantityField: 'quantityHagga' | 'quantityDeepDesert',
     updateType: 'absolute' | 'relative',
+    reason?: string,
   ) => {
     if (!resource) return
 
@@ -372,6 +373,7 @@ export default function ResourceDetailPage() {
           updateType: updateType,
           changeValue: amount,
           quantityField: quantityField,
+          reason,
         }),
       })
 
