@@ -98,7 +98,7 @@ export function TransferModal({
         aria-modal="true"
         aria-labelledby="transfer-modal-title"
         onClick={(e) => e.stopPropagation()}
-        className={`bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md md:max-w-lg mx-4 border border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out transform ${
+        className={`bg-white dark:bg-gray-800 rounded-lg p-6 md:p-8 max-w-md md:max-w-lg mx-4 border border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out transform ${
           isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
