@@ -110,13 +110,16 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
       className={`fixed inset-0 flex items-center justify-center p-4 z-50 transition-colors duration-300 ease-in-out ${
         isAnimating ? 'bg-black/50' : 'bg-black/0'
       }`}
-      onClick={() => handleClose(true)}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) {
+          handleClose(true)
+        }
+      }}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="whats-new-modal-title"
-        onClick={(e) => e.stopPropagation()}
         className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full flex flex-col max-h-[80vh] transition-all duration-300 ease-in-out transform ${
           isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
