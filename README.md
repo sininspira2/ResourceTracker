@@ -177,6 +177,9 @@ Your Resource Tracker is now running for free! Visit your Vercel URL and sign in
 
 For local development:
 
+### Requires:
+- NodeJS 22.x LTS (includes npm) (https://nodejs.org/)
+
 1. Install dependencies:
 ```bash
 npm install
@@ -186,7 +189,8 @@ npm install
 
 3. Run the database migration:
 ```bash
-npx drizzle-kit push
+npm run db:push
+npm run db:log-init
 ```
 
 4. Start the development server:
