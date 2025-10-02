@@ -693,12 +693,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             pointsEarned: pointsEarned,
             pointsCalculation: pointsCalculation,
             resourceName: resource.name,
-            actionType:
-              updateType === 'absolute'
-                ? 'SET'
-                : amount > 0
-                  ? 'ADD'
-                  : 'REMOVE',
+            actionType: 'ADD',
             quantityChanged: Math.abs(amount),
           })
         }
