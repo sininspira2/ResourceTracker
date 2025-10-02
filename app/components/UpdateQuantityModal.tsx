@@ -51,6 +51,7 @@ export function UpdateQuantityModal({
   )
   const [reason, setReason] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [userFetchError, setUserFetchError] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
 
@@ -72,15 +73,27 @@ export function UpdateQuantityModal({
       setReason('')
       setError(null)
       setOnBehalfOf('')
+      setUserFetchError(null)
 
       const canManageUsers = session?.user.permissions?.hasUserManagementAccess ?? false
       if (canManageUsers) {
         fetch('/api/users')
-          .then((res) => res.json())
+          .then(async (res) => {
+            if (!res.ok) {
+              const errorData = await res.json().catch(() => ({}))
+              throw new Error(
+                errorData.error || `Failed to fetch users: ${res.statusText}`,
+              )
+            }
+            return res.json()
+          })
           .then((data) => {
             setUsers(data)
           })
-          .catch((err) => console.error('Failed to fetch users:', err))
+          .catch((err) => {
+            console.error('Failed to fetch users:', err)
+            setUserFetchError(err.message)
+          })
       }
     }
   }, [isOpen, session])
@@ -224,26 +237,33 @@ export function UpdateQuantityModal({
             </select>
           </div>
 
-          {session?.user.permissions?.hasUserManagementAccess && users.length > 0 && (
+          {session?.user.permissions?.hasUserManagementAccess && (
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 On Behalf Of (Admin)
               </label>
-              <select
-                value={onBehalfOf}
-                onChange={(e) => setOnBehalfOf(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              >
-                <option value="">Current User</option>
-                {users.map((user) => {
-                  const displayName = user.customNickname || user.username
-                  return (
-                    <option key={user.id} value={user.id}>
-                      {displayName}
-                    </option>
-                  )
-                })}
-              </select>
+              {userFetchError ? (
+                <div className="text-red-500 text-sm p-2 bg-red-50 dark:bg-red-900/20 rounded-md">
+                  Error: {userFetchError}
+                </div>
+              ) : (
+                <select
+                  value={onBehalfOf}
+                  onChange={(e) => setOnBehalfOf(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  disabled={users.length === 0}
+                >
+                  <option value="">Current User</option>
+                  {users.map((user) => {
+                    const displayName = user.customNickname || user.username
+                    return (
+                      <option key={user.id} value={user.id}>
+                        {displayName}
+                      </option>
+                    )
+                  })}
+                </select>
+              )}
             </div>
           )}
 
