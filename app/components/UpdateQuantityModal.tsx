@@ -68,8 +68,8 @@ export function UpdateQuantityModal({
       setError(null)
       setOnBehalfOf('')
 
-      const isAdmin = session?.user?.roles && hasResourceAdminAccess(session.user.roles)
-      if (isAdmin) {
+      const canManageUsers = session?.user.permissions?.hasUserManagementAccess ?? false
+      if (canManageUsers) {
         fetch('/api/users')
           .then((res) => res.json())
           .then((data) => {
@@ -219,7 +219,7 @@ export function UpdateQuantityModal({
             </select>
           </div>
 
-          {session?.user?.roles && hasResourceAdminAccess(session.user.roles) && users.length > 0 && (
+          {session?.user.permissions?.hasUserManagementAccess && users.length > 0 && (
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 On Behalf Of (Admin)
