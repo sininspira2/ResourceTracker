@@ -35,7 +35,12 @@ export function UpdateQuantityModal({
   updateType,
   session,
 }: UpdateQuantityModalProps) {
-  const [users, setUsers] = useState<{ id: string; username: string }[]>([])
+  const [
+    users,
+    setUsers,
+  ] = useState<{ id: string; username: string; customNickname: string | null }[]>(
+    [],
+  )
   const [onBehalfOf, setOnBehalfOf] = useState<string>('')
   const [amount, setAmount] = useState(0)
   const [
@@ -230,11 +235,14 @@ export function UpdateQuantityModal({
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               >
                 <option value="">Current User</option>
-                {users.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.username}
-                  </option>
-                ))}
+                {users.map((user) => {
+                  const displayName = user.customNickname || user.username
+                  return (
+                    <option key={user.id} value={displayName}>
+                      {displayName}
+                    </option>
+                  )
+                })}
               </select>
             </div>
           )}
