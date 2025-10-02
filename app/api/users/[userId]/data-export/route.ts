@@ -6,14 +6,14 @@ import { eq, desc, or } from 'drizzle-orm'
 import { hasResourceAccess } from '@/lib/discord-roles'
 
 // GET /api/users/{userId}/data-export - Export all user data for a specific user (GDPR compliance)
-export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   const session = await getServerSession(authOptions)
 
   if (!session || !session.user.permissions?.hasUserManagementAccess) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { userId: targetUserId } = params
+  const { userId: targetUserId } = await params
 
   try {
     const targetUser = await db.select().from(users).where(eq(users.id, targetUserId)).limit(1)

@@ -5,7 +5,7 @@ import { getUserContributions, getUserRank } from '@/lib/leaderboard'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -14,6 +14,7 @@ export async function GET(
   }
 
   try {
+    const { userId } = await params
     const { searchParams } = new URL(request.url)
     const timeFilter = searchParams.get('timeFilter') as '24h' | '7d' | '30d' | 'all' || 'all'
     const limit = parseInt(searchParams.get('limit') || '100')
@@ -25,12 +26,12 @@ export async function GET(
     const effectiveLimit = searchParams.get('limit') ? limit : pageSize
 
     const [contributions, rank] = await Promise.all([
-      getUserContributions(params.userId, timeFilter, effectiveLimit, offset),
-      getUserRank(params.userId, timeFilter)
+      getUserContributions(userId, timeFilter, effectiveLimit, offset),
+      getUserRank(userId, timeFilter)
     ])
 
     return NextResponse.json({
-      userId: params.userId,
+      userId: userId,
       timeFilter,
       rank,
       contributions: contributions.contributions,

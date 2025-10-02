@@ -8,7 +8,7 @@ import { hasResourceAccess, hasTargetEditAccess } from '@/lib/discord-roles'
 // PUT /api/resources/[id]/target - Update target quantity (admin only)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -22,6 +22,7 @@ export async function PUT(
   }
 
   try {
+    const { id } = await params
     const { targetQuantity } = await request.json()
     const userId = getUserIdentifier(session)
     
@@ -31,7 +32,7 @@ export async function PUT(
     }
 
     // Check if resource exists
-    const currentResource = await db.select().from(resources).where(eq(resources.id, params.id))
+    const currentResource = await db.select().from(resources).where(eq(resources.id, id))
     if (currentResource.length === 0) {
       return NextResponse.json({ error: 'Resource not found' }, { status: 404 })
     }
@@ -43,10 +44,10 @@ export async function PUT(
         lastUpdatedBy: userId,
         updatedAt: new Date(),
       })
-      .where(eq(resources.id, params.id))
+      .where(eq(resources.id, id))
 
     // Get the updated resource
-    const updatedResource = await db.select().from(resources).where(eq(resources.id, params.id))
+    const updatedResource = await db.select().from(resources).where(eq(resources.id, id))
     
     return NextResponse.json(updatedResource[0], {
       headers: {
