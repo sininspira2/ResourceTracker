@@ -1515,6 +1515,7 @@ export default function ResourceDetailPage() {
           updateType={updateModalState.updateType}
           onClose={() => setUpdateModalState({ isOpen: false, resource: null, updateType: 'absolute' })}
           onUpdate={handleUpdate}
+          session={session}
         />
       )}
 
