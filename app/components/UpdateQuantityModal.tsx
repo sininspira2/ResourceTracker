@@ -238,7 +238,7 @@ export function UpdateQuantityModal({
                 {users.map((user) => {
                   const displayName = user.customNickname || user.username
                   return (
-                    <option key={user.id} value={displayName}>
+                    <option key={user.id} value={user.id}>
                       {displayName}
                     </option>
                   )

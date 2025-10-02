@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions, getUserIdentifier } from '@/lib/auth'
 import { db } from '@/lib/db'
-import { resources, resourceHistory } from '@/lib/db'
+import { resources, resourceHistory, users } from '@/lib/db'
 import { eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import { hasResourceAccess, hasResourceAdminAccess } from '@/lib/discord-roles'
@@ -35,11 +35,23 @@ export async function PUT(
 
   try {
     const { quantity, updateType = 'absolute', changeValue, reason, quantityField, onBehalfOf } = await request.json()
-    const actingUserId = getUserIdentifier(session)
+    const actingUserIdentifier = getUserIdentifier(session)
     
-    let effectiveUserId = actingUserId
+    let effectiveUserId = actingUserIdentifier
+
+    // If an admin is acting on behalf of another user, look up that user's display name
     if (onBehalfOf && hasResourceAdminAccess(session.user.roles)) {
-      effectiveUserId = onBehalfOf
+      const targetUser = await db.select({
+        username: users.username,
+        customNickname: users.customNickname,
+      }).from(users).where(eq(users.id, onBehalfOf))
+
+      if (targetUser.length === 0) {
+        return NextResponse.json({ error: 'User to act on behalf of not found' }, { status: 404 });
+      }
+
+      // Use the display name for consistency in history and leaderboards
+      effectiveUserId = targetUser[0].customNickname || targetUser[0].username
     }
 
     const result = await db.transaction(async (tx) => {
@@ -70,7 +82,7 @@ export async function PUT(
         .set({
           quantityHagga: newQuantityHagga,
           quantityDeepDesert: newQuantityDeepDesert,
-          lastUpdatedBy: actingUserId,
+          lastUpdatedBy: actingUserIdentifier, // Always log the admin who performed the action
           updatedAt: new Date(),
         })
         .where(eq(resources.id, params.id))
@@ -86,7 +98,7 @@ export async function PUT(
         newQuantityDeepDesert,
         changeAmountDeepDesert,
         changeType: updateType || 'absolute',
-        updatedBy: effectiveUserId,
+        updatedBy: effectiveUserId, // This is the user the action is for
         reason: reason,
         createdAt: new Date(),
       })
@@ -102,7 +114,7 @@ export async function PUT(
         const resourceStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity)
 
         pointsCalculation = await awardPoints(
-          effectiveUserId,
+          effectiveUserId, // Award points to the user the action is for
           params.id,
           actionType,
           Math.abs(totalChangeAmount),
@@ -177,4 +189,4 @@ export async function DELETE(
     console.error('Error deleting resource:', error)
     return NextResponse.json({ error: 'Failed to delete resource' }, { status: 500 })
   }
-} 
+}
