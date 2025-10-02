@@ -24,13 +24,13 @@
     "next": "^14.2.33",
     "next-auth": "^4.24.5",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",
     "@types/node": "^22.18.8",
     "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
+    "@types/react-dom": "^19.2.0",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.5",
     "eslint": "^8.56.0",
