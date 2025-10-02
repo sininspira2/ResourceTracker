@@ -9,7 +9,7 @@ import { hasResourceAccess } from '@/lib/discord-roles'
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
 
@@ -18,6 +18,7 @@ export async function PUT(
   }
 
   try {
+    const { id } = await params
     const { transferAmount, transferDirection } = await request.json()
     const userId = getUserIdentifier(session)
 
@@ -30,7 +31,7 @@ export async function PUT(
     }
 
     const result = await db.transaction(async (tx) => {
-      const currentResource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      const currentResource = await tx.select().from(resources).where(eq(resources.id, id))
       if (currentResource.length === 0) {
         throw new Error('ResourceNotFound')
       }
@@ -60,11 +61,11 @@ export async function PUT(
           lastUpdatedBy: userId,
           updatedAt: new Date(),
         })
-        .where(eq(resources.id, params.id))
+        .where(eq(resources.id, id))
 
       await tx.insert(resourceHistory).values({
         id: nanoid(),
-        resourceId: params.id,
+        resourceId: id,
         previousQuantityHagga: resource.quantityHagga,
         newQuantityHagga: newQuantityHagga,
         changeAmountHagga: transferDirection === 'to_hagga' ? transferAmount : -transferAmount,
@@ -79,7 +80,7 @@ export async function PUT(
         transferDirection: transferDirection
       })
 
-      const updatedResource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      const updatedResource = await tx.select().from(resources).where(eq(resources.id, id))
       return { resource: updatedResource[0] }
     })
 

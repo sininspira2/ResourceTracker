@@ -9,7 +9,7 @@ import { cache, CACHE_KEYS } from '@/lib/cache'
 // GET /api/resources/[id]/history?days=7 - Get resource history
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -20,7 +20,7 @@ export async function GET(
   try {
     const { searchParams } = new URL(request.url)
     const days = parseInt(searchParams.get('days') || '7')
-    const resourceId = params.id
+    const { id: resourceId } = await params
 
     // Remove cache check to prevent stale data on Vercel
     // const cacheKey = CACHE_KEYS.RESOURCE_HISTORY(resourceId, days)

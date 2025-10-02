@@ -25,7 +25,7 @@ import { hasTargetEditAccess } from '@/lib/discord-roles'
 // PUT /api/resources/[id] - Update single resource
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -34,6 +34,7 @@ export async function PUT(
   }
 
   try {
+    const { id } = await params
     let { quantity, updateType = 'absolute', changeValue, reason, quantityField, onBehalfOf } = await request.json()
     const actingUserIdentifier = getUserIdentifier(session)
     
@@ -60,7 +61,7 @@ export async function PUT(
 
     const result = await db.transaction(async (tx) => {
       // Get current resource for history logging and points calculation
-      const currentResource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      const currentResource = await tx.select().from(resources).where(eq(resources.id, id))
       if (currentResource.length === 0) {
         throw new Error('ResourceNotFound')
       }
@@ -89,12 +90,12 @@ export async function PUT(
           lastUpdatedBy: actingUserIdentifier, // Always log the admin who performed the action
           updatedAt: new Date(),
         })
-        .where(eq(resources.id, params.id))
+        .where(eq(resources.id, id))
 
       // Log the change in history
       await tx.insert(resourceHistory).values({
         id: nanoid(),
-        resourceId: params.id,
+        resourceId: id,
         previousQuantityHagga,
         newQuantityHagga,
         changeAmountHagga,
@@ -119,7 +120,7 @@ export async function PUT(
 
         pointsCalculation = await awardPoints(
           effectiveUserId, // Award points to the user the action is for
-          params.id,
+          id,
           actionType,
           Math.abs(totalChangeAmount),
           {
@@ -132,7 +133,7 @@ export async function PUT(
         )
       }
 
-      const updatedResource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      const updatedResource = await tx.select().from(resources).where(eq(resources.id, id))
 
       return {
         resource: updatedResource[0],
@@ -160,7 +161,7 @@ export async function PUT(
 // DELETE /api/resources/[id] - Delete resource and all its history (admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -169,14 +170,15 @@ export async function DELETE(
   }
 
   try {
+    const { id } = await params
     await db.transaction(async (tx) => {
-      const resource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      const resource = await tx.select().from(resources).where(eq(resources.id, id))
       if (resource.length === 0) {
         throw new Error('ResourceNotFound')
       }
 
-      await tx.delete(resourceHistory).where(eq(resourceHistory.resourceId, params.id))
-      await tx.delete(resources).where(eq(resources.id, params.id))
+      await tx.delete(resourceHistory).where(eq(resourceHistory.resourceId, id))
+      await tx.delete(resources).where(eq(resources.id, id))
     })
 
     return NextResponse.json({ message: 'Resource and its history deleted successfully' }, {

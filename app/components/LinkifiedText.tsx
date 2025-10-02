@@ -11,7 +11,7 @@ const LinkifiedText: React.FC<LinkifiedTextProps> = ({ text }) => {
     return null;
   }
 
-  const elements: (string | JSX.Element)[] = [];
+  const elements: (string | React.ReactElement)[] = [];
   let lastIndex = 0;
   let match;
 
