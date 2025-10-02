@@ -22,6 +22,7 @@ declare module 'next-auth' {
     isInGuild?: boolean
     discordNickname?: string | null
     permissions?: UserPermissions
+    global_name?: string | null
   }
 
   interface Session {
