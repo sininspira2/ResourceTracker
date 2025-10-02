@@ -34,9 +34,14 @@ export async function PUT(
   }
 
   try {
-    const { quantity, updateType = 'absolute', changeValue, reason, quantityField } = await request.json()
-    const userId = getUserIdentifier(session)
+    const { quantity, updateType = 'absolute', changeValue, reason, quantityField, onBehalfOf } = await request.json()
+    const actingUserId = getUserIdentifier(session)
     
+    let effectiveUserId = actingUserId
+    if (onBehalfOf && hasResourceAdminAccess(session.user.roles)) {
+      effectiveUserId = onBehalfOf
+    }
+
     const result = await db.transaction(async (tx) => {
       // Get current resource for history logging and points calculation
       const currentResource = await tx.select().from(resources).where(eq(resources.id, params.id))
@@ -65,7 +70,7 @@ export async function PUT(
         .set({
           quantityHagga: newQuantityHagga,
           quantityDeepDesert: newQuantityDeepDesert,
-          lastUpdatedBy: userId,
+          lastUpdatedBy: actingUserId,
           updatedAt: new Date(),
         })
         .where(eq(resources.id, params.id))
@@ -81,7 +86,7 @@ export async function PUT(
         newQuantityDeepDesert,
         changeAmountDeepDesert,
         changeType: updateType || 'absolute',
-        updatedBy: userId,
+        updatedBy: effectiveUserId,
         reason: reason,
         createdAt: new Date(),
       })
@@ -97,7 +102,7 @@ export async function PUT(
         const resourceStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity)
 
         pointsCalculation = await awardPoints(
-          getUserIdentifier(session),
+          effectiveUserId,
           params.id,
           actionType,
           Math.abs(totalChangeAmount),
