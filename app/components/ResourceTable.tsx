@@ -700,6 +700,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     quantityField: 'quantityHagga' | 'quantityDeepDesert',
     updateType: 'absolute' | 'relative',
     reason?: string,
+    onBehalfOf?: string,
   ) => {
     const resource = resources.find((r) => r.id === resourceId)
     if (!resource) return
@@ -725,14 +726,33 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           changeValue: amount,
           quantityField: quantityField,
           reason,
+          onBehalfOf,
         }),
       })
 
       if (response.ok) {
-        const { resource } = await response.json()
+        const { resource, pointsEarned, pointsCalculation } =
+          await response.json()
         setResources((prev) =>
           prev.map((r) => (r.id === resourceId ? { ...r, ...resource } : r)),
         )
+
+        // Show congratulations popup if points were earned
+        if (pointsEarned > 0) {
+          setCongratulationsState({
+            isVisible: true,
+            pointsEarned: pointsEarned,
+            pointsCalculation: pointsCalculation,
+            resourceName: resource.name,
+            actionType:
+              updateType === 'absolute'
+                ? 'SET'
+                : amount > 0
+                  ? 'ADD'
+                  : 'REMOVE',
+            quantityChanged: Math.abs(amount),
+          })
+        }
       } else {
         const { error } = await response.json()
         throw new Error(error || 'Failed to update quantity.')
@@ -2226,6 +2246,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           }
           onUpdate={handleUpdate}
           updateType={updateModalState.updateType}
+          session={session}
         />
       )}
       <EditResourceModal

@@ -1,7 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import { QUANTITY_FIELD, UPDATE_TYPE, type QuantityField, type UpdateType } from '@/lib/constants'
+import { hasResourceAdminAccess } from '@/lib/discord-roles'
+import { type User } from 'next-auth'
 
 interface UpdateQuantityModalProps {
   resource: {
@@ -18,8 +21,10 @@ interface UpdateQuantityModalProps {
     quantityField: QuantityField,
     updateType: UpdateType,
     reason?: string,
-  ) => Promise<void>,
+    onBehalfOf?: string,
+  ) => Promise<void>
   updateType: UpdateType
+  session: { user: User } | null
 }
 
 export function UpdateQuantityModal({
@@ -28,7 +33,15 @@ export function UpdateQuantityModal({
   onClose,
   onUpdate,
   updateType,
+  session,
 }: UpdateQuantityModalProps) {
+  const [
+    users,
+    setUsers,
+  ] = useState<{ id: string; username: string; customNickname: string | null }[]>(
+    [],
+  )
+  const [onBehalfOf, setOnBehalfOf] = useState<string>('')
   const [amount, setAmount] = useState(0)
   const [
     quantityField,
@@ -38,6 +51,7 @@ export function UpdateQuantityModal({
   )
   const [reason, setReason] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [userFetchError, setUserFetchError] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
 
@@ -58,8 +72,31 @@ export function UpdateQuantityModal({
       setAmount(0)
       setReason('')
       setError(null)
+      setOnBehalfOf('')
+      setUserFetchError(null)
+
+      const isResourceAdmin = session?.user.permissions?.hasResourceAdminAccess ?? false
+      if (isResourceAdmin) {
+        fetch('/api/users')
+          .then(async (res) => {
+            if (!res.ok) {
+              const errorData = await res.json().catch(() => ({}))
+              throw new Error(
+                errorData.error || `Failed to fetch users: ${res.statusText}`,
+              )
+            }
+            return res.json()
+          })
+          .then((data) => {
+            setUsers(data)
+          })
+          .catch((err) => {
+            console.error('Failed to fetch users:', err)
+            setUserFetchError(err.message)
+          })
+      }
     }
-  }, [isOpen])
+  }, [isOpen, session])
 
   const handleUpdate = async () => {
     setError(null)
@@ -69,7 +106,7 @@ export function UpdateQuantityModal({
     }
 
     try {
-      await onUpdate(resource.id, amount, quantityField, updateType, reason)
+      await onUpdate(resource.id, amount, quantityField, updateType, reason, onBehalfOf)
       onClose()
     } catch (err: any) {
       setError(err.message || 'An error occurred.')
@@ -93,7 +130,14 @@ export function UpdateQuantityModal({
     }
 
     try {
-      await onUpdate(resource.id, amount, quantityField, UPDATE_TYPE.RELATIVE, reason)
+      await onUpdate(
+        resource.id,
+        amount,
+        quantityField,
+        UPDATE_TYPE.RELATIVE,
+        reason,
+        onBehalfOf,
+      )
       onClose()
     } catch (err: any) {
       setError(err.message || 'An error occurred.')
@@ -118,7 +162,14 @@ export function UpdateQuantityModal({
     }
 
     try {
-      await onUpdate(resource.id, -amount, quantityField, UPDATE_TYPE.RELATIVE, reason)
+      await onUpdate(
+        resource.id,
+        -amount,
+        quantityField,
+        UPDATE_TYPE.RELATIVE,
+        reason,
+        onBehalfOf,
+      )
       onClose()
     } catch (err: any) {
       setError(err.message || 'An error occurred.')
@@ -185,6 +236,37 @@ export function UpdateQuantityModal({
               <option value={QUANTITY_FIELD.DEEP_DESERT}>Deep Desert</option>
             </select>
           </div>
+
+          {session?.user.permissions?.hasResourceAdminAccess && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                On Behalf Of (Admin)
+              </label>
+              {userFetchError ? (
+                <div className="text-red-500 text-sm p-2 bg-red-50 dark:bg-red-900/20 rounded-md">
+                  Error: {userFetchError}
+                </div>
+              ) : (
+                <select
+                  value={onBehalfOf}
+                  onChange={(e) => setOnBehalfOf(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  disabled={users.length === 0}
+                >
+                  <option value="">Current User</option>
+                  {users.map((user) => {
+                    const displayName = user.customNickname || user.username
+                    return (
+                      <option key={user.id} value={user.id}>
+                        {displayName}
+                      </option>
+                    )
+                  })}
+                </select>
+              )}
+            </div>
+          )}
+
           {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
         <div className="space-y-4 mt-4">

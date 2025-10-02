@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions, getUserIdentifier } from '@/lib/auth'
 import { db } from '@/lib/db'
-import { resources, resourceHistory } from '@/lib/db'
+import { resources, resourceHistory, users } from '@/lib/db'
 import { eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import { hasResourceAccess, hasResourceAdminAccess } from '@/lib/discord-roles'
@@ -25,7 +25,7 @@ import { hasTargetEditAccess } from '@/lib/discord-roles'
 // PUT /api/resources/[id] - Update single resource
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -34,12 +34,34 @@ export async function PUT(
   }
 
   try {
-    const { quantity, updateType = 'absolute', changeValue, reason, quantityField } = await request.json()
-    const userId = getUserIdentifier(session)
+    const { id } = await params
+    let { quantity, updateType = 'absolute', changeValue, reason, quantityField, onBehalfOf } = await request.json()
+    const actingUserIdentifier = getUserIdentifier(session)
     
+    let effectiveUserId = actingUserIdentifier
+
+    // If an admin is acting on behalf of another user, look up that user's display name
+    if (onBehalfOf && hasResourceAdminAccess(session.user.roles)) {
+      const targetUser = await db.select({
+        username: users.username,
+        customNickname: users.customNickname,
+      }).from(users).where(eq(users.id, onBehalfOf))
+
+      if (targetUser.length === 0) {
+        return NextResponse.json({ error: 'User to act on behalf of not found' }, { status: 404 });
+      }
+
+      // Use the display name for consistency in history and leaderboards
+      effectiveUserId = targetUser[0].customNickname || targetUser[0].username
+
+      // Append an audit note to the reason
+      const auditNote = `(entered by ${actingUserIdentifier})`
+      reason = reason ? `${reason} ${auditNote}` : auditNote
+    }
+
     const result = await db.transaction(async (tx) => {
       // Get current resource for history logging and points calculation
-      const currentResource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      const currentResource = await tx.select().from(resources).where(eq(resources.id, id))
       if (currentResource.length === 0) {
         throw new Error('ResourceNotFound')
       }
@@ -65,15 +87,15 @@ export async function PUT(
         .set({
           quantityHagga: newQuantityHagga,
           quantityDeepDesert: newQuantityDeepDesert,
-          lastUpdatedBy: userId,
+          lastUpdatedBy: actingUserIdentifier, // Always log the admin who performed the action
           updatedAt: new Date(),
         })
-        .where(eq(resources.id, params.id))
+        .where(eq(resources.id, id))
 
       // Log the change in history
       await tx.insert(resourceHistory).values({
         id: nanoid(),
-        resourceId: params.id,
+        resourceId: id,
         previousQuantityHagga,
         newQuantityHagga,
         changeAmountHagga,
@@ -81,7 +103,7 @@ export async function PUT(
         newQuantityDeepDesert,
         changeAmountDeepDesert,
         changeType: updateType || 'absolute',
-        updatedBy: userId,
+        updatedBy: effectiveUserId, // This is the user the action is for
         reason: reason,
         createdAt: new Date(),
       })
@@ -97,8 +119,8 @@ export async function PUT(
         const resourceStatus = calculateResourceStatus(resource.quantityHagga + resource.quantityDeepDesert, resource.targetQuantity)
 
         pointsCalculation = await awardPoints(
-          getUserIdentifier(session),
-          params.id,
+          effectiveUserId, // Award points to the user the action is for
+          id,
           actionType,
           Math.abs(totalChangeAmount),
           {
@@ -111,7 +133,7 @@ export async function PUT(
         )
       }
 
-      const updatedResource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      const updatedResource = await tx.select().from(resources).where(eq(resources.id, id))
 
       return {
         resource: updatedResource[0],
@@ -139,7 +161,7 @@ export async function PUT(
 // DELETE /api/resources/[id] - Delete resource and all its history (admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -148,14 +170,15 @@ export async function DELETE(
   }
 
   try {
+    const { id } = await params
     await db.transaction(async (tx) => {
-      const resource = await tx.select().from(resources).where(eq(resources.id, params.id))
+      const resource = await tx.select().from(resources).where(eq(resources.id, id))
       if (resource.length === 0) {
         throw new Error('ResourceNotFound')
       }
 
-      await tx.delete(resourceHistory).where(eq(resourceHistory.resourceId, params.id))
-      await tx.delete(resources).where(eq(resources.id, params.id))
+      await tx.delete(resourceHistory).where(eq(resourceHistory.resourceId, id))
+      await tx.delete(resources).where(eq(resources.id, id))
     })
 
     return NextResponse.json({ message: 'Resource and its history deleted successfully' }, {
@@ -172,4 +195,4 @@ export async function DELETE(
     console.error('Error deleting resource:', error)
     return NextResponse.json({ error: 'Failed to delete resource' }, { status: 500 })
   }
-} 
+}

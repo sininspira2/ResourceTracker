@@ -9,7 +9,7 @@ import { hasResourceAdminAccess } from '@/lib/discord-roles'
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; entryId: string } }
+  { params }: { params: Promise<{ id: string; entryId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -23,8 +23,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 
-    const resourceId = params.id
-    const entryId = params.entryId
+    const { id: resourceId, entryId } = await params
 
     // Verify the entry exists and belongs to this resource
     const existingEntry = await db

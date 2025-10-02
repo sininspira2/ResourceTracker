@@ -296,7 +296,8 @@ export default function ResourceDetailPage() {
         setNewQuantity(0)
         setNewQuantityInput('')
         // Refresh history and leaderboard to show the new change
-        handleResourceUpdate()
+        fetchHistory(timeFilter)
+        fetchLeaderboard()
       } else {
         const errorData = await response.text()
         console.error('Failed to update resource:', errorData)
@@ -310,46 +311,13 @@ export default function ResourceDetailPage() {
     }
   }
 
-  const handleResourceUpdate = () => {
-    fetchHistory(timeFilter)
-    fetchLeaderboard()
-    // A simple way to refetch the resource is to just reload the main resource data
-    // This is less efficient than updating state directly, but safer
-    // and for a single resource page, performance impact is minimal.
-    const fetchResource = async () => {
-      try {
-        const response = await fetch(`/api/resources`, {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
-        })
-        if (response.ok) {
-          const resources = await response.json()
-          const foundResource = resources.find((r: Resource) => r.id === resourceId)
-          if (foundResource) {
-            setResource({
-              ...foundResource,
-              updatedAt: typeof foundResource.updatedAt === 'string'
-                ? foundResource.updatedAt
-                : new Date(foundResource.updatedAt).toISOString(),
-              createdAt: typeof foundResource.createdAt === 'string'
-                ? foundResource.createdAt
-                : new Date(foundResource.createdAt).toISOString(),
-            })
-          }
-        }
-      } catch (error) {
-        console.error('Error refetching resource:', error)
-      }
-    }
-    fetchResource()
-  }
-
   const handleUpdate = async (
     resourceId: string,
     amount: number,
     quantityField: 'quantityHagga' | 'quantityDeepDesert',
     updateType: 'absolute' | 'relative',
     reason?: string,
+    onBehalfOf?: string,
   ) => {
     if (!resource) return
 
@@ -374,11 +342,34 @@ export default function ResourceDetailPage() {
           changeValue: amount,
           quantityField: quantityField,
           reason,
+          onBehalfOf,
         }),
       })
 
       if (response.ok) {
-        handleResourceUpdate()
+        const { resource: updatedResource, pointsEarned, pointsCalculation } = await response.json()
+        setResource(updatedResource)
+
+        // Show congratulations popup if points were earned
+        if (pointsEarned > 0) {
+          setCongratulationsState({
+            isVisible: true,
+            finalPoints: pointsEarned,
+            pointsCalculation: pointsCalculation,
+            resourceName: updatedResource.name,
+            actionType:
+              updateType === 'absolute'
+                ? 'SET'
+                : amount > 0
+                  ? 'ADD'
+                  : 'REMOVE',
+            quantityChanged: Math.abs(amount),
+          })
+        }
+
+        // Manually trigger a history and leaderboard refresh
+        fetchHistory(timeFilter)
+        fetchLeaderboard()
       } else {
         const { error } = await response.json()
         throw new Error(error || 'Failed to update quantity.')
@@ -413,7 +404,8 @@ export default function ResourceDetailPage() {
       )
 
       if (response.ok) {
-        handleResourceUpdate()
+        const updatedResource = await response.json()
+        setResource(updatedResource)
         setChangeTargetModalState({ isOpen: false, resource: null })
       } else {
         console.error('Failed to save target quantity')
@@ -450,7 +442,10 @@ export default function ResourceDetailPage() {
       )
 
       if (response.ok) {
-        handleResourceUpdate()
+        const { resource: updatedResource } = await response.json()
+        setResource(updatedResource)
+        fetchHistory(timeFilter)
+        fetchLeaderboard()
       } else {
         const { error } = await response.json()
         throw new Error(error || 'Failed to transfer quantity.')
@@ -1515,6 +1510,7 @@ export default function ResourceDetailPage() {
           updateType={updateModalState.updateType}
           onClose={() => setUpdateModalState({ isOpen: false, resource: null, updateType: 'absolute' })}
           onUpdate={handleUpdate}
+          session={session}
         />
       )}
 
