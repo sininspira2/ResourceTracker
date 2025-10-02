@@ -680,23 +680,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       )
 
       if (response.ok) {
-        const { resource, pointsEarned, pointsCalculation } =
-          await response.json()
+        const { resource } = await response.json()
         setResources((prev) =>
           prev.map((r) => (r.id === resourceId ? { ...r, ...resource } : r)),
         )
-
-        // Show congratulations popup if points were earned
-        if (pointsEarned > 0) {
-          setCongratulationsState({
-            isVisible: true,
-            pointsEarned: pointsEarned,
-            pointsCalculation: pointsCalculation,
-            resourceName: resource.name,
-            actionType: 'ADD',
-            quantityChanged: Math.abs(amount),
-          })
-        }
       } else {
         const { error } = await response.json()
         throw new Error(error || 'Failed to transfer quantity.')
