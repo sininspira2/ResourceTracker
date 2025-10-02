@@ -34,7 +34,7 @@ export async function PUT(
   }
 
   try {
-    const { quantity, updateType = 'absolute', changeValue, reason, quantityField, onBehalfOf } = await request.json()
+    let { quantity, updateType = 'absolute', changeValue, reason, quantityField, onBehalfOf } = await request.json()
     const actingUserIdentifier = getUserIdentifier(session)
     
     let effectiveUserId = actingUserIdentifier
@@ -52,6 +52,10 @@ export async function PUT(
 
       // Use the display name for consistency in history and leaderboards
       effectiveUserId = targetUser[0].customNickname || targetUser[0].username
+
+      // Append an audit note to the reason
+      const auditNote = `(entered by ${actingUserIdentifier})`
+      reason = reason ? `${reason} ${auditNote}` : auditNote
     }
 
     const result = await db.transaction(async (tx) => {
