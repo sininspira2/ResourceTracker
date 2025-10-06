@@ -1,5 +1,5 @@
 import { calculatePoints, awardPoints, getLeaderboard, getUserContributions, getUserRank } from './leaderboard';
-import { db } from './db';
+import { db, mockDbExecution } from './db';
 
 // Tell Jest to use the manual mock in `lib/__mocks__/db.ts`
 jest.mock('./db');
@@ -15,9 +15,6 @@ jest.mock('drizzle-orm', () => ({
   and: jest.fn(),
   gte: jest.fn(),
 }));
-
-// Get a reference to the mock function inside the manual mock
-const mockDbExecution = (db as any).__mockDbExecution;
 
 describe('lib/leaderboard.ts', () => {
   beforeEach(() => {

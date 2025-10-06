@@ -1,7 +1,7 @@
-const mockDbExecution = jest.fn();
+export const mockDbExecution = jest.fn();
 const subqueryMock = { rank: 'rank_col', userId: 'userId_col' };
 
-const db = {
+export const db = {
   insert: jest.fn().mockReturnThis(),
   values: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
@@ -15,9 +15,6 @@ const db = {
   then: function (resolve: (value: unknown) => void) {
     return Promise.resolve(mockDbExecution()).then(resolve);
   },
-  __mockDbExecution: mockDbExecution,
 };
 
-const leaderboard = 'leaderboard';
-
-export { db, leaderboard };
+export const leaderboard = 'leaderboard';

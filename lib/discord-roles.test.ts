@@ -1,3 +1,5 @@
+import type * as DiscordRoles from './discord-roles';
+
 const mockRoles = [
   { id: 'admin-role', name: 'Admin', level: 100, isAdmin: true, canEditTargets: true, canAccessResources: true, canManageUsers: true, canExportData: true, canViewReports: true },
   { id: 'manager-role', name: 'Logistics Manager', level: 50, canEditTargets: true, canAccessResources: true },
@@ -7,7 +9,7 @@ const mockRoles = [
 ];
 
 describe('Discord Role-Based Access Control', () => {
-  let discordRoles: any;
+  let discordRoles: typeof DiscordRoles;
   const originalEnv = process.env;
 
   beforeEach(() => {
@@ -64,7 +66,7 @@ describe('Discord Role-Based Access Control', () => {
       { func: 'hasReportAccess', expected: [true, false, false, true, false, false] },
       { func: 'hasUserManagementAccess', expected: [true, false, false, false, false, false] },
       { func: 'hasDataExportAccess', expected: [true, false, false, false, false, false] },
-    ];
+    ] as const;
 
     const roles = [adminRoles, managerRoles, contributorRoles, viewerRoles, noPermsRoles, emptyRoles];
 
@@ -78,7 +80,7 @@ describe('Discord Role-Based Access Control', () => {
           ['no-perms', roles[4], expected[4]],
           ['empty', roles[5], expected[5]],
         ])('should return %s for %s user', (_roleName, userRoles, expectedResult) => {
-          expect(discordRoles[func](userRoles)).toBe(expectedResult);
+          expect(discordRoles[func](userRoles as string[])).toBe(expectedResult);
         });
       });
     });
