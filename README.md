@@ -118,6 +118,7 @@ TURSO_AUTH_TOKEN=your_turso_auth_token
 # Optional: Customize branding
 NEXT_PUBLIC_ORG_NAME=Your Community Name
 ```
+<img width="626" height="848" alt="env variable" src="https://github.com/user-attachments/assets/953a76c9-d191-422e-a5d8-14e9b1b8d699" />
 
 4. Click **Deploy**
 
