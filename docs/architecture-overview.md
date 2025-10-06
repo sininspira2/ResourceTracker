@@ -52,6 +52,7 @@ The Resource Tracker is built with a modern, TypeScript-first technology stack o
 | **Linting**             | ESLint          | `9.37.0`  | Code quality and style enforcement            |
 | **Environment Vars**    | `dotenv`        | `17.2.3`  | Loading environment variables from `.env` files |
 
+
 ## Data Flow
 
 ### Authentication Flow
