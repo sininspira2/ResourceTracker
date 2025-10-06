@@ -26,7 +26,7 @@ let cachedRoles: RoleConfig[] | null = null;
  * result. This allows subsequent calls within the same warm serverless function to
  * retry parsing, which is crucial if environment variables are loaded with a slight delay.
  */
-function getRoleHierarchy(): RoleConfig[] {
+export function getRoleHierarchy(): RoleConfig[] {
   // If we have a valid, cached configuration, return it immediately.
   if (cachedRoles !== null) {
     return cachedRoles;
