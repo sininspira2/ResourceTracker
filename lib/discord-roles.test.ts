@@ -31,6 +31,80 @@ describe('Discord Role-Based Access Control', () => {
       const hierarchy = discordRoles.getRoleHierarchy();
       expect(hierarchy).toEqual(mockRoles);
     });
+
+    describe('Error and Edge Case Handling', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+      beforeEach(() => {
+        consoleWarnSpy.mockClear();
+        consoleErrorSpy.mockClear();
+      });
+
+      it('should return an empty array and warn if DISCORD_ROLES_CONFIG is not set', () => {
+        delete process.env.DISCORD_ROLES_CONFIG;
+        jest.resetModules();
+        const discordRoles = require('./discord-roles');
+        const hierarchy = discordRoles.getRoleHierarchy();
+        expect(hierarchy).toEqual([]);
+        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('No DISCORD_ROLES_CONFIG found'));
+      });
+
+      it('should return an empty array and error if config is invalid JSON', () => {
+        process.env.DISCORD_ROLES_CONFIG = 'invalid-json';
+        jest.resetModules();
+        const discordRoles = require('./discord-roles');
+        const hierarchy = discordRoles.getRoleHierarchy();
+        expect(hierarchy).toEqual([]);
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse DISCORD_ROLES_CONFIG:', expect.any(String));
+      });
+
+      it('should return an empty array and error if config is not an array', () => {
+        process.env.DISCORD_ROLES_CONFIG = JSON.stringify({ not: 'an array' });
+        jest.resetModules();
+        const discordRoles = require('./discord-roles');
+        const hierarchy = discordRoles.getRoleHierarchy();
+        expect(hierarchy).toEqual([]);
+        expect(consoleErrorSpy).toHaveBeenCalledWith('DISCORD_ROLES_CONFIG must be an array, got:', 'object');
+      });
+
+      it('should filter out invalid role objects and warn', () => {
+        process.env.DISCORD_ROLES_CONFIG = JSON.stringify([
+          { id: 'valid', name: 'Valid Role' },
+          null,
+          { name: 'missing-id' },
+          { id: 'missing-name' },
+        ]);
+        jest.resetModules();
+        const discordRoles = require('./discord-roles');
+        const hierarchy = discordRoles.getRoleHierarchy();
+        expect(hierarchy).toHaveLength(1);
+        expect(hierarchy[0].id).toBe('valid');
+        expect(consoleWarnSpy).toHaveBeenCalledTimes(3);
+      });
+
+       it('should warn if all roles after filtering are invalid', () => {
+        process.env.DISCORD_ROLES_CONFIG = JSON.stringify([
+          { name: 'missing-id' },
+        ]);
+        jest.resetModules();
+        const discordRoles = require('./discord-roles');
+        discordRoles.getRoleHierarchy();
+        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('No valid roles found'));
+      });
+    });
+  });
+
+  describe('getRoleName', () => {
+    it('should return the role name for a given ID', () => {
+      const roleName = discordRoles.getRoleName('manager-role');
+      expect(roleName).toBe('Logistics Manager');
+    });
+
+    it('should return a default string for an unknown ID', () => {
+      const roleName = discordRoles.getRoleName('unknown-id');
+      expect(roleName).toBe('Unknown Role (unknown-id)');
+    });
   });
 
   describe('getHighestRole', () => {

@@ -96,6 +96,18 @@ describe('lib/leaderboard.ts', () => {
       expect(result.rankings[0].userId).toBe('user-1');
       expect(mockDbExecution).toHaveBeenCalledTimes(2);
     });
+
+    it('should gracefully handle database errors', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      mockDbExecution.mockRejectedValueOnce(new Error('DB connection failed'));
+
+      const result = await getLeaderboard();
+
+      expect(result.rankings).toEqual([]);
+      expect(result.total).toBe(0);
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error in getLeaderboard:', expect.any(Error));
+      consoleErrorSpy.mockRestore();
+    });
   });
 
   describe('getUserContributions', () => {
@@ -112,6 +124,23 @@ describe('lib/leaderboard.ts', () => {
       expect(result.summary.totalPoints).toBe(150);
       expect(mockDbExecution).toHaveBeenCalledTimes(3);
     });
+
+    it.each([
+      ['24h'],
+      ['7d'],
+      ['30d'],
+      ['all'],
+    ])('should apply the correct time filter (%s) for contributions', async (filter) => {
+      mockDbExecution.mockResolvedValueOnce([{ count: 1 }]).mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+      const { gte } = require('drizzle-orm');
+      await getUserContributions('user-1', filter as any);
+
+      if (filter !== 'all') {
+        expect(gte).toHaveBeenCalled();
+      } else {
+        expect(gte).not.toHaveBeenCalled();
+      }
+    });
   });
 
   describe('getUserRank', () => {
@@ -119,6 +148,22 @@ describe('lib/leaderboard.ts', () => {
       mockDbExecution.mockResolvedValueOnce([{ rank: 5 }]);
       const rank = await getUserRank('user-1', 'all');
       expect(rank).toBe(5);
+    });
+
+    it.each([
+        ['24h'],
+        ['7d'],
+        ['30d'],
+        ['all'],
+    ])('should apply the correct time filter (%s) for rank', async (filter) => {
+        mockDbExecution.mockResolvedValueOnce([{ rank: 1 }]);
+        const { gte } = require('drizzle-orm');
+        await getUserRank('user-1', filter as any);
+        if (filter !== 'all') {
+            expect(gte).toHaveBeenCalled();
+        } else {
+            expect(gte).not.toHaveBeenCalled();
+        }
     });
 
     it('should return null if user is not found', async () => {

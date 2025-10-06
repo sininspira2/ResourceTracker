@@ -12,8 +12,8 @@ export const db = {
   limit: jest.fn().mockReturnThis(),
   offset: jest.fn().mockReturnThis(),
   as: jest.fn(() => subqueryMock),
-  then: function (resolve: (value: unknown) => void) {
-    return Promise.resolve(mockDbExecution()).then(resolve);
+  then: function (resolve: (value: unknown) => void, reject: (reason?: any) => void) {
+    return mockDbExecution().then(resolve, reject);
   },
 };
 
