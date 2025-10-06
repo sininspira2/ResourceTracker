@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useSession } from 'next-auth/react'
-import { Github } from 'lucide-react'
+import { Github, Bug } from 'lucide-react'
 import { 
   getCurrentVersion, 
   getReleasesSince, 
@@ -134,11 +134,22 @@ export function WhatsNewModal({ isOpen: externalIsOpen, onClose: externalOnClose
             </div>
             <div className="flex items-center gap-2">
               <a
+                href="https://github.com/sininspira2/ResourceTracker/issues/new"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-100 hover:text-white p-1 rounded-full hover:bg-blue-600 transition-colors"
+                aria-label="Report a Bug"
+                title="Report a Bug"
+              >
+                <Bug className="w-6 h-6" />
+              </a>
+              <a
                 href="https://github.com/sininspira2/ResourceTracker"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-100 hover:text-white p-1 rounded-full hover:bg-blue-600 transition-colors"
-                aria-label="View source on GitHub"
+                aria-label="Visit project Github"
+                title="Visit project Github"
               >
                 <Github className="w-6 h-6" />
               </a>
