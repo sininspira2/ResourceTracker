@@ -5,259 +5,109 @@ This guide covers security best practices and considerations for Resource Tracke
 ## Authentication & Authorization
 
 ### Discord OAuth Security
-- **Secure Redirect URIs**: Only add trusted domains to Discord app settings
-- **Environment Variables**: Never commit Discord secrets to version control
-- **Token Management**: Access tokens are automatically refreshed by NextAuth.js
-- **Session Security**: Sessions expire after 4 hours by default
+-   **Secure Redirect URIs**: Only add trusted domains to your Discord application's OAuth2 settings.
+-   **Environment Variables**: Never commit Discord secrets (`DISCORD_CLIENT_SECRET`) to version control.
+-   **Token Management**: Access tokens are handled server-side and automatically refreshed by NextAuth.js.
+-   **Session Security**: Sessions use secure, HTTP-only cookies with a defined expiration.
 
-### Role-Based Access Control
-Resource Tracker implements a flexible role-based permission system:
+### Role-Based Access Control (RBAC)
+Resource Tracker implements a granular, role-based permission system configured via the `DISCORD_ROLES_CONFIG` environment variable.
 
-```typescript
-// Permission hierarchy
-{
-  "canAccessResources": true,  // View and update resources
-  "canEditTargets": true,      // Modify target quantities  
-  "isAdmin": true             // Full CRUD access + history deletion
-}
-```
+**Available Permissions:**
+-   `canAccessResources`: The base permission to view and update resource quantities.
+-   `canEditTargets`: Allows a user to modify resource target quantities.
+-   `canManageUsers`: Grants access to the user management page.
+-   `canExportData`: Allows exporting data for any user (intended for administrators).
+-   `isAdmin`: Grants full administrative privileges, including creating/editing/deleting resources and their history.
 
 **Security by Design:**
-- **Default Deny**: No access without explicit role configuration
-- **Least Privilege**: Users get minimum required permissions
-- **Audit Trail**: All actions are logged with user attribution
+-   **Default Deny**: Users have no access unless they are granted a role defined in the configuration.
+-   **Least Privilege**: The system is designed to allow for roles with the minimum required permissions for their function.
+-   **Audit Trail**: All significant actions are logged in the `resource_history` table with user attribution.
 
 ## Environment Security
 
 ### Production Environment Variables
+All sensitive configuration is handled via environment variables. Never hard-code secrets in the source code.
+
 ```bash
-# Use strong, unique secrets
-NEXTAUTH_SECRET=your_very_long_random_secret_32_chars_minimum
+# Use a strong, unique secret of at least 32 characters
+NEXTAUTH_SECRET=your_very_long_random_secret_for_production
 
-# Secure database URLs
-TURSO_DATABASE_URL=libsql://your-db.turso.io
-TURSO_AUTH_TOKEN=your_secure_token_with_proper_permissions
+# Use secure database credentials from your provider (e.g., Turso)
+TURSO_DATABASE_URL=libsql://your-prod-db-name.turso.io
+TURSO_AUTH_TOKEN=your_secure_production_auth_token
 
-# Validate Discord configuration
-DISCORD_CLIENT_SECRET=keep_this_secret_secure
-DISCORD_ROLES_CONFIG=properly_validated_json_array
+# Your production Discord App credentials
+DISCORD_CLIENT_ID=your_production_discord_client_id
+DISCORD_CLIENT_SECRET=your_production_discord_client_secret
+
+# A validated JSON array for role configuration
+DISCORD_ROLES_CONFIG=[{"id":"your_admin_role_id","name":"Administrator","level":100,"isAdmin":true,...}]
 ```
 
 ### Secret Management
-**Recommended Practices:**
-- Use environment-specific secrets
-- Rotate secrets regularly (quarterly)
-- Use secret management services in production
-- Never log or expose secrets in error messages
-
-**Vercel Deployment:**
-- Set environment variables in Vercel dashboard
-- Use different secrets for preview vs production
-- Enable Vercel's security headers
+-   **Vercel Deployment**: Use the Vercel dashboard to set environment variables for Production, Preview, and Development environments.
+-   **Rotation**: Rotate secrets (like `NEXTAUTH_SECRET` and `TURSO_AUTH_TOKEN`) periodically, especially if a leak is suspected.
+-   **Logging**: Ensure that secrets are never logged or exposed in error messages.
 
 ## Database Security
 
 ### Turso Security Features
-- **Built-in Encryption**: Data encrypted at rest and in transit
-- **Access Control**: Token-based authentication
-- **Regional Isolation**: Choose database regions for compliance
-- **Audit Logging**: All database operations are logged
-
-### SQL Injection Prevention
-Resource Tracker uses Drizzle ORM which provides:
-- **Parameterized Queries**: All user inputs are properly escaped
-- **Type Safety**: TypeScript prevents many injection vectors
-- **Schema Validation**: Structured database interactions
+-   **Encryption**: Data is encrypted at rest and in transit (HTTPS/TLS).
+-   **Access Control**: The database is protected by a long-lived auth token.
+-   **SQL Injection Prevention**: The application uses Drizzle ORM, which provides built-in protection through parameterized queries. All user input is automatically escaped.
 
 ### Data Validation
-```typescript
-// All API endpoints validate inputs
-const quantity = parseInt(body.quantity)
-if (isNaN(quantity) || quantity < 0) {
-  return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 })
-}
-```
+All API endpoints validate and sanitize incoming data before it reaches the database. For example, quantities are checked to be valid numbers.
 
 ## GDPR & Privacy Compliance
 
 ### Data Collection
-Resource Tracker collects minimal user data:
-- **Discord Profile**: Username, avatar, server nickname
-- **Activity Data**: Resource updates attributed to users
-- **Session Data**: Temporary authentication tokens
+The application collects the minimum data necessary for its operation:
+-   **Discord Profile**: `discordId`, `username`, and `avatar`.
+-   **Activity Data**: A log of resource updates attributed to the user.
 
-### User Rights Implementation
-- **Right to Access**: `/api/user/data-export` endpoint
-- **Right to Deletion**: `/api/user/data-deletion` endpoint (anonymization)
-- **Data Portability**: JSON export format
-- **Consent**: Clear privacy policy and user controls
-
-### Data Retention
-```typescript
-// Configurable retention policies
-const retentionPolicies = {
-  userSessions: '30 days',
-  resourceHistory: 'indefinitely', // for audit purposes
-  userData: 'until deletion requested'
-}
-```
+### User Rights
+The API provides endpoints to comply with user rights under GDPR:
+-   **Right to Access/Portability**: The `/api/user/data-export` endpoint provides a JSON export of all data associated with the user.
+-   **Right to Erasure**: The `/api/user/data-deletion` endpoint anonymizes a user's data, severing the link between their Discord identity and their past contributions.
 
 ## API Security
 
 ### Rate Limiting
-Currently not implemented, but recommended for production:
-
-```typescript
-// Example rate limiting middleware
-import rateLimit from 'express-rate-limit'
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP'
-})
-```
+Rate limiting is not implemented by default but is highly recommended for production deployments to prevent abuse. This can be added at the middleware or server level.
 
 ### Input Validation
-All API endpoints implement:
-- **Type Checking**: TypeScript interfaces for request/response
-- **Boundary Validation**: Min/max values for quantities
-- **Format Validation**: Proper JSON structure for complex inputs
-- **Authentication**: Session validation on protected routes
-
-### Error Handling
-```typescript
-// Security-conscious error responses
-try {
-  // Operation that might fail
-} catch (error) {
-  console.error('Internal error:', error) // Log detailed error
-  return NextResponse.json({ 
-    error: 'Operation failed' // Return generic message
-  }, { status: 500 })
-}
-```
-
-## Infrastructure Security
-
-### Vercel Security
-- **HTTPS Enforcement**: All traffic encrypted in transit
-- **Security Headers**: Automatic security headers
-- **DDoS Protection**: Built-in protection against attacks
-- **Edge Network**: Global CDN reduces attack surface
-
-### DNS Security
-- **DNSSEC**: Enable DNSSEC for domain
-- **CAA Records**: Restrict certificate authorities
-- **Subdomain Takeover**: Monitor for unused subdomains
-
-### Monitoring & Alerts
-**Recommended Monitoring:**
-- Failed authentication attempts
-- Unusual API usage patterns
-- Database connection failures
-- Error rate spikes
-
-## Incident Response
-
-### Security Incident Plan
-1. **Detection**: Monitor logs and metrics
-2. **Assessment**: Determine scope and impact
-3. **Containment**: Isolate affected systems
-4. **Recovery**: Restore normal operations
-5. **Lessons**: Update security measures
-
-### Emergency Contacts
-Maintain an incident response plan with:
-- Technical team contacts
-- Infrastructure provider support
-- Legal/compliance team
-- User communication channels
+-   All API routes use TypeScript for strict type checking of request and response bodies.
+-   Server-side validation ensures that users cannot submit malformed or malicious data.
+-   Authentication and authorization are checked on all protected routes before any logic is executed.
 
 ## Vulnerability Management
 
 ### Dependency Updates
+Regularly update dependencies to patch known vulnerabilities.
 ```bash
-# Regular security updates
+# Check for vulnerabilities in dependencies
 npm audit
-npm audit fix
 
-# Monitor for vulnerabilities
-npm install -g npm-check-updates
-ncu -u
+# Attempt to automatically fix them
+npm audit fix
 ```
 
-### Security Scanning
-**Recommended Tools:**
-- **Snyk**: Dependency vulnerability scanning
-- **CodeQL**: Static code analysis
-- **OWASP ZAP**: Dynamic security testing
-- **Lighthouse**: Security best practices audit
-
 ### Responsible Disclosure
-If you discover security vulnerabilities:
-1. **Do not** publish details publicly
-2. Email security team privately
-3. Provide reproduction steps
-4. Allow reasonable time for fixes
-5. Credit will be given for responsible disclosure
-
-## Compliance Considerations
-
-### GDPR (EU Users)
-- ✅ Data minimization implemented
-- ✅ User consent mechanisms
-- ✅ Right to deletion (anonymization)
-- ✅ Data portability (JSON export)
-- ✅ Privacy by design architecture
-
-### SOC 2 (Enterprise)
-For enterprise deployments, consider:
-- Access control documentation
-- Change management procedures
-- Incident response documentation
-- Regular security assessments
-
-### Industry Standards
-- **OWASP Top 10**: Address common web vulnerabilities
-- **NIST Framework**: Cybersecurity framework compliance
-- **ISO 27001**: Information security management
+If you discover a security vulnerability, please report it privately to the project maintainers. Do not disclose it publicly until a fix has been made available.
 
 ## Security Checklist
 
 ### Pre-Deployment
-- [ ] Environment variables configured securely
-- [ ] Discord app permissions reviewed
-- [ ] Database access restricted
-- [ ] Error handling doesn't leak sensitive data
-- [ ] Security headers configured
-- [ ] Dependencies updated and scanned
-
-### Post-Deployment
-- [ ] Monitoring and alerting configured
-- [ ] Backup procedures tested
-- [ ] Incident response plan documented
-- [ ] Regular security reviews scheduled
-- [ ] User training completed
-- [ ] Compliance requirements met
+-   [ ] All secrets are stored as environment variables, not in code.
+-   [ ] Production environment variables are set with strong, unique values.
+-   [ ] The `DISCORD_ROLES_CONFIG` is correctly formatted and uses production Role IDs.
+-   [ ] The Discord App's Redirect URI is correctly set to the production URL.
+-   [ ] Debugging flags are turned off in the production environment.
 
 ### Ongoing Maintenance
-- [ ] Monthly dependency updates
-- [ ] Quarterly secret rotation
-- [ ] Semi-annual security reviews
-- [ ] Annual penetration testing (enterprise)
-- [ ] Continuous monitoring of security advisories
-
-## Getting Security Help
-
-**For Security Questions:**
-- Review this guide and documentation
-- Check GitHub security advisories
-- Join community discussions
-
-**For Security Issues:**
-- Report vulnerabilities responsibly
-- Contact maintainers for security concerns
-- Use encrypted communication when possible
-
-**Remember:** Security is a shared responsibility between the application, infrastructure providers, and users. Stay informed and follow best practices for your specific deployment scenario.
+-   [ ] Regularly rotate secrets and API keys.
+-   [ ] Periodically run `npm audit` to check for new vulnerabilities in dependencies.
+-   [ ] Monitor logs for suspicious activity, such as repeated failed login attempts or unusual API traffic.

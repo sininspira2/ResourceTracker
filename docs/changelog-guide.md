@@ -74,6 +74,38 @@ Edit `lib/changelog.json` directly:
 3. **Group related changes** in a single release when possible
 4. **Use semantic versioning** consistently
 
+## 📢 Final Step: Update the Main README
+
+After updating the changelog, it is crucial to add the release notes to the main `README.md` file in the project root. This keeps the project's front page up-to-date with the latest changes.
+
+### Release Notes Format
+
+Add a new section to `README.md` using the following format:
+
+```markdown
+## 🚀 Release Notes - Version [VERSION_NUMBER]
+
+**Release Date:** [YYYY-MM-DD]
+
+---
+
+### ✨ New Features
+
+* [Brief description of a new feature, including what it does and why it's beneficial.]
+* [Another new feature, if applicable.]
+
+### 🚀 Improvements
+
+* [Description of an enhancement to an existing feature.]
+* [Details about performance improvements, UI/UX updates, or refactoring.]
+
+### 🐛 Bug Fixes
+
+* [A summary of a bug that was fixed and the impact on the user.]
+* [Another bug fix, if applicable.]
+---
+```
+
 ## 🔧 How It Works
 
 1. **Version tracking**: Each user's last seen version is stored in localStorage
@@ -81,4 +113,4 @@ Edit `lib/changelog.json` directly:
 3. **Modal display**: Shows all releases since their last visit
 4. **User control**: Users can "Got It!" (mark as seen) or "Remind Me Later"
 
-The system automatically handles version comparison and will show users all updates they've missed since their last visit! 
+The system automatically handles version comparison and will show users all updates they've missed since their last visit!

@@ -5,16 +5,16 @@ This document describes the database schema used by Resource Tracker, built with
 ## Overview
 
 The application uses 5 main tables:
-- `users` - Discord user information
-- `user_sessions` - Session data for role caching
-- `resources` - Resource definitions and current quantities
-- `resource_history` - Audit trail of all resource changes
-- `leaderboard` - Points and contribution tracking
+-   `users` - Discord user information
+-   `user_sessions` - Session data for role caching
+-   `resources` - Resource definitions and current quantities for both locations
+-   `resource_history` - Audit trail of all resource changes, including transfers
+-   `leaderboard` - Points and contribution tracking
 
 ## Table Definitions
 
-### users
-Stores Discord user information.
+### `users`
+Stores essential Discord user information.
 
 ```sql
 CREATE TABLE users (
@@ -28,17 +28,8 @@ CREATE TABLE users (
 );
 ```
 
-**Fields:**
-- `id` - Internal user ID (nanoid)
-- `discord_id` - Discord user ID
-- `username` - Discord username
-- `avatar` - Discord avatar URL
-- `custom_nickname` - User-set custom nickname
-- `created_at` - Account creation timestamp
-- `last_login` - Last login timestamp
-
-### user_sessions
-Caches Discord role and guild membership data.
+### `user_sessions`
+Caches Discord role and guild membership data to minimize API calls to Discord.
 
 ```sql
 CREATE TABLE user_sessions (
@@ -50,79 +41,60 @@ CREATE TABLE user_sessions (
 );
 ```
 
-**Fields:**
-- `id` - Session ID (nanoid)
-- `user_id` - Reference to users table
-- `roles` - JSON string array of Discord role IDs
-- `is_in_guild` - Whether user is in the Discord server
-- `created_at` - Session creation timestamp
-
-### resources
-Main resource definitions and current state.
+### `resources`
+The core table for resource definitions, tracking quantities at two separate locations.
 
 ```sql
 CREATE TABLE resources (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
-  quantity INTEGER NOT NULL DEFAULT 0,
+  quantity_hagga INTEGER NOT NULL DEFAULT 0,
+  quantity_deep_desert INTEGER NOT NULL DEFAULT 0,
   description TEXT,
   category TEXT,
-  icon TEXT, -- Discord emoji like ':ResourceIcon:'
-  image_url TEXT, -- URL to resource image
+  icon TEXT,
+  image_url TEXT,
   status TEXT, -- 'at_target', 'below_target', 'critical'
-  target_quantity INTEGER, -- Target/threshold quantity
-  multiplier REAL NOT NULL DEFAULT 1.0, -- Points multiplier
+  target_quantity INTEGER,
+  multiplier REAL NOT NULL DEFAULT 1.0,
+  is_priority INTEGER NOT NULL DEFAULT 0, -- Boolean (0/1)
   last_updated_by TEXT NOT NULL,
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL
 );
 ```
-
 **Fields:**
-- `id` - Resource ID (nanoid)
-- `name` - Resource display name
-- `quantity` - Current quantity
-- `description` - Resource description
-- `category` - Resource category (Raw Materials, Refined, etc.)
-- `icon` - Discord emoji identifier
-- `image_url` - URL to resource image
-- `status` - Calculated status based on target
-- `target_quantity` - Target quantity for status calculation
-- `multiplier` - Points multiplier for leaderboard
-- `last_updated_by` - Who last updated this resource
-- `created_at` - Creation timestamp
-- `updated_at` - Last update timestamp
+- `quantity_hagga`: Current quantity at the "Hagga" location.
+- `quantity_deep_desert`: Current quantity at the "Deep Desert" location.
+- `is_priority`: A boolean flag to mark important resources.
 
-### resource_history
-Audit trail of all resource quantity changes.
+### `resource_history`
+A detailed audit trail for every change made to resource quantities, including transfers between locations.
 
 ```sql
 CREATE TABLE resource_history (
   id TEXT PRIMARY KEY,
   resource_id TEXT NOT NULL REFERENCES resources(id),
-  previous_quantity INTEGER NOT NULL,
-  new_quantity INTEGER NOT NULL,
-  change_amount INTEGER NOT NULL, -- +/- amount
-  change_type TEXT NOT NULL, -- 'absolute' or 'relative'
+  previous_quantity_hagga INTEGER NOT NULL,
+  new_quantity_hagga INTEGER NOT NULL,
+  change_amount_hagga INTEGER NOT NULL,
+  previous_quantity_deep_desert INTEGER NOT NULL,
+  new_quantity_deep_desert INTEGER NOT NULL,
+  change_amount_deep_desert INTEGER NOT NULL,
+  change_type TEXT NOT NULL, -- 'absolute', 'relative', or 'transfer'
   updated_by TEXT NOT NULL,
-  reason TEXT, -- Optional reason for change
-  created_at INTEGER NOT NULL
+  reason TEXT,
+  created_at INTEGER NOT NULL,
+  transfer_amount INTEGER,
+  transfer_direction TEXT -- 'to_deep_desert' or 'to_hagga'
 );
 ```
-
 **Fields:**
-- `id` - History entry ID (nanoid)
-- `resource_id` - Reference to resources table
-- `previous_quantity` - Quantity before change
-- `new_quantity` - Quantity after change
-- `change_amount` - Net change (+/-)
-- `change_type` - "absolute" (set to value) or "relative" (add/subtract)
-- `updated_by` - User who made the change
-- `reason` - Optional reason for the change
-- `created_at` - Change timestamp
+- Contains separate `previous_`, `new_`, and `change_amount_` fields for both `hagga` and `deep_desert` to provide a complete before-and-after snapshot.
+- `transfer_amount` & `transfer_direction`: Specifically log details of transfer operations.
 
-### leaderboard
-Points and contribution tracking for gamification.
+### `leaderboard`
+Stores records of user contributions for gamification and ranking.
 
 ```sql
 CREATE TABLE leaderboard (
@@ -131,10 +103,10 @@ CREATE TABLE leaderboard (
   resource_id TEXT NOT NULL REFERENCES resources(id),
   action_type TEXT NOT NULL, -- 'ADD', 'SET', 'REMOVE'
   quantity_changed INTEGER NOT NULL,
-  base_points REAL NOT NULL, -- Points before multipliers
+  base_points REAL NOT NULL,
   resource_multiplier REAL NOT NULL,
-  status_bonus REAL NOT NULL, -- Percentage bonus (0.0, 0.05, 0.10)
-  final_points REAL NOT NULL, -- Final calculated points
+  status_bonus REAL NOT NULL,
+  final_points REAL NOT NULL,
   resource_name TEXT NOT NULL,
   resource_category TEXT NOT NULL,
   resource_status TEXT NOT NULL,
@@ -142,60 +114,20 @@ CREATE TABLE leaderboard (
 );
 ```
 
-**Fields:**
-- `id` - Leaderboard entry ID (nanoid)
-- `user_id` - User identifier (Discord nickname/username)
-- `resource_id` - Reference to resources table
-- `action_type` - Type of action performed
-- `quantity_changed` - Amount changed
-- `base_points` - Base points earned
-- `resource_multiplier` - Resource-specific multiplier
-- `status_bonus` - Bonus for resource status
-- `final_points` - Total points after all multipliers
-- `resource_name` - Denormalized resource name
-- `resource_category` - Denormalized resource category
-- `resource_status` - Resource status at time of action
-- `created_at` - Action timestamp
-
 ## Indexes
 
-The following indexes are automatically created:
-- `users_discord_id_unique` on `users.discord_id`
-- Primary key indexes on all `id` fields
-- Foreign key indexes on reference fields
+-   `users_discord_id_unique` on `users.discord_id`
+-   Primary key indexes on all `id` fields.
+-   Foreign key indexes on reference fields (`user_id`, `resource_id`).
 
 ## Migration Commands
 
+Use Drizzle Kit to manage schema changes.
+
 ```bash
-# Generate migration files
+# Generate migration files based on schema changes in lib/db.ts
 npm run db:generate
 
-# Apply migrations to database
+# Apply generated migrations to the database
 npm run db:push
 ```
-
-## Points Calculation
-
-The leaderboard uses this formula:
-```
-final_points = base_points × resource_multiplier × (1 + status_bonus)
-```
-
-Where:
-- `base_points` = `quantity_changed` × action multiplier
-- `resource_multiplier` = per-resource multiplier (default 1.0)
-- `status_bonus` = 0.0 (at_target), 0.05 (below_target), 0.10 (critical)
-
-## Data Retention
-
-- **Resource History**: Kept indefinitely for audit purposes
-- **Leaderboard**: Kept indefinitely for historical rankings
-- **User Sessions**: Cleared after 30 days
-- **Users**: Kept until deletion requested (GDPR compliance)
-
-## GDPR Compliance
-
-The schema supports GDPR requirements:
-- **Data Export**: All user data can be exported via API
-- **Data Deletion**: User data can be anonymized while preserving statistics
-- **Audit Trail**: Complete history of who accessed/changed what data
