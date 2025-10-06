@@ -96,46 +96,52 @@ Resources support both Discord emoji icons and image URLs:
 ## Discord Integration
 
 ### Role Configuration
-Customize roles for your Discord server:
+Customize roles for your Discord server by mapping Discord Role IDs to the application's permission levels. The configuration is set in the `DISCORD_ROLES_CONFIG` environment variable.
+
+The following example reflects the three primary agent personas used in this application:
 
 ```json
 [
   {
-    "id": "admin_role_id",
-    "name": "Administrators", 
+    "id": "your_admin_discord_role_id",
+    "name": "Administrator",
     "level": 100,
     "isAdmin": true,
     "canManageUsers": true,
     "canEditTargets": true,
-    "canAccessResources": true
+    "canAccessResources": true,
+    "canExportData": true
   },
   {
-    "id": "moderator_role_id",
-    "name": "Moderators",
-    "level": 50, 
+    "id": "your_logistics_manager_discord_role_id",
+    "name": "Logistics Manager",
+    "level": 50,
     "isAdmin": false,
-    "canManageUsers": true,
+    "canManageUsers": false,
     "canEditTargets": true,
-    "canAccessResources": true
+    "canAccessResources": true,
+    "canExportData": false
   },
   {
-    "id": "member_role_id",
-    "name": "Members",
+    "id": "your_contributor_discord_role_id",
+    "name": "Contributor",
     "level": 1,
     "isAdmin": false,
-    "canManageUsers": false,    
+    "canManageUsers": false,
     "canEditTargets": false,
-    "canAccessResources": true
+    "canAccessResources": true,
+    "canExportData": false
   }
 ]
 ```
 
 ### Permission Levels
-- **isAdmin**: Can create/edit/delete resources and history
-- **canManageUsers**: Can access the User Management page to see users that have registered with the app and their last login time
-- **canEditTargets**: Can modify resource target quantities
-- **canAccessResources**: Can view and update resource quantities
-- **level**: Determines hierarchy for role display
+-   **`isAdmin`**: Grants full administrative access, including creating, editing, and deleting resources and history entries.
+-   **`canManageUsers`**: Allows access to the user management page to view registered users.
+-   **`canEditTargets`**: Permits the modification of resource target quantities.
+-   **`canAccessResources`**: The base permission required to view and update resource quantities.
+-   **`canExportData`**: Allows the user to export data for any user (Administrator-only).
+-   **`level`**: A numeric value that determines the role's hierarchy for display purposes. Higher numbers have higher precedence.
 
 ## Points & Leaderboard
 

@@ -4,22 +4,22 @@ This guide covers everything you need to know for developing and contributing to
 
 ## Prerequisites
 
-- **Node.js** 18+ and npm
-- **Git** for version control
-- **Discord Developer Account** for OAuth testing
-- **Turso Account** for database (free tier available)
+-   **Node.js** 18+ and npm
+-   **Git** for version control
+-   **Discord Developer Account** for OAuth testing
+-   **Turso Account** for database (free tier available)
 
 ## Development Setup
 
 ### 1. Clone and Install
 ```bash
-git clone https://github.com/your-username/ResourceTracker.git
+git clone https://github.com/sininspira2/ResourceTracker.git
 cd ResourceTracker
 npm install
 ```
 
 ### 2. Environment Configuration
-Copy `.env.example` to `.env.local` and fill in the required values:
+Copy `.env.example` to `.env.local` and fill in the required values. See `ENVIRONMENT.md` for detailed instructions.
 
 ```bash
 # Required for development
@@ -27,12 +27,12 @@ DISCORD_CLIENT_ID=your_test_app_client_id
 DISCORD_CLIENT_SECRET=your_test_app_secret
 DISCORD_GUILD_ID=your_test_server_id
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_local_secret
+NEXTAUTH_SECRET=a_random_string_for_session_encryption
 TURSO_DATABASE_URL=your_dev_database_url
 TURSO_AUTH_TOKEN=your_dev_auth_token
 
-# Discord roles configuration (JSON)
-DISCORD_ROLES_CONFIG=[{"id":"role_id","name":"Admin","level":100,"isAdmin":true,"canAccessResources":true}]
+# A comprehensive role configuration example
+DISCORD_ROLES_CONFIG=[{"id":"your_admin_role_id","name":"Administrator","level":100,"isAdmin":true,"canManageUsers":true,"canEditTargets":true,"canAccessResources":true,"canExportData":true},{"id":"your_logistics_manager_role_id","name":"Logistics Manager","level":50,"isAdmin":false,"canManageUsers":false,"canEditTargets":true,"canAccessResources":true,"canExportData":false},{"id":"your_contributor_role_id","name":"Contributor","level":1,"isAdmin":false,"canManageUsers":false,"canEditTargets":false,"canAccessResources":true,"canExportData":false}]
 
 # Optional branding
 NEXT_PUBLIC_ORG_NAME=Dev Test Community
@@ -40,11 +40,11 @@ NEXT_PUBLIC_ORG_NAME=Dev Test Community
 
 ### 3. Database Setup
 ```bash
-# Apply database schema
+# Apply the latest database schema
 npm run db:push
 
-# Populate with sample data
-npm run populate-resources-safe
+# Populate the database with sample data
+npm run populate-resources
 ```
 
 ### 4. Start Development
@@ -59,7 +59,7 @@ npm run dev
 ResourceTracker/
 ├── app/                    # Next.js app directory
 │   ├── api/               # API routes
-│   ├── components/        # React components  
+│   ├── components/        # React components
 │   ├── dashboard/         # Dashboard pages
 │   └── resources/         # Resource management pages
 ├── lib/                   # Shared utilities
@@ -71,212 +71,62 @@ ResourceTracker/
 └── drizzle/             # Database migrations
 ```
 
-## Key Technologies
-
-- **Framework**: Next.js 14 (App Router)
-- **Authentication**: NextAuth.js with Discord OAuth
-- **Database**: Turso (SQLite) with Drizzle ORM
-- **Styling**: Tailwind CSS
-- **Deployment**: Vercel
-
 ## Development Workflow
 
 ### 1. Feature Development
-```bash
-# Create feature branch
-git checkout -b feature/new-feature-name
-
-# Make changes and test locally
-npm run dev
-
-# Run linting
-npm run lint
-
-# Test build
-npm run build
-```
+-   Create a feature branch: `git checkout -b feature/new-feature-name`
+-   Make changes and test locally with `npm run dev`.
+-   Ensure code quality by running `npm run lint`.
+-   Verify the production build with `npm run build`.
 
 ### 2. Database Changes
-```bash
-# Modify schema in lib/db.ts
-# Generate migration
-npm run db:generate
-
-# Apply to local database
-npm run db:push
-```
+-   Modify the schema in `lib/db.ts`.
+-   Generate a migration file: `npm run db:generate`.
+-   Apply the migration to your local database: `npm run db:push`.
 
 ### 3. Testing
-```bash
-# Test authentication flow
-# - Sign in with Discord
-# - Verify role-based access
-# - Test CRUD operations
-
-# Test responsive design
-# - Mobile, tablet, desktop
-# - Light and dark themes
-
-# Test error cases
-# - Invalid permissions
-# - Network failures
-# - Malformed data
-```
-
-## Common Development Tasks
-
-### Adding New Resource Types
-1. Update database schema in `lib/db.ts`
-2. Generate and apply migration
-3. Update population scripts with examples
-4. Add UI components if needed
-
-### Adding New API Endpoints
-1. Create route file in `app/api/`
-2. Implement proper authentication
-3. Add input validation
-4. Document in `api-reference.md`
-
-### Modifying User Permissions
-1. Update role types in `lib/discord-roles.ts`
-2. Modify permission checking functions
-3. Update environment documentation
-4. Test with different role configurations
-
-### Styling Changes
-1. Use Tailwind CSS classes
-2. Support both light and dark themes
-3. Ensure responsive design
-4. Test accessibility
-
-## Environment Variables
-
-See [ENVIRONMENT.md](../ENVIRONMENT.md) for complete documentation.
-
-**Development-specific variables:**
-```bash
-# Enable debug logging
-NODE_ENV=development
-
-# NextAuth debug (optional)
-NEXTAUTH_DEBUG=true
-
-# Database debugging (optional)
-DATABASE_DEBUG=true
-```
+-   **Authentication**: Test the full sign-in flow with different Discord roles.
+-   **Permissions**: Verify that role-based access control is enforced correctly on API routes and UI components.
+-   **Responsiveness**: Check the UI on mobile, tablet, and desktop viewports, in both light and dark themes.
+-   **Error Handling**: Test edge cases like invalid inputs, network failures, and insufficient permissions.
 
 ## Debugging
 
 ### Authentication Issues
-1. Check Discord app configuration
-2. Verify redirect URIs match exactly
-3. Ensure all environment variables are set
-4. Check browser console for errors
+1.  Double-check your Discord application configuration in the developer portal.
+2.  Verify that the redirect URI in your Discord app settings matches `NEXTAUTH_URL` exactly.
+3.  Ensure all required environment variables in `.env.local` are correctly set.
+4.  Use your browser's developer tools to check for console errors or failed network requests.
 
 ### Database Issues
-1. Verify Turso credentials
-2. Check database permissions
-3. Look for migration errors
-4. Use Turso CLI for direct access
+1.  Verify your Turso database URL and auth token are correct.
+2.  Check for errors in the terminal during schema migration (`db:push`).
+3.  Use the Turso CLI (`turso db shell <db_name>`) for direct database access to inspect data.
 
 ### Role Permission Issues
-1. Validate `DISCORD_ROLES_CONFIG` JSON
-2. Check user's actual Discord roles
-3. Verify role IDs are correct
-4. Test with `npm run validate-roles`
+1.  Validate that `DISCORD_ROLES_CONFIG` is a valid, single-line JSON string.
+2.  Ensure the role IDs in your configuration match the actual role IDs from your Discord server.
+3.  Check that the test user has the intended roles assigned in Discord.
 
 ## Code Style
-
-### TypeScript
-- Use strict type checking
-- Prefer interfaces over types
-- Document complex functions
-- Handle errors explicitly
-
-### React Components
-- Use functional components
-- Implement proper loading states
-- Handle error boundaries
-- Support server-side rendering
-
-### API Routes
-- Validate all inputs
-- Use consistent error responses
-- Implement proper HTTP status codes
-- Add request logging
-
-## Performance Considerations
-
-### Database
-- Use appropriate indexes
-- Implement pagination for large datasets
-- Cache expensive queries
-- Monitor query performance
-
-### Frontend
-- Implement loading states
-- Use React Suspense appropriately
-- Optimize images and assets
-- Monitor bundle size
-
-### API
-- Implement rate limiting
-- Use compression
-- Cache static responses
-- Monitor response times
-
-## Security Best Practices
-
-### Authentication
-- Validate all sessions
-- Implement proper CSRF protection
-- Use secure cookie settings
-- Validate Discord tokens
-
-### Authorization
-- Check permissions on every request
-- Use least-privilege principle
-- Validate role configurations
-- Audit permission changes
-
-### Data Protection
-- Sanitize all inputs
-- Implement GDPR compliance
-- Protect sensitive data
-- Use HTTPS in production
+-   **TypeScript**: Adhere to strict type checking. Document complex functions and types.
+-   **React**: Use functional components with hooks. Implement clear loading and error states.
+-   **API Routes**: Validate all incoming data. Use consistent error responses and appropriate HTTP status codes.
 
 ## Contributing
-
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines.
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for detailed contribution guidelines.
 
 ### Pull Request Process
-1. Create feature branch
-2. Make changes with tests
-3. Update documentation
-4. Submit pull request
-5. Address review feedback
-
-### Code Review Checklist
-- [ ] Functionality works as expected
-- [ ] Code follows style guidelines
-- [ ] Security considerations addressed
-- [ ] Documentation updated
-- [ ] Tests pass
-- [ ] No console errors
+1.  Create a feature branch from an up-to-date `main`.
+2.  Develop the feature and include tests where applicable.
+3.  Update all relevant documentation (`/docs`, `README.md`).
+4.  Submit a pull request and describe your changes clearly.
+5.  Address any feedback from the code review.
 
 ## Deployment
+The application is designed for easy deployment on Vercel.
+1.  Connect your GitHub repository to a new Vercel project.
+2.  Configure the same environment variables you used for development, but with production values.
+3.  Vercel will automatically build and deploy the application on every push to the `main` branch.
 
-### Local Testing
-```bash
-# Test production build
-npm run build
-npm start
-```
-
-### Vercel Deployment
-1. Connect GitHub repository
-2. Configure environment variables
-3. Deploy automatically on push
-4. Monitor for errors
-
-See the main README for detailed deployment instructions.
+See the root `README.md` for a more detailed deployment guide.

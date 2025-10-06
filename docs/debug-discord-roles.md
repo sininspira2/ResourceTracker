@@ -1,30 +1,62 @@
 # 🔍 How to Get Your Discord Role ID
 
-## Step 1: Enable Developer Mode
-1. Open Discord
-2. Go to User Settings (gear icon)
-3. Go to Advanced → Enable "Developer Mode"
+To configure the application's role-based access control, you need the unique ID for each Discord role you want to use.
 
-## Step 2: Get Role ID
-1. Go to your Discord server
-2. Right-click on the role you want to use
-3. Click "Copy ID"
-4. This is your role ID (e.g., `1234567890123456789`)
+## Step 1: Enable Developer Mode in Discord
+1.  Open your Discord client.
+2.  Go to **User Settings** (the gear icon in the bottom-left).
+3.  In the left-hand menu, navigate to the **Advanced** tab.
+4.  Toggle on **Developer Mode**.
+
+This setting allows you to copy IDs for users, roles, and servers directly from the Discord interface.
+
+## Step 2: Copy the Role ID
+1.  Go to your Discord server's settings: right-click the server icon and select **Server Settings** > **Roles**.
+2.  Find the role you want to use (e.g., "Administrator").
+3.  Right-click on the role name and select **Copy ID**.
+4.  The ID will be a long number (e.g., `1234567890123456789`), which is now copied to your clipboard.
 
 ## Step 3: Create the JSON Configuration
 
-Replace `YOUR_ROLE_ID_HERE` with the actual role ID you copied:
+Use the copied IDs to create the JSON for your `DISCORD_ROLES_CONFIG` environment variable. The entire configuration must be a single line of valid JSON.
+
+### Example Configuration
+
+This example shows a complete, three-tier role setup. Replace the placeholder IDs with the actual IDs you copied from your Discord server.
 
 ```json
-[{"id":"YOUR_ROLE_ID_HERE","name":"Your Role Name","level":100,"isAdmin":true,"canManageUsers":true,"canAccessResources":true,"canEditTargets":true}]
+[
+  {
+    "id": "your_admin_discord_role_id",
+    "name": "Administrator",
+    "level": 100,
+    "isAdmin": true,
+    "canManageUsers": true,
+    "canEditTargets": true,
+    "canAccessResources": true,
+    "canExportData": true
+  },
+  {
+    "id": "your_logistics_manager_discord_role_id",
+    "name": "Logistics Manager",
+    "level": 50,
+    "isAdmin": false,
+    "canManageUsers": false,
+    "canEditTargets": true,
+    "canAccessResources": true,
+    "canExportData": false
+  },
+  {
+    "id": "your_contributor_discord_role_id",
+    "name": "Contributor",
+    "level": 1,
+    "isAdmin": false,
+    "canManageUsers": false,
+    "canEditTargets": false,
+    "canAccessResources": true,
+    "canExportData": false
+  }
+]
 ```
 
-## Example with Real Role ID:
-```json
-[{"id":"1234567890123456789","name":"Admin","level":100,"isAdmin":true,"canManageUsers":true,"canAccessResources":true,"canEditTargets":true}]
-```
-
-## Multiple Roles Example:
-```json
-[{"id":"1234567890123456789","name":"Admin","level":100,"isAdmin":true,"canAccessResources":true,"canEditTargets":true},{"id":"9876543210987654321","name":"Member","level":1,"isAdmin":false,"canManageUsers":false,"canAccessResources":true,"canEditTargets":false}]
-```
+**Important**: Ensure the final value you place in your `.env.local` or Vercel environment variables is a single, continuous line of text with no line breaks.
