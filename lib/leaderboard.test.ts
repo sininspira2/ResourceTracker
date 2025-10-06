@@ -1,10 +1,13 @@
 import { calculatePoints, awardPoints, getLeaderboard, getUserContributions, getUserRank } from './leaderboard';
+import { db } from './db';
 
-// Mock external and internal dependencies
+// Tell Jest to use the manual mock in `lib/__mocks__/db.ts`
+jest.mock('./db');
+
+// Mock other external dependencies
 jest.mock('nanoid', () => ({
   nanoid: () => 'test-id',
 }));
-
 jest.mock('drizzle-orm', () => ({
   eq: jest.fn(),
   desc: jest.fn(),
@@ -13,44 +16,14 @@ jest.mock('drizzle-orm', () => ({
   gte: jest.fn(),
 }));
 
-// This function will hold the mock results for our DB queries
-const mockDbExecution = jest.fn();
-const subqueryMock = { rank: 'rank_col', userId: 'userId_col' };
-
-// Mock the './db' module. The factory function defines the mock object.
-// This avoids the ReferenceError caused by jest.mock hoisting.
-jest.mock('./db', () => ({
-  db: {
-    insert: jest.fn().mockReturnThis(),
-    values: jest.fn().mockReturnThis(),
-    select: jest.fn().mockReturnThis(),
-    from: jest.fn().mockReturnThis(),
-    where: jest.fn().mockReturnThis(),
-    groupBy: jest.fn().mockReturnThis(),
-    orderBy: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-    offset: jest.fn().mockReturnThis(),
-    as: jest.fn(() => subqueryMock),
-    // Make the entire chain awaitable by adding a `then` method
-    then: function (resolve: (value: unknown) => void) {
-      return Promise.resolve(mockDbExecution()).then(resolve);
-    },
-  },
-  leaderboard: 'leaderboard',
-}));
-
-// After mocking, require the mocked db to get a reference to it for our tests
-const { db: mockDb } = require('./db');
+// Get a reference to the mock function inside the manual mock
+const mockDbExecution = (db as any).__mockDbExecution;
 
 describe('lib/leaderboard.ts', () => {
-  // Clear all mock states before each test
   beforeEach(() => {
+    // Clear all mock states before each test
+    jest.clearAllMocks();
     mockDbExecution.mockClear();
-    Object.values(mockDb).forEach((mockFn: any) => {
-      if (jest.isMockFunction(mockFn)) {
-        mockFn.mockClear();
-      }
-    });
   });
 
   describe('calculatePoints', () => {
@@ -100,15 +73,15 @@ describe('lib/leaderboard.ts', () => {
 
     it('should insert a record if points are earned', async () => {
       mockDbExecution.mockResolvedValueOnce(undefined);
-      await awardPoints('user-1', 'resource-1', 'ADD', 100, resourceData, mockDb);
+      await awardPoints('user-1', 'resource-1', 'ADD', 100, resourceData, db);
 
-      expect(mockDb.insert).toHaveBeenCalledWith('leaderboard');
-      expect(mockDb.values).toHaveBeenCalledWith(expect.objectContaining({ userId: 'user-1' }));
+      expect(db.insert).toHaveBeenCalledWith('leaderboard');
+      expect(db.values).toHaveBeenCalledWith(expect.objectContaining({ userId: 'user-1' }));
     });
 
     it('should not insert a record if no points are earned', async () => {
-      await awardPoints('user-1', 'resource-1', 'REMOVE', 100, resourceData, mockDb);
-      expect(mockDb.insert).not.toHaveBeenCalled();
+      await awardPoints('user-1', 'resource-1', 'REMOVE', 100, resourceData, db);
+      expect(db.insert).not.toHaveBeenCalled();
     });
   });
 
@@ -120,8 +93,8 @@ describe('lib/leaderboard.ts', () => {
 
       const result = await getLeaderboard('7d', 10, 5);
 
-      expect(mockDb.limit).toHaveBeenCalledWith(10);
-      expect(mockDb.offset).toHaveBeenCalledWith(5);
+      expect(db.limit).toHaveBeenCalledWith(10);
+      expect(db.offset).toHaveBeenCalledWith(5);
       expect(result.total).toBe(50);
       expect(result.rankings[0].userId).toBe('user-1');
       expect(mockDbExecution).toHaveBeenCalledTimes(2);

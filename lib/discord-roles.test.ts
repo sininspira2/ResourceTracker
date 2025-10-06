@@ -50,65 +50,37 @@ describe('Discord Role-Based Access Control', () => {
   });
 
   describe('Permission Checks', () => {
-    const admin = ['admin-role'];
-    const manager = ['manager-role', 'contributor-role'];
-    const contributor = ['contributor-role'];
-    const viewer = ['viewer-role'];
-    const noPerms = ['no-perms-role'];
+    const adminRoles = ['admin-role'];
+    const managerRoles = ['manager-role', 'contributor-role'];
+    const contributorRoles = ['contributor-role'];
+    const viewerRoles = ['viewer-role'];
+    const noPermsRoles = ['no-perms-role'];
     const emptyRoles: string[] = [];
 
-    test('hasResourceAccess', () => {
-      expect(discordRoles.hasResourceAccess(admin)).toBe(true);
-      expect(discordRoles.hasResourceAccess(manager)).toBe(true);
-      expect(discordRoles.hasResourceAccess(contributor)).toBe(true);
-      expect(discordRoles.hasResourceAccess(viewer)).toBe(false);
-      expect(discordRoles.hasResourceAccess(noPerms)).toBe(false);
-      expect(discordRoles.hasResourceAccess(emptyRoles)).toBe(false);
-    });
+    const testCases = [
+      { func: 'hasResourceAccess', expected: [true, true, true, false, false, false] },
+      { func: 'hasResourceAdminAccess', expected: [true, false, false, false, false, false] },
+      { func: 'hasTargetEditAccess', expected: [true, true, false, false, false, false] },
+      { func: 'hasReportAccess', expected: [true, false, false, true, false, false] },
+      { func: 'hasUserManagementAccess', expected: [true, false, false, false, false, false] },
+      { func: 'hasDataExportAccess', expected: [true, false, false, false, false, false] },
+    ];
 
-    test('hasResourceAdminAccess', () => {
-      expect(discordRoles.hasResourceAdminAccess(admin)).toBe(true);
-      expect(discordRoles.hasResourceAdminAccess(manager)).toBe(false);
-      expect(discordRoles.hasResourceAdminAccess(contributor)).toBe(false);
-      expect(discordRoles.hasResourceAdminAccess(viewer)).toBe(false);
-      expect(discordRoles.hasResourceAdminAccess(noPerms)).toBe(false);
-      expect(discordRoles.hasResourceAdminAccess(emptyRoles)).toBe(false);
-    });
+    const roles = [adminRoles, managerRoles, contributorRoles, viewerRoles, noPermsRoles, emptyRoles];
 
-    test('hasTargetEditAccess', () => {
-      expect(discordRoles.hasTargetEditAccess(admin)).toBe(true);
-      expect(discordRoles.hasTargetEditAccess(manager)).toBe(true);
-      expect(discordRoles.hasTargetEditAccess(contributor)).toBe(false);
-      expect(discordRoles.hasTargetEditAccess(viewer)).toBe(false);
-      expect(discordRoles.hasTargetEditAccess(noPerms)).toBe(false);
-      expect(discordRoles.hasTargetEditAccess(emptyRoles)).toBe(false);
-    });
-
-    test('hasReportAccess', () => {
-        expect(discordRoles.hasReportAccess(admin)).toBe(true);
-        expect(discordRoles.hasReportAccess(manager)).toBe(false);
-        expect(discordRoles.hasReportAccess(contributor)).toBe(false);
-        expect(discordRoles.hasReportAccess(viewer)).toBe(true);
-        expect(discordRoles.hasReportAccess(noPerms)).toBe(false);
-        expect(discordRoles.hasReportAccess(emptyRoles)).toBe(false);
-    });
-
-    test('hasUserManagementAccess', () => {
-        expect(discordRoles.hasUserManagementAccess(admin)).toBe(true);
-        expect(discordRoles.hasUserManagementAccess(manager)).toBe(false);
-        expect(discordRoles.hasUserManagementAccess(contributor)).toBe(false);
-        expect(discordRoles.hasUserManagementAccess(viewer)).toBe(false);
-        expect(discordRoles.hasUserManagementAccess(noPerms)).toBe(false);
-        expect(discordRoles.hasUserManagementAccess(emptyRoles)).toBe(false);
-    });
-
-    test('hasDataExportAccess', () => {
-        expect(discordRoles.hasDataExportAccess(admin)).toBe(true);
-        expect(discordRoles.hasDataExportAccess(manager)).toBe(false);
-        expect(discordRoles.hasDataExportAccess(contributor)).toBe(false);
-        expect(discordRoles.hasDataExportAccess(viewer)).toBe(false);
-        expect(discordRoles.hasDataExportAccess(noPerms)).toBe(false);
-        expect(discordRoles.hasDataExportAccess(emptyRoles)).toBe(false);
+    testCases.forEach(({ func, expected }) => {
+      describe(func, () => {
+        it.each([
+          ['admin', roles[0], expected[0]],
+          ['manager', roles[1], expected[1]],
+          ['contributor', roles[2], expected[2]],
+          ['viewer', roles[3], expected[3]],
+          ['no-perms', roles[4], expected[4]],
+          ['empty', roles[5], expected[5]],
+        ])('should return %s for %s user', (_roleName, userRoles, expectedResult) => {
+          expect(discordRoles[func](userRoles)).toBe(expectedResult);
+        });
+      });
     });
   });
 });
