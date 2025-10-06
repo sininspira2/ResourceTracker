@@ -133,7 +133,7 @@ Welcome to the comprehensive documentation for Resource Tracker - a flexible res
 ## 📝 Documentation Feedback
 
 Help us improve this documentation:
-- Found an error? Submit a GitHub issue
+- Found an error? [Submit a GitHub issue](https://github.com/sininspira2/ResourceTracker/issues/new)
 - Missing information? Request additions
 - Unclear instructions? Suggest improvements
 - Want to contribute? See our contributing guide
@@ -141,4 +141,4 @@ Help us improve this documentation:
 ---
 
 **Resource Tracker** - Open source resource management with Discord integration  
-[GitHub Repository](https://github.com/your-username/ResourceTracker) | [Live Demo](https://resource-tracker-demo.vercel.app) | [Community](https://github.com/your-username/ResourceTracker/discussions)
+[GitHub Repository](https://github.com/sininspira2/ResourceTracker) | [Community](https://github.com/sininspira2/ResourceTracker/discussions)
