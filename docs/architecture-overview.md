@@ -29,51 +29,28 @@ graph TB
 
 ## Technology Stack
 
-### Frontend
-- **Framework**: Next.js 14 with App Router
-- **UI Library**: React 18 with TypeScript
-- **Styling**: Tailwind CSS with dark/light themes
-- **Charts**: Chart.js for resource history visualization
-- **State Management**: React hooks (no external state library)
+The Resource Tracker is built with a modern, TypeScript-first technology stack optimized for developer experience, type safety, and edge deployment.
 
-### Backend
-- **Runtime**: Node.js on Vercel Edge Functions
-- **API**: Next.js API Routes with TypeScript
-- **Authentication**: NextAuth.js with Discord OAuth
-- **Database ORM**: Drizzle ORM with TypeScript
-- **Database**: Turso (SQLite) cloud database
+| Component             | Technology      | Version  | Purpose                                       |
+| --------------------- | --------------- | -------- | --------------------------------------------- |
+| **Frontend Framework**  | Next.js         | `15.1.1` | React-based framework with SSR & API routes   |
+| **Language**            | TypeScript      | `5.9.3`  | Type-safe development and enhanced IDE support|
+| **Runtime**             | React           | `19.2.0` | Component-based UI library                    |
+| **Styling**             | Tailwind CSS    | `4.1.14` | Utility-first CSS framework for responsive design|
+| **Authentication**      | NextAuth.js     | `4.24.5` | Authentication library with Discord provider  |
+| **Database Client**     | `@libsql/client`| `0.15.15`| Turso SQLite database connectivity            |
+| **ORM**                 | Drizzle ORM     | `0.44.6` | Type-safe database operations and migrations  |
+| **Icons**               | Lucide React    | `0.544.0`| Modern icon library                           |
+| **Unique IDs**          | nanoid          | `5.1.6`  | URL-safe unique ID generation                 |
+| **Deployment**          | Vercel          | -        | Edge-optimized serverless platform            |
 
-### Infrastructure
-- **Hosting**: Vercel (Edge Network + Serverless Functions)
-- **Database**: Turso (Global SQLite replication)
-- **CDN**: Vercel Edge Network (100+ regions)
-- **SSL**: Automatic HTTPS with Vercel
-
-## Design Principles
-
-### Security First
-- **Authentication Required**: All protected routes require Discord OAuth
-- **Role-Based Access**: Granular permissions based on Discord roles
-- **Input Validation**: All user inputs validated and sanitized
-- **GDPR Compliant**: User data export and deletion capabilities
-
-### Performance Optimized
-- **Edge Computing**: API routes run on Vercel Edge Runtime
-- **Database Optimization**: Efficient queries with Drizzle ORM
-- **Caching Strategy**: Strategic caching for static data
-- **Bundle Optimization**: Code splitting and tree shaking
-
-### Developer Experience
-- **Type Safety**: Full TypeScript coverage
-- **Database Migrations**: Version-controlled schema changes
-- **Hot Reloading**: Fast development iteration
-- **Error Handling**: Comprehensive error boundaries
-
-### User Experience
-- **Responsive Design**: Mobile-first approach
-- **Dark/Light Themes**: Automatic theme detection
-- **Real-time Updates**: Live status indicators
-- **Accessibility**: WCAG compliance considerations
+### Development Tools
+| Tool                  | Version   | Purpose                                       |
+| --------------------- | --------- | --------------------------------------------- |
+| **Database Migrations** | `drizzle-kit`   | `0.31.5`  | Schema migration generation                   |
+| **TypeScript Execution**| `tsx`           | `4.20.6`  | High-performance TypeScript execution         |
+| **Linting**             | ESLint          | `9.37.0`  | Code quality and style enforcement            |
+| **Environment Vars**    | `dotenv`        | `17.2.3`  | Loading environment variables from `.env` files |
 
 ## Data Flow
 
@@ -91,16 +68,16 @@ graph TB
 
 ### Resource Update Flow
 ```
-1. User submits resource quantity change
-2. Middleware validates authentication
-3. API route checks user permissions
-4. Validate input data (quantity, type, reason)
-5. Calculate status based on target quantity
-6. Update resource table
-7. Create history entry for audit trail
-8. Calculate and record leaderboard points
-9. Return updated resource data
-10. Frontend updates UI optimistically
+1. User submits a resource quantity change for a specific location (Hagga or Deep Desert).
+2. Middleware validates the user's authentication session.
+3. The API route checks if the user's role has the required permissions.
+4. Input data (quantity, location, reason) is validated.
+5. The status is recalculated based on the total quantity vs. the target.
+6. The appropriate quantity field (`quantityHagga` or `quantityDeepDesert`) is updated in the `resources` table.
+7. A detailed record is created in the `resource_history` table, capturing the before-and-after quantities for both locations.
+8. Leaderboard points are calculated and stored.
+9. The updated resource data is returned to the client.
+10. The frontend UI updates optimistically to reflect the new state.
 ```
 
 ### Permission System
@@ -137,164 +114,29 @@ app/api/
 │   ├── [id]/route.ts         # Get, update, delete resource
 │   ├── [id]/history/         # Resource change history
 │   └── [id]/target/          # Target quantity management
-├── user/                  # User-specific endpoints
-│   ├── activity/route.ts     # User activity history
-│   ├── data-export/route.ts  # GDPR data export
-│   └── data-deletion/route.ts # GDPR data deletion
+├── users/                 # User management endpoints
+│   └── route.ts              # List all users (Admin)
+├── user/                  # Endpoints for the authenticated user
+│   ├── activity/route.ts     # User's personal activity
+│   ├── data-export/route.ts  # GDPR data export for self
+│   └── data-deletion/route.ts # GDPR data deletion for self
 └── leaderboard/           # Points and rankings
 ```
 
 ## Database Design
 
 ### Schema Overview
-```sql
--- Core tables
-users              # Discord user information
-user_sessions       # Cached role and guild data
-resources           # Resource definitions and quantities
-resource_history    # Audit trail of all changes
-leaderboard         # Points and contribution tracking
-```
+The schema is designed around five core tables to handle users, resources, and their interactions.
+-   **`users`**: Stores essential information about a user, linked to their Discord ID.
+-   **`user_sessions`**: Caches user role data from Discord to reduce API calls and speed up authentication checks.
+-   **`resources`**: The central table for all trackable items. Crucially, it tracks quantities separately for two locations: `quantityHagga` and `quantityDeepDesert`.
+-   **`resource_history`**: Provides a detailed, immutable audit trail. Every change is recorded here, including the before-and-after quantities for *both* locations to ensure complete traceability, even for transfers.
+-   **`leaderboard`**: Stores records of user contributions and calculated points for the gamification system.
 
 ### Key Relationships
-- **Users → Resources**: Through resource_history.updated_by
+- **Users → Resources**: Through `resource_history.updated_by`
 - **Resources → History**: One-to-many relationship
 - **Users → Leaderboard**: Points calculated from history
-- **Resources → Status**: Calculated from quantity vs target
-
-### Indexing Strategy
-- Primary keys for all tables (nanoid)
-- Foreign key indexes for relationships
-- Composite indexes for common queries
-- Discord ID unique constraint
-
-## Security Architecture
-
-### Authentication Layers
-1. **Discord OAuth**: External identity provider
-2. **NextAuth Sessions**: Secure JWT tokens
-3. **Middleware Protection**: Route-level authorization
-4. **API Validation**: Input sanitization and validation
-
-### Data Protection
-- **Encryption at Rest**: Turso native encryption
-- **Encryption in Transit**: HTTPS/TLS everywhere
-- **Token Security**: Secure cookie configuration
-- **Role Isolation**: Least privilege access control
-
-## Scalability Considerations
-
-### Horizontal Scaling
-- **Stateless Architecture**: No server-side state
-- **Edge Distribution**: Global CDN and edge functions
-- **Database Replication**: Turso multi-region support
-- **Caching Strategy**: Static asset and API response caching
-
-### Performance Monitoring
-- **Response Times**: API endpoint performance
-- **Database Queries**: Query execution time
-- **Error Rates**: 4xx/5xx response monitoring
-- **User Metrics**: Page load times and interactions
-
-### Capacity Planning
-- **Database Growth**: Resource history accumulation
-- **API Load**: Rate limiting and throttling
-- **Storage Optimization**: Image and asset management
-- **Memory Usage**: Server function memory limits
-
-## Deployment Architecture
-
-### Vercel Integration
-```
-GitHub Repository ──→ Vercel Build ──→ Edge Deployment
-                             ↓
-                       Environment Variables ──→ Runtime Configuration
-                             ↓
-                       Database Connection ──→ Turso Cloud
-```
-
-### Environment Strategy
-- **Development**: Local with .env.local
-- **Preview**: Vercel preview deployments
-- **Production**: Vercel production with secure environment variables
-
-### CI/CD Pipeline
-1. Code pushed to GitHub
-2. Vercel triggers automatic build
-3. TypeScript compilation and linting
-4. Database schema validation
-5. Deployment to edge network
-6. Health checks and monitoring
-
-## Extension Points
-
-### Plugin Architecture
-The system is designed for extensibility:
-
-```typescript
-// Example plugin interface
-interface ResourcePlugin {
-  beforeUpdate?: (resource: Resource) => Resource
-  afterUpdate?: (resource: Resource) => void
-  customValidation?: (input: any) => boolean
-  pointsCalculation?: (change: ResourceChange) => number
-}
-```
-
-### Custom Integrations
-- **Webhooks**: External system notifications
-- **API Extensions**: Custom endpoints for specific needs
-- **UI Components**: Replaceable component architecture
-- **Theme System**: Customizable styling and branding
-
-### Multi-tenant Support
-Architecture supports multi-organization deployments:
-- Organization-scoped data isolation
-- Configurable branding per organization
-- Separate Discord integrations
-- Role mapping per organization
-
-## Monitoring & Observability
-
-### Built-in Logging
-- API request/response logging
-- Authentication event tracking
-- Database query performance
-- Error reporting with stack traces
-
-### Recommended Monitoring
-- **Vercel Analytics**: Built-in performance monitoring
-- **Sentry**: Error tracking and performance monitoring
-- **LogRocket**: User session recording
-- **DataDog**: Infrastructure monitoring
-
-### Health Checks
-```typescript
-// Example health check endpoint
-GET /api/health
-{
-  "status": "healthy",
-  "database": "connected",
-  "discord": "reachable",
-  "version": "1.0.0",
-  "uptime": "5d 14h 23m"
-}
-```
-
-## Future Considerations
-
-### Potential Enhancements
-- **Real-time Updates**: WebSocket support for live data
-- **Advanced Analytics**: Resource trend analysis
-- **Mobile App**: React Native companion app
-- **API Rate Limiting**: Production-grade rate limiting
-- **Backup System**: Automated database backups
-- **Audit Compliance**: Enhanced audit trail features
-
-### Migration Strategies
-- **Database Migrations**: Version-controlled schema evolution
-- **Feature Flags**: Gradual feature rollouts
-- **A/B Testing**: Component-level testing framework
-- **Blue/Green Deployment**: Zero-downtime deployments
+- **Resources → Status**: Calculated from total quantity vs. target
 
 This architecture provides a solid foundation for a secure, scalable, and maintainable resource management system while remaining flexible enough for diverse organizational needs.
