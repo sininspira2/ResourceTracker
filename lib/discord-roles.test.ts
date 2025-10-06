@@ -1,14 +1,3 @@
-import {
-  getRoleHierarchy,
-  getHighestRole,
-  hasResourceAccess,
-  hasResourceAdminAccess,
-  hasTargetEditAccess,
-  hasReportAccess,
-  hasUserManagementAccess,
-  hasDataExportAccess,
-} from './discord-roles';
-
 const mockRoles = [
   { id: 'admin-role', name: 'Admin', level: 100, isAdmin: true, canEditTargets: true, canAccessResources: true, canManageUsers: true, canExportData: true, canViewReports: true },
   { id: 'manager-role', name: 'Logistics Manager', level: 50, canEditTargets: true, canAccessResources: true },
@@ -18,17 +7,26 @@ const mockRoles = [
 ];
 
 describe('Discord Role-Based Access Control', () => {
-  beforeAll(() => {
-    process.env.DISCORD_ROLES_CONFIG = JSON.stringify(mockRoles);
+  let discordRoles: any;
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    jest.resetModules(); // Clear the module cache to get a fresh instance
+    process.env = {
+      ...originalEnv,
+      DISCORD_ROLES_CONFIG: JSON.stringify(mockRoles),
+    };
+    // Require the module inside the test setup to get a fresh copy
+    discordRoles = require('./discord-roles');
   });
 
-  afterAll(() => {
-    delete process.env.DISCORD_ROLES_CONFIG;
+  afterEach(() => {
+    process.env = originalEnv; // Restore the original environment
   });
 
   describe('getRoleHierarchy', () => {
     it('should parse and return the role hierarchy from environment variables', () => {
-      const hierarchy = getRoleHierarchy();
+      const hierarchy = discordRoles.getRoleHierarchy();
       expect(hierarchy).toEqual(mockRoles);
     });
   });
@@ -36,17 +34,17 @@ describe('Discord Role-Based Access Control', () => {
   describe('getHighestRole', () => {
     it('should return the role with the highest level', () => {
       const userRoles = ['contributor-role', 'manager-role'];
-      const highestRole = getHighestRole(userRoles);
+      const highestRole = discordRoles.getHighestRole(userRoles);
       expect(highestRole?.id).toBe('manager-role');
     });
 
     it('should return null if the user has no roles', () => {
-      const highestRole = getHighestRole([]);
+      const highestRole = discordRoles.getHighestRole([]);
       expect(highestRole).toBeNull();
     });
 
     it('should return null if the user has roles not in the hierarchy', () => {
-        const highestRole = getHighestRole(['unknown-role']);
+        const highestRole = discordRoles.getHighestRole(['unknown-role']);
         expect(highestRole).toBeNull();
     });
   });
@@ -60,57 +58,57 @@ describe('Discord Role-Based Access Control', () => {
     const emptyRoles: string[] = [];
 
     test('hasResourceAccess', () => {
-      expect(hasResourceAccess(admin)).toBe(true);
-      expect(hasResourceAccess(manager)).toBe(true);
-      expect(hasResourceAccess(contributor)).toBe(true);
-      expect(hasResourceAccess(viewer)).toBe(false);
-      expect(hasResourceAccess(noPerms)).toBe(false);
-      expect(hasResourceAccess(emptyRoles)).toBe(false);
+      expect(discordRoles.hasResourceAccess(admin)).toBe(true);
+      expect(discordRoles.hasResourceAccess(manager)).toBe(true);
+      expect(discordRoles.hasResourceAccess(contributor)).toBe(true);
+      expect(discordRoles.hasResourceAccess(viewer)).toBe(false);
+      expect(discordRoles.hasResourceAccess(noPerms)).toBe(false);
+      expect(discordRoles.hasResourceAccess(emptyRoles)).toBe(false);
     });
 
     test('hasResourceAdminAccess', () => {
-      expect(hasResourceAdminAccess(admin)).toBe(true);
-      expect(hasResourceAdminAccess(manager)).toBe(false);
-      expect(hasResourceAdminAccess(contributor)).toBe(false);
-      expect(hasResourceAdminAccess(viewer)).toBe(false);
-      expect(hasResourceAdminAccess(noPerms)).toBe(false);
-      expect(hasResourceAdminAccess(emptyRoles)).toBe(false);
+      expect(discordRoles.hasResourceAdminAccess(admin)).toBe(true);
+      expect(discordRoles.hasResourceAdminAccess(manager)).toBe(false);
+      expect(discordRoles.hasResourceAdminAccess(contributor)).toBe(false);
+      expect(discordRoles.hasResourceAdminAccess(viewer)).toBe(false);
+      expect(discordRoles.hasResourceAdminAccess(noPerms)).toBe(false);
+      expect(discordRoles.hasResourceAdminAccess(emptyRoles)).toBe(false);
     });
 
     test('hasTargetEditAccess', () => {
-      expect(hasTargetEditAccess(admin)).toBe(true);
-      expect(hasTargetEditAccess(manager)).toBe(true);
-      expect(hasTargetEditAccess(contributor)).toBe(false);
-      expect(hasTargetEditAccess(viewer)).toBe(false);
-      expect(hasTargetEditAccess(noPerms)).toBe(false);
-      expect(hasTargetEditAccess(emptyRoles)).toBe(false);
+      expect(discordRoles.hasTargetEditAccess(admin)).toBe(true);
+      expect(discordRoles.hasTargetEditAccess(manager)).toBe(true);
+      expect(discordRoles.hasTargetEditAccess(contributor)).toBe(false);
+      expect(discordRoles.hasTargetEditAccess(viewer)).toBe(false);
+      expect(discordRoles.hasTargetEditAccess(noPerms)).toBe(false);
+      expect(discordRoles.hasTargetEditAccess(emptyRoles)).toBe(false);
     });
 
     test('hasReportAccess', () => {
-        expect(hasReportAccess(admin)).toBe(true);
-        expect(hasReportAccess(manager)).toBe(false);
-        expect(hasReportAccess(contributor)).toBe(false);
-        expect(hasReportAccess(viewer)).toBe(true);
-        expect(hasReportAccess(noPerms)).toBe(false);
-        expect(hasReportAccess(emptyRoles)).toBe(false);
+        expect(discordRoles.hasReportAccess(admin)).toBe(true);
+        expect(discordRoles.hasReportAccess(manager)).toBe(false);
+        expect(discordRoles.hasReportAccess(contributor)).toBe(false);
+        expect(discordRoles.hasReportAccess(viewer)).toBe(true);
+        expect(discordRoles.hasReportAccess(noPerms)).toBe(false);
+        expect(discordRoles.hasReportAccess(emptyRoles)).toBe(false);
     });
 
     test('hasUserManagementAccess', () => {
-        expect(hasUserManagementAccess(admin)).toBe(true);
-        expect(hasUserManagementAccess(manager)).toBe(false);
-        expect(hasUserManagementAccess(contributor)).toBe(false);
-        expect(hasUserManagementAccess(viewer)).toBe(false);
-        expect(hasUserManagementAccess(noPerms)).toBe(false);
-        expect(hasUserManagementAccess(emptyRoles)).toBe(false);
+        expect(discordRoles.hasUserManagementAccess(admin)).toBe(true);
+        expect(discordRoles.hasUserManagementAccess(manager)).toBe(false);
+        expect(discordRoles.hasUserManagementAccess(contributor)).toBe(false);
+        expect(discordRoles.hasUserManagementAccess(viewer)).toBe(false);
+        expect(discordRoles.hasUserManagementAccess(noPerms)).toBe(false);
+        expect(discordRoles.hasUserManagementAccess(emptyRoles)).toBe(false);
     });
 
     test('hasDataExportAccess', () => {
-        expect(hasDataExportAccess(admin)).toBe(true);
-        expect(hasDataExportAccess(manager)).toBe(false);
-        expect(hasDataExportAccess(contributor)).toBe(false);
-        expect(hasDataExportAccess(viewer)).toBe(false);
-        expect(hasDataExportAccess(noPerms)).toBe(false);
-        expect(hasDataExportAccess(emptyRoles)).toBe(false);
+        expect(discordRoles.hasDataExportAccess(admin)).toBe(true);
+        expect(discordRoles.hasDataExportAccess(manager)).toBe(false);
+        expect(discordRoles.hasDataExportAccess(contributor)).toBe(false);
+        expect(discordRoles.hasDataExportAccess(viewer)).toBe(false);
+        expect(discordRoles.hasDataExportAccess(noPerms)).toBe(false);
+        expect(discordRoles.hasDataExportAccess(emptyRoles)).toBe(false);
     });
   });
 });
