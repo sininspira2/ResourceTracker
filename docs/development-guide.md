@@ -4,19 +4,29 @@ This guide covers everything you need to know for developing and contributing to
 
 ## Prerequisites
 
--   **Node.js** 18+ and npm
+-   **Node.js** 22+ and npm
 -   **Git** for version control
 -   **Discord Developer Account** for OAuth testing
 -   **Turso Account** for database (free tier available)
 
 ## Development Setup
 
-### 1. Clone and Install
-```bash
-git clone https://github.com/sininspira2/ResourceTracker.git
-cd ResourceTracker
-npm install
-```
+### 1. Fork, Clone, and Install
+
+To contribute to the project, you should first create your own copy (a "fork") of the repository on GitHub.
+
+1.  **Fork the Repository**: Click the **Fork** button at the top-right of the main project's GitHub page. This will create a copy of the repository under your own GitHub account.
+
+2.  **Clone Your Fork**: Clone the repository from your account to your local machine. Replace `YOUR_USERNAME` with your GitHub username.
+    ```bash
+    git clone https://github.com/YOUR_USERNAME/ResourceTracker.git
+    cd ResourceTracker
+    ```
+
+3.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
 
 ### 2. Environment Configuration
 Copy `.env.example` to `.env.local` and fill in the required values. See `ENVIRONMENT.md` for detailed instructions.

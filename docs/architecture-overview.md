@@ -29,25 +29,29 @@ graph TB
 
 ## Technology Stack
 
-### Frontend
-- **Framework**: Next.js 14 with App Router
-- **UI Library**: React 18 with TypeScript
-- **Styling**: Tailwind CSS with dark/light themes
-- **Charts**: Chart.js for resource history visualization
-- **State Management**: React hooks (no external state library)
+The Resource Tracker is built with a modern, TypeScript-first technology stack optimized for developer experience, type safety, and edge deployment.
 
-### Backend
-- **Runtime**: Node.js on Vercel Edge Functions
-- **API**: Next.js API Routes with TypeScript
-- **Authentication**: NextAuth.js with Discord OAuth
-- **Database ORM**: Drizzle ORM with TypeScript
-- **Database**: Turso (SQLite) cloud database
+| Component             | Technology      | Version  | Purpose                                       |
+| --------------------- | --------------- | -------- | --------------------------------------------- |
+| **Frontend Framework**  | Next.js         | `15.1.1` | React-based framework with SSR & API routes   |
+| **Language**            | TypeScript      | `5.9.3`  | Type-safe development and enhanced IDE support|
+| **Runtime**             | React           | `19.2.0` | Component-based UI library                    |
+| **Styling**             | Tailwind CSS    | `4.1.14` | Utility-first CSS framework for responsive design|
+| **Authentication**      | NextAuth.js     | `4.24.5` | Authentication library with Discord provider  |
+| **Database Client**     | `@libsql/client`| `0.15.15`| Turso SQLite database connectivity            |
+| **ORM**                 | Drizzle ORM     | `0.44.6` | Type-safe database operations and migrations  |
+| **Icons**               | Lucide React    | `0.544.0`| Modern icon library                           |
+| **Unique IDs**          | nanoid          | `5.1.6`  | URL-safe unique ID generation                 |
+| **Deployment**          | Vercel          | -        | Edge-optimized serverless platform            |
 
-### Infrastructure
-- **Hosting**: Vercel (Edge Network + Serverless Functions)
-- **Database**: Turso (Global SQLite replication)
-- **CDN**: Vercel Edge Network (100+ regions)
-- **SSL**: Automatic HTTPS with Vercel
+### Development Tools
+| Tool                  | Version   | Purpose                                       |
+| --------------------- | --------- | --------------------------------------------- |
+| **Database Migrations** | `drizzle-kit`   | `0.31.5`  | Schema migration generation                   |
+| **TypeScript Execution**| `tsx`           | `4.20.6`  | High-performance TypeScript execution         |
+| **Linting**             | ESLint          | `9.37.0`  | Code quality and style enforcement            |
+| **Environment Vars**    | `dotenv`        | `17.2.3`  | Loading environment variables from `.env` files |
+
 
 ## Data Flow
 
