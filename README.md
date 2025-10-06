@@ -107,7 +107,7 @@ DISCORD_GUILD_ID=your_discord_server_id
 # Discord Roles (single line JSON - see ENVIRONMENT.md for details)
 DISCORD_ROLES_CONFIG=[{"id":"your_role_id","name":"Admin","level":100,"isAdmin":true,"canAccessResources":true}]
 
-# NextAuth (generate with: openssl rand -base64 32)
+# NextAuth (generate NEXTAUTH_SECRET with: openssl rand -base64 32)
 NEXTAUTH_URL=https://your-app-name.vercel.app
 NEXTAUTH_SECRET=your_long_random_secret_here
 
