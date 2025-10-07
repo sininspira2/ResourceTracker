@@ -24,7 +24,6 @@ import {
   RESOURCES_API_PATH,
   RESOURCE_STATUS,
   RESOURCE_STATUS_THRESHOLDS,
-  STALE_THRESHOLD_MS,
   STATUS_CHANGE_TIMEOUT_MS,
   UNCATEGORIZED,
   UPDATE_THRESHOLD_PRIORITY_MS,
@@ -88,13 +87,7 @@ const calculateResourceStatus = (
   return RESOURCE_STATUS.CRITICAL // Red - very much below target
 }
 
-// Check if resource is stale (not updated in more than 48 hours)
-const isResourceStale = (updatedAt: string): boolean => {
-  const now = new Date()
-  return now.getTime() - new Date(updatedAt).getTime() > STALE_THRESHOLD_MS
-}
-
-// Check if resource needs updating (not updated in more than 24 hours)
+// Check if resource needs updating (not updated in more than 24 hours for priority, 7 days for non-priority)
 const needsUpdating = (updatedAt: string, isPriority: boolean): boolean => {
   const now = new Date()
   const threshold = isPriority
@@ -1628,26 +1621,31 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       resource.targetQuantity || null,
                     )
                     const statusChange = statusChanges.get(resource.id)
-                    const isStale = isResourceStale(resource.updatedAt)
+                    const isOutdated = needsUpdating(
+                      resource.updatedAt,
+                      !!resource.isPriority,
+                    )
 
                     return (
                       <div
                         key={resource.id}
                         className={`border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer group ${
-                          isStale
+                          isOutdated
                             ? 'border-amber-300 dark:border-amber-600 ring-1 ring-amber-200 dark:ring-amber-800'
                             : 'border-gray-200 dark:border-gray-700'
                         } ${
                           resource.category === BP_CATEGORY
                             ? 'bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50'
-                            : isStale
+                            : isOutdated
                             ? 'bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20'
                             : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
                         onClick={() => handleResourceClick(resource.id)}
                         title={
-                          isStale
-                            ? '⚠️ Not updated in 48+ hours - Click to view details'
+                          isOutdated
+                            ? `⚠️ Not updated in over ${
+                                resource.isPriority ? '24 hours' : '7 days'
+                              } - Click to view details`
                             : 'Click to view detailed resource information'
                         }
                       >
@@ -1764,7 +1762,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               </span>
                             </div>
                             <div className="flex items-center justify-center gap-1">
-                              {isStale && (
+                              {isOutdated && (
                                 <svg
                                   className="w-3 h-3 text-amber-500 dark:text-amber-400"
                                   fill="currentColor"
@@ -1779,7 +1777,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               )}
                               <div
                                 className={`text-xs cursor-help hover:underline decoration-dotted ${
-                                  isStale
+                                  isOutdated
                                     ? 'text-amber-600 dark:text-amber-400 font-medium'
                                     : 'text-gray-400 dark:text-gray-500'
                                 }`}
@@ -1931,26 +1929,31 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     resource.targetQuantity || 0,
                   )
                   const statusChange = statusChanges.get(resource.id)
-                  const isStale = isResourceStale(resource.updatedAt)
+                  const isOutdated = needsUpdating(
+                    resource.updatedAt,
+                    !!resource.isPriority,
+                  )
 
                   return (
                     <tr
                       key={resource.id}
                       className={`cursor-pointer transition-colors group ${
-                        isStale
+                        isOutdated
                           ? 'border-l-4 border-l-amber-400 dark:border-l-amber-500'
                           : ''
                       } ${
                         resource.category === BP_CATEGORY
                           ? 'bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50'
-                          : isStale
+                          : isOutdated
                           ? 'bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20'
                           : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                       onClick={() => handleResourceClick(resource.id)}
                       title={
-                        isStale
-                          ? '⚠️ Not updated in 48+ hours - Click to view details'
+                        isOutdated
+                          ? `⚠️ Not updated in over ${
+                              resource.isPriority ? '24 hours' : '7 days'
+                            } - Click to view details`
                           : 'Click to view detailed resource information'
                       }
                     >
