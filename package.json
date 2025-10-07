@@ -8,15 +8,15 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "jest",
-    "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
-    "db:log-init": "tsx scripts/log-initial-migration.ts",
-    "db:migrate": "drizzle-kit migrate",
+    "db:generate": "tsx --env-file .env.local ./node_modules/.bin/drizzle-kit generate",
+    "db:push": "tsx --env-file .env.local ./node_modules/.bin/drizzle-kit push",
+    "db:log-init": "tsx --env-file .env.local scripts/log-initial-migration.ts",
+    "db:migrate": "tsx --env-file .env.local ./node_modules/.bin/drizzle-kit migrate",
     "update-version": "node scripts/update-version.js",
-    "populate-resources": "tsx scripts/populate-resources.ts",
-    "populate-resources-dune": "tsx scripts/populate-resources-dune.ts",
-    "populate-blueprints-dune": "tsx scripts/populate-blueprints-dune.ts",
-    "add-resources-with-images": "tsx scripts/add-resources-with-images.ts"
+    "populate-resources": "tsx --env-file .env.local scripts/populate-resources.ts",
+    "populate-resources-dune": "tsx --env-file .env.local scripts/populate-resources-dune.ts",
+    "populate-blueprints-dune": "tsx --env-file .env.local scripts/populate-blueprints-dune.ts",
+    "add-resources-with-images": "tsx --env-file .env.local scripts/add-resources-with-images.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.15.15",
