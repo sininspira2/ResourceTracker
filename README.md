@@ -10,23 +10,39 @@ Removed from fork network due to original author repository being deleted, and d
 
 ---
 
-## 🚀 Release Notes - Version 4.0.6
+## 🚀 Release Notes - Version 4.0.7: Dynamic Thresholds, Testing, and Dependency Upgrades
 
-**Release Date:** October 2, 2025
+**Release Date:** October 7, 2025
+
+---
 
 ### ✨ New Features
 
-* **Admin Resource Update Override:** Administrators can now update resource quantities on behalf of other users via a new dropdown in the **"Add/Remove" modal**. The backend API has been updated to accept an `onBehalfOf` parameter, and an audit note is automatically recorded in the reason field for these actions.
+#### Dynamic 'Needs Updating' Time Thresholds
+
+This release introduces new logic to differentiate how long a resource can go without an update before it's flagged as "needs updating" on the dashboard, making tracking more intelligent and customizable.
+
+* **Non-Priority Item Threshold:** Items not marked as priority are now flagged as **"needs updating" after 7 days** of inactivity.
+* **Priority Item Threshold:** Priority items retain the original, more urgent **24-hour threshold** for inactivity.
+* **User Interface:** The UI now dynamically applies styling and uses tooltips to display the correct, context-aware time threshold for each resource.
+* **Code Cleanup:** The redundant `isResourceStale` function and the unused `STALE_THRESHOLD_MS` constant have been removed, streamlining the codebase.
 
 ### 🚀 Improvements
 
-* **Core Framework Upgrades:** The application has been upgraded to **React 19.2.0** and **Next.js 15.1.1**, bringing the project up to date with the latest versions of these critical frameworks.
-* **API Route Handler Adaptations:** Dynamic API route handlers were updated to correctly process **asynchronous parameters**, a new requirement in Next.js 15.
-* **Type Definition Streamlining:** The `@types/react` and `@types/react-dom` packages were removed, as **React 19 now includes its own type definitions**, simplifying project dependency management.
+#### What's New Modal Links and Documentation Overhaul
 
-### 🐛 Bug Fixes
+* **Bug Reporting:** The **'What's New' modal** has been enhanced with a new **'Bug' icon** (sourced from `lucide-react`) that provides a direct link to the project's GitHub issues page, complete with a **'Report a Bug'** tooltip.
+* **GitHub Link:** The tooltip for the existing GitHub icon has been updated to the clearer **'Visit project Github'**.
+* **Documentation:** The project's primary documentation, including the **`README.md`**, has been completely overhauled for improved clarity and comprehensive detail.
 
-* **Congratulations Popup Fix:** Fixed a bug where the **congratulations popup** was not appearing after a resource update. The logic in `ResourceTable.tsx` now correctly uses the `pointsEarned` from the API response to trigger the popup.
+#### Testing and Tooling Enhancements
+
+* **Improved Test Coverage:** New test coverage has been added for core application libraries, increasing code reliability.
+* **Modern Testing Setup:** The testing environment has been streamlined by configuring **SWC (Speedy Web Compiler) for Jest**, which is expected to significantly improve the performance and setup time of unit tests.
+
+### 🛠️ Other
+
+* **ESLint Version Upgrade:** The linter setup has been updated to use **ESLint v9** and the latest `eslint-config-next`. This change resolves several pending npm warnings related to deprecated packages, ensuring the development environment remains modern and stable.
 
 *See `lib/changelog.json` for previous update history.*
 
