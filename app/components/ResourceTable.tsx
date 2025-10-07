@@ -27,7 +27,8 @@ import {
   STALE_THRESHOLD_MS,
   STATUS_CHANGE_TIMEOUT_MS,
   UNCATEGORIZED,
-  UPDATE_THRESHOLD_MS,
+  UPDATE_THRESHOLD_PRIORITY_MS,
+  UPDATE_THRESHOLD_NON_PRIORITY_MS,
   UPDATE_TYPE,
   USER_ACTIVITY_API_PATH,
   WATER_RESOURCE_ID,
@@ -94,9 +95,12 @@ const isResourceStale = (updatedAt: string): boolean => {
 }
 
 // Check if resource needs updating (not updated in more than 24 hours)
-const needsUpdating = (updatedAt: string): boolean => {
+const needsUpdating = (updatedAt: string, isPriority: boolean): boolean => {
   const now = new Date()
-  return now.getTime() - new Date(updatedAt).getTime() > UPDATE_THRESHOLD_MS
+  const threshold = isPriority
+    ? UPDATE_THRESHOLD_PRIORITY_MS
+    : UPDATE_THRESHOLD_NON_PRIORITY_MS
+  return now.getTime() - new Date(updatedAt).getTime() > threshold
 }
 
 // Function to get status background color for grid view
@@ -390,7 +394,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   // Calculate needs updating count
   const needsUpdateCount = resources.filter((resource) =>
-    needsUpdating(resource.updatedAt),
+    needsUpdating(resource.updatedAt, !!resource.isPriority),
   ).length
 
   // Fetch recent activity
@@ -876,7 +880,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       // Needs updating filter
       let matchesNeedsUpdate = true
       if (needsUpdateFilter) {
-        matchesNeedsUpdate = needsUpdating(resource.updatedAt)
+        matchesNeedsUpdate = needsUpdating(
+          resource.updatedAt,
+          !!resource.isPriority,
+        )
       }
 
       // Category filter
@@ -1533,8 +1540,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 />
                 <span>Needs updating ({needsUpdateCount})</span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  (24+ hours)
+                <span
+                  className="text-xs text-gray-500 dark:text-gray-400"
+                  title="Priority items are flagged after 24 hours, non-priority after 7 days."
+                >
+                  (24h/7d)
                 </span>
               </label>
             </div>

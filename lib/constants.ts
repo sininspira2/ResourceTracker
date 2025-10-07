@@ -8,8 +8,9 @@ export const MS_IN_MINUTE = MS_IN_SECOND * 60;
 export const MS_IN_HOUR = MS_IN_MINUTE * 60;
 export const MS_IN_DAY = MS_IN_HOUR * 24;
 export const STALE_THRESHOLD_MS = 48 * MS_IN_HOUR;
-export const UPDATE_THRESHOLD_MS = 24 * MS_IN_HOUR;
+export const UPDATE_THRESHOLD_PRIORITY_MS = 24 * MS_IN_HOUR;
 export const ONE_WEEK_IN_MS = 7 * MS_IN_DAY;
+export const UPDATE_THRESHOLD_NON_PRIORITY_MS = ONE_WEEK_IN_MS;
 export const STATUS_CHANGE_TIMEOUT_MS = 3000;
 
 // Resource Status
