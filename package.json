@@ -15,6 +15,7 @@
     "update-version": "node scripts/update-version.js",
     "populate-resources": "tsx scripts/populate-resources.ts",
     "populate-resources-dune": "tsx scripts/populate-resources-dune.ts",
+    "populate-blueprints-dune": "tsx scripts/populate-blueprints-dune.ts",
     "add-resources-with-images": "tsx scripts/add-resources-with-images.ts"
   },
   "dependencies": {
