@@ -148,7 +148,7 @@ async function populateResourcesSafe() {
     }
 
     const allResources = [
-      ...blueprints.map(r => ({ ...r, category: 'Blueprint' })),
+      ...blueprints.map(r => ({ ...r, category: 'Blueprints' })),
     ]
 
     const resourceData = allResources.map(resource => {
