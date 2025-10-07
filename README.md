@@ -166,6 +166,9 @@ You can add some initial data to see how the application works.
 ```bash
 # For Dune-specific resources
 npm run populate-resources-dune
+
+# For Tier-6 Blueprints
+npm run populate-blueprints-dune
 ```
 
 ### Step 9: Finalize Discord Configuration
