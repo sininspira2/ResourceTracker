@@ -232,7 +232,7 @@ function generateSQLStatements() {
     const targetQuantity = estimateTarget(resource.quantityHagga, resource.status)
     const actualStatus = calculateStatus(resource.quantityHagga, targetQuantity)
     const id = nanoid()
-    const now = Date.now()
+    const now = Math.floor(Date.now() / 1000)
     
     const sql = `INSERT INTO resources (id, name, quantity_hagga, quantity_deep_desert, description, category, icon, status, target_quantity, last_updated_by, created_at, updated_at) VALUES (
   '${id}',
