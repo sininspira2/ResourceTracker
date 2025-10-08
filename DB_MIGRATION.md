@@ -2,9 +2,13 @@
 
 This guide provides manual SQL scripts to update your Turso database schema, ensuring data preservation during specific migration or upgrade scenarios.
 
+Scenario 1: Migrating from `gazreyn/ResourceTracker`
+Scenario 2: Upgrading from v3.x to v4.x
+Scenario 3: No Migration Table OR Cannot Run db:migrate
+
 ---
 
-## Migrating from `gazreyn/ResourceTracker`
+## Scenario 1: Migrating from `gazreyn/ResourceTracker`
 
 ⚠️ The standard Drizzle migration can lead to data loss when used with Turso. To migrate your existing data safely, follow these steps.
 
@@ -39,7 +43,7 @@ This guide provides manual SQL scripts to update your Turso database schema, ens
 11.  Then run `npm run db:log-init`
 ---
 
-## Upgrading from v3.x to v4.x
+## Scenario 2: Upgrading from v3.x to v4.x
 
 If you upgraded from a `3.x` version to `4.x` and can no longer edit resource metadata, apply this simple fix.
 
@@ -60,7 +64,7 @@ If you upgraded from a `3.x` version to `4.x` and can no longer edit resource me
 6.  Then run `npm run db:log-init`
 ---
 
-## No Migration Table OR Cannot Run db:migrate
+## Scenario 3: No Migration Table OR Cannot Run db:migrate
 
 1. From your local git folder that you cloned during setup, run `git fetch`
 2. Run `npm install && npm run db:log-init`
