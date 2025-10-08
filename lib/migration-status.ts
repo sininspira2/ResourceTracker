@@ -1,8 +1,7 @@
 import { unstable_noStore as noStore } from 'next/cache'
 import { db } from './db'
 import { sql } from 'drizzle-orm'
-import fs from 'fs/promises'
-import path from 'path'
+import { LATEST_MIGRATION_TAG } from './constants'
 
 type MigrationStatus = 'up-to-date' | 'out-of-date' | 'no-table' | 'error'
 
@@ -40,17 +39,11 @@ export async function getMigrationStatus(): Promise<MigrationStatusResult> {
     )
     const dbHash = latestMigrationResult?.hash ?? null
 
-    // Get the latest migration tag from the journal file
-    const journalPath = path.join(process.cwd(), 'drizzle', 'meta', '_journal.json')
-    const journalFile = await fs.readFile(journalPath, 'utf-8')
-    const journal = JSON.parse(journalFile)
-    const latestJournalEntry = journal.entries[journal.entries.length - 1]
-    const latestMigrationTag = latestJournalEntry?.tag ?? null
-
-    if (dbHash === latestMigrationTag) {
+    // Compare the database hash with the constant
+    if (dbHash === LATEST_MIGRATION_TAG) {
       return { status: 'up-to-date' }
     } else {
-      return { status: 'out-of-date', latestMigrationTag }
+      return { status: 'out-of-date', latestMigrationTag: LATEST_MIGRATION_TAG }
     }
   } catch (error) {
     console.error('Error checking migration status:', error)

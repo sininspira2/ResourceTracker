@@ -6,8 +6,6 @@ import { ThemeProvider } from './components/ThemeProvider'
 import { WhatsNewModal } from './components/WhatsNewModal'
 import { MigrationBanner } from './components/MigrationBanner'
 
-export const dynamic = 'force-dynamic'
-
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {

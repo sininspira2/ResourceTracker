@@ -4,6 +4,23 @@ This guide provides manual SQL scripts to update your Turso database schema, ens
 
 ---
 
+## ⚠️ Important: After Creating a New Migration
+
+Whenever you generate a new database migration using `npm run db:generate`, you **must** perform one manual step to ensure the application's migration-check banner works correctly.
+
+1.  After the migration is generated, a new tag will be created in `drizzle/meta/_journal.json`.
+2.  Open the `lib/constants.ts` file.
+3.  Find the `LATEST_MIGRATION_TAG` constant.
+4.  Update its value to match the **newest tag** from the `_journal.json` file.
+
+**Example:**
+If you generate a new migration and the journal file's last entry is `"tag": "0001_new_migration"`, you must update the constant to be:
+`export const LATEST_MIGRATION_TAG = '0001_new_migration';`
+
+Failure to do this will cause a warning banner to incorrectly appear at the top of the application for all users.
+
+---
+
 ## Migrating from `gazreyn/ResourceTracker`
 
 ⚠️ The standard Drizzle migration can lead to data loss when used with Turso. To migrate your existing data safely, follow these steps.
