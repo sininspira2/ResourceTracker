@@ -10,7 +10,7 @@
     "test": "jest",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "db:log-init": "scripts/log-initial-migration.ts",
+    "db:log-init": "tsx --env-file .env.local scripts/log-initial-migration.ts",
     "db:migrate": "drizzle-kit migrate",
     "update-version": "node scripts/update-version.js",
     "populate-resources": "tsx --env-file .env.local scripts/populate-resources.ts",
