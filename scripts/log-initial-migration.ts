@@ -19,13 +19,15 @@ async function logInitialMigration() {
 
   try {
     // 1. CREATE MIGRATION LOG TABLE (IF NOT EXISTS)
-    await db.run(sql.raw`
-      CREATE TABLE IF NOT EXISTS __drizzle_migrations (
+    await db.run(
+      sql.raw(
+        `CREATE TABLE IF NOT EXISTS __drizzle_migrations (
         id INTEGER PRIMARY KEY,
         hash TEXT NOT NULL,
         created_at INTEGER NOT NULL
-      );
-    `)
+      );`
+      )
+    )
     console.log(`✅ Migration log table exists or was created.`)
 
     // 2. LOG INITIAL MIGRATION ENTRY (IF IT DOESN'T EXIST)
