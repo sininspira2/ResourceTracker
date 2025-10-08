@@ -65,28 +65,46 @@ If you upgraded from a `3.x` version to `4.x` and can no longer edit resource me
 6.  Then run `npm run db:log-init`
 ---
 
-## Scenario 3: No Migration Table OR Cannot Run db:migrate
+## Scenario 3: Standard Setup and Updates
 
-1. From your local git folder that you cloned during setup, run `git fetch`
-2. Run `npm install && npm run db:log-init`
-3. If a database migration is necessary, run `npm run db:migrate`
+This section covers the standard workflow for setting up a new database or updating an existing one that is already using Drizzle migrations.
 
+### 🚀 For New Users (First-Time Setup)
+
+If you are setting up Resource Tracker for the first time with a new, empty database, the process is simple. Run the following command to create all tables and apply all migrations:
+
+```bash
+npm run db:migrate
+```
+
+This single command will bring your database schema completely up-to-date.
+
+### ⚠️ For Existing Users (Updating an Old Database)
+
+If you have an existing Resource Tracker database that was created *before* the Drizzle migration tracking system was in place (i.e., you have data but no `__drizzle_migrations` table), you must follow a two-step process to update your schema without errors.
+
+**Step 1: Baseline Your Database**
+
+First, run the `db:log-init` script. This command will create the `__drizzle_migrations` table and log the initial schema state, preventing Drizzle from trying to re-create tables that already exist.
+
+```bash
+npm run db:log-init
+```
+
+**Step 2: Apply New Migrations**
+
+After baselining your database, you can now safely apply any new migrations that have been added since your initial setup.
+
+```bash
+npm run db:migrate
+```
+
+For all future updates, you will only need to run `npm run db:migrate`.
 
 ---
 
-## ⚠️ Important Note for Developers: After Creating a New Migration
+## ⚙️ How Migration Status is Checked
 
-Whenever you generate a new database migration using `npm run db:generate`, you **must** perform one manual step to ensure the application's migration-check banner works correctly.
+The application automatically checks if the database schema is up-to-date by comparing the latest migration recorded in the `__drizzle_migrations` table against a pre-built list of migration hashes.
 
-1.  After the migration is generated, a new tag will be created in `drizzle/meta/_journal.json`.
-2.  Open the `lib/constants.ts` file.
-3.  Find the `LATEST_MIGRATION_TAG` constant.
-4.  Update its value to match the **newest tag** from the `_journal.json` file.
-
-**Example:**
-If you generate a new migration and the journal file's last entry is `"tag": "0001_new_migration"`, you must update the constant to be:
-`export const LATEST_MIGRATION_TAG = '0001_new_migration';`
-
-Failure to do this will cause a warning banner to incorrectly appear at the top of the application for all users.
-
----
+This process is fully automated. The list of hashes is generated automatically when new migrations are created, so no manual intervention is required. If the application detects that your database schema is out of date, it will display a warning banner.

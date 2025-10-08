@@ -1,8 +1,5 @@
 // This file contains shared constants used throughout the application.
 
-// Drizzle Migrations
-export const LATEST_MIGRATION_TAG = '0001_mixed_magneto';
-
 export const CATEGORY_OPTIONS = ['Raw', 'Refined', 'Components', 'Blueprints', 'Other'] as const;
 
 // Time constants in milliseconds
