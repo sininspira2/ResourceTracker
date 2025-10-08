@@ -39,7 +39,7 @@ This guide provides manual SQL scripts to update your Turso database schema, ens
 11.  Then run `npm run db:log-init`
 ---
 
-## Fixing Metadata Editing After Upgrading to v4.x
+## Upgrading from v3.x to v4.x
 
 If you upgraded from a `3.x` version to `4.x` and can no longer edit resource metadata, apply this simple fix.
 
@@ -60,3 +60,8 @@ If you upgraded from a `3.x` version to `4.x` and can no longer edit resource me
 6.  Then run `npm run db:log-init`
 ---
 
+## No Migration Table OR Cannot Run db:migrate
+
+1. From your local git folder that you cloned during setup, run `git fetch`
+2. Run `npm run db:log-init`
+3. If a database migration is necessary, run `npm run db:migrate`
