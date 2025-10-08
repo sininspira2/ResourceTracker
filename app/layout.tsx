@@ -4,6 +4,7 @@ import './globals.css'
 import { SessionProvider } from './components/SessionProvider'
 import { ThemeProvider } from './components/ThemeProvider'
 import { WhatsNewModal } from './components/WhatsNewModal'
+import { MigrationBanner } from './components/MigrationBanner'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider>
           <SessionProvider>
+            <MigrationBanner />
             {children}
             <WhatsNewModal />
           </SessionProvider>

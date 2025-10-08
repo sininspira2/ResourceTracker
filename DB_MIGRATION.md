@@ -8,7 +8,6 @@ This guide provides manual SQL scripts to update your Turso database schema, ens
 
 - [Scenario 3: No Migration Table OR Cannot Run db:migrate](#scenario-3-no-migration-table-or-cannot-run-dbmigrate)
 
----
 
 ## Scenario 1: Migrating from `gazreyn/ResourceTracker`
 
@@ -71,3 +70,23 @@ If you upgraded from a `3.x` version to `4.x` and can no longer edit resource me
 1. From your local git folder that you cloned during setup, run `git fetch`
 2. Run `npm install && npm run db:log-init`
 3. If a database migration is necessary, run `npm run db:migrate`
+
+
+---
+
+## ⚠️ Important Note for Developers: After Creating a New Migration
+
+Whenever you generate a new database migration using `npm run db:generate`, you **must** perform one manual step to ensure the application's migration-check banner works correctly.
+
+1.  After the migration is generated, a new tag will be created in `drizzle/meta/_journal.json`.
+2.  Open the `lib/constants.ts` file.
+3.  Find the `LATEST_MIGRATION_TAG` constant.
+4.  Update its value to match the **newest tag** from the `_journal.json` file.
+
+**Example:**
+If you generate a new migration and the journal file's last entry is `"tag": "0001_new_migration"`, you must update the constant to be:
+`export const LATEST_MIGRATION_TAG = '0001_new_migration';`
+
+Failure to do this will cause a warning banner to incorrectly appear at the top of the application for all users.
+
+---
