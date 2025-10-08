@@ -2,9 +2,11 @@
 
 This guide provides manual SQL scripts to update your Turso database schema, ensuring data preservation during specific migration or upgrade scenarios.
 
-Scenario 1: Migrating from `gazreyn/ResourceTracker`
-Scenario 2: Upgrading from v3.x to v4.x
-Scenario 3: No Migration Table OR Cannot Run db:migrate
+- [Scenario 1: Migrating from gazreyn/ResourceTracker](#scenario-1-migrating-from-gazreynresourcetracker)
+
+- [Scenario 2: Upgrading from v3.x to v4.x](#scenario-2-upgrading-from-v3x-to-v4x)
+
+- [Scenario 3: No Migration Table OR Cannot Run db:migrate](#scenario-3-no-migration-table-or-cannot-run-dbmigrate)
 
 ---
 
