@@ -36,11 +36,12 @@ async function logInitialMigration() {
     const initialMigrationFile = migrationFiles[0]
     console.log(`🔍 Found initial migration file: ${initialMigrationFile}`)
 
-    // 2. Calculate its hash directly from the file content
+    // 2. Calculate its hash directly from the file content, normalizing line endings
     const filePath = path.join(MIGRATIONS_DIR, initialMigrationFile)
     const fileContent = fs.readFileSync(filePath, 'utf-8')
-    const initialMigrationHash = crypto.createHash('sha256').update(fileContent).digest('hex')
-    console.log(`✅ Calculated hash: ${initialMigrationHash}`)
+    const normalizedContent = fileContent.replace(/\r\n/g, '\n')
+    const initialMigrationHash = crypto.createHash('sha256').update(normalizedContent).digest('hex')
+    console.log(`✅ Calculated normalized hash: ${initialMigrationHash}`)
 
     // 3. Create migration log table if it doesn't exist
     await db.run(
