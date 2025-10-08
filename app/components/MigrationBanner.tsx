@@ -9,8 +9,8 @@ export async function MigrationBanner() {
   }
 
   const messages = {
-    'no-table': 'No drizzle migration table in database - check',
-    'out-of-date': 'Database is not latest schema version - check',
+    'no-table': 'Your database is missing the migration table. Please check',
+    'out-of-date': 'Your database schema is out of date. Please check',
   }
 
   const message = messages[status]
