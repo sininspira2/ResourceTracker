@@ -3,6 +3,15 @@ import { drizzle, LibSQLDatabase } from 'drizzle-orm/libsql'
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
 
 // Database schema
+export const globalSettings = sqliteTable('global_settings', {
+  id: integer('id').primaryKey(),
+  settingKey: text('setting_key').unique().notNull(),
+  settingValue: text('setting_value'),
+  description: text('description'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  lastUpdatedAt: integer('last_updated_at', { mode: 'timestamp' }).notNull(),
+})
+
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
   discordId: text('discord_id').unique().notNull(),
@@ -34,6 +43,8 @@ export const resources = sqliteTable('resources', {
   targetQuantity: integer('target_quantity'), // Target/threshold quantity for status calculation
   multiplier: real('multiplier').notNull().default(1.0), // Points multiplier for this resource
   isPriority: integer('is_priority', { mode: 'boolean' }).notNull().default(false),
+  tier: integer('tier'),
+  subcategory: text('subcategory'),
   lastUpdatedBy: text('last_updated_by').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
@@ -72,7 +83,7 @@ export const leaderboard = sqliteTable('leaderboard', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 })
 
-const schema = { users, userSessions, resources, resourceHistory, leaderboard };
+const schema = { globalSettings, users, userSessions, resources, resourceHistory, leaderboard };
 
 // --- LAZY INITIALIZATION OF DATABASE ---
 let _db: LibSQLDatabase<typeof schema> | null = null;
