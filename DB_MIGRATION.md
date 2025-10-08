@@ -40,7 +40,7 @@ If you are migrating from a legacy version, your database might have the correct
 
 To fix this, you must first "baseline" your database:
 
-1.  **Run Manual SQL (If Needed):** If you are coming from a very old version, you may need to run manual SQL commands to update your schema to a point where migrations can take over. The commands for `gazreyn/ResourceTracker` and `v3.x` are listed below. If you are unsure, it is safe to run them; they will not harm an up-to-date schema.
+1.  **Run Manual SQL (If Needed):** If you are coming from a very old version, you may need to run manual SQL commands to update your schema to a point where migrations can take over. The commands for `gazreyn/ResourceTracker` and `v3.x` are listed below. If you are unsure, you can attempt to run them. Some commands may fail if your schema has already been partially updated; this is usually safe to ignore.
 2.  **Run the Baselining Script:**
     ```bash
     npm run db:log-init
