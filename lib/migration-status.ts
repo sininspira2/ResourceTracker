@@ -47,9 +47,6 @@ export async function getMigrationStatus(): Promise<MigrationStatusResult> {
     const latestJournalEntry = journal.entries[journal.entries.length - 1]
     const latestMigrationTag = latestJournalEntry?.tag ?? null
 
-    console.log('Database Hash:', dbHash);
-    console.log('Journal Tag:', latestMigrationTag);
-
     if (dbHash === latestMigrationTag) {
       return { status: 'up-to-date' }
     } else {
