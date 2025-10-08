@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from 'next/cache'
 import { db } from './db'
 import { sql } from 'drizzle-orm'
 import fs from 'fs/promises'
@@ -25,6 +26,7 @@ async function tableExists(tableName: string): Promise<boolean> {
 }
 
 export async function getMigrationStatus(): Promise<MigrationStatusResult> {
+  noStore()
   try {
     const migrationsTableExists = await tableExists('__drizzle_migrations')
 
@@ -44,6 +46,9 @@ export async function getMigrationStatus(): Promise<MigrationStatusResult> {
     const journal = JSON.parse(journalFile)
     const latestJournalEntry = journal.entries[journal.entries.length - 1]
     const latestMigrationTag = latestJournalEntry?.tag ?? null
+
+    console.log('Database Hash:', dbHash);
+    console.log('Journal Tag:', latestMigrationTag);
 
     if (dbHash === latestMigrationTag) {
       return { status: 'up-to-date' }
