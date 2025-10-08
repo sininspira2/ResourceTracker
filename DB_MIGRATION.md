@@ -2,26 +2,14 @@
 
 This guide provides manual SQL scripts to update your Turso database schema, ensuring data preservation during specific migration or upgrade scenarios.
 
----
+- [Scenario 1: Migrating from gazreyn/ResourceTracker](#scenario-1-migrating-from-gazreynresourcetracker)
 
-## ⚠️ Important: After Creating a New Migration
+- [Scenario 2: Upgrading from v3.x to v4.x](#scenario-2-upgrading-from-v3x-to-v4x)
 
-Whenever you generate a new database migration using `npm run db:generate`, you **must** perform one manual step to ensure the application's migration-check banner works correctly.
+- [Scenario 3: No Migration Table OR Cannot Run db:migrate](#scenario-3-no-migration-table-or-cannot-run-dbmigrate)
 
-1.  After the migration is generated, a new tag will be created in `drizzle/meta/_journal.json`.
-2.  Open the `lib/constants.ts` file.
-3.  Find the `LATEST_MIGRATION_TAG` constant.
-4.  Update its value to match the **newest tag** from the `_journal.json` file.
 
-**Example:**
-If you generate a new migration and the journal file's last entry is `"tag": "0001_new_migration"`, you must update the constant to be:
-`export const LATEST_MIGRATION_TAG = '0001_new_migration';`
-
-Failure to do this will cause a warning banner to incorrectly appear at the top of the application for all users.
-
----
-
-## Migrating from `gazreyn/ResourceTracker`
+## Scenario 1: Migrating from `gazreyn/ResourceTracker`
 
 ⚠️ The standard Drizzle migration can lead to data loss when used with Turso. To migrate your existing data safely, follow these steps.
 
@@ -56,7 +44,7 @@ Failure to do this will cause a warning banner to incorrectly appear at the top 
 11.  Then run `npm run db:log-init`
 ---
 
-## Upgrading from v3.x to v4.x
+## Scenario 2: Upgrading from v3.x to v4.x
 
 If you upgraded from a `3.x` version to `4.x` and can no longer edit resource metadata, apply this simple fix.
 
@@ -77,8 +65,28 @@ If you upgraded from a `3.x` version to `4.x` and can no longer edit resource me
 6.  Then run `npm run db:log-init`
 ---
 
-## No Migration Table OR Cannot Run db:migrate
+## Scenario 3: No Migration Table OR Cannot Run db:migrate
 
 1. From your local git folder that you cloned during setup, run `git fetch`
-2. Run `npm run db:log-init`
+2. Run `npm install && npm run db:log-init`
 3. If a database migration is necessary, run `npm run db:migrate`
+
+
+---
+
+## ⚠️ Important Note for Developers: After Creating a New Migration
+
+Whenever you generate a new database migration using `npm run db:generate`, you **must** perform one manual step to ensure the application's migration-check banner works correctly.
+
+1.  After the migration is generated, a new tag will be created in `drizzle/meta/_journal.json`.
+2.  Open the `lib/constants.ts` file.
+3.  Find the `LATEST_MIGRATION_TAG` constant.
+4.  Update its value to match the **newest tag** from the `_journal.json` file.
+
+**Example:**
+If you generate a new migration and the journal file's last entry is `"tag": "0001_new_migration"`, you must update the constant to be:
+`export const LATEST_MIGRATION_TAG = '0001_new_migration';`
+
+Failure to do this will cause a warning banner to incorrectly appear at the top of the application for all users.
+
+---
