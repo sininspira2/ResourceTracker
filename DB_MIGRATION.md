@@ -63,5 +63,5 @@ If you upgraded from a `3.x` version to `4.x` and can no longer edit resource me
 ## No Migration Table OR Cannot Run db:migrate
 
 1. From your local git folder that you cloned during setup, run `git fetch`
-2. Run `npm run db:log-init`
+2. Run `npm install && npm run db:log-init`
 3. If a database migration is necessary, run `npm run db:migrate`
