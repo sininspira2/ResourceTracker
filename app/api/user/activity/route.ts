@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   internalUrl.searchParams.set('oldUserIds', oldUserIds.join(','));
 
   const response = await fetch(internalUrl, {
-    next: { revalidate: 60 }, // Cache for 60 seconds
+    next: { revalidate: 120 }, // Cache for 2 minutes
   });
 
   if (!response.ok) {

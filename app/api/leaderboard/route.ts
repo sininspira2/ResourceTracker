@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   internalUrl.search = request.nextUrl.search;
 
   const response = await fetch(internalUrl, {
-    next: { revalidate: 60 }, // Cache for 60 seconds
+    next: { revalidate: 300 }, // Cache for 5 minutes
   });
 
   if (!response.ok) {
