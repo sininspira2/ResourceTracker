@@ -1,28 +1,28 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions, getUserIdentifier } from '@/lib/auth'
-import { db, resourceHistory, resources } from '@/lib/db'
-import { eq, desc, or } from 'drizzle-orm'
-import { hasResourceAccess } from '@/lib/discord-roles'
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions, getUserIdentifier } from "@/lib/auth";
+import { db, resourceHistory, resources } from "@/lib/db";
+import { eq, desc, or } from "drizzle-orm";
+import { hasResourceAccess } from "@/lib/discord-roles";
 
 // GET /api/user/data-export - Export all user data (GDPR compliance)
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions)
-  
+  const session = await getServerSession(authOptions);
+
   if (!session || !hasResourceAccess(session.user.roles)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const userId = getUserIdentifier(session)
+    const userId = getUserIdentifier(session);
 
     // For backward compatibility, also check for old user identifiers
     const oldUserIds = [
       session.user.id,
-      session.user.email, 
+      session.user.email,
       session.user.name,
-      'unknown'
-    ].filter(Boolean)
+      "unknown",
+    ].filter(Boolean);
 
     // Fetch all user activity (current and legacy identifiers)
     const activityRaw = await db
@@ -45,13 +45,16 @@ export async function GET(request: NextRequest) {
       .where(
         or(
           eq(resourceHistory.updatedBy, userId),
-          ...oldUserIds.map(id => eq(resourceHistory.updatedBy, id as string))
-        )
+          ...oldUserIds.map((id) =>
+            eq(resourceHistory.updatedBy, id as string),
+          ),
+        ),
       )
-      .orderBy(desc(resourceHistory.createdAt))
+      .orderBy(desc(resourceHistory.createdAt));
 
-    const activity = activityRaw.map(entry => {
-      const totalChangeAmount = (entry.changeAmountHagga || 0) + (entry.changeAmountDeepDesert || 0);
+    const activity = activityRaw.map((entry) => {
+      const totalChangeAmount =
+        (entry.changeAmountHagga || 0) + (entry.changeAmountDeepDesert || 0);
       return {
         ...entry,
         changeAmount: totalChangeAmount,
@@ -61,7 +64,7 @@ export async function GET(request: NextRequest) {
     // Prepare complete data export
     const exportData = {
       exportDate: new Date().toISOString(),
-      exportVersion: '1.0',
+      exportVersion: "1.0",
       user: {
         id: session.user.id,
         name: session.user.name,
@@ -75,42 +78,50 @@ export async function GET(request: NextRequest) {
       resourceActivity: activity,
       summary: {
         totalChanges: activity.length,
-        firstActivity: activity.length > 0 ? activity[activity.length - 1].createdAt : null,
+        firstActivity:
+          activity.length > 0 ? activity[activity.length - 1].createdAt : null,
         lastActivity: activity.length > 0 ? activity[0].createdAt : null,
-        totalAdditions: activity.filter(a => a.changeAmount > 0).length,
-        totalRemovals: activity.filter(a => a.changeAmount < 0).length,
-        totalAbsoluteChanges: activity.filter(a => a.changeType === 'absolute').length,
-        totalRelativeChanges: activity.filter(a => a.changeType === 'relative').length,
+        totalAdditions: activity.filter((a) => a.changeAmount > 0).length,
+        totalRemovals: activity.filter((a) => a.changeAmount < 0).length,
+        totalAbsoluteChanges: activity.filter(
+          (a) => a.changeType === "absolute",
+        ).length,
+        totalRelativeChanges: activity.filter(
+          (a) => a.changeType === "relative",
+        ).length,
       },
       dataRetention: {
-        resourceActivity: 'Indefinitely (until deletion request)',
-        sessionTokens: '30 days',
-        discordProfile: 'Refreshed on each login',
+        resourceActivity: "Indefinitely (until deletion request)",
+        sessionTokens: "30 days",
+        discordProfile: "Refreshed on each login",
       },
       privacyRights: {
-        rightToAccess: 'This export',
-        rightToRectification: 'Contact administrators',
-        rightToErasure: 'Available via Privacy & Data page',
-        rightToPortability: 'This JSON export',
-        rightToObject: 'Contact administrators',
-      }
-    }
+        rightToAccess: "This export",
+        rightToRectification: "Contact administrators",
+        rightToErasure: "Available via Privacy & Data page",
+        rightToPortability: "This JSON export",
+        rightToObject: "Contact administrators",
+      },
+    };
 
     // Return as downloadable JSON file
-    const jsonData = JSON.stringify(exportData, null, 2)
-    
+    const jsonData = JSON.stringify(exportData, null, 2);
+
     return new NextResponse(jsonData, {
       status: 200,
       headers: {
-        'Content-Type': 'application/json',
-        'Content-Disposition': `attachment; filename="resource-tracker-data-${userId}-${new Date().toISOString().split('T')[0]}.json"`,
-        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
-    })
+        "Content-Type": "application/json",
+        "Content-Disposition": `attachment; filename="resource-tracker-data-${userId}-${new Date().toISOString().split("T")[0]}.json"`,
+        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
   } catch (error) {
-    console.error('Error exporting user data:', error)
-    return NextResponse.json({ error: 'Failed to export user data' }, { status: 500 })
+    console.error("Error exporting user data:", error);
+    return NextResponse.json(
+      { error: "Failed to export user data" },
+      { status: 500 },
+    );
   }
-} 
+}

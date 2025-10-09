@@ -1,28 +1,31 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { useSession } from 'next-auth/react'
-import { LoginButton } from './LoginButton'
-import { LogoutButton } from './LogoutButton'
-import { ThemeToggle } from './ThemeToggle'
-import { VersionDisplay } from './VersionDisplay'
-import { WhatsNewModal } from './WhatsNewModal'
-import { useState, useEffect } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { LoginButton } from "./LoginButton";
+import { LogoutButton } from "./LogoutButton";
+import { ThemeToggle } from "./ThemeToggle";
+import { VersionDisplay } from "./VersionDisplay";
+import { WhatsNewModal } from "./WhatsNewModal";
+import { useState, useEffect } from "react";
+import { ArrowLeft } from "lucide-react";
 
 interface ClientNavigationProps {
-  title: string
-  showDashboardLink?: boolean
+  title: string;
+  showDashboardLink?: boolean;
 }
 
-export function ClientNavigation({ title, showDashboardLink = true }: ClientNavigationProps) {
-  const { data: session } = useSession()
-  const [showChangelog, setShowChangelog] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
+export function ClientNavigation({
+  title,
+  showDashboardLink = true,
+}: ClientNavigationProps) {
+  const { data: session } = useSession();
+  const [showChangelog, setShowChangelog] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
+    setIsMounted(true);
+  }, []);
 
   return (
     <>
@@ -32,7 +35,10 @@ export function ClientNavigation({ title, showDashboardLink = true }: ClientNavi
             {/* Left side - Title and Version */}
             <div className="flex items-center gap-3">
               {showDashboardLink && (
-                <Link href="/dashboard" className="sm:hidden text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link
+                  href="/dashboard"
+                  className="sm:hidden text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                >
                   <ArrowLeft size={24} />
                 </Link>
               )}
@@ -56,9 +62,9 @@ export function ClientNavigation({ title, showDashboardLink = true }: ClientNavi
                   Dashboard
                 </Link>
               )}
-              
+
               {isMounted && <ThemeToggle />}
-              
+
               {session ? <LogoutButton /> : <LoginButton />}
             </div>
           </div>
@@ -67,12 +73,12 @@ export function ClientNavigation({ title, showDashboardLink = true }: ClientNavi
 
       {/* Changelog Modal */}
       {showChangelog && (
-        <WhatsNewModal 
+        <WhatsNewModal
           isOpen={showChangelog}
           onClose={() => setShowChangelog(false)}
           forceShow={true}
         />
       )}
     </>
-  )
-} 
+  );
+}

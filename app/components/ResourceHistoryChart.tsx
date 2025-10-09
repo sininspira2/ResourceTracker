@@ -1,81 +1,100 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 
 // Utility function to format numbers with commas
 const formatNumber = (num: number): string => {
-  return num.toLocaleString()
-}
+  return num.toLocaleString();
+};
 
 interface HistoryEntry {
-  id: string
-  resourceId: string
-  previousQuantityHagga: number
-  newQuantityHagga: number
-  changeAmountHagga: number
-  previousQuantityDeepDesert: number
-  newQuantityDeepDesert: number
-  changeAmountDeepDesert: number
-  transferAmount?: number
-  transferDirection?: 'to_deep_desert' | 'to_hagga'
-  changeType: 'absolute' | 'relative' | 'transfer'
-  updatedBy: string
-  reason?: string
-  createdAt: string
+  id: string;
+  resourceId: string;
+  previousQuantityHagga: number;
+  newQuantityHagga: number;
+  changeAmountHagga: number;
+  previousQuantityDeepDesert: number;
+  newQuantityDeepDesert: number;
+  changeAmountDeepDesert: number;
+  transferAmount?: number;
+  transferDirection?: "to_deep_desert" | "to_hagga";
+  changeType: "absolute" | "relative" | "transfer";
+  updatedBy: string;
+  reason?: string;
+  createdAt: string;
 }
 
 interface ResourceHistoryChartProps {
-  resourceId: string
-  resourceName: string
+  resourceId: string;
+  resourceName: string;
   customButton?: {
-    className?: string
-    children?: React.ReactNode
-  }
+    className?: string;
+    children?: React.ReactNode;
+  };
 }
 
-export function ResourceHistoryChart({ resourceId, resourceName, customButton }: ResourceHistoryChartProps) {
-  const [history, setHistory] = useState<HistoryEntry[]>([])
-  const [loading, setLoading] = useState(true)
-  const [days, setDays] = useState(7)
-  const [isOpen, setIsOpen] = useState(false)
-  const [hoveredPoint, setHoveredPoint] = useState<HistoryEntry | null>(null)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+export function ResourceHistoryChart({
+  resourceId,
+  resourceName,
+  customButton,
+}: ResourceHistoryChartProps) {
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [days, setDays] = useState(7);
+  const [isOpen, setIsOpen] = useState(false);
+  const [hoveredPoint, setHoveredPoint] = useState<HistoryEntry | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    if (!isOpen) return
-    
+    if (!isOpen) return;
+
     const fetchHistory = async () => {
       try {
-        setLoading(true)
-        const response = await fetch(`/api/resources/${resourceId}/history?days=${days}`)
+        setLoading(true);
+        const response = await fetch(
+          `/api/resources/${resourceId}/history?days=${days}`,
+        );
         if (response.ok) {
-          const data = await response.json()
-          setHistory(data)
+          const data = await response.json();
+          setHistory(data);
         }
       } catch (error) {
-        console.error('Error fetching history:', error)
+        console.error("Error fetching history:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchHistory()
-  }, [resourceId, days, isOpen])
+    fetchHistory();
+  }, [resourceId, days, isOpen]);
 
   if (!isOpen) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className={customButton?.className || "text-gray-600 hover:text-blue-600 transition-colors p-1 rounded-sm hover:bg-gray-100"}
+        className={
+          customButton?.className ||
+          "text-gray-600 hover:text-blue-600 transition-colors p-1 rounded-sm hover:bg-gray-100"
+        }
         title="View resource history"
       >
         {customButton?.children || (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
         )}
       </button>
-    )
+    );
   }
 
   return (
@@ -115,7 +134,9 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
             </div>
           ) : history.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">No changes in the last {days} days</p>
+              <p className="text-gray-500">
+                No changes in the last {days} days
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -125,81 +146,138 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
                 <div className="relative h-32">
                   {history.length > 1 && (
                     <div className="relative">
-                      <svg 
+                      <svg
                         className="w-full h-full"
                         onMouseMove={(e) => {
-                          const rect = e.currentTarget.getBoundingClientRect()
+                          const rect = e.currentTarget.getBoundingClientRect();
                           setMousePosition({
                             x: e.clientX - rect.left,
-                            y: e.clientY - rect.top
-                          })
+                            y: e.clientY - rect.top,
+                          });
                         }}
                         onMouseLeave={() => setHoveredPoint(null)}
                       >
-                      {history.slice().reverse().map((entry, index, arr) => {
-                        if (index === arr.length - 1) return null
-                        const nextEntry = arr[index + 1]
-                        
-                        const x1 = (index / (arr.length - 1)) * 100
-                        const x2 = ((index + 1) / (arr.length - 1)) * 100
-                        
-                        const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
-                        const y1 = 100 - ((entry.newQuantityHagga + entry.newQuantityDeepDesert) / maxQuantity) * 80
-                        const y2 = 100 - ((nextEntry.newQuantityHagga + nextEntry.newQuantityDeepDesert) / maxQuantity) * 80
-                        
-                        return (
-                          <line
-                            key={entry.id}
-                            x1={`${x1}%`}
-                            y1={`${y1}%`}
-                            x2={`${x2}%`}
-                            y2={`${y2}%`}
-                            stroke="#3b82f6"
-                            strokeWidth="2"
-                          />
-                        )
-                      })}
-                      
-                      {/* Data points */}
-                      {history.slice().reverse().map((entry, index, arr) => {
-                        const x = (index / (arr.length - 1)) * 100
-                        const maxQuantity = Math.max(...history.map(h => Math.max(h.previousQuantityHagga + h.previousQuantityDeepDesert, h.newQuantityHagga + h.newQuantityDeepDesert)))
-                        const y = 100 - ((entry.newQuantityHagga + entry.newQuantityDeepDesert) / maxQuantity) * 80
-                        
-                        return (
-                          <circle
-                            key={`point-${entry.id}`}
-                            cx={`${x}%`}
-                            cy={`${y}%`}
-                              r="4"
-                            fill="#3b82f6"
-                              stroke="white"
-                              strokeWidth="2"
-                              className="cursor-pointer hover:r-6 transition-all"
-                              onMouseEnter={() => setHoveredPoint(entry)}
-                              onMouseLeave={() => setHoveredPoint(null)}
-                          />
-                        )
-                      })}
-                    </svg>
-                      
+                        {history
+                          .slice()
+                          .reverse()
+                          .map((entry, index, arr) => {
+                            if (index === arr.length - 1) return null;
+                            const nextEntry = arr[index + 1];
+
+                            const x1 = (index / (arr.length - 1)) * 100;
+                            const x2 = ((index + 1) / (arr.length - 1)) * 100;
+
+                            const maxQuantity = Math.max(
+                              ...history.map((h) =>
+                                Math.max(
+                                  h.previousQuantityHagga +
+                                    h.previousQuantityDeepDesert,
+                                  h.newQuantityHagga + h.newQuantityDeepDesert,
+                                ),
+                              ),
+                            );
+                            const y1 =
+                              100 -
+                              ((entry.newQuantityHagga +
+                                entry.newQuantityDeepDesert) /
+                                maxQuantity) *
+                                80;
+                            const y2 =
+                              100 -
+                              ((nextEntry.newQuantityHagga +
+                                nextEntry.newQuantityDeepDesert) /
+                                maxQuantity) *
+                                80;
+
+                            return (
+                              <line
+                                key={entry.id}
+                                x1={`${x1}%`}
+                                y1={`${y1}%`}
+                                x2={`${x2}%`}
+                                y2={`${y2}%`}
+                                stroke="#3b82f6"
+                                strokeWidth="2"
+                              />
+                            );
+                          })}
+
+                        {/* Data points */}
+                        {history
+                          .slice()
+                          .reverse()
+                          .map((entry, index, arr) => {
+                            const x = (index / (arr.length - 1)) * 100;
+                            const maxQuantity = Math.max(
+                              ...history.map((h) =>
+                                Math.max(
+                                  h.previousQuantityHagga +
+                                    h.previousQuantityDeepDesert,
+                                  h.newQuantityHagga + h.newQuantityDeepDesert,
+                                ),
+                              ),
+                            );
+                            const y =
+                              100 -
+                              ((entry.newQuantityHagga +
+                                entry.newQuantityDeepDesert) /
+                                maxQuantity) *
+                                80;
+
+                            return (
+                              <circle
+                                key={`point-${entry.id}`}
+                                cx={`${x}%`}
+                                cy={`${y}%`}
+                                r="4"
+                                fill="#3b82f6"
+                                stroke="white"
+                                strokeWidth="2"
+                                className="cursor-pointer hover:r-6 transition-all"
+                                onMouseEnter={() => setHoveredPoint(entry)}
+                                onMouseLeave={() => setHoveredPoint(null)}
+                              />
+                            );
+                          })}
+                      </svg>
+
                       {/* Tooltip */}
                       {hoveredPoint && (
-                        <div 
+                        <div
                           className="absolute bg-black text-white text-xs rounded-sm px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
                           style={{
                             left: mousePosition.x + 10,
                             top: mousePosition.y - 10,
-                            transform: mousePosition.x > 200 ? 'translateX(-100%)' : 'none'
+                            transform:
+                              mousePosition.x > 200
+                                ? "translateX(-100%)"
+                                : "none",
                           }}
                         >
-                          <div className="font-medium">{formatNumber(hoveredPoint.newQuantityHagga + hoveredPoint.newQuantityDeepDesert)}</div>
-                          <div className="text-gray-300">
-                            {hoveredPoint.changeAmountHagga + hoveredPoint.changeAmountDeepDesert > 0 ? '+' : ''}{formatNumber(hoveredPoint.changeAmountHagga + hoveredPoint.changeAmountDeepDesert)}
+                          <div className="font-medium">
+                            {formatNumber(
+                              hoveredPoint.newQuantityHagga +
+                                hoveredPoint.newQuantityDeepDesert,
+                            )}
                           </div>
-                          <div className="text-gray-300">By: {hoveredPoint.updatedBy}</div>
                           <div className="text-gray-300">
-                            {new Date(hoveredPoint.createdAt).toLocaleDateString()}
+                            {hoveredPoint.changeAmountHagga +
+                              hoveredPoint.changeAmountDeepDesert >
+                            0
+                              ? "+"
+                              : ""}
+                            {formatNumber(
+                              hoveredPoint.changeAmountHagga +
+                                hoveredPoint.changeAmountDeepDesert,
+                            )}
+                          </div>
+                          <div className="text-gray-300">
+                            By: {hoveredPoint.updatedBy}
+                          </div>
+                          <div className="text-gray-300">
+                            {new Date(
+                              hoveredPoint.createdAt,
+                            ).toLocaleDateString()}
                           </div>
                         </div>
                       )}
@@ -213,25 +291,50 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
                 <h3 className="text-sm font-medium mb-3">Recent Changes</h3>
                 <div className="space-y-3">
                   {history.map((entry) => (
-                    <div key={entry.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={entry.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
                       <div className="flex items-center gap-3">
-                        <div className={`w-3 h-3 rounded-full ${
-                          entry.changeAmountHagga + entry.changeAmountDeepDesert > 0 ? 'bg-green-500' :
-                          entry.changeAmountHagga + entry.changeAmountDeepDesert < 0 ? 'bg-red-500' : 'bg-gray-400'
-                        }`}></div>
+                        <div
+                          className={`w-3 h-3 rounded-full ${
+                            entry.changeAmountHagga +
+                              entry.changeAmountDeepDesert >
+                            0
+                              ? "bg-green-500"
+                              : entry.changeAmountHagga +
+                                    entry.changeAmountDeepDesert <
+                                  0
+                                ? "bg-red-500"
+                                : "bg-gray-400"
+                          }`}
+                        ></div>
                         <div>
                           <div className="font-medium">
-                            {entry.changeType === 'transfer' ? (
+                            {entry.changeType === "transfer" ? (
                               <span>
-                                Transfer {entry.transferAmount} {entry.transferDirection === 'to_deep_desert' ? 'to Deep Desert' : 'to Hagga'}
+                                Transfer {entry.transferAmount}{" "}
+                                {entry.transferDirection === "to_deep_desert"
+                                  ? "to Deep Desert"
+                                  : "to Hagga"}
                               </span>
                             ) : (
                               <div>
                                 <div>
-                                  Hagga: {formatNumber(entry.previousQuantityHagga)} → {formatNumber(entry.newQuantityHagga)} ({entry.changeAmountHagga > 0 ? '+' : ''}{formatNumber(entry.changeAmountHagga)})
+                                  Hagga:{" "}
+                                  {formatNumber(entry.previousQuantityHagga)} →{" "}
+                                  {formatNumber(entry.newQuantityHagga)} (
+                                  {entry.changeAmountHagga > 0 ? "+" : ""}
+                                  {formatNumber(entry.changeAmountHagga)})
                                 </div>
                                 <div>
-                                  Deep Desert: {formatNumber(entry.previousQuantityDeepDesert)} → {formatNumber(entry.newQuantityDeepDesert)} ({entry.changeAmountDeepDesert > 0 ? '+' : ''}{formatNumber(entry.changeAmountDeepDesert)})
+                                  Deep Desert:{" "}
+                                  {formatNumber(
+                                    entry.previousQuantityDeepDesert,
+                                  )}{" "}
+                                  → {formatNumber(entry.newQuantityDeepDesert)}{" "}
+                                  ({entry.changeAmountDeepDesert > 0 ? "+" : ""}
+                                  {formatNumber(entry.changeAmountDeepDesert)})
                                 </div>
                               </div>
                             )}
@@ -239,13 +342,16 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
                           <div className="text-sm text-gray-600">
                             By {entry.updatedBy}
                             {entry.reason && (
-                              <span className="ml-2 text-blue-600">• {entry.reason}</span>
+                              <span className="ml-2 text-blue-600">
+                                • {entry.reason}
+                              </span>
                             )}
                           </div>
                         </div>
                       </div>
                       <div className="text-sm text-gray-500">
-                        {new Date(entry.createdAt).toLocaleDateString()} {new Date(entry.createdAt).toLocaleTimeString()}
+                        {new Date(entry.createdAt).toLocaleDateString()}{" "}
+                        {new Date(entry.createdAt).toLocaleTimeString()}
                       </div>
                     </div>
                   ))}
@@ -256,5 +362,5 @@ export function ResourceHistoryChart({ resourceId, resourceName, customButton }:
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

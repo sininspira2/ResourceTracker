@@ -20,6 +20,7 @@ npm run update-version
 ```
 
 This will:
+
 1. Show your current version
 2. Ask what type of update (patch/minor/major)
 3. Let you add changes one by one
@@ -44,7 +45,7 @@ Edit `lib/changelog.json` directly:
           "description": "Added awesome new functionality"
         },
         {
-          "type": "improvement", 
+          "type": "improvement",
           "description": "Made existing features better"
         }
       ]
@@ -64,7 +65,7 @@ Edit `lib/changelog.json` directly:
 ## 🎯 Release Types
 
 - **`patch`** (1.2.0 → 1.2.1) - Bug fixes, small improvements
-- **`minor`** (1.2.0 → 1.3.0) - New features, non-breaking changes  
+- **`minor`** (1.2.0 → 1.3.0) - New features, non-breaking changes
 - **`major`** (1.2.0 → 2.0.0) - Breaking changes, major features
 
 ## 💡 Tips
@@ -91,18 +92,19 @@ Add a new section to `README.md` using the following format:
 
 ### ✨ New Features
 
-* [Brief description of a new feature, including what it does and why it's beneficial.]
-* [Another new feature, if applicable.]
+- [Brief description of a new feature, including what it does and why it's beneficial.]
+- [Another new feature, if applicable.]
 
 ### 🚀 Improvements
 
-* [Description of an enhancement to an existing feature.]
-* [Details about performance improvements, UI/UX updates, or refactoring.]
+- [Description of an enhancement to an existing feature.]
+- [Details about performance improvements, UI/UX updates, or refactoring.]
 
 ### 🐛 Bug Fixes
 
-* [A summary of a bug that was fixed and the impact on the user.]
-* [Another bug fix, if applicable.]
+- [A summary of a bug that was fixed and the impact on the user.]
+- [Another bug fix, if applicable.]
+
 ---
 ```
 

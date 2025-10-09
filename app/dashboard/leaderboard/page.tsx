@@ -1,85 +1,88 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
-import { Pagination } from '@/app/components/Pagination'
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { Pagination } from "@/app/components/Pagination";
 
 interface LeaderboardEntry {
-  userId: string
-  totalPoints: number
-  totalActions: number
+  userId: string;
+  totalPoints: number;
+  totalActions: number;
 }
 
 interface LeaderboardData {
-  leaderboard: LeaderboardEntry[]
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
-  hasNextPage: boolean
-  hasPrevPage: boolean
+  leaderboard: LeaderboardEntry[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }
 
 const timeFilterOptions = [
-  { value: '24h', label: 'Last 24 Hours' },
-  { value: '7d', label: 'Last 7 Days' },
-  { value: '30d', label: 'Last 30 Days' },
-  { value: 'all', label: 'All Time' }
-]
+  { value: "24h", label: "Last 24 Hours" },
+  { value: "7d", label: "Last 7 Days" },
+  { value: "30d", label: "Last 30 Days" },
+  { value: "all", label: "All Time" },
+];
 
 export default function LeaderboardPage() {
-  const router = useRouter()
-  const { data: session } = useSession()
-  const [data, setData] = useState<LeaderboardData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [timeFilter, setTimeFilter] = useState('7d')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [error, setError] = useState<string | null>(null)
-  
-  const pageSize = 20
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [data, setData] = useState<LeaderboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [timeFilter, setTimeFilter] = useState("7d");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [error, setError] = useState<string | null>(null);
+
+  const pageSize = 20;
 
   const fetchLeaderboard = useCallback(async () => {
     try {
-      setLoading(true)
-      setError(null)
-      
-      const response = await fetch(`/api/leaderboard?timeFilter=${timeFilter}&page=${currentPage}&pageSize=${pageSize}`, {
-        headers: {
-          'Cache-Control': 'no-cache',
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(
+        `/api/leaderboard?timeFilter=${timeFilter}&page=${currentPage}&pageSize=${pageSize}`,
+        {
+          headers: {
+            "Cache-Control": "no-cache",
+          },
         },
-      })
-      
+      );
+
       if (!response.ok) {
-        throw new Error('Failed to fetch leaderboard')
+        throw new Error("Failed to fetch leaderboard");
       }
-      
-      const leaderboardData = await response.json()
-      setData(leaderboardData)
+
+      const leaderboardData = await response.json();
+      setData(leaderboardData);
     } catch (error) {
-      console.error('Error fetching leaderboard:', error)
-      setError('Failed to load leaderboard')
+      console.error("Error fetching leaderboard:", error);
+      setError("Failed to load leaderboard");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [timeFilter, currentPage, pageSize])
+  }, [timeFilter, currentPage, pageSize]);
 
   useEffect(() => {
-    fetchLeaderboard()
-  }, [fetchLeaderboard])
+    fetchLeaderboard();
+  }, [fetchLeaderboard]);
 
   const handleUserClick = (userId: string) => {
-    router.push(`/dashboard/contributions/${userId}`)
-  }
+    router.push(`/dashboard/contributions/${userId}`);
+  };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
+    setCurrentPage(page);
+  };
 
   const handleTimeFilterChange = (newTimeFilter: string) => {
-    setTimeFilter(newTimeFilter)
-    setCurrentPage(1) // Reset to first page when changing filters
-  }
+    setTimeFilter(newTimeFilter);
+    setCurrentPage(1); // Reset to first page when changing filters
+  };
 
   if (loading && !data) {
     return (
@@ -87,11 +90,13 @@ export default function LeaderboardPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading leaderboard...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">
+              Loading leaderboard...
+            </p>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -105,11 +110,12 @@ export default function LeaderboardPage() {
                 🏆 Leaderboard
               </h1>
               <p className="text-gray-600 dark:text-gray-300 mt-1">
-                Top contributors in the {process.env.NEXT_PUBLIC_ORG_NAME || 'community'}
+                Top contributors in the{" "}
+                {process.env.NEXT_PUBLIC_ORG_NAME || "community"}
               </p>
             </div>
             <button
-              onClick={() => router.push('/resources')}
+              onClick={() => router.push("/resources")}
               className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
             >
               Back to Resources
@@ -152,7 +158,9 @@ export default function LeaderboardPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Rankings ({timeFilterOptions.find(opt => opt.value === timeFilter)?.label})
+              Rankings (
+              {timeFilterOptions.find((opt) => opt.value === timeFilter)?.label}
+              )
             </h2>
             {data && (
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -164,16 +172,31 @@ export default function LeaderboardPage() {
           {loading ? (
             <div className="p-8 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600 dark:text-gray-300">Loading...</p>
+              <p className="mt-2 text-gray-600 dark:text-gray-300">
+                Loading...
+              </p>
             </div>
           ) : !data || data.leaderboard.length === 0 ? (
             <div className="p-8 text-center">
-              <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg
+                className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
-              <p className="text-gray-500 dark:text-gray-400">No contributions found for this time period</p>
+              <p className="text-gray-500 dark:text-gray-400">
+                No contributions found for this time period
+              </p>
               <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                Try selecting a different time period or start contributing to appear on the leaderboard!
+                Try selecting a different time period or start contributing to
+                appear on the leaderboard!
               </p>
             </div>
           ) : (
@@ -181,22 +204,27 @@ export default function LeaderboardPage() {
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
                 {data.leaderboard.map((entry, index) => {
                   // Calculate global rank based on current page
-                  const globalRank = (currentPage - 1) * pageSize + index + 1
-                  
+                  const globalRank = (currentPage - 1) * pageSize + index + 1;
+
                   return (
-                    <div 
-                      key={entry.userId} 
+                    <div
+                      key={entry.userId}
                       className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
                       onClick={() => handleUserClick(entry.userId)}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
-                            globalRank === 1 ? 'bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200' :
-                            globalRank === 2 ? 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200' :
-                            globalRank === 3 ? 'bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200' :
-                            'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300'
-                          }`}>
+                          <div
+                            className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
+                              globalRank === 1
+                                ? "bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200"
+                                : globalRank === 2
+                                  ? "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                  : globalRank === 3
+                                    ? "bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200"
+                                    : "bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300"
+                            }`}
+                          >
                             #{globalRank}
                           </div>
                           <div>
@@ -206,7 +234,12 @@ export default function LeaderboardPage() {
                             <div className="flex items-center gap-4 mt-1 text-sm text-gray-500 dark:text-gray-400">
                               <span>{entry.totalActions} actions</span>
                               <span>•</span>
-                              <span>{(entry.totalPoints / entry.totalActions).toFixed(1)} pts/action</span>
+                              <span>
+                                {(
+                                  entry.totalPoints / entry.totalActions
+                                ).toFixed(1)}{" "}
+                                pts/action
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -216,14 +249,24 @@ export default function LeaderboardPage() {
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                             Click to view details
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            <svg
+                              className="w-3 h-3"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
                             </svg>
                           </div>
                         </div>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
 
@@ -250,15 +293,33 @@ export default function LeaderboardPage() {
             📊 How Points Work
           </h3>
           <div className="space-y-2 text-sm text-blue-700 dark:text-blue-300">
-            <p><strong>ADD Actions:</strong> 0.1 points per resource (100 points per 1000 resources)</p>
-            <p><strong>SET Actions:</strong> Fixed 1 points regardless of quantity</p>
-            <p><strong>Refined Actions:</strong> Fixed 2 points for any action (special category)</p>
-            <p><strong>Multipliers:</strong> Resources have different point multipliers (0.1x to 5x+)</p>
-            <p><strong>Status Bonuses:</strong> Critical resources +10%, Below Target +5%</p>
-            <p><strong>Categories:</strong> Raw, Components, and Refined categories earn points</p>
+            <p>
+              <strong>ADD Actions:</strong> 0.1 points per resource (100 points
+              per 1000 resources)
+            </p>
+            <p>
+              <strong>SET Actions:</strong> Fixed 1 points regardless of
+              quantity
+            </p>
+            <p>
+              <strong>Refined Actions:</strong> Fixed 2 points for any action
+              (special category)
+            </p>
+            <p>
+              <strong>Multipliers:</strong> Resources have different point
+              multipliers (0.1x to 5x+)
+            </p>
+            <p>
+              <strong>Status Bonuses:</strong> Critical resources +10%, Below
+              Target +5%
+            </p>
+            <p>
+              <strong>Categories:</strong> Raw, Components, and Refined
+              categories earn points
+            </p>
           </div>
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

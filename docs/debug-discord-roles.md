@@ -3,6 +3,7 @@
 To configure the application's role-based access control, you need the unique ID for each Discord role you want to use.
 
 ## Step 1: Enable Developer Mode in Discord
+
 1.  Open your Discord client.
 2.  Go to **User Settings** (the gear icon in the bottom-left).
 3.  In the left-hand menu, navigate to the **Advanced** tab.
@@ -11,6 +12,7 @@ To configure the application's role-based access control, you need the unique ID
 This setting allows you to copy IDs for users, roles, and servers directly from the Discord interface.
 
 ## Step 2: Copy the Role ID
+
 1.  Go to your Discord server's settings: right-click the server icon and select **Server Settings** > **Roles**.
 2.  Find the role you want to use (e.g., "Administrator").
 3.  Right-click on the role name and select **Copy ID**.

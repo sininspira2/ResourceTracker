@@ -5,15 +5,17 @@ This document describes the database schema used by Resource Tracker, built with
 ## Overview
 
 The application uses 5 main tables:
--   `users` - Discord user information
--   `user_sessions` - Session data for role caching
--   `resources` - Resource definitions and current quantities for both locations
--   `resource_history` - Audit trail of all resource changes, including transfers
--   `leaderboard` - Points and contribution tracking
+
+- `users` - Discord user information
+- `user_sessions` - Session data for role caching
+- `resources` - Resource definitions and current quantities for both locations
+- `resource_history` - Audit trail of all resource changes, including transfers
+- `leaderboard` - Points and contribution tracking
 
 ## Table Definitions
 
 ### `users`
+
 Stores essential Discord user information.
 
 ```sql
@@ -29,6 +31,7 @@ CREATE TABLE users (
 ```
 
 ### `user_sessions`
+
 Caches Discord role and guild membership data to minimize API calls to Discord.
 
 ```sql
@@ -42,6 +45,7 @@ CREATE TABLE user_sessions (
 ```
 
 ### `resources`
+
 The core table for resource definitions, tracking quantities at two separate locations.
 
 ```sql
@@ -63,12 +67,15 @@ CREATE TABLE resources (
   updated_at INTEGER NOT NULL
 );
 ```
+
 **Fields:**
+
 - `quantity_hagga`: Current quantity at the "Hagga" location.
 - `quantity_deep_desert`: Current quantity at the "Deep Desert" location.
 - `is_priority`: A boolean flag to mark important resources.
 
 ### `resource_history`
+
 A detailed audit trail for every change made to resource quantities, including transfers between locations.
 
 ```sql
@@ -89,11 +96,14 @@ CREATE TABLE resource_history (
   transfer_direction TEXT -- 'to_deep_desert' or 'to_hagga'
 );
 ```
+
 **Fields:**
+
 - Contains separate `previous_`, `new_`, and `change_amount_` fields for both `hagga` and `deep_desert` to provide a complete before-and-after snapshot.
 - `transfer_amount` & `transfer_direction`: Specifically log details of transfer operations.
 
 ### `leaderboard`
+
 Stores records of user contributions for gamification and ranking.
 
 ```sql
@@ -116,9 +126,9 @@ CREATE TABLE leaderboard (
 
 ## Indexes
 
--   `users_discord_id_unique` on `users.discord_id`
--   Primary key indexes on all `id` fields.
--   Foreign key indexes on reference fields (`user_id`, `resource_id`).
+- `users_discord_id_unique` on `users.discord_id`
+- Primary key indexes on all `id` fields.
+- Foreign key indexes on reference fields (`user_id`, `resource_id`).
 
 ## Migration Commands
 

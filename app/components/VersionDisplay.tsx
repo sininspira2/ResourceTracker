@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { getCurrentVersion } from '@/lib/version'
+import { getCurrentVersion } from "@/lib/version";
 
 interface VersionDisplayProps {
-  onClick?: () => void
+  onClick?: () => void;
 }
 
 export function VersionDisplay({ onClick }: VersionDisplayProps) {
-  const version = getCurrentVersion()
-  
+  const version = getCurrentVersion();
+
   return (
     <button
       onClick={onClick}
@@ -18,5 +18,5 @@ export function VersionDisplay({ onClick }: VersionDisplayProps) {
     >
       v{version}
     </button>
-  )
-} 
+  );
+}

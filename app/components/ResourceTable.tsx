@@ -1,15 +1,15 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useCallback } from 'react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { CongratulationsPopup } from './CongratulationsPopup'
-import { TransferModal } from './TransferModal'
-import { UpdateQuantityModal } from './UpdateQuantityModal'
-import { EditResourceModal } from './EditResourceModal'
-import { ChangeTargetModal } from './ChangeTargetModal'
-import { AlertTriangle, Trash2 } from 'lucide-react'
-import { getUserIdentifier } from '@/lib/auth'
+import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { CongratulationsPopup } from "./CongratulationsPopup";
+import { TransferModal } from "./TransferModal";
+import { UpdateQuantityModal } from "./UpdateQuantityModal";
+import { EditResourceModal } from "./EditResourceModal";
+import { ChangeTargetModal } from "./ChangeTargetModal";
+import { AlertTriangle, Trash2 } from "lucide-react";
+import { getUserIdentifier } from "@/lib/auth";
 import {
   CATEGORY_OPTIONS,
   COMPONENTS_CATEGORY,
@@ -32,317 +32,309 @@ import {
   USER_ACTIVITY_API_PATH,
   WATER_RESOURCE_ID,
   VIEW_MODE,
-} from '@/lib/constants'
+} from "@/lib/constants";
 
 // Utility function to format numbers with commas
 const formatNumber = (num: number): string => {
-  return num.toLocaleString()
-}
+  return num.toLocaleString();
+};
 
 // Calculate relative time
 const getRelativeTime = (updatedAt: string): string => {
-  const now = new Date()
-  const past = new Date(updatedAt)
-  const diffInMs = now.getTime() - past.getTime()
-  const diffInMinutes = Math.floor(diffInMs / MS_IN_MINUTE)
+  const now = new Date();
+  const past = new Date(updatedAt);
+  const diffInMs = now.getTime() - past.getTime();
+  const diffInMinutes = Math.floor(diffInMs / MS_IN_MINUTE);
 
-  if (diffInMinutes < 1) return 'Just now'
+  if (diffInMinutes < 1) return "Just now";
   if (diffInMinutes < 60)
-    return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'} ago`
+    return `${diffInMinutes} minute${diffInMinutes === 1 ? "" : "s"} ago`;
 
-  const diffInHours = Math.floor(diffInMinutes / 60)
+  const diffInHours = Math.floor(diffInMinutes / 60);
   if (diffInHours < 24)
-    return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`
+    return `${diffInHours} hour${diffInHours === 1 ? "" : "s"} ago`;
 
-  const diffInDays = Math.floor(diffInHours / 24)
-  if (diffInDays < 7) return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 7)
+    return `${diffInDays} day${diffInDays === 1 ? "" : "s"} ago`;
 
-  const diffInWeeks = Math.floor(diffInDays / 7)
+  const diffInWeeks = Math.floor(diffInDays / 7);
   if (diffInWeeks < 4)
-    return `${diffInWeeks} week${diffInWeeks === 1 ? '' : 's'} ago`
+    return `${diffInWeeks} week${diffInWeeks === 1 ? "" : "s"} ago`;
 
-  const diffInMonths = Math.floor(diffInDays / 30)
+  const diffInMonths = Math.floor(diffInDays / 30);
   if (diffInMonths < 12)
-    return `${diffInMonths} month${diffInMonths === 1 ? '' : 's'} ago`
+    return `${diffInMonths} month${diffInMonths === 1 ? "" : "s"} ago`;
 
-  const diffInYears = Math.floor(diffInDays / 365)
-  const years = Math.floor(diffInMonths / 12)
-  return `${years} year${years === 1 ? '' : 's'} ago`
-}
+  const diffInYears = Math.floor(diffInDays / 365);
+  const years = Math.floor(diffInMonths / 12);
+  return `${years} year${years === 1 ? "" : "s"} ago`;
+};
 
 // Calculate status based on quantity vs target
 const calculateResourceStatus = (
   quantity: number,
   targetQuantity: number | null,
 ): (typeof RESOURCE_STATUS)[keyof typeof RESOURCE_STATUS] => {
-  if (!targetQuantity || targetQuantity <= 0) return RESOURCE_STATUS.AT_TARGET
+  if (!targetQuantity || targetQuantity <= 0) return RESOURCE_STATUS.AT_TARGET;
 
-  const percentage = (quantity / targetQuantity) * 100
+  const percentage = (quantity / targetQuantity) * 100;
   if (percentage >= RESOURCE_STATUS_THRESHOLDS.ABOVE_TARGET)
-    return RESOURCE_STATUS.ABOVE_TARGET // Purple - well above target
+    return RESOURCE_STATUS.ABOVE_TARGET; // Purple - well above target
   if (percentage >= RESOURCE_STATUS_THRESHOLDS.AT_TARGET)
-    return RESOURCE_STATUS.AT_TARGET // Green - at or above target
+    return RESOURCE_STATUS.AT_TARGET; // Green - at or above target
   if (percentage >= RESOURCE_STATUS_THRESHOLDS.BELOW_TARGET)
-    return RESOURCE_STATUS.BELOW_TARGET // Orange - below target but not critical
-  return RESOURCE_STATUS.CRITICAL // Red - very much below target
-}
+    return RESOURCE_STATUS.BELOW_TARGET; // Orange - below target but not critical
+  return RESOURCE_STATUS.CRITICAL; // Red - very much below target
+};
 
 // Check if resource needs updating (not updated in more than 24 hours for priority, 7 days for non-priority)
 const needsUpdating = (updatedAt: string, isPriority: boolean): boolean => {
-  const now = new Date()
+  const now = new Date();
   const threshold = isPriority
     ? UPDATE_THRESHOLD_PRIORITY_MS
-    : UPDATE_THRESHOLD_NON_PRIORITY_MS
-  return now.getTime() - new Date(updatedAt).getTime() > threshold
-}
+    : UPDATE_THRESHOLD_NON_PRIORITY_MS;
+  return now.getTime() - new Date(updatedAt).getTime() > threshold;
+};
 
 // Function to get status background color for grid view
 const getStatusBackgroundColor = (status: string): string => {
   switch (status) {
     case RESOURCE_STATUS.CRITICAL:
-      return 'bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800'
+      return "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800";
     case RESOURCE_STATUS.BELOW_TARGET:
-      return 'bg-orange-50 dark:bg-orange-900/10 border-orange-200 dark:border-orange-800'
+      return "bg-orange-50 dark:bg-orange-900/10 border-orange-200 dark:border-orange-800";
     case RESOURCE_STATUS.AT_TARGET:
-      return 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800'
+      return "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800";
     case RESOURCE_STATUS.ABOVE_TARGET:
-      return 'bg-purple-50 dark:bg-purple-900/10 border-purple-200 dark:border-purple-800'
+      return "bg-purple-50 dark:bg-purple-900/10 border-purple-200 dark:border-purple-800";
     default:
-      return 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+      return "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700";
   }
-}
+};
 
 const getStatusText = (status: string): string => {
   switch (status) {
     case RESOURCE_STATUS.CRITICAL:
-      return 'Critical'
+      return "Critical";
     case RESOURCE_STATUS.BELOW_TARGET:
-      return 'Below Target'
+      return "Below Target";
     case RESOURCE_STATUS.AT_TARGET:
-      return 'At Target'
+      return "At Target";
     case RESOURCE_STATUS.ABOVE_TARGET:
-      return 'Above Target'
+      return "Above Target";
     default:
-      return 'Unknown'
+      return "Unknown";
   }
-}
+};
 
 const getStatusColor = (status: string): string => {
   switch (status) {
     case RESOURCE_STATUS.CRITICAL:
-      return 'text-red-700 dark:text-red-300'
+      return "text-red-700 dark:text-red-300";
     case RESOURCE_STATUS.BELOW_TARGET:
-      return 'text-orange-700 dark:text-orange-300'
+      return "text-orange-700 dark:text-orange-300";
     case RESOURCE_STATUS.AT_TARGET:
-      return 'text-green-700 dark:text-green-300'
+      return "text-green-700 dark:text-green-300";
     case RESOURCE_STATUS.ABOVE_TARGET:
-      return 'text-purple-700 dark:text-purple-300'
+      return "text-purple-700 dark:text-purple-300";
     default:
-      return 'text-gray-700 dark:text-gray-300'
+      return "text-gray-700 dark:text-gray-300";
   }
-}
+};
 
 // Function to get combined status styling for table view (background + text colors)
 const getStatusTableColor = (status: string): string => {
   switch (status) {
     case RESOURCE_STATUS.CRITICAL:
-      return 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200'
+      return "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200";
     case RESOURCE_STATUS.BELOW_TARGET:
-      return 'bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200'
+      return "bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200";
     case RESOURCE_STATUS.AT_TARGET:
-      return 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200'
+      return "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200";
     case RESOURCE_STATUS.ABOVE_TARGET:
-      return 'bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200'
+      return "bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200";
     default:
-      return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+      return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200";
   }
-}
+};
 
 interface Resource {
-  id: string
-  name: string
-  quantityHagga: number
-  quantityDeepDesert: number
-  description?: string
-  category?: string
-  icon?: string
-  imageUrl?: string
-  status?: string // Optional since we calculate this dynamically
-  targetQuantity?: number
-  multiplier?: number // Points multiplier for this resource
-  isPriority?: boolean
-  lastUpdatedBy: string
-  updatedAt: string
+  id: string;
+  name: string;
+  quantityHagga: number;
+  quantityDeepDesert: number;
+  description?: string;
+  category?: string;
+  icon?: string;
+  imageUrl?: string;
+  status?: string; // Optional since we calculate this dynamically
+  targetQuantity?: number;
+  multiplier?: number; // Points multiplier for this resource
+  isPriority?: boolean;
+  lastUpdatedBy: string;
+  updatedAt: string;
 }
 
 interface ResourceUpdate {
-  id: string
-  updateType: (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE]
-  value: number
-  reason?: string
+  id: string;
+  updateType: (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE];
+  value: number;
+  reason?: string;
 }
 
 interface ResourceTableProps {
-  userId: string
+  userId: string;
 }
 
 interface PointsCalculation {
-  basePoints: number
-  resourceMultiplier: number
-  statusBonus: number
-  finalPoints: number
+  basePoints: number;
+  resourceMultiplier: number;
+  statusBonus: number;
+  finalPoints: number;
 }
 
 interface LeaderboardEntry {
-  userId: string
-  totalPoints: number
-  totalActions: number
+  userId: string;
+  totalPoints: number;
+  totalActions: number;
 }
 
 interface CongratulationsState {
-  isVisible: boolean
-  pointsEarned: number
-  pointsCalculation?: PointsCalculation
-  resourceName: string
-  actionType: 'ADD' | 'SET' | 'REMOVE'
-  quantityChanged: number
+  isVisible: boolean;
+  pointsEarned: number;
+  pointsCalculation?: PointsCalculation;
+  resourceName: string;
+  actionType: "ADD" | "SET" | "REMOVE";
+  quantityChanged: number;
 }
 
 // Note: Role checking now done server-side in auth.ts and passed via session.user.permissions
 
 export function ResourceTable({ userId }: ResourceTableProps) {
-  const { data: session } = useSession()
-  const router = useRouter()
+  const { data: session } = useSession();
+  const router = useRouter();
 
   // Use pre-computed permissions from session (computed server-side)
-  const canEdit = session?.user?.permissions?.hasResourceAccess ?? false
+  const canEdit = session?.user?.permissions?.hasResourceAccess ?? false;
   const isTargetAdmin =
-    session?.user?.permissions?.hasTargetEditAccess ?? false
+    session?.user?.permissions?.hasTargetEditAccess ?? false;
   const isResourceAdmin =
-    session?.user?.permissions?.hasResourceAdminAccess ?? false
+    session?.user?.permissions?.hasResourceAdminAccess ?? false;
 
-  const [resources, setResources] = useState<Resource[]>([])
-  const [
-    statusChanges,
-    setStatusChanges,
-  ] = useState<Map<string, { oldStatus: string; newStatus: string; timestamp: number }>>(new Map())
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [
-    updateModes,
-    setUpdateModes,
-  ] = useState<Map<string, (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE]>>(new Map())
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [statusChanges, setStatusChanges] = useState<
+    Map<string, { oldStatus: string; newStatus: string; timestamp: number }>
+  >(new Map());
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [updateModes, setUpdateModes] = useState<
+    Map<string, (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE]>
+  >(new Map());
   const [relativeValues, setRelativeValues] = useState<Map<string, number>>(
     new Map(),
-  )
-  const [searchTerm, setSearchTerm] = useState('')
+  );
+  const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<
     (typeof VIEW_MODE)[keyof typeof VIEW_MODE]
-  >(VIEW_MODE.GRID)
-  const [currentTime, setCurrentTime] = useState(new Date())
-  const [recentActivity, setRecentActivity] = useState<any[]>([])
-  const [activityLoading, setActivityLoading] = useState(true)
+  >(VIEW_MODE.GRID);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const [activityLoading, setActivityLoading] = useState(true);
 
   // Leaderboard states
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
-  const [leaderboardLoading, setLeaderboardLoading] = useState(true)
-  const [
-    leaderboardTimeFilter,
-    setLeaderboardTimeFilter,
-  ] = useState<
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
+  const [leaderboardTimeFilter, setLeaderboardTimeFilter] = useState<
     (typeof LEADERBOARD_TIME_FILTERS)[keyof typeof LEADERBOARD_TIME_FILTERS]
-  >(LEADERBOARD_TIME_FILTERS['7D'])
-  const [leaderboardExpanded, setLeaderboardExpanded] = useState(false)
+  >(LEADERBOARD_TIME_FILTERS["7D"]);
+  const [leaderboardExpanded, setLeaderboardExpanded] = useState(false);
 
   // Congratulations popup state
-  const [congratulationsState, setCongratulationsState] = useState<
-    CongratulationsState
-  >({
-    isVisible: false,
-    pointsEarned: 0,
-    resourceName: '',
-    actionType: 'ADD',
-    quantityChanged: 0,
-  })
+  const [congratulationsState, setCongratulationsState] =
+    useState<CongratulationsState>({
+      isVisible: false,
+      pointsEarned: 0,
+      resourceName: "",
+      actionType: "ADD",
+      quantityChanged: 0,
+    });
 
   // Filter states
   const [statusFilter, setStatusFilter] = useState<string>(
     LEADERBOARD_TIME_FILTERS.ALL,
-  )
-  const [needsUpdateFilter, setNeedsUpdateFilter] = useState(false)
-  const [categoryFilter, setCategoryFilter] = useState('all')
-  const [priorityFilter, setPriorityFilter] = useState(false)
+  );
+  const [needsUpdateFilter, setNeedsUpdateFilter] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState(false);
 
   // Add state for update modal
   const [updateModalState, setUpdateModalState] = useState<{
-    isOpen: boolean
-    resource: Resource | null
-    updateType: (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE]
-  }>({ isOpen: false, resource: null, updateType: UPDATE_TYPE.ABSOLUTE })
+    isOpen: boolean;
+    resource: Resource | null;
+    updateType: (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE];
+  }>({ isOpen: false, resource: null, updateType: UPDATE_TYPE.ABSOLUTE });
 
   // Admin state for resource editing
   const [editModalState, setEditModalState] = useState<{
-    isOpen: boolean
-    resource: Resource | null
-  }>({ isOpen: false, resource: null })
+    isOpen: boolean;
+    resource: Resource | null;
+  }>({ isOpen: false, resource: null });
 
   const [changeTargetModalState, setChangeTargetModalState] = useState<{
-    isOpen: boolean
-    resource: Resource | null
-  }>({ isOpen: false, resource: null })
+    isOpen: boolean;
+    resource: Resource | null;
+  }>({ isOpen: false, resource: null });
 
   // Create new resource state
-  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const [createResourceForm, setCreateResourceForm] = useState({
-    name: '',
+    name: "",
     category: RAW_CATEGORY,
-    description: '',
-    imageUrl: '',
+    description: "",
+    imageUrl: "",
     quantityHagga: 0,
     quantityDeepDesert: 0,
     targetQuantity: 0,
     multiplier: 1.0,
-  })
+  });
 
   // Delete confirmation state
   const [deleteConfirm, setDeleteConfirm] = useState({
     resourceId: null as string | null,
-    resourceName: '',
+    resourceName: "",
     showDialog: false,
-  })
+  });
 
   const [transferModalState, setTransferModalState] = useState<{
-    isOpen: boolean
-    resource: Resource | null
-  }>({ isOpen: false, resource: null })
+    isOpen: boolean;
+    resource: Resource | null;
+  }>({ isOpen: false, resource: null });
 
   // Load view preference
   useEffect(() => {
-    const savedViewMode = localStorage.getItem(LOCAL_STORAGE_KEYS.VIEW_MODE)
-    if (
-      savedViewMode === VIEW_MODE.TABLE ||
-      savedViewMode === VIEW_MODE.GRID
-    ) {
-      setViewMode(savedViewMode as (typeof VIEW_MODE)[keyof typeof VIEW_MODE])
+    const savedViewMode = localStorage.getItem(LOCAL_STORAGE_KEYS.VIEW_MODE);
+    if (savedViewMode === VIEW_MODE.TABLE || savedViewMode === VIEW_MODE.GRID) {
+      setViewMode(savedViewMode as (typeof VIEW_MODE)[keyof typeof VIEW_MODE]);
     }
-  }, [])
+  }, []);
 
   // Save view preference
   const setAndSaveViewMode = (
     mode: (typeof VIEW_MODE)[keyof typeof VIEW_MODE],
   ) => {
-    setViewMode(mode)
-    localStorage.setItem(LOCAL_STORAGE_KEYS.VIEW_MODE, mode)
-  }
+    setViewMode(mode);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.VIEW_MODE, mode);
+  };
 
   // Status options for filter dropdown
   const statusOptions = [
-    { value: 'all', label: 'All Status', count: 0 },
-    { value: RESOURCE_STATUS.CRITICAL, label: 'Critical', count: 0 },
-    { value: RESOURCE_STATUS.BELOW_TARGET, label: 'Below Target', count: 0 },
-    { value: RESOURCE_STATUS.AT_TARGET, label: 'At Target', count: 0 },
-    { value: RESOURCE_STATUS.ABOVE_TARGET, label: 'Above Target', count: 0 },
-  ]
+    { value: "all", label: "All Status", count: 0 },
+    { value: RESOURCE_STATUS.CRITICAL, label: "Critical", count: 0 },
+    { value: RESOURCE_STATUS.BELOW_TARGET, label: "Below Target", count: 0 },
+    { value: RESOURCE_STATUS.AT_TARGET, label: "At Target", count: 0 },
+    { value: RESOURCE_STATUS.ABOVE_TARGET, label: "Above Target", count: 0 },
+  ];
 
   // Calculate status counts
   const statusCounts = resources.reduce(
@@ -350,76 +342,76 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       const status = calculateResourceStatus(
         resource.quantityHagga + resource.quantityDeepDesert,
         resource.targetQuantity ?? null,
-      )
-      acc[status] = (acc[status] || 0) + 1
-      acc.all = (acc.all || 0) + 1
-      return acc
+      );
+      acc[status] = (acc[status] || 0) + 1;
+      acc.all = (acc.all || 0) + 1;
+      return acc;
     },
     {} as Record<string, number>,
-  )
+  );
 
   // Update status options with counts
   statusOptions.forEach((option) => {
-    option.count = statusCounts[option.value] || 0
-  })
+    option.count = statusCounts[option.value] || 0;
+  });
 
   // Create category options for filter dropdown
   const categoryOptions = [
-    { value: 'all', label: 'All Categories', count: 0 },
+    { value: "all", label: "All Categories", count: 0 },
     ...CATEGORY_OPTIONS.map((cat) => ({ value: cat, label: cat, count: 0 })),
-  ]
+  ];
 
   // Calculate category counts
   const categoryCounts = resources.reduce(
     (acc, resource) => {
-      const category = resource.category || UNCATEGORIZED
-      acc[category] = (acc[category] || 0) + 1
-      acc.all = (acc.all || 0) + 1
-      return acc
+      const category = resource.category || UNCATEGORIZED;
+      acc[category] = (acc[category] || 0) + 1;
+      acc.all = (acc.all || 0) + 1;
+      return acc;
     },
     {} as Record<string, number>,
-  )
+  );
 
   // Update category options with counts
   categoryOptions.forEach((option) => {
-    option.count = categoryCounts[option.value] || 0
-  })
+    option.count = categoryCounts[option.value] || 0;
+  });
 
   // Calculate needs updating count
   const needsUpdateCount = resources.filter((resource) =>
     needsUpdating(resource.updatedAt, !!resource.isPriority),
-  ).length
+  ).length;
 
   // Fetch recent activity
   const fetchRecentActivity = useCallback(async () => {
     try {
-      setActivityLoading(true)
+      setActivityLoading(true);
       const response = await fetch(
         `${USER_ACTIVITY_API_PATH}?global=true&limit=50`,
         {
           headers: {
-            'Cache-Control': 'no-cache',
+            "Cache-Control": "no-cache",
           },
         },
-      )
+      );
       if (response.ok) {
-        const activity = await response.json()
-        setRecentActivity(activity)
+        const activity = await response.json();
+        setRecentActivity(activity);
       }
     } catch (error) {
-      console.error('Error fetching recent activity:', error)
+      console.error("Error fetching recent activity:", error);
     } finally {
-      setActivityLoading(false)
+      setActivityLoading(false);
     }
-  }, [])
+  }, []);
 
   // Calculate top contributors from last week
   const calculateTopContributors = () => {
-    const oneWeekAgo = new Date(Date.now() - ONE_WEEK_IN_MS)
-    const contributors: { [key: string]: number } = {}
+    const oneWeekAgo = new Date(Date.now() - ONE_WEEK_IN_MS);
+    const contributors: { [key: string]: number } = {};
 
     recentActivity.forEach((activity) => {
-      const activityDate = new Date(activity.createdAt)
+      const activityDate = new Date(activity.createdAt);
       // Only include 'Raw Resources' and 'Components' categories, exclude water (resource ID 45)
       if (
         activityDate >= oneWeekAgo &&
@@ -430,28 +422,28 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           activity.resourceCategory === COMPONENTS_CATEGORY)
       ) {
         contributors[activity.updatedBy] =
-          (contributors[activity.updatedBy] || 0) + activity.changeAmount
+          (contributors[activity.updatedBy] || 0) + activity.changeAmount;
       }
-    })
+    });
 
     return Object.entries(contributors)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
-      .map(([user, amount]) => ({ user, amount }))
-  }
+      .map(([user, amount]) => ({ user, amount }));
+  };
 
   // Save view mode to localStorage whenever it changes
   const handleViewModeChange = (
     newViewMode: (typeof VIEW_MODE)[keyof typeof VIEW_MODE],
   ) => {
-    setViewMode(newViewMode)
-    localStorage.setItem(LOCAL_STORAGE_KEYS.VIEW_MODE, newViewMode)
-  }
+    setViewMode(newViewMode);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.VIEW_MODE, newViewMode);
+  };
 
   // Navigate to resource detail page
   const handleResourceClick = (resourceId: string) => {
-    router.push(`/resources/${resourceId}`)
-  }
+    router.push(`/resources/${resourceId}`);
+  };
 
   // Update resource status immediately and track changes
   const updateResourceStatus = (
@@ -459,126 +451,125 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     quantity: number,
     targetQuantity: number | null,
   ) => {
-    const resource = resources.find((r) => r.id === resourceId)
-    if (!resource) return
+    const resource = resources.find((r) => r.id === resourceId);
+    if (!resource) return;
 
     const oldStatus = calculateResourceStatus(
       resource.quantityHagga + resource.quantityDeepDesert,
       resource.targetQuantity || null,
-    )
-    const newStatus = calculateResourceStatus(quantity, targetQuantity)
+    );
+    const newStatus = calculateResourceStatus(quantity, targetQuantity);
 
     if (oldStatus !== newStatus) {
-      setStatusChanges(
-        (prev) =>
-          new Map(prev).set(resourceId, {
-            oldStatus,
-            newStatus,
-            timestamp: Date.now(),
-          }),
-      )
+      setStatusChanges((prev) =>
+        new Map(prev).set(resourceId, {
+          oldStatus,
+          newStatus,
+          timestamp: Date.now(),
+        }),
+      );
 
       // Clear the status change indicator after 3 seconds
       setTimeout(() => {
         setStatusChanges((prev) => {
-          const newMap = new Map(prev)
-          newMap.delete(resourceId)
-          return newMap
-        })
-      }, STATUS_CHANGE_TIMEOUT_MS)
+          const newMap = new Map(prev);
+          newMap.delete(resourceId);
+          return newMap;
+        });
+      }, STATUS_CHANGE_TIMEOUT_MS);
     }
-  }
+  };
 
   // Fetch resources from API
   const fetchResources = useCallback(async () => {
     try {
-      setLoading(true)
-      const timestamp = Date.now()
+      setLoading(true);
+      const timestamp = Date.now();
       const response = await fetch(`${RESOURCES_API_PATH}?t=${timestamp}`, {
-        cache: 'no-store',
+        cache: "no-store",
         headers: {
-          'Cache-Control': 'no-cache',
+          "Cache-Control": "no-cache",
         },
-      })
+      });
 
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
         setResources(
           data.map((resource: any) => ({
             ...resource,
             updatedAt: new Date(resource.updatedAt).toISOString(),
             createdAt: new Date(resource.createdAt).toISOString(),
           })),
-        )
+        );
       }
     } catch (error) {
-      console.error('Error fetching resources:', error)
+      console.error("Error fetching resources:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   const handleSaveTargetChange = async (
     resourceId: string,
     newTarget: number,
   ) => {
-    if (!isTargetAdmin) return
+    if (!isTargetAdmin) return;
 
-    setSaving(true)
+    setSaving(true);
     try {
       const response = await fetch(
         `${RESOURCES_API_PATH}/${resourceId}/target`,
         {
-          method: 'PUT',
-          cache: 'no-store',
+          method: "PUT",
+          cache: "no-store",
           headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache',
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
           },
           body: JSON.stringify({
             targetQuantity: newTarget,
           }),
         },
-      )
+      );
 
       if (response.ok) {
-        const updatedResource = await response.json()
+        const updatedResource = await response.json();
         setResources((prev) =>
           prev.map((r) =>
             r.id === resourceId ? { ...r, ...updatedResource } : r,
           ),
-        )
-        setChangeTargetModalState({ isOpen: false, resource: null })
+        );
+        setChangeTargetModalState({ isOpen: false, resource: null });
       } else {
-        console.error('Failed to save target quantity')
-        throw new Error('Failed to save target quantity.')
+        console.error("Failed to save target quantity");
+        throw new Error("Failed to save target quantity.");
       }
     } catch (error) {
-      console.error('Error saving target quantity:', error)
-      throw error
+      console.error("Error saving target quantity:", error);
+      throw error;
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   // Admin function to start editing a resource
   const startEditResource = (resource: Resource) => {
-    if (!isResourceAdmin) return
-    setEditModalState({ isOpen: true, resource: resource })
-  }
+    if (!isResourceAdmin) return;
+    setEditModalState({ isOpen: true, resource: resource });
+  };
 
   // Admin function to save resource metadata changes
   const saveResourceMetadata = async (resourceId: string, formData: any) => {
-    if (!isResourceAdmin) return
+    if (!isResourceAdmin) return;
 
-    setSaving(true)
+    setSaving(true);
     try {
       const response = await fetch(RESOURCES_API_PATH, {
-        method: 'PUT',
-        cache: 'no-store',
+        method: "PUT",
+        cache: "no-store",
         headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
         },
         body: JSON.stringify({
           resourceMetadata: {
@@ -586,136 +577,136 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             ...formData,
           },
         }),
-      })
+      });
 
       if (response.ok) {
-        const updatedResource = await response.json()
+        const updatedResource = await response.json();
         setResources((prev) =>
           prev.map((r) =>
             r.id === resourceId ? { ...r, ...updatedResource } : r,
           ),
-        )
-        setEditModalState({ isOpen: false, resource: null })
+        );
+        setEditModalState({ isOpen: false, resource: null });
       } else {
-        console.error('Failed to update resource metadata')
-        throw new Error('Failed to update resource metadata.')
+        console.error("Failed to update resource metadata");
+        throw new Error("Failed to update resource metadata.");
       }
     } catch (error) {
-      console.error('Error updating resource metadata:', error)
-      throw error
+      console.error("Error updating resource metadata:", error);
+      throw error;
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   // Admin function to create new resource
   const createNewResource = async () => {
-    if (!isResourceAdmin) return
+    if (!isResourceAdmin) return;
 
     if (!createResourceForm.name || !createResourceForm.category) {
-      alert('Name and category are required')
-      return
+      alert("Name and category are required");
+      return;
     }
 
-    setSaving(true)
+    setSaving(true);
     try {
       const response = await fetch(RESOURCES_API_PATH, {
-        method: 'POST',
-        cache: 'no-store',
+        method: "POST",
+        cache: "no-store",
         headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
         },
         body: JSON.stringify(createResourceForm),
-      })
+      });
 
       if (response.ok) {
-        const newResource = await response.json()
-        setResources((prev) => [...prev, newResource])
-        setShowCreateForm(false)
+        const newResource = await response.json();
+        setResources((prev) => [...prev, newResource]);
+        setShowCreateForm(false);
         setCreateResourceForm({
-          name: '',
+          name: "",
           category: RAW_CATEGORY,
-          description: '',
-          imageUrl: '',
+          description: "",
+          imageUrl: "",
           quantityHagga: 0,
           quantityDeepDesert: 0,
           targetQuantity: 0,
           multiplier: 1.0,
-        })
+        });
       } else {
-        console.error('Failed to create resource')
+        console.error("Failed to create resource");
       }
     } catch (error) {
-      console.error('Error creating resource:', error)
+      console.error("Error creating resource:", error);
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   // Admin function to delete resource
   const handleTransfer = async (
     resourceId: string,
     amount: number,
-    direction: 'to_deep_desert' | 'to_hagga',
+    direction: "to_deep_desert" | "to_hagga",
   ) => {
     try {
       const response = await fetch(
         `${RESOURCES_API_PATH}/${resourceId}/transfer`,
         {
-          method: 'PUT',
-          cache: 'no-store',
+          method: "PUT",
+          cache: "no-store",
           headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache',
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
           },
           body: JSON.stringify({
             transferAmount: amount,
             transferDirection: direction,
           }),
         },
-      )
+      );
 
       if (response.ok) {
-        const { resource } = await response.json()
+        const { resource } = await response.json();
         setResources((prev) =>
           prev.map((r) => (r.id === resourceId ? { ...r, ...resource } : r)),
-        )
+        );
       } else {
-        const { error } = await response.json()
-        throw new Error(error || 'Failed to transfer quantity.')
+        const { error } = await response.json();
+        throw new Error(error || "Failed to transfer quantity.");
       }
     } catch (error) {
-      console.error('Error transferring quantity:', error)
-      throw error
+      console.error("Error transferring quantity:", error);
+      throw error;
     }
-  }
+  };
 
   const handleUpdate = async (
     resourceId: string,
     amount: number,
-    quantityField: 'quantityHagga' | 'quantityDeepDesert',
-    updateType: 'absolute' | 'relative',
+    quantityField: "quantityHagga" | "quantityDeepDesert",
+    updateType: "absolute" | "relative",
     reason?: string,
     onBehalfOf?: string,
   ) => {
-    const resource = resources.find((r) => r.id === resourceId)
-    if (!resource) return
+    const resource = resources.find((r) => r.id === resourceId);
+    if (!resource) return;
 
-    let newQuantity: number
+    let newQuantity: number;
     if (updateType === UPDATE_TYPE.RELATIVE) {
-      newQuantity = Math.max(0, resource[quantityField] + amount)
+      newQuantity = Math.max(0, resource[quantityField] + amount);
     } else {
-      newQuantity = Math.max(0, amount)
+      newQuantity = Math.max(0, amount);
     }
 
     try {
       const response = await fetch(`${RESOURCES_API_PATH}/${resourceId}`, {
-        method: 'PUT',
-        cache: 'no-store',
+        method: "PUT",
+        cache: "no-store",
         headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
         },
         body: JSON.stringify({
           quantity: newQuantity,
@@ -725,14 +716,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           reason,
           onBehalfOf,
         }),
-      })
+      });
 
       if (response.ok) {
         const { resource, pointsEarned, pointsCalculation } =
-          await response.json()
+          await response.json();
         setResources((prev) =>
           prev.map((r) => (r.id === resourceId ? { ...r, ...resource } : r)),
-        )
+        );
 
         // Show congratulations popup if points were earned
         if (pointsEarned > 0) {
@@ -742,153 +733,150 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             pointsCalculation: pointsCalculation,
             resourceName: resource.name,
             actionType:
-              updateType === 'absolute'
-                ? 'SET'
-                : amount > 0
-                  ? 'ADD'
-                  : 'REMOVE',
+              updateType === "absolute" ? "SET" : amount > 0 ? "ADD" : "REMOVE",
             quantityChanged: Math.abs(amount),
-          })
+          });
         }
       } else {
-        const { error } = await response.json()
-        throw new Error(error || 'Failed to update quantity.')
+        const { error } = await response.json();
+        throw new Error(error || "Failed to update quantity.");
       }
     } catch (error) {
-      console.error('Error updating quantity:', error)
-      throw error
+      console.error("Error updating quantity:", error);
+      throw error;
     }
-  }
+  };
 
   const deleteResource = async (resourceId: string) => {
-    if (!isResourceAdmin) return
+    if (!isResourceAdmin) return;
 
-    setSaving(true)
+    setSaving(true);
     try {
       const response = await fetch(`${RESOURCES_API_PATH}/${resourceId}`, {
-        method: 'DELETE',
-        cache: 'no-store',
+        method: "DELETE",
+        cache: "no-store",
         headers: {
-          'Cache-Control': 'no-cache',
+          "Cache-Control": "no-cache",
         },
-      })
+      });
 
       if (response.ok) {
-        setResources((prev) => prev.filter((r) => r.id !== resourceId))
+        setResources((prev) => prev.filter((r) => r.id !== resourceId));
         setDeleteConfirm({
           resourceId: null,
-          resourceName: '',
+          resourceName: "",
           showDialog: false,
-        })
+        });
       } else {
-        console.error('Failed to delete resource')
+        console.error("Failed to delete resource");
       }
     } catch (error) {
-      console.error('Error deleting resource:', error)
+      console.error("Error deleting resource:", error);
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   // Fetch leaderboard data
   const fetchLeaderboard = useCallback(async () => {
     try {
-      setLeaderboardLoading(true)
+      setLeaderboardLoading(true);
       const response = await fetch(
         `${LEADERBOARD_API_PATH}?timeFilter=${leaderboardTimeFilter}&limit=10`,
         {
           headers: {
-            'Cache-Control': 'no-cache',
+            "Cache-Control": "no-cache",
           },
         },
-      )
+      );
       if (response.ok) {
-        const data = await response.json()
-        setLeaderboard(data.leaderboard || [])
+        const data = await response.json();
+        setLeaderboard(data.leaderboard || []);
       } else {
         console.error(
-          'Leaderboard API error:',
+          "Leaderboard API error:",
           response.status,
           response.statusText,
-        )
-        setLeaderboard([])
+        );
+        setLeaderboard([]);
       }
     } catch (error) {
-      console.error('Error fetching leaderboard:', error)
-      setLeaderboard([])
+      console.error("Error fetching leaderboard:", error);
+      setLeaderboard([]);
     } finally {
-      setLeaderboardLoading(false)
+      setLeaderboardLoading(false);
     }
-  }, [leaderboardTimeFilter])
+  }, [leaderboardTimeFilter]);
 
   // Fetch resources on component mount
   useEffect(() => {
-    fetchResources()
-    fetchRecentActivity()
-  }, [fetchResources, fetchRecentActivity])
+    fetchResources();
+    fetchRecentActivity();
+  }, [fetchResources, fetchRecentActivity]);
 
   // Fetch leaderboard when time filter changes
   useEffect(() => {
-    fetchLeaderboard()
-  }, [fetchLeaderboard])
+    fetchLeaderboard();
+  }, [fetchLeaderboard]);
 
   // Filter resources based on search term and filters
   const filteredResources = resources
     .filter((resource) => {
-      const searchLower = searchTerm.toLowerCase()
-      const resourceNameLower = resource.name.toLowerCase()
+      const searchLower = searchTerm.toLowerCase();
+      const resourceNameLower = resource.name.toLowerCase();
 
       // Text search filter
-      let matchesSearch = true
+      let matchesSearch = true;
       if (searchTerm) {
         // Exact name match (highest priority)
         if (resourceNameLower === searchLower) {
-          matchesSearch = true
+          matchesSearch = true;
         }
         // Partial name match (high priority)
         else if (resourceNameLower.includes(searchLower)) {
-          matchesSearch = true
+          matchesSearch = true;
         }
         // Extended search: only for longer search terms (6+ characters) to avoid broad matches
         else if (searchLower.length >= 6) {
           matchesSearch =
             (resource.description?.toLowerCase().includes(searchLower) ??
               false) ||
-            (resource.category?.toLowerCase().includes(searchLower) ?? false)
+            (resource.category?.toLowerCase().includes(searchLower) ?? false);
         } else {
-          matchesSearch = false
+          matchesSearch = false;
         }
       }
 
       // Status filter
-      let matchesStatus = true
+      let matchesStatus = true;
       if (statusFilter !== LEADERBOARD_TIME_FILTERS.ALL) {
         const resourceStatus = calculateResourceStatus(
           resource.quantityHagga + resource.quantityDeepDesert,
           resource.targetQuantity ?? null,
-        )
-        matchesStatus = resourceStatus === statusFilter
+        );
+        matchesStatus = resourceStatus === statusFilter;
       }
 
       // Needs updating filter
-      let matchesNeedsUpdate = true
+      let matchesNeedsUpdate = true;
       if (needsUpdateFilter) {
         matchesNeedsUpdate = needsUpdating(
           resource.updatedAt,
           !!resource.isPriority,
-        )
+        );
       }
 
       // Category filter
-      let matchesCategory = true
-      if (categoryFilter !== 'all') {
-        matchesCategory = (resource.category || UNCATEGORIZED) === categoryFilter
+      let matchesCategory = true;
+      if (categoryFilter !== "all") {
+        matchesCategory =
+          (resource.category || UNCATEGORIZED) === categoryFilter;
       }
 
       // Priority filter
-      let matchesPriority = true
+      let matchesPriority = true;
       if (priorityFilter) {
-        matchesPriority = resource.isPriority === true
+        matchesPriority = resource.isPriority === true;
       }
 
       return (
@@ -897,51 +885,51 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         matchesNeedsUpdate &&
         matchesCategory &&
         matchesPriority
-      )
+      );
     })
     .sort((a, b) => {
       // If there's a search term, sort by search relevance
       if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase()
-        const aNameLower = a.name.toLowerCase()
-        const bNameLower = b.name.toLowerCase()
+        const searchLower = searchTerm.toLowerCase();
+        const aNameLower = a.name.toLowerCase();
+        const bNameLower = b.name.toLowerCase();
 
         // Exact name matches first
-        const aExact = aNameLower === searchLower
-        const bExact = bNameLower === searchLower
-        if (aExact && !bExact) return -1
-        if (!aExact && bExact) return 1
+        const aExact = aNameLower === searchLower;
+        const bExact = bNameLower === searchLower;
+        if (aExact && !bExact) return -1;
+        if (!aExact && bExact) return 1;
 
         // Then partial name matches (by position in name)
-        const aNameMatch = aNameLower.includes(searchLower)
-        const bNameMatch = bNameLower.includes(searchLower)
-        if (aNameMatch && !bNameMatch) return -1
-        if (!aNameMatch && bNameMatch) return 1
+        const aNameMatch = aNameLower.includes(searchLower);
+        const bNameMatch = bNameLower.includes(searchLower);
+        if (aNameMatch && !bNameMatch) return -1;
+        if (!aNameMatch && bNameMatch) return 1;
 
         // If both are name matches, sort by position of match
         if (aNameMatch && bNameMatch) {
-          const aIndex = aNameLower.indexOf(searchLower)
-          const bIndex = bNameLower.indexOf(searchLower)
-          if (aIndex !== bIndex) return aIndex - bIndex
+          const aIndex = aNameLower.indexOf(searchLower);
+          const bIndex = bNameLower.indexOf(searchLower);
+          if (aIndex !== bIndex) return aIndex - bIndex;
         }
       }
 
       // Default sort by name
-      return a.name.localeCompare(b.name)
-    })
+      return a.name.localeCompare(b.name);
+    });
 
   // Group resources by category for grid view
   const groupedResources = filteredResources.reduce(
     (acc, resource) => {
-      const category = resource.category || UNCATEGORIZED
+      const category = resource.category || UNCATEGORIZED;
       if (!acc[category]) {
-        acc[category] = []
+        acc[category] = [];
       }
-      acc[category].push(resource)
-      return acc
+      acc[category].push(resource);
+      return acc;
     },
     {} as Record<string, Resource[]>,
-  )
+  );
 
   if (loading) {
     return (
@@ -951,7 +939,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           Loading resources...
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -1002,10 +990,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     <div
                       className={`w-2 h-2 rounded-full ${
                         activity.changeAmount > 0
-                          ? 'bg-green-500'
+                          ? "bg-green-500"
                           : activity.changeAmount < 0
-                            ? 'bg-red-500'
-                            : 'bg-gray-400'
+                            ? "bg-red-500"
+                            : "bg-gray-400"
                       }`}
                     ></div>
                     <div>
@@ -1013,7 +1001,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         {activity.resourceName}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">
-                        By {activity.updatedBy} •{' '}
+                        By {activity.updatedBy} •{" "}
                         {getRelativeTime(activity.createdAt)}
                       </div>
                     </div>
@@ -1021,13 +1009,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   <div
                     className={`text-sm font-medium ${
                       activity.changeAmount > 0
-                        ? 'text-green-600 dark:text-green-400'
+                        ? "text-green-600 dark:text-green-400"
                         : activity.changeAmount < 0
-                          ? 'text-red-600 dark:text-red-400'
-                          : 'text-gray-600 dark:text-gray-400'
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-gray-600 dark:text-gray-400"
                     }`}
                   >
-                    {activity.changeAmount > 0 ? '+' : ''}
+                    {activity.changeAmount > 0 ? "+" : ""}
                     {formatNumber(activity.changeAmount)}
                   </div>
                 </div>
@@ -1053,9 +1041,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 }
                 className="text-xs bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-sm px-2 py-1"
               >
-                <option value={LEADERBOARD_TIME_FILTERS['24H']}>24h</option>
-                <option value={LEADERBOARD_TIME_FILTERS['7D']}>7d</option>
-                <option value={LEADERBOARD_TIME_FILTERS['30D']}>30d</option>
+                <option value={LEADERBOARD_TIME_FILTERS["24H"]}>24h</option>
+                <option value={LEADERBOARD_TIME_FILTERS["7D"]}>7d</option>
+                <option value={LEADERBOARD_TIME_FILTERS["30D"]}>30d</option>
                 <option value={LEADERBOARD_TIME_FILTERS.ALL}>All</option>
               </select>
               <svg
@@ -1102,12 +1090,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       <div
                         className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
                           index === 0
-                            ? 'bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200'
+                            ? "bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200"
                             : index === 1
-                              ? 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                              ? "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                               : index === 2
-                                ? 'bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200'
-                                : 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300'
+                                ? "bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200"
+                                : "bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300"
                         }`}
                       >
                         #{index + 1}
@@ -1147,13 +1135,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     className="w-full text-center py-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
                   >
                     {leaderboardExpanded
-                      ? 'Show Less'
+                      ? "Show Less"
                       : `Show All ${leaderboard.length} Contributors`}
                   </button>
                 )}
 
                 <button
-                  onClick={() => router.push('/dashboard/leaderboard')}
+                  onClick={() => router.push("/dashboard/leaderboard")}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
                 >
                   View Full Leaderboard
@@ -1379,21 +1367,21 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   }
                   className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
-                  {saving ? 'Creating...' : 'Create Resource'}
+                  {saving ? "Creating..." : "Create Resource"}
                 </button>
                 <button
                   onClick={() => {
-                    setShowCreateForm(false)
+                    setShowCreateForm(false);
                     setCreateResourceForm({
-                      name: '',
+                      name: "",
                       category: RAW_CATEGORY,
-                      description: '',
-                      imageUrl: '',
+                      description: "",
+                      imageUrl: "",
                       quantityHagga: 0,
                       quantityDeepDesert: 0,
                       targetQuantity: 0,
                       multiplier: 1.0,
-                    })
+                    });
                   }}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
@@ -1440,8 +1428,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 onClick={() => setAndSaveViewMode(VIEW_MODE.TABLE)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   viewMode === VIEW_MODE.TABLE
-                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-xs'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                    ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-xs"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                 }`}
               >
                 <svg
@@ -1463,8 +1451,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 onClick={() => setAndSaveViewMode(VIEW_MODE.GRID)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   viewMode === VIEW_MODE.GRID
-                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-xs'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                    ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-xs"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                 }`}
               >
                 <svg
@@ -1556,23 +1544,23 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             </div>
 
             {/* Active Filters Indicator */}
-            {(statusFilter !== 'all' ||
+            {(statusFilter !== "all" ||
               needsUpdateFilter ||
               searchTerm ||
-              categoryFilter !== 'all' ||
+              categoryFilter !== "all" ||
               priorityFilter) && (
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <span>
-                  Showing {filteredResources.length} of {resources.length}{' '}
+                  Showing {filteredResources.length} of {resources.length}{" "}
                   resources
                 </span>
                 <button
                   onClick={() => {
-                    setStatusFilter('all')
-                    setNeedsUpdateFilter(false)
-                    setSearchTerm('')
-                    setCategoryFilter('all')
-                    setPriorityFilter(false)
+                    setStatusFilter("all");
+                    setNeedsUpdateFilter(false);
+                    setSearchTerm("");
+                    setCategoryFilter("all");
+                    setPriorityFilter(false);
                   }}
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
@@ -1595,19 +1583,19 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           {Object.entries(groupedResources)
             .sort(([categoryA], [categoryB]) => {
               // Define the desired order: Raw → Refined → Components → Other categories
-              const order = [RAW_CATEGORY, 'Refined', COMPONENTS_CATEGORY]
-              const indexA = order.indexOf(categoryA)
-              const indexB = order.indexOf(categoryB)
+              const order = [RAW_CATEGORY, "Refined", COMPONENTS_CATEGORY];
+              const indexA = order.indexOf(categoryA);
+              const indexB = order.indexOf(categoryB);
 
               // If both categories are in the defined order, sort by their position
               if (indexA !== -1 && indexB !== -1) {
-                return indexA - indexB
+                return indexA - indexB;
               }
               // If only one is in the defined order, prioritize it
-              if (indexA !== -1) return -1
-              if (indexB !== -1) return 1
+              if (indexA !== -1) return -1;
+              if (indexB !== -1) return 1;
               // If neither is in the defined order, sort alphabetically
-              return categoryA.localeCompare(categoryB)
+              return categoryA.localeCompare(categoryB);
             })
             .map(([category, categoryResources]) => (
               <div key={category} className="space-y-4">
@@ -1619,34 +1607,34 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     const status = calculateResourceStatus(
                       resource.quantityHagga + resource.quantityDeepDesert,
                       resource.targetQuantity || null,
-                    )
-                    const statusChange = statusChanges.get(resource.id)
+                    );
+                    const statusChange = statusChanges.get(resource.id);
                     const isOutdated = needsUpdating(
                       resource.updatedAt,
                       !!resource.isPriority,
-                    )
+                    );
 
                     return (
                       <div
                         key={resource.id}
                         className={`border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer group ${
                           isOutdated
-                            ? 'border-amber-300 dark:border-amber-600 ring-1 ring-amber-200 dark:ring-amber-800'
-                            : 'border-gray-200 dark:border-gray-700'
+                            ? "border-amber-300 dark:border-amber-600 ring-1 ring-amber-200 dark:ring-amber-800"
+                            : "border-gray-200 dark:border-gray-700"
                         } ${
                           resource.category === BP_CATEGORY
-                            ? 'bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50'
+                            ? "bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50"
                             : isOutdated
-                            ? 'bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20'
-                            : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+                              ? "bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20"
+                              : "bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
                         }`}
                         onClick={() => handleResourceClick(resource.id)}
                         title={
                           isOutdated
                             ? `⚠️ Not updated in over ${
-                                resource.isPriority ? '24 hours' : '7 days'
+                                resource.isPriority ? "24 hours" : "7 days"
                               } - Click to view details`
-                            : 'Click to view detailed resource information'
+                            : "Click to view detailed resource information"
                         }
                       >
                         {/* Resource Image */}
@@ -1657,16 +1645,17 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               alt={resource.name}
                               className="w-full h-full object-cover rounded-lg"
                               onError={(e) => {
-                                const target = e.target as HTMLImageElement
-                                target.style.display = 'none'
-                                const fallback = target.nextElementSibling as HTMLElement
-                                if (fallback) fallback.style.display = 'flex'
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = "none";
+                                const fallback =
+                                  target.nextElementSibling as HTMLElement;
+                                if (fallback) fallback.style.display = "flex";
                               }}
                             />
                           ) : null}
                           <div
                             className={`w-full h-full rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center ${
-                              resource.imageUrl ? 'hidden' : 'flex'
+                              resource.imageUrl ? "hidden" : "flex"
                             }`}
                           >
                             <span className="text-gray-400 dark:text-gray-500 text-xs">
@@ -1709,7 +1698,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             <span
                               className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
                                 status,
-                              )} ${statusChange ? 'animate-pulse' : ''}`}
+                              )} ${statusChange ? "animate-pulse" : ""}`}
                             >
                               {getStatusText(status)}
                             </span>
@@ -1718,20 +1707,19 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             <span
                               className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                                 resource.multiplier === 0
-                                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                                  ? "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                                   : (resource.multiplier || 1.0) >= 3.0
-                                    ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200'
+                                    ? "bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200"
                                     : (resource.multiplier || 1.0) >= 2.0
-                                      ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200'
+                                      ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200"
                                       : (resource.multiplier || 1.0) >= 1.0
-                                        ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200'
-                                        : 'bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200'
+                                        ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200"
+                                        : "bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200"
                               }`}
                             >
                               {resource.multiplier === 0
-                                ? '0x'
-                                : (resource.multiplier || 1.0).toFixed(1) +
-                                  'x'}
+                                ? "0x"
+                                : (resource.multiplier || 1.0).toFixed(1) + "x"}
                             </span>
                           </div>
 
@@ -1741,7 +1729,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               Hagga: {formatNumber(resource.quantityHagga)}
                             </div>
                             <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                              Deep Desert:{' '}
+                              Deep Desert:{" "}
                               {formatNumber(resource.quantityDeepDesert)}
                             </div>
                             <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -1749,14 +1737,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 ? `Target: ${formatNumber(
                                     resource.targetQuantity,
                                   )}`
-                                : 'No target set'}
+                                : "No target set"}
                             </div>
                           </div>
 
                           {/* Last Updated Info */}
                           <div className="text-center pt-2 border-t border-gray-100 dark:border-gray-700">
                             <div className="text-xs text-gray-500 dark:text-gray-400">
-                              Updated by{' '}
+                              Updated by{" "}
                               <span className="font-medium text-gray-600 dark:text-gray-300">
                                 {resource.lastUpdatedBy}
                               </span>
@@ -1778,8 +1766,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               <div
                                 className={`text-xs cursor-help hover:underline decoration-dotted ${
                                   isOutdated
-                                    ? 'text-amber-600 dark:text-amber-400 font-medium'
-                                    : 'text-gray-400 dark:text-gray-500'
+                                    ? "text-amber-600 dark:text-amber-400 font-medium"
+                                    : "text-gray-400 dark:text-gray-500"
                                 }`}
                                 title={new Date(
                                   resource.updatedAt,
@@ -1797,12 +1785,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               <div className="flex gap-1">
                                 <button
                                   onClick={(e) => {
-                                    e.stopPropagation()
+                                    e.stopPropagation();
                                     setUpdateModalState({
                                       isOpen: true,
                                       resource: resource,
                                       updateType: UPDATE_TYPE.RELATIVE,
-                                    })
+                                    });
                                   }}
                                   className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
@@ -1810,12 +1798,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 </button>
                                 <button
                                   onClick={(e) => {
-                                    e.stopPropagation()
+                                    e.stopPropagation();
                                     setUpdateModalState({
                                       isOpen: true,
                                       resource: resource,
                                       updateType: UPDATE_TYPE.ABSOLUTE,
-                                    })
+                                    });
                                   }}
                                   className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
@@ -1825,11 +1813,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               <div className="flex gap-1">
                                 <button
                                   onClick={(e) => {
-                                    e.stopPropagation()
+                                    e.stopPropagation();
                                     setTransferModalState({
                                       isOpen: true,
                                       resource: resource,
-                                    })
+                                    });
                                   }}
                                   className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
@@ -1838,11 +1826,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 {isTargetAdmin && (
                                   <button
                                     onClick={(e) => {
-                                      e.stopPropagation()
+                                      e.stopPropagation();
                                       setChangeTargetModalState({
                                         isOpen: true,
                                         resource: resource,
-                                      })
+                                      });
                                     }}
                                     className="flex-1 bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
@@ -1856,8 +1844,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 <div className="flex gap-1">
                                   <button
                                     onClick={(e) => {
-                                      e.stopPropagation()
-                                      startEditResource(resource)
+                                      e.stopPropagation();
+                                      startEditResource(resource);
                                     }}
                                     className="flex-1 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
@@ -1865,12 +1853,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                   </button>
                                   <button
                                     onClick={(e) => {
-                                      e.stopPropagation()
+                                      e.stopPropagation();
                                       setDeleteConfirm({
                                         resourceId: resource.id,
                                         resourceName: resource.name,
                                         showDialog: true,
-                                      })
+                                      });
                                     }}
                                     className="flex-1 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
@@ -1882,7 +1870,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           </div>
                         </div>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -1927,34 +1915,34 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   const status = calculateResourceStatus(
                     resource.quantityHagga + resource.quantityDeepDesert,
                     resource.targetQuantity || 0,
-                  )
-                  const statusChange = statusChanges.get(resource.id)
+                  );
+                  const statusChange = statusChanges.get(resource.id);
                   const isOutdated = needsUpdating(
                     resource.updatedAt,
                     !!resource.isPriority,
-                  )
+                  );
 
                   return (
                     <tr
                       key={resource.id}
                       className={`cursor-pointer transition-colors group ${
                         isOutdated
-                          ? 'border-l-4 border-l-amber-400 dark:border-l-amber-500'
-                          : ''
+                          ? "border-l-4 border-l-amber-400 dark:border-l-amber-500"
+                          : ""
                       } ${
                         resource.category === BP_CATEGORY
-                          ? 'bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50'
+                          ? "bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50"
                           : isOutdated
-                          ? 'bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20'
-                          : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                            ? "bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20"
+                            : "hover:bg-gray-50 dark:hover:bg-gray-700"
                       }`}
                       onClick={() => handleResourceClick(resource.id)}
                       title={
                         isOutdated
                           ? `⚠️ Not updated in over ${
-                              resource.isPriority ? '24 hours' : '7 days'
+                              resource.isPriority ? "24 hours" : "7 days"
                             } - Click to view details`
-                          : 'Click to view detailed resource information'
+                          : "Click to view detailed resource information"
                       }
                     >
                       <td className="px-3 py-3">
@@ -1966,17 +1954,17 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 src={resource.imageUrl}
                                 alt={resource.name}
                                 onError={(e) => {
-                                  const target = e.target as HTMLImageElement
-                                  target.style.display = 'none'
-                                  const fallback = target.nextElementSibling as HTMLElement
-                                  if (fallback)
-                                    fallback.style.display = 'flex'
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = "none";
+                                  const fallback =
+                                    target.nextElementSibling as HTMLElement;
+                                  if (fallback) fallback.style.display = "flex";
                                 }}
                               />
                             ) : null}
                             <div
                               className={`h-12 w-12 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center ${
-                                resource.imageUrl ? 'hidden' : 'flex'
+                                resource.imageUrl ? "hidden" : "flex"
                               }`}
                             >
                               <span className="text-gray-400 dark:text-gray-500 text-xs">
@@ -2016,26 +2004,26 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             resource.multiplier === 0
-                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                              ? "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                               : (resource.multiplier || 1.0) >= 3.0
-                                ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200'
+                                ? "bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200"
                                 : (resource.multiplier || 1.0) >= 2.0
-                                  ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200'
+                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200"
                                   : (resource.multiplier || 1.0) >= 1.0
-                                    ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200'
-                                    : 'bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200'
+                                    ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200"
+                                    : "bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200"
                           }`}
                         >
                           {resource.multiplier === 0
-                            ? '0x'
-                            : (resource.multiplier || 1.0).toFixed(1) + 'x'}
+                            ? "0x"
+                            : (resource.multiplier || 1.0).toFixed(1) + "x"}
                         </span>
                       </td>
                       <td className="px-3 py-3 whitespace-nowrap">
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusTableColor(
                             status,
-                          )} ${statusChange ? 'animate-pulse' : ''}`}
+                          )} ${statusChange ? "animate-pulse" : ""}`}
                         >
                           {getStatusText(status)}
                         </span>
@@ -2043,14 +2031,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                         Hagga: {formatNumber(resource.quantityHagga)}
                         <br />
-                        Deep Desert:{' '}
-                        {formatNumber(resource.quantityDeepDesert)}
+                        Deep Desert: {formatNumber(resource.quantityDeepDesert)}
                       </td>
                       {canEdit && (
                         <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                           {resource.targetQuantity
                             ? formatNumber(resource.targetQuantity)
-                            : 'No target set'}
+                            : "No target set"}
                         </td>
                       )}
 
@@ -2084,7 +2071,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 }
                                 className="flex-1 min-w-20 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                               >
-                                  Set Qty
+                                Set Qty
                               </button>
                             </div>
                             <div className="flex gap-1">
@@ -2141,7 +2128,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         </div>
                       </td>
                     </tr>
-                  )
+                  );
                 })}
               </tbody>
             </table>
@@ -2158,7 +2145,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 No resources found matching &quot;{searchTerm}&quot;
               </p>
               <button
-                onClick={() => setSearchTerm('')}
+                onClick={() => setSearchTerm("")}
                 className="mt-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
               >
                 Clear search
@@ -2185,7 +2172,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
             <div className="mb-6">
               <p className="text-gray-700 dark:text-gray-300 mb-2">
-                Are you sure you want to delete{' '}
+                Are you sure you want to delete{" "}
                 <strong>&quot;{deleteConfirm.resourceName}&quot;</strong>?
               </p>
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3">
@@ -2196,7 +2183,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       Warning: This action cannot be undone
                     </p>
                     <p className="text-red-700 dark:text-red-300">
-                      This will permanently delete the resource and{' '}
+                      This will permanently delete the resource and{" "}
                       <strong>all its history data</strong>. All tracking
                       records, changes, and analytics for this resource will be
                       lost forever.
@@ -2211,7 +2198,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 onClick={() =>
                   setDeleteConfirm({
                     resourceId: null,
-                    resourceName: '',
+                    resourceName: "",
                     showDialog: false,
                   })
                 }
@@ -2222,13 +2209,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               <button
                 onClick={() => {
                   if (deleteConfirm.resourceId) {
-                    deleteResource(deleteConfirm.resourceId)
+                    deleteResource(deleteConfirm.resourceId);
                   }
                 }}
                 disabled={saving}
                 className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 disabled:opacity-50 rounded-lg transition-colors"
               >
-                {saving ? 'Deleting...' : 'Delete Resource'}
+                {saving ? "Deleting..." : "Delete Resource"}
               </button>
             </div>
           </div>
@@ -2291,5 +2278,5 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         }
       />
     </div>
-  )
+  );
 }

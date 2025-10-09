@@ -1,28 +1,31 @@
-'use client'
+"use client";
 
-import { signOut } from 'next-auth/react'
+import { signOut } from "next-auth/react";
 
 interface LogoutButtonProps {
-  variant?: 'default' | 'prominent'
-  fullWidth?: boolean
+  variant?: "default" | "prominent";
+  fullWidth?: boolean;
 }
 
-export function LogoutButton({ variant = 'default', fullWidth = false }: LogoutButtonProps) {
+export function LogoutButton({
+  variant = "default",
+  fullWidth = false,
+}: LogoutButtonProps) {
   const handleSignOut = () => {
-    signOut({ callbackUrl: '/' })
-  }
+    signOut({ callbackUrl: "/" });
+  };
 
-  if (variant === 'prominent') {
+  if (variant === "prominent") {
     return (
       <button
         onClick={handleSignOut}
         className={`bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white px-6 py-3 rounded-lg transition-colors font-semibold ${
-          fullWidth ? 'w-full' : ''
+          fullWidth ? "w-full" : ""
         }`}
       >
         Sign Out & Try Different Account
       </button>
-    )
+    );
   }
 
   return (
@@ -32,5 +35,5 @@ export function LogoutButton({ variant = 'default', fullWidth = false }: LogoutB
     >
       Sign Out
     </button>
-  )
-} 
+  );
+}
