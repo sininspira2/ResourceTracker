@@ -19,22 +19,17 @@ const calculateResourceStatus = (quantity: number, targetQuantity: number | null
 }
 
 export async function GET(request: NextRequest) {
-  try {
-    const allResources = await db.select().from(resources)
-    
-    return NextResponse.json(allResources, {
-      headers: {
-        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
-    })
-  } catch (error) {
-    console.error('Error fetching resources:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch resources' },
-      { status: 500 })
+  // The fetch call will be cached by Vercel Data Cache
+  const response = await fetch(new URL('/api/internal/resources', request.url), {
+    next: { revalidate: 60 }, // Cache for 60 seconds
+  });
+
+  if (!response.ok) {
+    return NextResponse.json({ error: 'Failed to fetch resources' }, { status: 500 });
   }
+
+  const data = await response.json();
+  return NextResponse.json(data);
 }
 
 // POST /api/resources - Create new resource (admin only)

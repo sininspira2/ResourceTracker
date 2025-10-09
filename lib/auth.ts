@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { users } from "@/lib/db"
 import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
+import { unstable_cache as cache } from 'next/cache';
 import { hasResourceAccess, hasResourceAdminAccess, hasTargetEditAccess, hasReportAccess, hasUserManagementAccess, hasDataExportAccess } from './discord-roles'
 
 interface UserPermissions {
@@ -15,6 +16,27 @@ interface UserPermissions {
   hasUserManagementAccess: boolean
   hasDataExportAccess: boolean
 }
+
+// Create a new cached function for permissions
+const getCachedUserPermissions = cache(
+  async (userRoles: string[]) => {
+    // This logic will only run if the result is not in the cache
+    return {
+      hasResourceAccess: hasResourceAccess(userRoles),
+      hasResourceAdminAccess: hasResourceAdminAccess(userRoles),
+      hasTargetEditAccess: hasTargetEditAccess(userRoles),
+      hasReportAccess: hasReportAccess(userRoles),
+      hasUserManagementAccess: hasUserManagementAccess(userRoles),
+      hasDataExportAccess: hasDataExportAccess(userRoles)
+    };
+  },
+  ['user-permissions'], // Cache key prefix
+  {
+    revalidate: 3600, // Cache permissions for 1 hour
+    tags: ['permissions'],
+  }
+);
+
 
 // Discord API scopes needed for role checking
 const scopes = ['identify', 'guilds.members.read'].join(' ')
@@ -172,17 +194,9 @@ export const authOptions: NextAuthOptions = {
         // Mark roles as fetched to prevent future API calls (unless explicitly triggered)
         token.rolesFetched = true
         
-        // Compute permissions server-side to avoid client-side environment variable issues
-        const userRoles = (token.userRoles || []) as string[]
-        token.permissions = {
-          hasResourceAccess: hasResourceAccess(userRoles),
-          hasResourceAdminAccess: hasResourceAdminAccess(userRoles),
-          hasTargetEditAccess: hasTargetEditAccess(userRoles),
-          // 🆕 Add new permission computations:
-          hasReportAccess: hasReportAccess(userRoles),
-          hasUserManagementAccess: hasUserManagementAccess(userRoles),
-          hasDataExportAccess: hasDataExportAccess(userRoles)
-        }
+        // Use the new cached function to get permissions
+        const userRoles = (token.userRoles || []) as string[];
+        token.permissions = await getCachedUserPermissions(userRoles);
       }
 
       return token
