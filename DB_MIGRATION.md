@@ -26,7 +26,18 @@ If you have an existing database and a new migration has been added to the proje
 
 1.  Pull the latest changes from the repository.
 2.  Run `npm install` to get any new dependencies.
-3.  Run `npm run db:migrate`. This will apply only the new, unapplied migrations to your database.
+3.  **Run the Baselining Script:**
+    ```bash
+    npm run db:log-init
+    ```
+    This special script will create the `__drizzle_migrations` table (if it doesn't exist) and log the *initial* migration hash. It **does not** run any migrations. This tells Drizzle to assume the first migration is already applied.
+4.  **Run Standard Migration:**
+    ```bash
+    npm run db:migrate
+    ```
+    This will now correctly apply any *subsequent* migrations (like `0001_...`, `0002_...`, etc.) without error.
+    
+6.  Going forward, if there are any database migrations, you will only need to run `npm run db:migrate`.
 
 ---
 
@@ -41,16 +52,6 @@ If you are migrating from a legacy version, your database might have the correct
 To fix this, you must first "baseline" your database:
 
 1.  **Run Manual SQL (If Needed):** If you are coming from a very old version, you may need to run manual SQL commands to update your schema to a point where migrations can take over. The commands for `gazreyn/ResourceTracker` and `v3.x` are listed below. If you are unsure, it is safe to run them; they will not harm an up-to-date schema.
-2.  **Run the Baselining Script:**
-    ```bash
-    npm run db:log-init
-    ```
-    This special script will create the `__drizzle_migrations` table (if it doesn't exist) and log the *initial* migration hash. It **does not** run any migrations. This tells Drizzle to assume the first migration is already applied.
-3.  **Run Standard Migration:**
-    ```bash
-    npm run db:migrate
-    ```
-    This will now correctly apply any *subsequent* migrations (like `0001_...`, `0002_...`, etc.) without error.
 
 #### Manual SQL for `gazreyn/ResourceTracker` Migrators
 
@@ -68,13 +69,24 @@ ALTER TABLE `resource_history` ADD COLUMN `transfer_direction` text;
 ALTER TABLE `resources` ADD COLUMN `quantity_deep_desert` integer DEFAULT 0 NOT NULL;
 DROP TABLE IF EXISTS __drizzle_migrations;
 ```
-
 #### Manual SQL for `v3.x` Upgraders
 
 ```sql
 ALTER TABLE `resources` ADD `is_priority` integer DEFAULT 0 NOT NULL;
 DROP TABLE IF EXISTS __drizzle_migrations;
 ```
+
+2.  **Run the Baselining Script:**
+    ```bash
+    npm run db:log-init
+    ```
+    This special script will create the `__drizzle_migrations` table (if it doesn't exist) and log the *initial* migration hash. It **does not** run any migrations. This tells Drizzle to assume the first migration is already applied.
+3.  **Run Standard Migration:**
+    ```bash
+    npm run db:migrate
+    ```
+    This will now correctly apply any *subsequent* migrations (like `0001_...`, `0002_...`, etc.) without error.
+
 
 ---
 
