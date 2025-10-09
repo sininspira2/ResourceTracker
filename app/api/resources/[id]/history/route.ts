@@ -6,7 +6,7 @@ import { hasResourceAccess } from '@/lib/discord-roles'
 // GET /api/resources/[id]/history?days=7 - Get resource history
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -14,10 +14,11 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const { id: resourceId } = await params;
   const { searchParams } = new URL(request.url)
   const days = searchParams.get('days') || '7'
 
-  const internalUrl = new URL(`/api/internal/resources/${params.id}/history`, request.url)
+  const internalUrl = new URL(`/api/internal/resources/${resourceId}/history`, request.url)
   internalUrl.searchParams.set('days', days)
 
   const response = await fetch(internalUrl, {

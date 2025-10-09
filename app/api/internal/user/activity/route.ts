@@ -17,14 +17,20 @@ export async function GET(request: NextRequest) {
     const daysAgo = new Date()
     daysAgo.setDate(daysAgo.getDate() - days)
 
-    const whereClause = isGlobal
+    const whereClauses = [];
+    if (userId) {
+      whereClauses.push(eq(resourceHistory.updatedBy, userId));
+    }
+    if (oldUserIds.length > 0) {
+      whereClauses.push(...oldUserIds.map(id => eq(resourceHistory.updatedBy, id as string)));
+    }
+
+    const userFilter = whereClauses.length > 0 ? or(...whereClauses) : undefined;
+
+    const finalWhereClause = isGlobal
       ? gte(resourceHistory.createdAt, daysAgo)
       : and(
-          // Check current nickname AND old identifiers for backward compatibility
-          or(
-            userId ? eq(resourceHistory.updatedBy, userId) : undefined,
-            ...oldUserIds.map(id => eq(resourceHistory.updatedBy, id as string))
-          ),
+          userFilter,
           gte(resourceHistory.createdAt, daysAgo)
         );
 
@@ -50,7 +56,7 @@ export async function GET(request: NextRequest) {
       })
       .from(resourceHistory)
       .innerJoin(resources, eq(resourceHistory.resourceId, resources.id))
-      .where(whereClause)
+      .where(finalWhereClause)
       .orderBy(desc(resourceHistory.createdAt))
       .limit(limit)
 
