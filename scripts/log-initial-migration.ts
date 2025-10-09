@@ -14,14 +14,31 @@ const JOURNAL_FILE = path.join(process.cwd(), 'drizzle', 'meta', '_journal.json'
 /**
  * This script is for a specific legacy use case: baselining a database that
  * already has the initial schema but is missing the __drizzle_migrations table.
- * It reads the Drizzle journal to get the correct timestamp, calculates the
- * hash, and inserts a record that is identical to one Drizzle Kit would create.
+ * It is self-healing: it will detect and drop a legacy, misconfigured migrations
+ * table before creating the correct one and logging the initial migration entry
+ * in a way that is fully compatible with Drizzle Kit.
  */
 async function logInitialMigration() {
   console.log(`\n⏳ Baselining database for legacy users...`)
 
   try {
-    // 1. Read the Drizzle journal file to get the correct metadata
+    // 1. Self-healing: Check for and drop a misconfigured migrations table
+    console.log(`🔎 Checking for existing '__drizzle_migrations' table...`)
+    const tableInfo = await db.get<{ sql: string | null }>(
+      sql`SELECT sql FROM sqlite_master WHERE type='table' AND name='__drizzle_migrations'`
+    )
+
+    if (tableInfo && tableInfo.sql && tableInfo.sql.includes('INTEGER')) {
+      console.warn('⚠️ Found migrations table with incorrect legacy schema. Dropping it...')
+      await db.run(sql`DROP TABLE __drizzle_migrations;`)
+      console.log('✅ Dropped incorrect table.')
+    } else if (tableInfo) {
+      console.log('✅ Existing migrations table schema is correct.')
+    } else {
+      console.log('✅ Migrations table does not exist yet.')
+    }
+
+    // 2. Read the Drizzle journal file to get the correct metadata
     if (!fs.existsSync(JOURNAL_FILE)) {
       console.error(`❌ Drizzle journal file not found at ${JOURNAL_FILE}`)
       process.exit(1)
@@ -40,7 +57,7 @@ async function logInitialMigration() {
     console.log(`🔍 Found initial migration entry: ${initialMigrationTag}`)
     console.log(`✅ Using timestamp from journal: ${initialMigrationTimestamp}`)
 
-    // 2. Calculate its hash from the file content
+    // 3. Calculate its hash from the file content
     const filePath = path.join(MIGRATIONS_DIR, initialMigrationFile)
     if (!fs.existsSync(filePath)) {
       console.error(`❌ Migration file not found: ${filePath}`)
@@ -51,7 +68,7 @@ async function logInitialMigration() {
     const initialMigrationHash = crypto.createHash('sha256').update(normalizedContent).digest('hex')
     console.log(`✅ Calculated normalized hash: ${initialMigrationHash}`)
 
-    // 3. Create migration log table with the correct schema
+    // 4. Create migration log table with the correct schema
     await db.run(
       sql.raw(
         `CREATE TABLE IF NOT EXISTS __drizzle_migrations (
@@ -63,7 +80,7 @@ async function logInitialMigration() {
     )
     console.log(`✅ Migration log table exists or was created.`)
 
-    // 4. Check if the entry already exists
+    // 5. Check if the entry already exists
     const existingEntries = await db.all<{ hash: string }>(
       sql`SELECT hash FROM __drizzle_migrations WHERE hash = ${initialMigrationHash}`
     )
@@ -71,7 +88,7 @@ async function logInitialMigration() {
     if (existingEntries.length > 0) {
       console.log(`✅ Initial migration hash already logged. No action needed.`)
     } else {
-      // 5. If not, insert it using the timestamp from the journal
+      // 6. If not, insert it using the timestamp from the journal
       await db.run(sql`
         INSERT INTO __drizzle_migrations (hash, created_at)
         VALUES (${initialMigrationHash}, ${initialMigrationTimestamp});
