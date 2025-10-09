@@ -1,2 +1,16 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Set default behavior to normalize all text files to LF (Unix) line endings.
+# This prevents inconsistencies between Windows and Unix-like systems.
+* text=auto eol=lf
+
+# The following files are binary and should not be modified.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.eot binary
+*.otf binary
+*.ttf binary
+*.woff binary
+*.woff2 binary

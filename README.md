@@ -153,10 +153,10 @@ Before you start, make sure you have the following installed:
     TURSO_DATABASE_URL=your_turso_database_url
     TURSO_AUTH_TOKEN=your_turso_auth_token
     ```
-3.  **Push the schema**: This command will create the necessary tables in your Turso database.
+3.  **Run the Database Migration**: This command creates and sets up the database schema.
     ```bash
-    npm run db:push
-    npm run db:log-init
+    # Applies all existing migrations to create the schema and logs them.
+    npm run db:migrate
     ```
 
 ### Step 8: Populate with Sample Data (Optional)
@@ -221,8 +221,8 @@ For contributing or making customizations, follow these steps to run the project
 
 3.  **Set up the database**:
     ```bash
-    npm run db:push
-    npm run db:log-init
+    # Applies all existing migrations to create the schema and logs them.
+    npm run db:migrate
     ```
 4.  **Start the development server**:
     ```bash

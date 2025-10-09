@@ -28,6 +28,8 @@ export const resources = sqliteTable('resources', {
   quantityDeepDesert: integer('quantity_deep_desert').notNull().default(0),
   description: text('description'),
   category: text('category'),
+  subcategory: text('subcategory'),
+  tier: integer('tier'),
   icon: text('icon'), // Emoji or icon identifier like '🪵', '🪨', or ':CustomEmoji:'
   imageUrl: text('image_url'), // URL to resource image
   status: text('status'), // 'at_target', 'below_target', 'critical'
@@ -72,7 +74,15 @@ export const leaderboard = sqliteTable('leaderboard', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 })
 
-const schema = { users, userSessions, resources, resourceHistory, leaderboard };
+export const globalSettings = sqliteTable('global_settings', {
+  settingKey: text('setting_key').primaryKey(),
+  settingValue: text('setting_value'),
+  description: text('description'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  lastUpdatedAt: integer('last_updated_at', { mode: 'timestamp' }).notNull(),
+})
+
+const schema = { users, userSessions, resources, resourceHistory, leaderboard, globalSettings };
 
 // --- LAZY INITIALIZATION OF DATABASE ---
 let _db: LibSQLDatabase<typeof schema> | null = null;

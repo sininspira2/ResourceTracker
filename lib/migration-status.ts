@@ -1,19 +1,18 @@
 import { unstable_noStore as noStore } from 'next/cache'
 import { db } from './db'
 import { sql } from 'drizzle-orm'
-import { LATEST_MIGRATION_TAG } from './constants'
+import { MIGRATION_HASHES } from './migration-hashes'
 
 type MigrationStatus = 'up-to-date' | 'out-of-date' | 'no-table' | 'error'
 
 interface MigrationStatusResult {
   status: MigrationStatus
-  latestMigrationTag?: string | null
+  latestExpectedHash?: string | null
 }
 
 // Helper function to check if a table exists
 async function tableExists(tableName: string): Promise<boolean> {
   try {
-    // This is a more universal way to check for table existence in SQLite
     const result = await db.get(
       sql`SELECT name FROM sqlite_master WHERE type='table' AND name=${tableName}`
     )
@@ -34,16 +33,25 @@ export async function getMigrationStatus(): Promise<MigrationStatusResult> {
     }
 
     // Get the latest migration hash from the database
-    const latestMigrationResult = await db.get<{ hash: string; created_at: number }>(
-      sql`SELECT hash, created_at FROM __drizzle_migrations ORDER BY created_at DESC LIMIT 1`
+    const latestMigrationResult = await db.get<{ hash: string }>(
+      sql`SELECT hash FROM __drizzle_migrations ORDER BY id DESC, created_at DESC LIMIT 1`
     )
     const dbHash = latestMigrationResult?.hash ?? null
 
-    // Compare the database hash with the constant
-    if (dbHash === LATEST_MIGRATION_TAG) {
+    // Get the latest hash from our generated file
+    const latestExpectedHash =
+      MIGRATION_HASHES.length > 0 ? MIGRATION_HASHES[MIGRATION_HASHES.length - 1] : null
+
+    // If there are no expected hashes and no db hash, we are up to date.
+    if (!latestExpectedHash && !dbHash) {
+      return { status: 'up-to-date' }
+    }
+
+    // Compare the database hash with the latest hash from our file
+    if (dbHash === latestExpectedHash) {
       return { status: 'up-to-date' }
     } else {
-      return { status: 'out-of-date', latestMigrationTag: LATEST_MIGRATION_TAG }
+      return { status: 'out-of-date', latestExpectedHash: latestExpectedHash }
     }
   } catch (error) {
     console.error('Error checking migration status:', error)

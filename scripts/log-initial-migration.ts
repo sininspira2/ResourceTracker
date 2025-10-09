@@ -1,54 +1,107 @@
 import { db } from '../lib/db'
 import { sql } from 'drizzle-orm'
 import * as dotenv from 'dotenv'
+import fs from 'fs'
+import path from 'path'
+import crypto from 'crypto'
 
 // Load .env.local variables explicitly
 dotenv.config({ path: '.env.local' })
 
-// --- Values from your journal.json ---
-// The local journal uses idx: 0 for the first migration.
-const IDX = 0 
-const HASH = '0000_little_blockbuster'
-const TIMESTAMP = 1759160886625
+const MIGRATIONS_DIR = path.join(process.cwd(), 'drizzle')
+const JOURNAL_FILE = path.join(process.cwd(), 'drizzle', 'meta', '_journal.json')
 
+/**
+ * This script is for a specific legacy use case: baselining a database that
+ * already has the initial schema but is missing the __drizzle_migrations table.
+ * It is self-healing: it will detect and drop a legacy, misconfigured migrations
+ * table before creating the correct one and logging the initial migration entry
+ * in a way that is fully compatible with Drizzle Kit.
+ */
 async function logInitialMigration() {
-  console.log(`\n⏳ Ensuring migration log table exists and logging initial migration (${HASH})...`)
+  console.log(`\n⏳ Baselining database for legacy users...`)
 
   try {
-    // 1. CREATE MIGRATION LOG TABLE (IF NOT EXISTS)
-    // We explicitly use INTEGER PRIMARY KEY which is necessary for SQLite's sequencing.
-    await db.run(sql.raw(`
-      CREATE TABLE IF NOT EXISTS __drizzle_migrations (
-        id INTEGER PRIMARY KEY,
-        hash TEXT NOT NULL,
-        created_at INTEGER NOT NULL
-      );
-    `))
+    // 1. Self-healing: Check for and drop a misconfigured migrations table
+    console.log(`🔎 Checking for existing '__drizzle_migrations' table...`)
+    const tableInfo = await db.get<{ sql: string | null }>(
+      sql`SELECT sql FROM sqlite_master WHERE type='table' AND name='__drizzle_migrations'`
+    )
+
+    if (tableInfo && tableInfo.sql && tableInfo.sql.includes('INTEGER')) {
+      console.warn('⚠️ Found migrations table with incorrect legacy schema. Dropping it...')
+      await db.run(sql`DROP TABLE __drizzle_migrations;`)
+      console.log('✅ Dropped incorrect table.')
+    } else if (tableInfo) {
+      console.log('✅ Existing migrations table schema is correct.')
+    } else {
+      console.log('✅ Migrations table does not exist yet.')
+    }
+
+    // 2. Read the Drizzle journal file to get the correct metadata
+    if (!fs.existsSync(JOURNAL_FILE)) {
+      console.error(`❌ Drizzle journal file not found at ${JOURNAL_FILE}`)
+      process.exit(1)
+    }
+    const journal = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'))
+    const initialMigrationEntry = journal.entries.find((e: any) => e.idx === 0)
+
+    if (!initialMigrationEntry) {
+      console.error('❌ Could not find the initial migration (idx: 0) in the journal file.')
+      process.exit(1)
+    }
+
+    const initialMigrationTag = initialMigrationEntry.tag
+    const initialMigrationTimestamp = initialMigrationEntry.when
+    const initialMigrationFile = `${initialMigrationTag}.sql`
+    console.log(`🔍 Found initial migration entry: ${initialMigrationTag}`)
+    console.log(`✅ Using timestamp from journal: ${initialMigrationTimestamp}`)
+
+    // 3. Calculate its hash from the file content
+    const filePath = path.join(MIGRATIONS_DIR, initialMigrationFile)
+    if (!fs.existsSync(filePath)) {
+      console.error(`❌ Migration file not found: ${filePath}`)
+      process.exit(1)
+    }
+    const fileContent = fs.readFileSync(filePath, 'utf-8')
+    const normalizedContent = fileContent.replace(/\r\n/g, '\n')
+    const initialMigrationHash = crypto.createHash('sha256').update(normalizedContent).digest('hex')
+    console.log(`✅ Calculated normalized hash: ${initialMigrationHash}`)
+
+    // 4. Create migration log table with the correct schema
+    await db.run(
+      sql.raw(
+        `CREATE TABLE IF NOT EXISTS __drizzle_migrations (
+          id NUMERIC PRIMARY KEY,
+          hash TEXT NOT NULL,
+          created_at NUMERIC
+        );`
+      )
+    )
     console.log(`✅ Migration log table exists or was created.`)
 
+    // 5. Check if the entry already exists
+    const existingEntries = await db.all<{ hash: string }>(
+      sql`SELECT hash FROM __drizzle_migrations WHERE hash = ${initialMigrationHash}`
+    )
 
-    // 2. LOG INITIAL MIGRATION ENTRY (IF NOT EXISTS)
-    // We explicitly set the ID to IDX (0) to match the local journal index.
-    const insertResult = await db.run(sql.raw(`
-      INSERT INTO __drizzle_migrations (id, hash, created_at)
-      SELECT ${IDX}, '${HASH}', ${TIMESTAMP}
-      WHERE NOT EXISTS (
-          SELECT 1 FROM __drizzle_migrations WHERE hash = '${HASH}'
-      );
-    `))
-    
-    // Check if any rows were inserted (SQLite affectedRows check)
-    if (insertResult.rowsAffected && insertResult.rowsAffected > 0) {
-      console.log(`✅ Successfully logged initial migration to __drizzle_migrations with ID ${IDX}.`)
+    if (existingEntries.length > 0) {
+      console.log(`✅ Initial migration hash already logged. No action needed.`)
     } else {
-      console.log(`✅ Migration entry for ${HASH} already existed. Skipping insertion.`)
+      // 6. If not, insert it using the timestamp from the journal
+      await db.run(sql`
+        INSERT INTO __drizzle_migrations (hash, created_at)
+        VALUES (${initialMigrationHash}, ${initialMigrationTimestamp});
+      `)
+      console.log(`✅ Successfully logged initial migration hash.`)
     }
-    
-    console.log(`   Future 'drizzle-kit migrate' commands will now run correctly.`)
 
+    console.log(
+      `   Database is now correctly baselined. You can now run 'npm run db:migrate' for future updates.`
+    )
   } catch (error) {
-    console.error("❌ A fatal database error occurred while logging the initial migration.")
-    console.error("   Ensure your database credentials are correct and the database is reachable.")
+    console.error('❌ A fatal error occurred while logging the initial migration.', error)
+    console.error('   Ensure your database credentials are correct and the database is reachable.')
     process.exit(1)
   }
   process.exit(0)
