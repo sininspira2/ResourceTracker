@@ -9,38 +9,49 @@ import crypto from 'crypto'
 dotenv.config({ path: '.env.local' })
 
 const MIGRATIONS_DIR = path.join(process.cwd(), 'drizzle')
+const JOURNAL_FILE = path.join(process.cwd(), 'drizzle', 'meta', '_journal.json')
 
 /**
  * This script is for a specific legacy use case: baselining a database that
  * already has the initial schema but is missing the __drizzle_migrations table.
- * It finds the first migration file, calculates its hash, and logs it to the
- * database using the exact schema and insertion method that Drizzle Kit uses.
+ * It reads the Drizzle journal to get the correct timestamp, calculates the
+ * hash, and inserts a record that is identical to one Drizzle Kit would create.
  */
 async function logInitialMigration() {
   console.log(`\n⏳ Baselining database for legacy users...`)
 
   try {
-    // 1. Find the initial migration file
-    const migrationFiles = fs
-      .readdirSync(MIGRATIONS_DIR)
-      .filter((file) => file.endsWith('.sql'))
-      .sort()
-
-    if (migrationFiles.length === 0) {
-      console.error('❌ No migration files found in the drizzle directory.')
+    // 1. Read the Drizzle journal file to get the correct metadata
+    if (!fs.existsSync(JOURNAL_FILE)) {
+      console.error(`❌ Drizzle journal file not found at ${JOURNAL_FILE}`)
       process.exit(1)
     }
-    const initialMigrationFile = migrationFiles[0]
-    console.log(`🔍 Found initial migration file: ${initialMigrationFile}`)
+    const journal = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'))
+    const initialMigrationEntry = journal.entries.find((e: any) => e.idx === 0)
 
-    // 2. Calculate its hash from the file content, normalizing line endings
+    if (!initialMigrationEntry) {
+      console.error('❌ Could not find the initial migration (idx: 0) in the journal file.')
+      process.exit(1)
+    }
+
+    const initialMigrationTag = initialMigrationEntry.tag
+    const initialMigrationTimestamp = initialMigrationEntry.when
+    const initialMigrationFile = `${initialMigrationTag}.sql`
+    console.log(`🔍 Found initial migration entry: ${initialMigrationTag}`)
+    console.log(`✅ Using timestamp from journal: ${initialMigrationTimestamp}`)
+
+    // 2. Calculate its hash from the file content
     const filePath = path.join(MIGRATIONS_DIR, initialMigrationFile)
+    if (!fs.existsSync(filePath)) {
+      console.error(`❌ Migration file not found: ${filePath}`)
+      process.exit(1)
+    }
     const fileContent = fs.readFileSync(filePath, 'utf-8')
     const normalizedContent = fileContent.replace(/\r\n/g, '\n')
     const initialMigrationHash = crypto.createHash('sha256').update(normalizedContent).digest('hex')
     console.log(`✅ Calculated normalized hash: ${initialMigrationHash}`)
 
-    // 3. Create migration log table with the correct schema used by Drizzle
+    // 3. Create migration log table with the correct schema
     await db.run(
       sql.raw(
         `CREATE TABLE IF NOT EXISTS __drizzle_migrations (
@@ -52,20 +63,20 @@ async function logInitialMigration() {
     )
     console.log(`✅ Migration log table exists or was created.`)
 
-    // 4. Log the dynamically calculated hash, letting the DB handle the ID
-    const timestamp = Date.now()
-    const result = await db.run(sql`
-      INSERT INTO __drizzle_migrations (hash, created_at)
-      SELECT ${initialMigrationHash}, ${timestamp}
-      WHERE NOT EXISTS (
-          SELECT 1 FROM __drizzle_migrations WHERE hash = ${initialMigrationHash}
-      );
-    `)
+    // 4. Check if the entry already exists
+    const existingEntries = await db.all<{ hash: string }>(
+      sql`SELECT hash FROM __drizzle_migrations WHERE hash = ${initialMigrationHash}`
+    )
 
-    if (result.rowsAffected > 0) {
-      console.log(`✅ Successfully logged initial migration hash.`)
-    } else {
+    if (existingEntries.length > 0) {
       console.log(`✅ Initial migration hash already logged. No action needed.`)
+    } else {
+      // 5. If not, insert it using the timestamp from the journal
+      await db.run(sql`
+        INSERT INTO __drizzle_migrations (hash, created_at)
+        VALUES (${initialMigrationHash}, ${initialMigrationTimestamp});
+      `)
+      console.log(`✅ Successfully logged initial migration hash.`)
     }
 
     console.log(

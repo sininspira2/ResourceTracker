@@ -13,6 +13,8 @@
     "db:push": "drizzle-kit push",
     "db:log-init": "tsx --env-file .env.local scripts/log-initial-migration.ts",
     "db:migrate": "drizzle-kit migrate",
+    "db:check": "tsx --env-file .env.local scripts/check-migrations.ts",
+    "db:check:drop": "tsx --env-file .env.local scripts/check-migrations.ts --drop",
     "update-version": "node scripts/update-version.js",
     "populate-resources": "tsx --env-file .env.local scripts/populate-resources.ts",
     "populate-resources-dune": "tsx --env-file .env.local scripts/populate-resources-dune.ts",
