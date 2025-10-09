@@ -36,8 +36,7 @@ If you have an existing database and a new migration has been added to the proje
     npm run db:migrate
     ```
     This will now correctly apply any *subsequent* migrations (like `0001_...`, `0002_...`, etc.) without error.
-    
-6.  Going forward, if there are any database migrations, you will only need to run `npm run db:migrate`.
+5.  Going forward, if there are any database migrations, you will only need to run `npm run db:migrate`.
 
 ---
 
@@ -87,6 +86,10 @@ DROP TABLE IF EXISTS __drizzle_migrations;
     ```
     This will now correctly apply any *subsequent* migrations (like `0001_...`, `0002_...`, etc.) without error.
 
+```sql
+ALTER TABLE `resources` ADD `is_priority` integer DEFAULT 0 NOT NULL;
+DROP TABLE IF EXISTS __drizzle_migrations;
+```
 
 ---
 
