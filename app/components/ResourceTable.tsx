@@ -395,12 +395,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     try {
       setActivityLoading(true)
       const response = await fetch(
-        `${USER_ACTIVITY_API_PATH}?global=true&limit=50`,
-        {
-          headers: {
-            'Cache-Control': 'no-cache',
-          },
-        },
+        `${USER_ACTIVITY_API_PATH}?global=true&limit=50`
       )
       if (response.ok) {
         const activity = await response.json()
@@ -493,13 +488,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const fetchResources = useCallback(async () => {
     try {
       setLoading(true)
-      const timestamp = Date.now()
-      const response = await fetch(`${RESOURCES_API_PATH}?t=${timestamp}`, {
-        cache: 'no-store',
-        headers: {
-          'Cache-Control': 'no-cache',
-        },
-      })
+      const response = await fetch(RESOURCES_API_PATH)
 
       if (response.ok) {
         const data = await response.json()
@@ -795,12 +784,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     try {
       setLeaderboardLoading(true)
       const response = await fetch(
-        `${LEADERBOARD_API_PATH}?timeFilter=${leaderboardTimeFilter}&limit=10`,
-        {
-          headers: {
-            'Cache-Control': 'no-cache',
-          },
-        },
+        `${LEADERBOARD_API_PATH}?timeFilter=${leaderboardTimeFilter}&limit=10`
       )
       if (response.ok) {
         const data = await response.json()
