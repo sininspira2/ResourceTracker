@@ -1,63 +1,65 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 interface User {
-  id: string
-  username: string
-  customNickname: string
-  createdAt: string
-  lastLogin: string
+  id: string;
+  username: string;
+  customNickname: string;
+  createdAt: string;
+  lastLogin: string;
 }
 
 export function UserTable() {
-  const { data: session } = useSession()
-  const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: session } = useSession();
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        setLoading(true)
-        const response = await fetch('/api/users')
+        setLoading(true);
+        const response = await fetch("/api/users");
         if (response.ok) {
-          const data = await response.json()
-          setUsers(data)
+          const data = await response.json();
+          setUsers(data);
         }
       } catch (error) {
-        console.error('Error fetching users:', error)
+        console.error("Error fetching users:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchUsers()
-  }, [])
+    fetchUsers();
+  }, []);
 
   const handleExport = async (userId: string) => {
     try {
-      const response = await fetch(`/api/users/${userId}/data-export`)
+      const response = await fetch(`/api/users/${userId}/data-export`);
       if (response.ok) {
-        const blob = await response.blob()
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        const disposition = response.headers.get('content-disposition');
-        const filenameMatch = disposition && disposition.match(/filename="(.+)"/);
-        a.download = filenameMatch ? filenameMatch[1] : `resource-tracker-data-${userId}-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a)
-        a.click()
-        a.remove()
-        window.URL.revokeObjectURL(url) 
-      } 
-      else {
-        console.error('Error exporting user data:', await response.json())
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const disposition = response.headers.get("content-disposition");
+        const filenameMatch =
+          disposition && disposition.match(/filename="(.+)"/);
+        a.download = filenameMatch
+          ? filenameMatch[1]
+          : `resource-tracker-data-${userId}-${new Date().toISOString().split("T")[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error("Error exporting user data:", await response.json());
       }
     } catch (error) {
-      console.error('Error exporting user data:', error)
+      console.error("Error exporting user data:", error);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -67,7 +69,7 @@ export function UserTable() {
           Loading users...
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -126,5 +128,5 @@ export function UserTable() {
         </table>
       </div>
     </div>
-  )
+  );
 }

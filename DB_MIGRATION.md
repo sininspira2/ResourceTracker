@@ -30,12 +30,12 @@ If you have an existing database and a new migration has been added to the proje
     ```bash
     npm run db:log-init
     ```
-    This special script will create the `__drizzle_migrations` table (if it doesn't exist) and log the *initial* migration hash. It **does not** run any migrations. This tells Drizzle to assume the first migration is already applied.
+    This special script will create the `__drizzle_migrations` table (if it doesn't exist) and log the _initial_ migration hash. It **does not** run any migrations. This tells Drizzle to assume the first migration is already applied.
 4.  **Run Standard Migration:**
     ```bash
     npm run db:migrate
     ```
-    This will now correctly apply any *subsequent* migrations (like `0001_...`, `0002_...`, etc.) without error.
+    This will now correctly apply any _subsequent_ migrations (like `0001_...`, `0002_...`, etc.) without error.
 5.  Going forward, if there are any database migrations, you will only need to run `npm run db:migrate`.
 
 ---
@@ -68,6 +68,7 @@ ALTER TABLE `resource_history` ADD COLUMN `transfer_direction` text;
 ALTER TABLE `resources` ADD COLUMN `quantity_deep_desert` integer DEFAULT 0 NOT NULL;
 DROP TABLE IF EXISTS __drizzle_migrations;
 ```
+
 #### Manual SQL for `v3.x` Upgraders
 
 ```sql
@@ -79,12 +80,12 @@ DROP TABLE IF EXISTS __drizzle_migrations;
     ```bash
     npm run db:log-init
     ```
-    This special script will create the `__drizzle_migrations` table (if it doesn't exist) and log the *initial* migration hash. It **does not** run any migrations. This tells Drizzle to assume the first migration is already applied.
+    This special script will create the `__drizzle_migrations` table (if it doesn't exist) and log the _initial_ migration hash. It **does not** run any migrations. This tells Drizzle to assume the first migration is already applied.
 3.  **Run Standard Migration:**
     ```bash
     npm run db:migrate
     ```
-    This will now correctly apply any *subsequent* migrations (like `0001_...`, `0002_...`, etc.) without error.
+    This will now correctly apply any _subsequent_ migrations (like `0001_...`, `0002_...`, etc.) without error.
 
 ```sql
 ALTER TABLE `resources` ADD `is_priority` integer DEFAULT 0 NOT NULL;
@@ -95,8 +96,9 @@ DROP TABLE IF EXISTS __drizzle_migrations;
 
 ### How the New Migration System Works (For Developers)
 
--   The application no longer uses migration tags. Instead, it uses SHA256 hashes of the `.sql` migration files.
--   When you run `npm run build` or `npm run db:generate`, a script automatically generates `lib/migration-hashes.ts`. This file contains an array of all migration hashes.
--   At runtime, the application compares the latest hash from the database with the latest hash in that file to determine if the database is up-to-date.
--   There are no manual steps required after generating a migration.
+- The application no longer uses migration tags. Instead, it uses SHA256 hashes of the `.sql` migration files.
+- When you run `npm run build` or `npm run db:generate`, a script automatically generates `lib/migration-hashes.ts`. This file contains an array of all migration hashes.
+- At runtime, the application compares the latest hash from the database with the latest hash in that file to determine if the database is up-to-date.
+- There are no manual steps required after generating a migration.
+
 ---

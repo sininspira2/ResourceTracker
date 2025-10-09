@@ -13,22 +13,24 @@ name: OSV-Scanner
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   merge_group:
-    branches: [ "main" ]
+    branches: ["main"]
   schedule:
-    - cron: '26 17 * * 3'
+    - cron: "26 17 * * 3"
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
-      # required for all workflows
-  security-events: write
+  # required for all workflows
+  security-events:
+    write
 
-      # required to fetch internal or private CodeQL packs
-  packages: read
+    # required to fetch internal or private CodeQL packs
+  packages:
+    read
 
-      # only required for workflows in private repositories
+    # only required for workflows in private repositories
   actions: read
   contents: read
 
@@ -45,4 +47,3 @@ jobs:
     with:
       # Set to false to prevent the workflow from failing on vulnerabilities
       fail-on-vuln: false
-

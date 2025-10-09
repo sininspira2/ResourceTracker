@@ -7,8 +7,9 @@ This document provides a comprehensive reference for all API endpoints in the Re
 All protected endpoints require Discord OAuth authentication via NextAuth.js. An API request is authorized if the user's Discord roles grant them the necessary permissions as defined in the system's role configuration.
 
 ### Authorization
--   **Method**: Bearer Token Authentication
--   **Header**: `Authorization: Bearer {session_token}`
+
+- **Method**: Bearer Token Authentication
+- **Header**: `Authorization: Bearer {session_token}`
 
 ---
 
@@ -17,10 +18,13 @@ All protected endpoints require Discord OAuth authentication via NextAuth.js. An
 Endpoints for managing resources.
 
 ### GET `/api/resources`
+
 Retrieves a list of all resources, including their current quantities, status, and metadata.
--   **Permissions**: Contributor
+
+- **Permissions**: Contributor
 
 **Response `200 OK`**
+
 ```json
 [
   {
@@ -43,10 +47,13 @@ Retrieves a list of all resources, including their current quantities, status, a
 ```
 
 ### POST `/api/resources`
+
 Creates a new resource.
--   **Permissions**: Administrator
+
+- **Permissions**: Administrator
 
 **Request Body**
+
 ```json
 {
   "name": "New Resource",
@@ -58,10 +65,13 @@ Creates a new resource.
 ```
 
 ### PUT `/api/resources`
+
 Updates the metadata of an existing resource (e.g., name, category).
--   **Permissions**: Administrator
+
+- **Permissions**: Administrator
 
 **Request Body**
+
 ```json
 {
   "id": "resource_id_to_update",
@@ -71,16 +81,21 @@ Updates the metadata of an existing resource (e.g., name, category).
 ```
 
 ### DELETE `/api/resources/[id]`
+
 Deletes a resource and all its associated history.
--   **Permissions**: Administrator
--   **Parameters**: `id` (string) - The ID of the resource to delete.
+
+- **Permissions**: Administrator
+- **Parameters**: `id` (string) - The ID of the resource to delete.
 
 ### PUT `/api/resources/[id]`
+
 Updates the quantity of a resource at a specific location.
--   **Permissions**: Contributor
--   **Parameters**: `id` (string) - The ID of the resource to update.
+
+- **Permissions**: Contributor
+- **Parameters**: `id` (string) - The ID of the resource to update.
 
 **Request Body**
+
 ```json
 {
   "quantity": 1500,
@@ -91,11 +106,14 @@ Updates the quantity of a resource at a specific location.
 ```
 
 ### PUT `/api/resources/[id]/transfer`
+
 Transfers a resource quantity between the two locations.
--   **Permissions**: Contributor
--   **Parameters**: `id` (string) - The ID of the resource to transfer.
+
+- **Permissions**: Contributor
+- **Parameters**: `id` (string) - The ID of the resource to transfer.
 
 **Request Body**
+
 ```json
 {
   "transferAmount": 100,
@@ -104,11 +122,14 @@ Transfers a resource quantity between the two locations.
 ```
 
 ### PUT `/api/resources/[id]/target`
+
 Updates the target quantity for a resource.
--   **Permissions**: Logistics Manager
--   **Parameters**: `id` (string) - The ID of the resource.
+
+- **Permissions**: Logistics Manager
+- **Parameters**: `id` (string) - The ID of the resource.
 
 **Request Body**
+
 ```json
 {
   "targetQuantity": 2000
@@ -120,12 +141,15 @@ Updates the target quantity for a resource.
 ## Resource History API
 
 ### GET `/api/resources/[id]/history`
+
 Retrieves the change history for a specific resource.
--   **Permissions**: Contributor
--   **Parameters**: `id` (string) - The ID of the resource.
--   **Query Parameters**: `days` (number, optional) - Number of days to look back (default: 7).
+
+- **Permissions**: Contributor
+- **Parameters**: `id` (string) - The ID of the resource.
+- **Query Parameters**: `days` (number, optional) - Number of days to look back (default: 7).
 
 **Response `200 OK`**
+
 ```json
 [
   {
@@ -146,56 +170,70 @@ Retrieves the change history for a specific resource.
 ```
 
 ### DELETE `/api/resources/[id]/history/[entryId]`
+
 Deletes a specific history entry.
--   **Permissions**: Administrator
--   **Parameters**:
-    -   `id` (string) - The ID of the resource.
-    -   `entryId` (string) - The ID of the history entry to delete.
+
+- **Permissions**: Administrator
+- **Parameters**:
+  - `id` (string) - The ID of the resource.
+  - `entryId` (string) - The ID of the history entry to delete.
 
 ---
 
 ## Users API
 
 ### GET `/api/users`
+
 Retrieves a list of all users in the system.
--   **Permissions**: Administrator
+
+- **Permissions**: Administrator
 
 ### GET `/api/user/activity`
+
 Retrieves the activity history for the currently authenticated user or globally if specified.
--   **Permissions**: Contributor
--   **Query Parameters**:
-    -   `days` (number, optional): Number of days to look back (default: 30).
-    -   `global` (boolean, optional): If true, shows activity for all users (requires Administrator permissions).
-    -   `limit` (number, optional): Maximum number of entries (default: 500).
+
+- **Permissions**: Contributor
+- **Query Parameters**:
+  - `days` (number, optional): Number of days to look back (default: 30).
+  - `global` (boolean, optional): If true, shows activity for all users (requires Administrator permissions).
+  - `limit` (number, optional): Maximum number of entries (default: 500).
 
 ---
 
 ## Leaderboard API
 
 ### GET `/api/leaderboard`
+
 Retrieves leaderboard rankings.
--   **Permissions**: Contributor
--   **Query Parameters**:
-    -   `timeFilter` (string): "all", "month", "week", "day" (default: "all").
-    -   `limit` (number): Maximum entries to return (default: 50).
-    -   `offset` (number): Pagination offset (default: 0).
+
+- **Permissions**: Contributor
+- **Query Parameters**:
+  - `timeFilter` (string): "all", "month", "week", "day" (default: "all").
+  - `limit` (number): Maximum entries to return (default: 50).
+  - `offset` (number): Pagination offset (default: 0).
 
 ### GET `/api/leaderboard/[userId]`
+
 Retrieves detailed contributions and points for a specific user.
--   **Permissions**: Contributor
--   **Parameters**: `userId` (string) - The Discord ID of the user.
+
+- **Permissions**: Contributor
+- **Parameters**: `userId` (string) - The Discord ID of the user.
 
 ---
 
 ## GDPR Compliance API
 
 ### GET `/api/user/data-export`
+
 Exports all data for the currently authenticated user in JSON format.
--   **Permissions**: Contributor
+
+- **Permissions**: Contributor
 
 ### POST `/api/user/data-deletion`
+
 Requests anonymization of all data for the currently authenticated user.
--   **Permissions**: Contributor
+
+- **Permissions**: Contributor
 
 ---
 
@@ -204,6 +242,7 @@ Requests anonymization of all data for the currently authenticated user.
 All endpoints return consistent error responses.
 
 **Example `403 Forbidden`**
+
 ```json
 {
   "error": "You do not have permission to perform this action.",
@@ -212,10 +251,11 @@ All endpoints return consistent error responses.
 ```
 
 ### Common HTTP Status Codes
--   `200 OK` - The request was successful.
--   `201 Created` - The resource was successfully created.
--   `400 Bad Request` - The server cannot process the request due to a client error (e.g., malformed request syntax).
--   `401 Unauthorized` - The client must authenticate itself to get the requested response.
--   `403 Forbidden` - The client does not have access rights to the content.
--   `404 Not Found` - The server cannot find the requested resource.
--   `500 Internal Server Error` - The server has encountered a situation it doesn't know how to handle.
+
+- `200 OK` - The request was successful.
+- `201 Created` - The resource was successfully created.
+- `400 Bad Request` - The server cannot process the request due to a client error (e.g., malformed request syntax).
+- `401 Unauthorized` - The client must authenticate itself to get the requested response.
+- `403 Forbidden` - The client does not have access rights to the content.
+- `404 Not Found` - The server cannot find the requested resource.
+- `500 Internal Server Error` - The server has encountered a situation it doesn't know how to handle.

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface LinkifiedTextProps {
   text: string;
@@ -27,7 +27,9 @@ const LinkifiedText: React.FC<LinkifiedTextProps> = ({ text }) => {
     // Clean trailing punctuation from the URL
     const punctuationRegex = /[.,;!?)]*$/;
     const trailingPunctuationMatch = url.match(punctuationRegex);
-    const trailingPunctuation = trailingPunctuationMatch ? trailingPunctuationMatch[0] : '';
+    const trailingPunctuation = trailingPunctuationMatch
+      ? trailingPunctuationMatch[0]
+      : "";
     const cleanUrl = url.substring(0, url.length - trailingPunctuation.length);
 
     // Add the link element if it's not empty after cleaning
@@ -41,7 +43,7 @@ const LinkifiedText: React.FC<LinkifiedTextProps> = ({ text }) => {
           className="text-blue-500 hover:underline break-all"
         >
           {cleanUrl}
-        </a>
+        </a>,
       );
     }
 

@@ -22,29 +22,29 @@ Removed from fork network due to original author repository being deleted, and d
 
 This release introduces new logic to differentiate how long a resource can go without an update before it's flagged as "needs updating" on the dashboard, making tracking more intelligent and customizable.
 
-* **Non-Priority Item Threshold:** Items not marked as priority are now flagged as **"needs updating" after 7 days** of inactivity.
-* **Priority Item Threshold:** Priority items retain the original, more urgent **24-hour threshold** for inactivity.
-* **User Interface:** The UI now dynamically applies styling and uses tooltips to display the correct, context-aware time threshold for each resource.
-* **Code Cleanup:** The redundant `isResourceStale` function and the unused `STALE_THRESHOLD_MS` constant have been removed, streamlining the codebase.
+- **Non-Priority Item Threshold:** Items not marked as priority are now flagged as **"needs updating" after 7 days** of inactivity.
+- **Priority Item Threshold:** Priority items retain the original, more urgent **24-hour threshold** for inactivity.
+- **User Interface:** The UI now dynamically applies styling and uses tooltips to display the correct, context-aware time threshold for each resource.
+- **Code Cleanup:** The redundant `isResourceStale` function and the unused `STALE_THRESHOLD_MS` constant have been removed, streamlining the codebase.
 
 ### 🚀 Improvements
 
 #### What's New Modal Links and Documentation Overhaul
 
-* **Bug Reporting:** The **'What's New' modal** has been enhanced with a new **'Bug' icon** (sourced from `lucide-react`) that provides a direct link to the project's GitHub issues page, complete with a **'Report a Bug'** tooltip.
-* **GitHub Link:** The tooltip for the existing GitHub icon has been updated to the clearer **'Visit project Github'**.
-* **Documentation:** The project's primary documentation, including the **`README.md`**, has been completely overhauled for improved clarity and comprehensive detail.
+- **Bug Reporting:** The **'What's New' modal** has been enhanced with a new **'Bug' icon** (sourced from `lucide-react`) that provides a direct link to the project's GitHub issues page, complete with a **'Report a Bug'** tooltip.
+- **GitHub Link:** The tooltip for the existing GitHub icon has been updated to the clearer **'Visit project Github'**.
+- **Documentation:** The project's primary documentation, including the **`README.md`**, has been completely overhauled for improved clarity and comprehensive detail.
 
 #### Testing and Tooling Enhancements
 
-* **Improved Test Coverage:** New test coverage has been added for core application libraries, increasing code reliability.
-* **Modern Testing Setup:** The testing environment has been streamlined by configuring **SWC (Speedy Web Compiler) for Jest**, which is expected to significantly improve the performance and setup time of unit tests.
+- **Improved Test Coverage:** New test coverage has been added for core application libraries, increasing code reliability.
+- **Modern Testing Setup:** The testing environment has been streamlined by configuring **SWC (Speedy Web Compiler) for Jest**, which is expected to significantly improve the performance and setup time of unit tests.
 
 ### 🛠️ Other
 
-* **ESLint Version Upgrade:** The linter setup has been updated to use **ESLint v9** and the latest `eslint-config-next`. This change resolves several pending npm warnings related to deprecated packages, ensuring the development environment remains modern and stable.
+- **ESLint Version Upgrade:** The linter setup has been updated to use **ESLint v9** and the latest `eslint-config-next`. This change resolves several pending npm warnings related to deprecated packages, ensuring the development environment remains modern and stable.
 
-*See `lib/changelog.json` for previous update history.*
+_See `lib/changelog.json` for previous update history._
 
 ---
 
@@ -56,16 +56,16 @@ _Detailed view with activity timeline and contribution stats._
 
 ## ✨ Features
 
-* **Discord OAuth Authentication** - Secure login with Discord.
-* **Role-Based Access Control** - Granular permissions managed through your Discord server roles.
-* **Resource Management** - Track quantities across two locations with visual status indicators.
-* **Activity Logging** - Complete audit trail of all user actions with time filtering.
-* **GDPR Compliance** - Tools for user data export and deletion.
-* **Grid & Table Views** - Multiple layouts to view and manage resources.
-* **Interactive Charts** - Visualize resource history with interactive data points.
-* **Gamification** - A points-based leaderboard system to encourage contributions.
-* **Admin Controls** - Full control over resources, targets, and user data for authorized roles.
-* **Responsive Design** - Modern UI optimized for desktop and mobile devices.
+- **Discord OAuth Authentication** - Secure login with Discord.
+- **Role-Based Access Control** - Granular permissions managed through your Discord server roles.
+- **Resource Management** - Track quantities across two locations with visual status indicators.
+- **Activity Logging** - Complete audit trail of all user actions with time filtering.
+- **GDPR Compliance** - Tools for user data export and deletion.
+- **Grid & Table Views** - Multiple layouts to view and manage resources.
+- **Interactive Charts** - Visualize resource history with interactive data points.
+- **Gamification** - A points-based leaderboard system to encourage contributions.
+- **Admin Controls** - Full control over resources, targets, and user data for authorized roles.
+- **Responsive Design** - Modern UI optimized for desktop and mobile devices.
 
 ---
 
@@ -117,17 +117,17 @@ Before you start, make sure you have the following installed:
 2.  Click **"Add New... > Project"** and import your forked repository.
 3.  In the "Configure Project" screen, expand the **Environment Variables** section. Add all variables from the table below, **but leave `NEXTAUTH_URL` empty for now.**
 
-| Variable Name          | Value                 | Description                                                              |
-| :--------------------- | :-------------------- | :----------------------------------------------------------------------- |
-| `DISCORD_CLIENT_ID`    | *From Step 2* | Your Discord application's Client ID.                                    |
-| `DISCORD_CLIENT_SECRET`| *From Step 2* | Your Discord application's Client Secret.                                |
-| `DISCORD_GUILD_ID`     | *From Step 3* | Your Discord server's ID.                                                |
-| `DISCORD_ROLES_CONFIG` | *See note below* | **Single-line JSON** for role permissions. See [ENVIRONMENT.md](./ENVIRONMENT.md). |
-| `NEXTAUTH_URL`         | **Leave this blank for now.** | The production URL of your Vercel app.                                   |
-| `NEXTAUTH_SECRET`      | *Generate a secret* | Run `openssl rand -base64 32` in your terminal to create one.              |
-| `TURSO_DATABASE_URL`   | *From Step 4* | Your Turso database URL.                                                 |
-| `TURSO_AUTH_TOKEN`     | *From Step 4* | Your Turso database authentication token.                                |
-| `NEXT_PUBLIC_ORG_NAME` | *Your choice* | Your community or organization's name.                                   |
+| Variable Name           | Value                         | Description                                                                        |
+| :---------------------- | :---------------------------- | :--------------------------------------------------------------------------------- |
+| `DISCORD_CLIENT_ID`     | _From Step 2_                 | Your Discord application's Client ID.                                              |
+| `DISCORD_CLIENT_SECRET` | _From Step 2_                 | Your Discord application's Client Secret.                                          |
+| `DISCORD_GUILD_ID`      | _From Step 3_                 | Your Discord server's ID.                                                          |
+| `DISCORD_ROLES_CONFIG`  | _See note below_              | **Single-line JSON** for role permissions. See [ENVIRONMENT.md](./ENVIRONMENT.md). |
+| `NEXTAUTH_URL`          | **Leave this blank for now.** | The production URL of your Vercel app.                                             |
+| `NEXTAUTH_SECRET`       | _Generate a secret_           | Run `openssl rand -base64 32` in your terminal to create one.                      |
+| `TURSO_DATABASE_URL`    | _From Step 4_                 | Your Turso database URL.                                                           |
+| `TURSO_AUTH_TOKEN`      | _From Step 4_                 | Your Turso database authentication token.                                          |
+| `NEXT_PUBLIC_ORG_NAME`  | _Your choice_                 | Your community or organization's name.                                             |
 
 > **Important**: For `DISCORD_ROLES_CONFIG`, the JSON must be on a single line. Start with a simple configuration for a single admin role:
 > `[{"id":"YOUR_ADMIN_ROLE_ID","name":"Admin","level":100,"isAdmin":true,"canAccessResources":true,"canEditTargets":true}]`
@@ -188,6 +188,7 @@ Your Resource Tracker is now live! Visit your Vercel URL to sign in with Discord
 For contributing or making customizations, follow these steps to run the project locally.
 
 1.  **Install dependencies**:
+
     ```bash
     npm install
     ```
@@ -217,6 +218,7 @@ For contributing or making customizations, follow these steps to run the project
     # Optional: Customize branding for your local instance
     NEXT_PUBLIC_ORG_NAME=Dev Community
     ```
+
     For a detailed explanation of all variables, see [ENVIRONMENT.md](./ENVIRONMENT.md).
 
 3.  **Set up the database**:
@@ -236,19 +238,19 @@ For contributing or making customizations, follow these steps to run the project
 
 This application is designed to be easily customized:
 
-* **Branding**: Set `NEXT_PUBLIC_ORG_NAME` for your organization's name.
-* **Roles**: Configure permissions in `DISCORD_ROLES_CONFIG`.
-* **Resources**: Modify the population scripts in the `/scripts` folder to fit your needs.
-* **Styling**: Update colors and themes in `tailwind.config.js` and `app/globals.css`.
+- **Branding**: Set `NEXT_PUBLIC_ORG_NAME` for your organization's name.
+- **Roles**: Configure permissions in `DISCORD_ROLES_CONFIG`.
+- **Resources**: Modify the population scripts in the `/scripts` folder to fit your needs.
+- **Styling**: Update colors and themes in `tailwind.config.js` and `app/globals.css`.
 
 For more details, see the [Customization Guide](./docs/customization-guide.md).
 
 ## 📚 Documentation
 
-* [**ENVIRONMENT.md**](./ENVIRONMENT.md): Full guide to all environment variables.
-* [**DB_MIGRATION.md**](./DB_MIGRATION.md): **IMPORTANT** guide for users upgrading from older versions.
-* [**CONTRIBUTING.md**](./CONTRIBUTING.md): Guidelines for contributing to the project.
-* [**docs/**](./docs/): In-depth documentation on architecture, API, and more.
+- [**ENVIRONMENT.md**](./ENVIRONMENT.md): Full guide to all environment variables.
+- [**DB_MIGRATION.md**](./DB_MIGRATION.md): **IMPORTANT** guide for users upgrading from older versions.
+- [**CONTRIBUTING.md**](./CONTRIBUTING.md): Guidelines for contributing to the project.
+- [**docs/**](./docs/): In-depth documentation on architecture, API, and more.
 
 ## 🤝 Contributing
 

@@ -1,20 +1,25 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import { QUANTITY_FIELD, UPDATE_TYPE, type QuantityField, type UpdateType } from '@/lib/constants'
-import { hasResourceAdminAccess } from '@/lib/discord-roles'
-import { type User } from 'next-auth'
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import {
+  QUANTITY_FIELD,
+  UPDATE_TYPE,
+  type QuantityField,
+  type UpdateType,
+} from "@/lib/constants";
+import { hasResourceAdminAccess } from "@/lib/discord-roles";
+import { type User } from "next-auth";
 
 interface UpdateQuantityModalProps {
   resource: {
-    id: string
-    name: string
-    quantityHagga: number
-    quantityDeepDesert: number
-  }
-  isOpen: boolean
-  onClose: () => void
+    id: string;
+    name: string;
+    quantityHagga: number;
+    quantityDeepDesert: number;
+  };
+  isOpen: boolean;
+  onClose: () => void;
   onUpdate: (
     resourceId: string,
     amount: number,
@@ -22,9 +27,9 @@ interface UpdateQuantityModalProps {
     updateType: UpdateType,
     reason?: string,
     onBehalfOf?: string,
-  ) => Promise<void>
-  updateType: UpdateType
-  session: { user: User } | null
+  ) => Promise<void>;
+  updateType: UpdateType;
+  session: { user: User } | null;
 }
 
 export function UpdateQuantityModal({
@@ -35,98 +40,100 @@ export function UpdateQuantityModal({
   updateType,
   session,
 }: UpdateQuantityModalProps) {
-  const [
-    users,
-    setUsers,
-  ] = useState<{ id: string; username: string; customNickname: string | null }[]>(
-    [],
-  )
-  const [onBehalfOf, setOnBehalfOf] = useState<string>('')
-  const [amount, setAmount] = useState(0)
-  const [
-    quantityField,
-    setQuantityField,
-  ] = useState<QuantityField>(
+  const [users, setUsers] = useState<
+    { id: string; username: string; customNickname: string | null }[]
+  >([]);
+  const [onBehalfOf, setOnBehalfOf] = useState<string>("");
+  const [amount, setAmount] = useState(0);
+  const [quantityField, setQuantityField] = useState<QuantityField>(
     QUANTITY_FIELD.HAGGA,
-  )
-  const [reason, setReason] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [userFetchError, setUserFetchError] = useState<string | null>(null)
-  const [showModal, setShowModal] = useState(false)
-  const [isAnimating, setIsAnimating] = useState(false)
+  );
+  const [reason, setReason] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [userFetchError, setUserFetchError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setShowModal(true)
-      const timer = setTimeout(() => setIsAnimating(true), 10)
-      return () => clearTimeout(timer)
+      setShowModal(true);
+      const timer = setTimeout(() => setIsAnimating(true), 10);
+      return () => clearTimeout(timer);
     } else {
-      setIsAnimating(false)
-      const timer = setTimeout(() => setShowModal(false), 300) // Animation duration
-      return () => clearTimeout(timer)
+      setIsAnimating(false);
+      const timer = setTimeout(() => setShowModal(false), 300); // Animation duration
+      return () => clearTimeout(timer);
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
-      setAmount(0)
-      setReason('')
-      setError(null)
-      setOnBehalfOf('')
-      setUserFetchError(null)
+      setAmount(0);
+      setReason("");
+      setError(null);
+      setOnBehalfOf("");
+      setUserFetchError(null);
 
-      const isResourceAdmin = session?.user.permissions?.hasResourceAdminAccess ?? false
+      const isResourceAdmin =
+        session?.user.permissions?.hasResourceAdminAccess ?? false;
       if (isResourceAdmin) {
-        fetch('/api/users')
+        fetch("/api/users")
           .then(async (res) => {
             if (!res.ok) {
-              const errorData = await res.json().catch(() => ({}))
+              const errorData = await res.json().catch(() => ({}));
               throw new Error(
                 errorData.error || `Failed to fetch users: ${res.statusText}`,
-              )
+              );
             }
-            return res.json()
+            return res.json();
           })
           .then((data) => {
-            setUsers(data)
+            setUsers(data);
           })
           .catch((err) => {
-            console.error('Failed to fetch users:', err)
-            setUserFetchError(err.message)
-          })
+            console.error("Failed to fetch users:", err);
+            setUserFetchError(err.message);
+          });
       }
     }
-  }, [isOpen, session])
+  }, [isOpen, session]);
 
   const handleUpdate = async () => {
-    setError(null)
+    setError(null);
     if (updateType === UPDATE_TYPE.ABSOLUTE && amount < 0) {
-      setError('Amount must be positive for absolute updates.')
-      return
+      setError("Amount must be positive for absolute updates.");
+      return;
     }
 
     try {
-      await onUpdate(resource.id, amount, quantityField, updateType, reason, onBehalfOf)
-      onClose()
+      await onUpdate(
+        resource.id,
+        amount,
+        quantityField,
+        updateType,
+        reason,
+        onBehalfOf,
+      );
+      onClose();
     } catch (err: any) {
-      setError(err.message || 'An error occurred.')
+      setError(err.message || "An error occurred.");
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
       if (updateType === UPDATE_TYPE.ABSOLUTE) {
-        handleUpdate()
+        handleUpdate();
       }
     }
-  }
+  };
 
   const handleAdd = async () => {
-    setError(null)
+    setError(null);
     if (amount <= 0) {
-      setError('Amount must be positive to add.')
-      return
+      setError("Amount must be positive to add.");
+      return;
     }
 
     try {
@@ -137,28 +144,28 @@ export function UpdateQuantityModal({
         UPDATE_TYPE.RELATIVE,
         reason,
         onBehalfOf,
-      )
-      onClose()
+      );
+      onClose();
     } catch (err: any) {
-      setError(err.message || 'An error occurred.')
+      setError(err.message || "An error occurred.");
     }
-  }
+  };
 
   const handleRemove = async () => {
-    setError(null)
+    setError(null);
     if (amount <= 0) {
-      setError('Amount must be positive to remove.')
-      return
+      setError("Amount must be positive to remove.");
+      return;
     }
 
     const currentQuantity =
       quantityField === QUANTITY_FIELD.HAGGA
         ? resource.quantityHagga
-        : resource.quantityDeepDesert
+        : resource.quantityDeepDesert;
 
     if (amount > currentQuantity) {
-      setError('Insufficient quantity.')
-      return
+      setError("Insufficient quantity.");
+      return;
     }
 
     try {
@@ -169,23 +176,23 @@ export function UpdateQuantityModal({
         UPDATE_TYPE.RELATIVE,
         reason,
         onBehalfOf,
-      )
-      onClose()
+      );
+      onClose();
     } catch (err: any) {
-      setError(err.message || 'An error occurred.')
+      setError(err.message || "An error occurred.");
     }
-  }
+  };
 
-  if (!showModal) return null
+  if (!showModal) return null;
 
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center z-50 transition-colors duration-300 ease-in-out ${
-        isAnimating ? 'bg-black/50' : 'bg-black/0'
+        isAnimating ? "bg-black/50" : "bg-black/0"
       }`}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) {
-          onClose()
+          onClose();
         }
       }}
     >
@@ -194,19 +201,20 @@ export function UpdateQuantityModal({
         aria-modal="true"
         aria-labelledby="update-quantity-modal-title"
         className={`bg-white dark:bg-gray-800 rounded-lg p-6 md:p-8 max-w-md md:max-w-lg mx-4 border border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out transform ${
-          isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+          isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
-        <h3 id="update-quantity-modal-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          {updateType === UPDATE_TYPE.ABSOLUTE ? 'Set' : 'Add/Remove'}{' '}
+        <h3
+          id="update-quantity-modal-title"
+          className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4"
+        >
+          {updateType === UPDATE_TYPE.ABSOLUTE ? "Set" : "Add/Remove"}{" "}
           {resource.name}
         </h3>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {updateType === UPDATE_TYPE.ABSOLUTE
-                ? 'New Quantity'
-                : 'Amount'}
+              {updateType === UPDATE_TYPE.ABSOLUTE ? "New Quantity" : "Amount"}
             </label>
             <input
               type="number"
@@ -226,9 +234,7 @@ export function UpdateQuantityModal({
             <select
               value={quantityField}
               onChange={(e) =>
-                setQuantityField(
-                  e.target.value as QuantityField,
-                )
+                setQuantityField(e.target.value as QuantityField)
               }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
@@ -255,12 +261,12 @@ export function UpdateQuantityModal({
                 >
                   <option value="">Current User</option>
                   {users.map((user) => {
-                    const displayName = user.customNickname || user.username
+                    const displayName = user.customNickname || user.username;
                     return (
                       <option key={user.id} value={user.id}>
                         {displayName}
                       </option>
-                    )
+                    );
                   })}
                 </select>
               )}
@@ -317,5 +323,5 @@ export function UpdateQuantityModal({
         </div>
       </div>
     </div>
-  )
+  );
 }
