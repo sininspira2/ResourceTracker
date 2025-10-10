@@ -1,6 +1,50 @@
 {
-  "currentVersion": "4.0.7",
+  "currentVersion": "4.1.0",
   "releases": [
+    {
+      "version": "4.1.0",
+      "date": "2025-10-10",
+      "title": "Vercel Data Cache, Improved Migrations, and API Stability",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "The database schema has been updated to include a new `global_settings` table and new `tier` (integer) and `subcategory` (text) columns in the `resources` table. **These columns are to support future features** but allow for more granular classification."
+        },
+        {
+          "type": "feature",
+          "description": "The database migration tracking system has been completely overhauled from a manual, tag-based approach to an **improved, hash-based system**. This new system ensures cross-platform consistency, is integrated into build commands, and simplifies the user workflow (using only `npm run db:migrate`)."
+        },
+        {
+          "type": "feature",
+          "description": "Implemented Vercel's fetch-based Data Cache for API routes using a public/internal pattern. This drastically improves API response times by refactoring `GET` API routes to leverage the new caching strategy with appropriate revalidation times."
+        },
+        {
+          "type": "improvement",
+          "description": "Application protection logic was simplified by replacing the old middleware with a lightweight 'include list'."
+        },
+        {
+          "type": "improvement",
+          "description": "Client-side cache-busting headers were removed to allow for correct server-side caching, and the old custom caching implementation was deleted."
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed authentication issues by ensuring 'cookie' and 'authorization' headers are correctly forwarded in internal API calls, resolving persistent 401 errors when using Vercel Authentication."
+        },
+        {
+          "type": "bugfix",
+          "description": "Resolved critical build errors related to the Next.js 15 upgrade by updating all dynamic API route handlers to correctly use the new asynchronous `params` object signature."
+        },
+        {
+          "type": "bugfix",
+          "description": "Ensured data integrity on resource deletion by updating the `DELETE` handler to also delete associated records from the `resource_history` and `leaderboard` tables. This logic is now wrapped in a database transaction."
+        },
+        {
+          "type": "bugfix",
+          "description": "Added robust input validation to the leaderboard API route, including an allowlist for `timeFilter` and fallbacks for `limit`, `page`, and `pageSize` to prevent `NaN` errors from invalid user input."
+        }
+      ]
+    },
     {
       "version": "4.0.7",
       "date": "2025-10-07",
