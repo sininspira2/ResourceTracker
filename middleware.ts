@@ -28,5 +28,6 @@ export const config = {
     '/api/resources/:path*',
     '/api/user/:path*',
     '/api/users/:path*',
+    '/api/internal/:path*',
   ],
 }

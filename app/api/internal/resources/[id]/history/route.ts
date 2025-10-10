@@ -31,11 +31,7 @@ export async function GET(
       .orderBy(desc(resourceHistory.createdAt))
       .limit(100); // Limit to reduce load
 
-    return NextResponse.json(history, {
-      headers: {
-        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
-      }
-    });
+    return NextResponse.json(history);
   } catch (error) {
     console.error('Error fetching resource history:', error);
     return NextResponse.json({ error: 'Failed to fetch history' }, { status: 500 });
