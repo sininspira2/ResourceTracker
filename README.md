@@ -10,39 +10,34 @@ Removed from fork network due to original author repository being deleted, and d
 
 ---
 
-## 🚀 Release Notes - Version 4.0.7: Dynamic Thresholds, Testing, and Dependency Upgrades
+## 🚀 Release Notes - Version 4.1.0: Vercel Data Cache, Improved Migrations, and API Stability
 
-**Release Date:** October 7, 2025
+**Release Date:** October 10, 2025
 
 ---
 
-### ✨ New Features
+### ✨ Architectural Features
 
-#### Dynamic 'Needs Updating' Time Thresholds
+#### Improved Database Migration System
+The database migration tracking system has been completely overhauled from a manual, tag-based approach to an **improved, hash-based system**.
 
-This release introduces new logic to differentiate how long a resource can go without an update before it's flagged as "needs updating" on the dashboard, making tracking more intelligent and customizable.
+* **Simplified Workflow:** The new system simplifies the database workflow for users, who can now handle all subsequent migrations using a single command: `npm run db:migrate`.
+* **Integrity and Consistency:** The system now automatically calculates the SHA256 hash of each migration file, ensuring cross-platform consistency.
+* **Schema Update:** The database schema now includes a new `global_settings` table and new `tier`/`subcategory` columns in the `resources` table. **These columns are included to support future features** but allow for more granular classification.
 
-- **Non-Priority Item Threshold:** Items not marked as priority are now flagged as **"needs updating" after 7 days** of inactivity.
-- **Priority Item Threshold:** Priority items retain the original, more urgent **24-hour threshold** for inactivity.
-- **User Interface:** The UI now dynamically applies styling and uses tooltips to display the correct, context-aware time threshold for each resource.
-- **Code Cleanup:** The redundant `isResourceStale` function and the unused `STALE_THRESHOLD_MS` constant have been removed, streamlining the codebase.
+#### Vercel Data Cache Implementation
+All API routes have been refactored to utilize **Vercel's fetch-based Data Cache**, resulting in significant performance gains and reduced load times.
 
-### 🚀 Improvements
+* **Caching Strategy:** `GET` API routes have been refactored to use a public/internal pattern to leverage this new caching strategy with appropriate revalidation times.
+* **Security and Authentication:**
+    * Application protection logic was simplified by replacing the old middleware with a lightweight 'include list'.
+    * **Fixed a critical 401 error** by ensuring 'cookie' and 'authorization' headers are correctly forwarded in internal API calls when using Vercel Authentication.
 
-#### What's New Modal Links and Documentation Overhaul
+### 🐛 Critical Bug Fixes & Stability
 
-- **Bug Reporting:** The **'What's New' modal** has been enhanced with a new **'Bug' icon** (sourced from `lucide-react`) that provides a direct link to the project's GitHub issues page, complete with a **'Report a Bug'** tooltip.
-- **GitHub Link:** The tooltip for the existing GitHub icon has been updated to the clearer **'Visit project Github'**.
-- **Documentation:** The project's primary documentation, including the **`README.md`**, has been completely overhauled for improved clarity and comprehensive detail.
-
-#### Testing and Tooling Enhancements
-
-- **Improved Test Coverage:** New test coverage has been added for core application libraries, increasing code reliability.
-- **Modern Testing Setup:** The testing environment has been streamlined by configuring **SWC (Speedy Web Compiler) for Jest**, which is expected to significantly improve the performance and setup time of unit tests.
-
-### 🛠️ Other
-
-- **ESLint Version Upgrade:** The linter setup has been updated to use **ESLint v9** and the latest `eslint-config-next`. This change resolves several pending npm warnings related to deprecated packages, ensuring the development environment remains modern and stable.
+* **Next.js 15 Compatibility:** Resolved persistent build errors by updating all dynamic API route handlers to correctly use the **asynchronous `params` object signature** required by Next.js 15.
+* **Data Integrity on Deletion:** Ensured database integrity during resource deletion by updating the `DELETE` handler to also delete associated records from the `resource_history` and `leaderboard` tables. This logic is now safely wrapped in a **database transaction**.
+* **Leaderboard Validation:** Added robust input validation to the leaderboard API route, including an allowlist for the `timeFilter` parameter and fallbacks for other parameters to prevent `NaN` errors from invalid input.
 
 _See `lib/changelog.json` for previous update history._
 
