@@ -4,7 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { db, resourceHistory } from "@/lib/db";
 import { eq, gte, desc, and } from "drizzle-orm";
 import { hasResourceAccess } from "@/lib/discord-roles";
-import { cache, CACHE_KEYS } from "@/lib/cache";
 
 // GET /api/resources/[id]/history?days=7 - Get resource history
 export async function GET(
@@ -21,13 +20,6 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const days = parseInt(searchParams.get("days") || "7");
     const { id: resourceId } = await params;
-
-    // Remove cache check to prevent stale data on Vercel
-    // const cacheKey = CACHE_KEYS.RESOURCE_HISTORY(resourceId, days)
-    // const cachedHistory = cache.get(cacheKey)
-    // if (cachedHistory) {
-    //   return NextResponse.json(cachedHistory)
-    // }
 
     // Calculate date threshold
     const daysAgo = new Date();

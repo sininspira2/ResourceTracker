@@ -214,11 +214,7 @@ export default function ResourceDetailPage() {
   const fetchLeaderboard = useCallback(async () => {
     setLeaderboardLoading(true);
     try {
-      const response = await fetch("/api/leaderboard?timeFilter=7d&limit=10", {
-        headers: {
-          "Cache-Control": "no-cache",
-        },
-      });
+      const response = await fetch("/api/leaderboard?timeFilter=7d&limit=10");
       if (response.ok) {
         const data = await response.json();
         setLeaderboard(data.leaderboard || []);
