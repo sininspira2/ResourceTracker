@@ -22,21 +22,47 @@ const calculateResourceStatus = (
 };
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const internalUrl = new URL(
+    `/api/internal/resources?${searchParams.toString()}`,
+    request.nextUrl.origin,
+  );
   try {
-    const allResources = await db.select().from(resources);
-
-    return NextResponse.json(allResources, {
+    const response = await fetch(internalUrl, {
+      next: { revalidate: 1 },
       headers: {
-        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
-        Pragma: "no-cache",
-        Expires: "0",
+        cookie: request.headers.get("cookie") || "",
+        authorization: request.headers.get("authorization") || "",
+      },
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(
+        `Internal API call failed with status ${response.status}:`,
+        errorBody,
+      );
+      return new NextResponse(errorBody, {
+        status: response.status,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const data = await response.json();
+    return new NextResponse(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
       },
     });
   } catch (error) {
-    console.error("Error fetching resources:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch resources" },
-      { status: 500 },
+    console.error("Error fetching from internal resources route:", error);
+    return new NextResponse(
+      JSON.stringify({ error: "Failed to fetch resources" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
     );
   }
 }

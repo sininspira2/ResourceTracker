@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, getUserIdentifier } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { resources, resourceHistory, users } from "@/lib/db";
+import { resources, resourceHistory, users, leaderboard } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { hasResourceAccess, hasResourceAdminAccess } from "@/lib/discord-roles";
@@ -229,6 +229,9 @@ export async function DELETE(
       await tx
         .delete(resourceHistory)
         .where(eq(resourceHistory.resourceId, id));
+      await tx
+        .delete(leaderboard)
+        .where(eq(leaderboard.resourceId, id));
       await tx.delete(resources).where(eq(resources.id, id));
     });
 

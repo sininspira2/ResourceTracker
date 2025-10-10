@@ -51,9 +51,6 @@ export default function PrivacyPage() {
     try {
       const response = await fetch("/api/user/data-export", {
         method: "GET",
-        headers: {
-          "Cache-Control": "no-cache",
-        },
       });
 
       if (response.ok) {
@@ -109,7 +106,6 @@ export default function PrivacyPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
         },
       });
 

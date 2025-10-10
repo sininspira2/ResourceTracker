@@ -88,12 +88,7 @@ export default function ActivityLogPage() {
 
       setLoading(true);
       try {
-        const response = await fetch(`/api/user/activity?days=${timeFilter}`, {
-          cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache",
-          },
-        });
+        const response = await fetch(`/api/user/activity?days=${timeFilter}`);
 
         if (response.ok) {
           const data = await response.json();

@@ -46,11 +46,6 @@ export default function LeaderboardPage() {
 
       const response = await fetch(
         `/api/leaderboard?timeFilter=${timeFilter}&page=${currentPage}&pageSize=${pageSize}`,
-        {
-          headers: {
-            "Cache-Control": "no-cache",
-          },
-        },
       );
 
       if (!response.ok) {

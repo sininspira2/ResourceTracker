@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getLeaderboard } from "@/lib/leaderboard";
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -10,44 +9,48 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const internalUrl = new URL(
+    `/api/internal/leaderboard?${searchParams.toString()}`,
+    request.nextUrl.origin,
+  );
+
   try {
-    const { searchParams } = new URL(request.url);
-    const timeFilter =
-      (searchParams.get("timeFilter") as "24h" | "7d" | "30d" | "all") || "all";
-    const limit = parseInt(searchParams.get("limit") || "50");
-    const page = parseInt(searchParams.get("page") || "1");
-    const pageSize = parseInt(searchParams.get("pageSize") || "20");
-
-    // Calculate offset for pagination
-    const offset = (page - 1) * pageSize;
-    const effectiveLimit = searchParams.get("limit") ? limit : pageSize;
-
-    const result = await getLeaderboard(timeFilter, effectiveLimit, offset);
-
-    return NextResponse.json(
-      {
-        leaderboard: result.rankings,
-        timeFilter,
-        total: result.total,
-        page,
-        pageSize: effectiveLimit,
-        totalPages: Math.ceil(result.total / effectiveLimit),
-        hasNextPage: offset + effectiveLimit < result.total,
-        hasPrevPage: page > 1,
+    const response = await fetch(internalUrl, {
+      next: { revalidate: 20 },
+      headers: {
+        cookie: request.headers.get("cookie") || "",
+        authorization: request.headers.get("authorization") || "",
       },
-      {
-        headers: {
-          "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
-          Pragma: "no-cache",
-          Expires: "0",
-        },
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(
+        `Internal API call failed with status ${response.status}:`,
+        errorBody,
+      );
+      return new NextResponse(errorBody, {
+        status: response.status,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const data = await response.json();
+    return new NextResponse(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
   } catch (error) {
-    console.error("Error fetching leaderboard:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch leaderboard" },
-      { status: 500 },
+    console.error("Error fetching from internal leaderboard route:", error);
+    return new NextResponse(
+      JSON.stringify({ error: "Failed to fetch leaderboard" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
     );
   }
 }

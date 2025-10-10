@@ -190,12 +190,6 @@ export default function ResourceDetailPage() {
       try {
         const response = await fetch(
           `/api/resources/${resourceId}/history?days=${days}`,
-          {
-            cache: "no-store",
-            headers: {
-              "Cache-Control": "no-cache",
-            },
-          },
         );
         if (response.ok) {
           const historyData = await response.json();
@@ -214,11 +208,7 @@ export default function ResourceDetailPage() {
   const fetchLeaderboard = useCallback(async () => {
     setLeaderboardLoading(true);
     try {
-      const response = await fetch("/api/leaderboard?timeFilter=7d&limit=10", {
-        headers: {
-          "Cache-Control": "no-cache",
-        },
-      });
+      const response = await fetch("/api/leaderboard?timeFilter=7d&limit=10");
       if (response.ok) {
         const data = await response.json();
         setLeaderboard(data.leaderboard || []);
@@ -290,10 +280,8 @@ export default function ResourceDetailPage() {
 
       const response = await fetch(`/api/resources/${resourceId}`, {
         method: "PUT",
-        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
         },
         body: JSON.stringify({
           quantity: finalQuantity,
@@ -377,10 +365,8 @@ export default function ResourceDetailPage() {
     try {
       const response = await fetch(`/api/resources/${resourceId}`, {
         method: "PUT",
-        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
         },
         body: JSON.stringify({
           quantity: newQuantity,
@@ -436,10 +422,8 @@ export default function ResourceDetailPage() {
     try {
       const response = await fetch(`/api/resources/${resourceId}/target`, {
         method: "PUT",
-        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
         },
         body: JSON.stringify({
           targetQuantity: newTarget,
@@ -470,10 +454,8 @@ export default function ResourceDetailPage() {
     try {
       const response = await fetch(`/api/resources/${resourceId}/transfer`, {
         method: "PUT",
-        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
         },
         body: JSON.stringify({
           transferAmount: amount,
@@ -504,10 +486,8 @@ export default function ResourceDetailPage() {
     try {
       const response = await fetch(`/api/resources`, {
         method: "PUT",
-        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
         },
         body: JSON.stringify({
           resourceMetadata: {
@@ -541,10 +521,6 @@ export default function ResourceDetailPage() {
     try {
       const response = await fetch(`/api/resources/${resourceId}`, {
         method: "DELETE",
-        cache: "no-store",
-        headers: {
-          "Cache-Control": "no-cache",
-        },
       });
 
       if (response.ok) {
@@ -663,12 +639,7 @@ export default function ResourceDetailPage() {
     const fetchResource = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/resources`, {
-          cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache",
-          },
-        });
+        const response = await fetch(`/api/resources`);
 
         if (response.ok) {
           const resources = await response.json();
