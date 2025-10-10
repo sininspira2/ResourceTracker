@@ -8,7 +8,7 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
 
   // Redirect authenticated users with access directly to dashboard
-  if (session && session.user.permissions?.hasResourceAccess) {
+  if (session && session.user && session.user.permissions?.hasResourceAccess) {
     redirect("/dashboard");
   }
 

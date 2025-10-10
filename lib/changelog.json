@@ -42,6 +42,10 @@
         {
           "type": "bugfix",
           "description": "Added robust input validation to the leaderboard API route, including an allowlist for `timeFilter` and fallbacks for `limit`, `page`, and `pageSize` to prevent `NaN` errors from invalid user input."
+        },
+		{
+          "type": "improvement",
+          "description": "Refactored the codebase to use modern JavaScript features (ES2022), including optional chaining and nullish coalescing. This improves code clarity, safety, and maintainability by simplifying property access and providing safer default values for variables."
         }
       ]
     },

@@ -11,9 +11,9 @@ export async function GET(request: NextRequest) {
     const timeFilterInput = searchParams.get("timeFilter") || "all";
     const timeFilter = allowedTimeFilters.includes(timeFilterInput) ? timeFilterInput as "24h" | "7d" | "30d" | "all" : "all";
 
-    const limit = parseInt(searchParams.get("limit") || "50", 10) || 50;
-    const page = parseInt(searchParams.get("page") || "1", 10) || 1;
-    const pageSize = parseInt(searchParams.get("pageSize") || "20", 10) || 20;
+    const limit = parseInt(searchParams.get("limit") || "50", 10);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const pageSize = parseInt(searchParams.get("pageSize") || "20", 10);
 
     // Calculate offset for pagination
     const offset = (page - 1) * pageSize;
