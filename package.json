@@ -1,6 +1,6 @@
 {
   "name": "resource-tracker",
-  "version": "4.0.7",
+  "version": "4.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
