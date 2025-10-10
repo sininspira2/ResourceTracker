@@ -1,51 +1,32 @@
-import { withAuth } from "next-auth/middleware";
-import {
-  hasResourceAccess,
-  hasUserManagementAccess,
-} from "./lib/discord-roles";
+import { withAuth } from "next-auth/middleware"
+import { hasResourceAccess, hasUserManagementAccess } from './lib/discord-roles'
 
-// Define protected routes that require authentication
-const protectedRoutes = [
-  "/dashboard",
-  "/resources",
-  "/api/resources",
-  "/api/user",
-  "/api/users",
-];
+export default withAuth({
+  callbacks: {
+    authorized: ({ token, req }) => {
+      if (!token) {
+        return false
+      }
 
-export default withAuth(
-  function middleware(req) {
-    // Additional middleware logic can go here
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        const { pathname } = req.nextUrl;
+      const { pathname } = req.nextUrl
+      const userRoles = (token.userRoles as string[]) || []
 
-        // Allow public routes
-        if (!protectedRoutes.some((route) => pathname.startsWith(route))) {
-          return true;
-        }
+      if (pathname.startsWith('/users') || pathname.startsWith('/api/users')) {
+        return hasUserManagementAccess(userRoles)
+      }
 
-        // Check if user is authenticated first
-        if (!token) {
-          return false;
-        }
-
-        // Check if user has required roles
-        const userRoles = (token.userRoles as string[]) || [];
-
-        // Route-specific permission checks
-        if (pathname.startsWith("/users")) {
-          return hasUserManagementAccess(userRoles);
-        }
-
-        return hasResourceAccess(userRoles);
-      },
+      return hasResourceAccess(userRoles)
     },
   },
-);
+})
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/resources/:path*", "/users/:path*"],
-};
+  matcher: [
+    '/dashboard/:path*',
+    '/resources/:path*',
+    '/users/:path*',
+    '/api/resources/:path*',
+    '/api/user/:path*',
+    '/api/users/:path*',
+  ],
+}

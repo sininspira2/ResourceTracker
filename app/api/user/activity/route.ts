@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, getUserIdentifier } from "@/lib/auth";
-import { db, resourceHistory, resources } from "@/lib/db";
-import { eq, gte, desc, and, or } from "drizzle-orm";
 import { hasResourceAccess } from "@/lib/discord-roles";
 
 // GET /api/user/activity - Get user's activity history
@@ -13,85 +11,61 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const userId = getUserIdentifier(session);
+  const oldUserIds = [
+    session.user.id,
+    session.user.email,
+    session.user.name,
+    "unknown",
+  ]
+    .filter(Boolean)
+    .join(",");
+
+  searchParams.set("userId", userId);
+  searchParams.set("oldUserIds", oldUserIds);
+
+  const internalUrl = new URL(
+    `/api/internal/user/activity?${searchParams.toString()}`,
+    request.nextUrl.origin,
+  );
+
   try {
-    const { searchParams } = new URL(request.url);
-    const days = parseInt(searchParams.get("days") || "30");
-    const isGlobal = searchParams.get("global") === "true";
-    const limit = parseInt(searchParams.get("limit") || "500");
-    const userId = getUserIdentifier(session);
-
-    // For backward compatibility, also check for old user identifiers
-    const oldUserIds = [
-      session.user.id,
-      session.user.email,
-      session.user.name,
-      "unknown",
-    ].filter(Boolean);
-
-    // Calculate date threshold
-    const daysAgo = new Date();
-    daysAgo.setDate(daysAgo.getDate() - days);
-
-    // Fetch activity from database with resource names and categories
-    const activity = await db
-      .select({
-        id: resourceHistory.id,
-        resourceId: resourceHistory.resourceId,
-        resourceName: resources.name,
-        resourceCategory: resources.category,
-        previousQuantityHagga: resourceHistory.previousQuantityHagga,
-        newQuantityHagga: resourceHistory.newQuantityHagga,
-        changeAmountHagga: resourceHistory.changeAmountHagga,
-        previousQuantityDeepDesert: resourceHistory.previousQuantityDeepDesert,
-        newQuantityDeepDesert: resourceHistory.newQuantityDeepDesert,
-        changeAmountDeepDesert: resourceHistory.changeAmountDeepDesert,
-        transferAmount: resourceHistory.transferAmount,
-        transferDirection: resourceHistory.transferDirection,
-        changeType: resourceHistory.changeType,
-        reason: resourceHistory.reason,
-        updatedBy: resourceHistory.updatedBy,
-        createdAt: resourceHistory.createdAt,
-      })
-      .from(resourceHistory)
-      .innerJoin(resources, eq(resourceHistory.resourceId, resources.id))
-      .where(
-        isGlobal
-          ? gte(resourceHistory.createdAt, daysAgo)
-          : and(
-              // Check current nickname AND old identifiers for backward compatibility
-              or(
-                eq(resourceHistory.updatedBy, userId),
-                ...oldUserIds.map((id) =>
-                  eq(resourceHistory.updatedBy, id as string),
-                ),
-              ),
-              gte(resourceHistory.createdAt, daysAgo),
-            ),
-      )
-      .orderBy(desc(resourceHistory.createdAt))
-      .limit(limit);
-
-    const processedActivity = activity.map((entry) => {
-      const totalChangeAmount =
-        (entry.changeAmountHagga || 0) + (entry.changeAmountDeepDesert || 0);
-      return {
-        ...entry,
-        changeAmount: totalChangeAmount,
-      };
+    const response = await fetch(internalUrl, {
+      next: { revalidate: 15 },
+      headers: {
+        cookie: request.headers.get("cookie") || "",
+        authorization: request.headers.get("authorization") || "",
+      },
     });
 
-    return NextResponse.json(processedActivity, {
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(
+        `Internal API call failed with status ${response.status}:`,
+        errorBody,
+      );
+      return new NextResponse(errorBody, {
+        status: response.status,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const data = await response.json();
+    return new NextResponse(JSON.stringify(data), {
+      status: 200,
       headers: {
-        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
-        Pragma: "no-cache",
-        Expires: "0",
+        "Content-Type": "application/json",
       },
     });
   } catch (error) {
-    console.error("Error fetching user activity:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch activity" },
-      { status: 500 },
+    console.error("Error fetching from internal user activity route:", error);
+    return new NextResponse(
+      JSON.stringify({ error: "Failed to fetch activity" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
     );
   }
 }

@@ -388,11 +388,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       setActivityLoading(true);
       const response = await fetch(
         `${USER_ACTIVITY_API_PATH}?global=true&limit=50`,
-        {
-          headers: {
-            "Cache-Control": "no-cache",
-          },
-        },
       );
       if (response.ok) {
         const activity = await response.json();
@@ -485,12 +480,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     try {
       setLoading(true);
       const timestamp = Date.now();
-      const response = await fetch(`${RESOURCES_API_PATH}?t=${timestamp}`, {
-        cache: "no-store",
-        headers: {
-          "Cache-Control": "no-cache",
-        },
-      });
+      const response = await fetch(`${RESOURCES_API_PATH}?t=${timestamp}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -521,10 +511,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         `${RESOURCES_API_PATH}/${resourceId}/target`,
         {
           method: "PUT",
-          cache: "no-store",
           headers: {
             "Content-Type": "application/json",
-            "Cache-Control": "no-cache",
           },
           body: JSON.stringify({
             targetQuantity: newTarget,
@@ -566,10 +554,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     try {
       const response = await fetch(RESOURCES_API_PATH, {
         method: "PUT",
-        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
         },
         body: JSON.stringify({
           resourceMetadata: {
@@ -612,10 +598,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     try {
       const response = await fetch(RESOURCES_API_PATH, {
         method: "POST",
-        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
         },
         body: JSON.stringify(createResourceForm),
       });
@@ -655,10 +639,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         `${RESOURCES_API_PATH}/${resourceId}/transfer`,
         {
           method: "PUT",
-          cache: "no-store",
           headers: {
             "Content-Type": "application/json",
-            "Cache-Control": "no-cache",
           },
           body: JSON.stringify({
             transferAmount: amount,
@@ -703,10 +685,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     try {
       const response = await fetch(`${RESOURCES_API_PATH}/${resourceId}`, {
         method: "PUT",
-        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
         },
         body: JSON.stringify({
           quantity: newQuantity,
@@ -754,10 +734,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     try {
       const response = await fetch(`${RESOURCES_API_PATH}/${resourceId}`, {
         method: "DELETE",
-        cache: "no-store",
-        headers: {
-          "Cache-Control": "no-cache",
-        },
       });
 
       if (response.ok) {
@@ -783,11 +759,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       setLeaderboardLoading(true);
       const response = await fetch(
         `${LEADERBOARD_API_PATH}?timeFilter=${leaderboardTimeFilter}&limit=10`,
-        {
-          headers: {
-            "Cache-Control": "no-cache",
-          },
-        },
       );
       if (response.ok) {
         const data = await response.json();

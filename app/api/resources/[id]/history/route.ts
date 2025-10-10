@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { db, resourceHistory } from "@/lib/db";
-import { eq, gte, desc, and } from "drizzle-orm";
 import { hasResourceAccess } from "@/lib/discord-roles";
-import { cache, CACHE_KEYS } from "@/lib/cache";
 
 // GET /api/resources/[id]/history?days=7 - Get resource history
 export async function GET(
@@ -17,48 +14,50 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const { id: resourceId } = await params;
+
+  const internalUrl = new URL(
+    `/api/internal/resources/${resourceId}/history?${searchParams.toString()}`,
+    request.nextUrl.origin,
+  );
+
   try {
-    const { searchParams } = new URL(request.url);
-    const days = parseInt(searchParams.get("days") || "7");
-    const { id: resourceId } = await params;
-
-    // Remove cache check to prevent stale data on Vercel
-    // const cacheKey = CACHE_KEYS.RESOURCE_HISTORY(resourceId, days)
-    // const cachedHistory = cache.get(cacheKey)
-    // if (cachedHistory) {
-    //   return NextResponse.json(cachedHistory)
-    // }
-
-    // Calculate date threshold
-    const daysAgo = new Date();
-    daysAgo.setDate(daysAgo.getDate() - days);
-
-    // Fetch history from database
-    const history = await db
-      .select()
-      .from(resourceHistory)
-      .where(
-        and(
-          eq(resourceHistory.resourceId, resourceId),
-          gte(resourceHistory.createdAt, daysAgo),
-        ),
-      )
-      .orderBy(desc(resourceHistory.createdAt))
-      .limit(100); // Limit to reduce load
-
-    // Return fresh data with cache-busting headers
-    return NextResponse.json(history, {
+    const response = await fetch(internalUrl, {
+      next: { revalidate: 15 },
       headers: {
-        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
-        Pragma: "no-cache",
-        Expires: "0",
+        cookie: request.headers.get("cookie") || "",
+        authorization: request.headers.get("authorization") || "",
+      },
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(
+        `Internal API call failed with status ${response.status}:`,
+        errorBody,
+      );
+      return new NextResponse(errorBody, {
+        status: response.status,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const data = await response.json();
+    return new NextResponse(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
       },
     });
   } catch (error) {
-    console.error("Error fetching resource history:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch history" },
-      { status: 500 },
+    console.error("Error fetching from internal resource history route:", error);
+    return new NextResponse(
+      JSON.stringify({ error: "Failed to fetch history" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
     );
   }
 }
