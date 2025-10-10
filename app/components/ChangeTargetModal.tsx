@@ -37,9 +37,7 @@ export function ChangeTargetModal({
   }, [isOpen]);
 
   useEffect(() => {
-    if (resource) {
-      setTarget(resource.targetQuantity || 0);
-    }
+    setTarget(resource?.targetQuantity || 0);
   }, [resource]);
 
   const handleSave = async () => {

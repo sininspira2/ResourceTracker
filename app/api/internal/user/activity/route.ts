@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const days = parseInt(searchParams.get("days") || "30");
+    const days = parseInt(searchParams.get("days") ?? "30");
     const isGlobal = searchParams.get("global") === "true";
-    const limit = parseInt(searchParams.get("limit") || "500");
+    const limit = parseInt(searchParams.get("limit") ?? "500");
     const userId = searchParams.get("userId");
     const oldUserIdsString = searchParams.get("oldUserIds");
     const oldUserIds = oldUserIdsString ? oldUserIdsString.split(',') : [];
