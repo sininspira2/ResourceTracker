@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     // Add caching headers
     response.headers.set(
       "Cache-Control",
-      "public, s-maxage=360, stale-while-revalidate=59",
+      "public, s-maxage=60, stale-while-revalidate=59",
     );
 
     return response;
