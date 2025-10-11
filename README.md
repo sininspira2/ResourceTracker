@@ -81,7 +81,7 @@ Before you start, make sure you have the following installed:
 1.  **Fork the project**: Click the "Fork" button at the top-right of this page to create your own copy.
 2.  **Clone your fork**: Open your terminal or command prompt and run the following command, replacing `YOUR_USERNAME` with your GitHub username:
     ```bash
-    git clone [https://github.com/YOUR_USERNAME/ResourceTracker.git](https://github.com/YOUR_USERNAME/ResourceTracker.git)
+    git clone https://github.com/YOUR_USERNAME/ResourceTracker.git
     cd ResourceTracker
     ```
 
@@ -139,7 +139,7 @@ Before you start, make sure you have the following installed:
 
 ### Step 7: Initialize the Database
 
-1.  **Install dependencies locally**:
+1.  **Install dependencies locally**: From the local pronect folder that you cloned in Step 1:
     ```bash
     npm install
     ```
