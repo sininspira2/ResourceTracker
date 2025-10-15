@@ -109,7 +109,7 @@ export default function LeaderboardPage() {
             </div>
             <button
               onClick={() => router.push("/resources")}
-              className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover text-text-white px-4 py-2 rounded-lg"
+              className="bg-button-secondary-bg hover:bg-button-secondary-bg-hover text-button-secondary-text px-4 py-2 rounded-lg"
             >
               Back to Resources
             </button>
@@ -123,7 +123,7 @@ export default function LeaderboardPage() {
             <select
               value={timeFilter}
               onChange={(e) => handleTimeFilterChange(e.target.value)}
-              className="bg-background-primary border border-border-secondary rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+              className="text-xs bg-background-tertiary border border-border-secondary rounded-sm px-2 py-1"
             >
               {timeFilterOptions.map((option) => (
                 <option key={option.value} value={option.value}>
