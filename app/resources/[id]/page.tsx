@@ -1813,7 +1813,7 @@ export default function ResourceDetailPage() {
                                   0
                                 ? "bg-activity-negative-bg"
                                 : "bg-activity-neutral-bg"
-                          } ${isHighlighted ? "ring-2 ring-blue-400 dark:ring-blue-500" : ""}`}
+                          } ${isHighlighted ? "ring-2 ring-highlight-border" : ""}`}
                         ></div>
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-text-primary flex items-center flex-wrap gap-2">

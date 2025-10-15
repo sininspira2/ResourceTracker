@@ -1032,7 +1032,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 .map((entry, index) => (
                   <div
                     key={entry.userId}
-                    className="flex items-center justify-between p-3 bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:from-green-100 hover:to-blue-100 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all cursor-pointer"
+                    className="flex items-center justify-between p-3 bg-leaderboard-gradient hover:bg-leaderboard-gradient-hover rounded-lg transition-all cursor-pointer"
                     onClick={() =>
                       router.push(`/dashboard/contributions/${entry.userId}`)
                     }
@@ -1470,7 +1470,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   type="checkbox"
                   checked={needsUpdateFilter}
                   onChange={(e) => setNeedsUpdateFilter(e.target.checked)}
-                  className="w-4 h-4 text-text-link bg-background-tertiary border-border-secondary rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
+                  className="w-4 h-4 text-text-link bg-background-tertiary border-border-secondary rounded-sm focus:ring-2 focus:ring-highlight-border"
                 />
                 <span>Needs updating ({needsUpdateCount})</span>
                 <span
@@ -1489,7 +1489,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   type="checkbox"
                   checked={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.checked)}
-                  className="w-4 h-4 text-text-link bg-background-tertiary border-border-secondary rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
+                  className="w-4 h-4 text-text-link bg-background-tertiary border-border-secondary rounded-sm focus:ring-2 focus:ring-highlight-border"
                 />
                 <span>Priority</span>
               </label>
@@ -1899,7 +1899,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           : ""
                       } ${
                         resource.category === BP_CATEGORY
-                          ? "bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50"
+                            ? "bg-category-bp-bg hover:bg-category-bp-bg-hover"
                           : isOutdated
                             ? "bg-update-indicator-bg hover:bg-update-indicator-bg-hover"
                             : "hover:bg-background-secondary"
