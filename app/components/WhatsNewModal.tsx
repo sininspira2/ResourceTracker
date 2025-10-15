@@ -115,7 +115,7 @@ export function WhatsNewModal({
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center p-4 z-50 transition-colors duration-300 ease-in-out ${
-        isAnimating ? "bg-black/50" : "bg-black/0"
+        isAnimating ? "bg-background-modal" : "bg-black/0"
       }`}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) {
@@ -127,12 +127,12 @@ export function WhatsNewModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="whats-new-modal-title"
-        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full flex flex-col max-h-[80vh] transition-all duration-300 ease-in-out transform ${
+        className={`bg-background-primary rounded-lg shadow-xl max-w-4xl w-full flex flex-col max-h-[80vh] transition-all duration-300 ease-in-out transform ${
           isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
         {/* Header */}
-        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg flex-shrink-0">
+        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-text-white p-6 rounded-t-lg flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <h2 id="whats-new-modal-title" className="text-2xl font-bold">
@@ -205,14 +205,14 @@ export function WhatsNewModal({
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                    <h3 className="text-xl font-bold text-text-primary">
                       {release.title}
                     </h3>
                     <span className="text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-sm">
                       v{release.version}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-text-tertiary mt-1">
                     Released {release.date}
                   </p>
                 </div>
@@ -227,7 +227,7 @@ export function WhatsNewModal({
                     >
                       {getChangeTypeIcon(change.type)}
                     </span>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                    <p className="text-text-secondary text-sm leading-relaxed">
                       {change.description}
                     </p>
                   </div>
@@ -238,12 +238,12 @@ export function WhatsNewModal({
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 rounded-b-lg flex gap-3 flex-shrink-0 items-center">
+        <div className="bg-background-secondary px-6 py-4 rounded-b-lg flex gap-3 flex-shrink-0 items-center">
           {/* See More button - aligned to the left */}
           {isOverflowing && !isExpanded && (
             <button
               onClick={() => setIsExpanded(true)}
-              className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-text-link hover:text-text-link-hover transition-colors"
             >
               See More
             </button>
@@ -257,13 +257,13 @@ export function WhatsNewModal({
             <>
               <button
                 onClick={() => handleClose(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-500 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-text-secondary bg-button-tertiary-bg hover:bg-button-tertiary-bg-hover border border-border-secondary rounded-lg transition-colors"
               >
                 Remind Me Later
               </button>
               <button
                 onClick={() => handleClose(true)}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-text-white bg-button-primary-bg hover:bg-button-primary-bg-hover rounded-lg transition-colors"
               >
                 Got It!
               </button>
@@ -272,7 +272,7 @@ export function WhatsNewModal({
           {(forceShow || externalIsOpen !== undefined) && (
             <button
               onClick={() => handleClose(false)}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+              className="px-4 py-2 text-sm font-medium text-text-white bg-button-primary-bg hover:bg-button-primary-bg-hover rounded-lg transition-colors"
             >
               Close
             </button>

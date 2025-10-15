@@ -91,6 +91,35 @@ export default {
         "activity-positive-bg": "var(--color-activity-positive-bg)",
         "activity-negative-bg": "var(--color-activity-negative-bg)",
         "activity-neutral-bg": "var(--color-activity-neutral-bg)",
+
+        "button-tertiary-bg": "var(--color-button-tertiary-bg)",
+        "button-tertiary-bg-hover": "var(--color-button-tertiary-bg-hover)",
+
+        "category-raw-bg": "var(--color-category-raw-bg)",
+        "category-raw-text": "var(--color-category-raw-text)",
+        "category-refined-bg": "var(--color-category-refined-bg)",
+        "category-refined-text": "var(--color-category-refined-text)",
+        "category-components-bg": "var(--color-category-components-bg)",
+        "category-components-text": "var(--color-category-components-text)",
+        "category-other-bg": "var(--color-category-other-bg)",
+        "category-other-text": "var(--color-category-other-text)",
+
+        "progress-bar-at-target-bg":
+          "var(--color-progress-bar-at-target-bg)",
+        "progress-bar-below-target-bg":
+          "var(--color-progress-bar-below-target-bg)",
+        "progress-bar-critical-bg": "var(--color-progress-bar-critical-bg)",
+
+        "text-accent": "var(--color-text-accent)",
+        "text-accent-dark": "var(--color-text-accent-dark)",
+
+        "background-accent-primary": "var(--color-background-accent-primary)",
+        "background-accent-secondary":
+          "var(--color-background-accent-secondary)",
+        "background-accent-tertiary": "var(--color-background-accent-tertiary)",
+
+        "border-accent-primary": "var(--color-border-accent-primary)",
+        "border-accent-secondary": "var(--color-border-accent-secondary)",
       },
     },
   },

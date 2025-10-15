@@ -782,43 +782,15 @@ export default function ResourceDetailPage() {
       )
     : null;
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case "Raw":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
-      case "Refined":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-      case "Components":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "Other":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "at_target":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "below_target":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
-      case "critical":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-background-secondary transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-xs border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-background-primary shadow-xs border-b border-border-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative flex items-center justify-center h-16">
             <button
               onClick={() => router.push("/resources")}
-              className="absolute left-0 flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+              className="absolute left-0 flex items-center text-text-tertiary hover:text-text-primary transition-colors"
             >
               <svg
                 className="w-5 h-5 md:mr-2"
@@ -835,7 +807,7 @@ export default function ResourceDetailPage() {
               </svg>
               <span className="hidden md:inline">Back to Resources</span>
             </button>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 text-center">
+            <h1 className="text-xl font-semibold text-text-primary text-center">
               Resource Details
             </h1>
           </div>
@@ -847,7 +819,7 @@ export default function ResourceDetailPage() {
         <div className="space-y-8">
           {/* Resource Info Card - Full Width Horizontal Layout */}
           <div className="w-full">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-background-primary rounded-lg shadow-md p-6 border border-border-primary">
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Resource Image */}
                 <div className="shrink-0">
@@ -855,7 +827,7 @@ export default function ResourceDetailPage() {
                     <img
                       src={resource.imageUrl}
                       alt={resource.name}
-                      className="w-32 h-32 object-cover rounded-lg border border-gray-200 dark:border-gray-600 mx-auto md:mx-0"
+                      className="w-32 h-32 object-cover rounded-lg border border-border-secondary mx-auto md:mx-0"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
@@ -866,9 +838,9 @@ export default function ResourceDetailPage() {
                     />
                   ) : null}
                   <div
-                    className={`w-32 h-32 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center mx-auto md:mx-0 ${resource.imageUrl ? "hidden" : "flex"}`}
+                    className={`w-32 h-32 rounded-lg bg-background-tertiary flex items-center justify-center mx-auto md:mx-0 ${resource.imageUrl ? "hidden" : "flex"}`}
                   >
-                    <span className="text-gray-400 dark:text-gray-500 text-sm">
+                    <span className="text-text-quaternary text-sm">
                       No Image
                     </span>
                   </div>
@@ -879,7 +851,7 @@ export default function ResourceDetailPage() {
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="text-center md:text-left">
                       {/* Resource Name */}
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                      <h2 className="text-2xl font-bold text-text-primary mb-2">
                         {resource.name}
                       </h2>
 
@@ -887,13 +859,27 @@ export default function ResourceDetailPage() {
                       <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-2">
                         {resource.category && (
                           <span
-                            className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getCategoryColor(resource.category)}`}
+                            className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
+                              resource.category === "Raw"
+                                ? "bg-category-raw-bg text-category-raw-text"
+                                : resource.category === "Refined"
+                                  ? "bg-category-refined-bg text-category-refined-text"
+                                  : resource.category === "Components"
+                                    ? "bg-category-components-bg text-category-components-text"
+                                    : "bg-category-other-bg text-category-other-text"
+                            }`}
                           >
                             {resource.category}
                           </span>
                         )}
                         <span
-                          className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(status)}`}
+                          className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
+                            status === "at_target"
+                              ? "bg-status-at-target-bg text-status-at-target-text"
+                              : status === "below_target"
+                                ? "bg-status-below-target-bg text-status-below-target-text"
+                                : "bg-status-critical-bg text-status-critical-text"
+                          }`}
                         >
                           {formatStatusForDisplay(status)}
                         </span>
@@ -901,7 +887,7 @@ export default function ResourceDetailPage() {
 
                       {/* Description */}
                       {resource.description && (
-                        <p className="text-gray-600 dark:text-gray-400 text-center md:text-left">
+                        <p className="text-text-tertiary text-center md:text-left">
                           <LinkifiedText text={resource.description} />
                         </p>
                       )}
@@ -910,24 +896,24 @@ export default function ResourceDetailPage() {
                     {/* Quantities */}
                     <div className="flex flex-col sm:flex-row gap-6 text-center">
                       <div>
-                        <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                        <div className="text-xl font-bold text-text-primary">
                           Hagga: {formatNumber(resource.quantityHagga)}
                         </div>
-                        <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                        <div className="text-xl font-bold text-text-primary">
                           Deep Desert:{" "}
                           {formatNumber(resource.quantityDeepDesert)}
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <div className="text-sm text-text-tertiary">
                           Current Quantities
                         </div>
                       </div>
                       <div>
-                        <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        <div className="text-3xl font-bold text-text-primary">
                           {resource.targetQuantity
                             ? formatNumber(resource.targetQuantity)
                             : "N/A"}
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <div className="text-sm text-text-tertiary">
                           Target Quantity
                         </div>
                       </div>
@@ -937,18 +923,18 @@ export default function ResourceDetailPage() {
                   {/* Progress Bar */}
                   {percentage !== null && (
                     <div>
-                      <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      <div className="flex justify-between text-sm text-text-tertiary mb-2">
                         <span>Progress to Target</span>
                         <span>{percentage}%</span>
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                      <div className="w-full bg-background-tertiary rounded-full h-3">
                         <div
                           className={`h-3 rounded-full transition-all duration-500 ${
                             percentage >= 100
-                              ? "bg-green-500"
+                              ? "bg-progress-bar-at-target-bg"
                               : percentage >= 50
-                                ? "bg-orange-500"
-                                : "bg-red-500"
+                                ? "bg-progress-bar-below-target-bg"
+                                : "bg-progress-bar-critical-bg"
                           }`}
                           style={{ width: `${Math.min(percentage, 100)}%` }}
                         ></div>
@@ -957,11 +943,11 @@ export default function ResourceDetailPage() {
                   )}
 
                   {/* Last Updated & Actions */}
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                    <div className="text-center md:text-left text-sm text-gray-600 dark:text-gray-400">
+                  <div className="pt-4 border-t border-border-primary flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    <div className="text-center md:text-left text-sm text-text-tertiary">
                       <div>
                         Last updated by:{" "}
-                        <span className="font-medium text-gray-900 dark:text-gray-100">
+                        <span className="font-medium text-text-primary">
                           {resource.lastUpdatedBy}
                         </span>
                       </div>
@@ -1065,15 +1051,15 @@ export default function ResourceDetailPage() {
 
           {/* Edit Mode Modal/Overlay */}
           {editMode && canEdit && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div className="fixed inset-0 bg-background-modal flex items-center justify-center z-50">
+              <div className="bg-background-primary rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-text-primary">
                     Update Quantity
                   </h3>
                   <button
                     onClick={() => setEditMode(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-text-quaternary hover:text-text-tertiary"
                   >
                     <svg
                       className="w-6 h-6"
@@ -1117,7 +1103,7 @@ export default function ResourceDetailPage() {
                     >
                       {updateType === "relative" ? "+/-" : "="}
                     </button>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-text-tertiary">
                       {updateType === "relative"
                         ? "Relative Change"
                         : "Absolute Value"}
@@ -1147,7 +1133,7 @@ export default function ResourceDetailPage() {
                       min={updateType === "absolute" ? "0" : undefined}
                     />
                     {updateType === "relative" && (
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-text-quaternary mt-1">
                         New quantity:{" "}
                         {formatNumber(
                           Math.max(0, resource.quantityHagga + newQuantity),
@@ -1160,7 +1146,7 @@ export default function ResourceDetailPage() {
                   <button
                     onClick={updateResource}
                     disabled={saving}
-                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2 rounded-lg font-medium"
+                    className="w-full bg-button-primary-bg hover:bg-button-primary-bg-hover disabled:opacity-50 text-text-white py-2 rounded-lg font-medium"
                   >
                     {saving ? "Updating..." : "Update Quantity"}
                   </button>
@@ -1173,19 +1159,17 @@ export default function ResourceDetailPage() {
         {/* History and Leaderboard Section - Full Width */}
         <div className="w-full space-y-8 mt-8">
           {/* Activity Timeline with Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-background-primary rounded-lg shadow-md p-6 border border-border-primary">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-text-primary">
                 Activity Timeline
               </h3>
               <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Time Range:
-                </span>
+                <span className="text-sm text-text-tertiary">Time Range:</span>
                 <select
                   value={timeFilter}
                   onChange={(e) => setTimeFilter(parseInt(e.target.value))}
-                  className="border border-gray-300 dark:border-gray-600 rounded-sm px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="border border-border-secondary rounded-sm px-3 py-1 text-sm bg-background-primary text-text-primary"
                 >
                   <option value={1}>Last 24 hours</option>
                   <option value={3}>Last 3 days</option>
@@ -1199,8 +1183,8 @@ export default function ResourceDetailPage() {
 
             {/* History Chart */}
             {!historyLoading && history.length > 1 && (
-              <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-4">
+              <div className="mb-6 p-4 bg-background-secondary rounded-lg border border-border-secondary">
+                <h4 className="text-md font-medium text-text-secondary mb-4">
                   Quantity Over Time
                 </h4>
                 <div className="relative h-72">
@@ -1514,7 +1498,7 @@ export default function ResourceDetailPage() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center justify-center gap-6 mt-4 text-xs text-gray-600 dark:text-gray-400">
+                <div className="flex items-center justify-center gap-6 mt-4 text-xs text-text-tertiary">
                   <div className="flex items-center gap-1">
                     <div
                       className="w-3 h-3 rounded-full flex-shrink-0"
@@ -1536,7 +1520,7 @@ export default function ResourceDetailPage() {
                     ></div>
                     <span>Deep Desert</span>
                   </div>
-                  <div className="text-gray-500 dark:text-gray-400 ml-4">
+                  <div className="text-text-quaternary ml-4">
                     💡 Hover points for details, click to highlight below •
                     Times update automatically
                   </div>
@@ -1545,9 +1529,9 @@ export default function ResourceDetailPage() {
             )}
 
             {!historyLoading && history.length <= 1 && (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <div className="text-center py-8 text-text-quaternary">
                 <svg
-                  className="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-500"
+                  className="w-12 h-12 mx-auto mb-4 text-text-quaternary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1566,16 +1550,16 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* Resource-Specific Contribution Leaderboard */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-background-primary rounded-lg shadow-md p-6 border border-border-primary">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-text-primary">
                 Contribution Leaderboard
               </h3>
-              <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-sm">
+              <div className="text-xs text-text-quaternary bg-background-tertiary px-2 py-1 rounded-sm">
                 Only +/- changes count
               </div>
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            <div className="text-sm text-text-tertiary mb-6">
               Tracks contributions and consumption from relative changes (+500,
               -200, etc.) for this resource. Administrative value updates are
               not included.
@@ -1583,17 +1567,17 @@ export default function ResourceDetailPage() {
 
             {historyLoading ? (
               <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-text-link mx-auto"></div>
               </div>
             ) : history.length === 0 ? (
-              <div className="text-center py-4 text-gray-500">
+              <div className="text-center py-4 text-text-quaternary">
                 No activity in the selected time period
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Top Contributors */}
                 <div>
-                  <h4 className="text-md font-medium text-green-700 dark:text-green-300 mb-3">
+                  <h4 className="text-md font-medium text-text-success mb-3">
                     🏆 Top Contributors
                   </h4>
                   <div className="space-y-2">
@@ -1604,17 +1588,17 @@ export default function ResourceDetailPage() {
                       .map(([user, stats], index) => (
                         <div
                           key={user}
-                          className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-sm"
+                          className="flex items-center justify-between p-2 bg-background-success rounded-sm"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <span className="text-sm font-medium text-text-primary">
                               #{index + 1}
                             </span>
-                            <span className="text-sm text-gray-900 dark:text-gray-100">
+                            <span className="text-sm text-text-primary">
                               {user}
                             </span>
                           </div>
-                          <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                          <span className="text-sm font-medium text-text-success">
                             +{formatNumber(stats.contributed)}
                           </span>
                         </div>
@@ -1624,7 +1608,7 @@ export default function ResourceDetailPage() {
 
                 {/* Top Consumers */}
                 <div>
-                  <h4 className="text-md font-medium text-red-700 dark:text-red-300 mb-3">
+                  <h4 className="text-md font-medium text-text-danger mb-3">
                     📉 Top Consumers
                   </h4>
                   <div className="space-y-2">
@@ -1635,17 +1619,17 @@ export default function ResourceDetailPage() {
                       .map(([user, stats], index) => (
                         <div
                           key={user}
-                          className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-900/20 rounded-sm"
+                          className="flex items-center justify-between p-2 bg-background-danger rounded-sm"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <span className="text-sm font-medium text-text-primary">
                               #{index + 1}
                             </span>
-                            <span className="text-sm text-gray-900 dark:text-gray-100">
+                            <span className="text-sm text-text-primary">
                               {user}
                             </span>
                           </div>
-                          <span className="text-sm font-medium text-red-700 dark:text-red-300">
+                          <span className="text-sm font-medium text-text-danger">
                             -{formatNumber(stats.taken)}
                           </span>
                         </div>
@@ -1657,29 +1641,29 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* Global Points Leaderboard */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-background-primary rounded-lg shadow-md p-6 border border-border-primary">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-text-primary">
                 🏆 Points Leaderboard
               </h3>
-              <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-sm">
+              <div className="text-xs text-text-quaternary bg-background-tertiary px-2 py-1 rounded-sm">
                 Global rankings (last 7 days)
               </div>
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            <div className="text-sm text-text-tertiary mb-6">
               Rankings based on points earned from resource contributions across
               all resources.
             </div>
 
             {leaderboardLoading ? (
               <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-text-link mx-auto"></div>
+                <p className="mt-2 text-sm text-text-tertiary">
                   Loading leaderboard...
                 </p>
               </div>
             ) : leaderboard.length === 0 ? (
-              <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+              <div className="text-center py-4 text-text-tertiary">
                 <p className="text-sm">
                   No contributions in the selected time period
                 </p>
@@ -1699,29 +1683,29 @@ export default function ResourceDetailPage() {
                       <div
                         className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
                           index === 0
-                            ? "bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200"
+                            ? "bg-rank-1-bg text-rank-1-text"
                             : index === 1
-                              ? "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                              ? "bg-rank-2-bg text-rank-2-text"
                               : index === 2
-                                ? "bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200"
-                                : "bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300"
+                                ? "bg-rank-3-bg text-rank-3-text"
+                                : "bg-rank-other-bg text-rank-other-text"
                         }`}
                       >
                         #{index + 1}
                       </div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <div className="text-sm font-medium text-text-primary">
                         {entry.userId}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-xs text-text-quaternary">
                         ({entry.totalActions} actions)
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                      <div className="text-sm font-bold text-text-link">
                         {entry.totalPoints.toFixed(1)} pts
                       </div>
                       <svg
-                        className="w-4 h-4 text-gray-400 dark:text-gray-500"
+                        className="w-4 h-4 text-text-quaternary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -1737,10 +1721,10 @@ export default function ResourceDetailPage() {
                   </div>
                 ))}
 
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="pt-4 border-t border-border-primary">
                   <button
                     onClick={() => router.push("/dashboard/leaderboard")}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
+                    className="w-full bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
                   >
                     View Full Leaderboard
                   </button>
@@ -1750,14 +1734,14 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* History Timeline */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-background-primary rounded-lg shadow-md p-6 border border-border-primary">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-text-primary">
                 Recent Changes
               </h3>
               <div className="flex items-center gap-3">
                 {selectedPointId && (
-                  <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-sm">
+                  <div className="text-sm text-text-tertiary bg-background-tertiary px-2 py-1 rounded-sm">
                     Point selected on chart
                   </div>
                 )}
@@ -1774,15 +1758,13 @@ export default function ResourceDetailPage() {
 
             {historyLoading ? (
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">
-                  Loading history...
-                </p>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-link mx-auto"></div>
+                <p className="mt-2 text-text-tertiary">Loading history...</p>
               </div>
             ) : history.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <div className="text-center py-8 text-text-quaternary">
                 <svg
-                  className="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-500"
+                  className="w-12 h-12 mx-auto mb-4 text-text-quaternary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1811,7 +1793,7 @@ export default function ResourceDetailPage() {
                       className={`group flex items-start justify-between p-4 rounded-lg transition-all duration-300 cursor-pointer ${
                         isHighlighted
                           ? "bg-blue-100 dark:bg-blue-900/50 border-2 border-blue-300 dark:border-blue-500 shadow-md transform scale-[1.02]"
-                          : "bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                          : "bg-background-secondary hover:bg-background-tertiary"
                       }`}
                       onClick={() =>
                         setSelectedPointId(
@@ -1825,16 +1807,16 @@ export default function ResourceDetailPage() {
                             entry.changeAmountHagga +
                               entry.changeAmountDeepDesert >
                             0
-                              ? "bg-green-500"
+                              ? "bg-activity-positive-bg"
                               : entry.changeAmountHagga +
                                     entry.changeAmountDeepDesert <
                                   0
-                                ? "bg-red-500"
-                                : "bg-gray-400"
+                                ? "bg-activity-negative-bg"
+                                : "bg-activity-neutral-bg"
                           } ${isHighlighted ? "ring-2 ring-blue-400 dark:ring-blue-500" : ""}`}
                         ></div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center flex-wrap gap-2">
+                          <div className="font-medium text-text-primary flex items-center flex-wrap gap-2">
                             {entry.changeType === "transfer" ? (
                               <span>
                                 Transfer {entry.transferAmount}{" "}
@@ -1880,26 +1862,26 @@ export default function ResourceDetailPage() {
                               </span>
                             )}
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <div className="text-sm text-text-tertiary mt-1">
                             By{" "}
                             <span className="font-medium">
                               {entry.updatedBy}
                             </span>
                             {entry.changeType === "relative" && (
-                              <span className="ml-2 text-green-600 dark:text-green-400 text-xs">
+                              <span className="ml-2 text-text-success text-xs">
                                 • Counts toward leaderboard
                               </span>
                             )}
                           </div>
                           {entry.reason && (
-                            <div className="mt-2 text-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-900/40 p-2 rounded-md whitespace-pre-wrap break-words">
+                            <div className="mt-2 text-sm text-text-secondary bg-background-tertiary p-2 rounded-md whitespace-pre-wrap break-words">
                               <LinkifiedText text={entry.reason} />
                             </div>
                           )}
                         </div>
                       </div>
                       <div className="flex items-start gap-3 pl-4">
-                        <div className="text-sm text-gray-500 dark:text-gray-400 text-right flex-shrink-0">
+                        <div className="text-sm text-text-quaternary text-right flex-shrink-0">
                           <div
                             className="cursor-help hover:underline decoration-dotted"
                             title={`${new Date(entry.createdAt).toLocaleDateString()} at ${new Date(entry.createdAt).toLocaleTimeString()}`}
@@ -1907,7 +1889,7 @@ export default function ResourceDetailPage() {
                             {getRelativeTime(entry.createdAt, currentTime)}
                           </div>
                           {isHighlighted && (
-                            <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                            <div className="text-xs text-text-link mt-1">
                               📍 Chart point
                             </div>
                           )}
@@ -2018,28 +2000,28 @@ export default function ResourceDetailPage() {
       )}
 
       {deleteConfirm.showDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4 border border-gray-200 dark:border-gray-700">
+        <div className="fixed inset-0 bg-background-modal flex items-center justify-center z-50">
+          <div className="bg-background-primary rounded-lg p-6 max-w-md mx-4 border border-border-primary">
             <div className="flex items-center gap-3 mb-4">
-              <Trash2 className="w-8 h-8 text-red-600 dark:text-red-400" />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <Trash2 className="w-8 h-8 text-text-danger" />
+              <h3 className="text-lg font-semibold text-text-primary">
                 Delete Resource
               </h3>
             </div>
 
             <div className="mb-6">
-              <p className="text-gray-700 dark:text-gray-300 mb-2">
+              <p className="text-text-secondary mb-2">
                 Are you sure you want to delete{" "}
                 <strong>&quot;{deleteConfirm.resourceName}&quot;</strong>?
               </p>
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3">
+              <div className="bg-background-danger border border-border-danger rounded-lg p-3">
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+                  <AlertTriangle className="w-5 h-5 text-text-danger mt-0.5 shrink-0" />
                   <div className="text-sm">
-                    <p className="font-medium text-red-800 dark:text-red-200 mb-1">
+                    <p className="font-medium text-text-danger mb-1">
                       Warning: This action cannot be undone
                     </p>
-                    <p className="text-red-700 dark:text-red-300">
+                    <p className="text-text-danger">
                       This will permanently delete the resource and{" "}
                       <strong>all its history data</strong>. All tracking
                       records, changes, and analytics for this resource will be
@@ -2059,7 +2041,7 @@ export default function ResourceDetailPage() {
                     showDialog: false,
                   })
                 }
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg transition-colors"
               >
                 Cancel
               </button>
@@ -2070,7 +2052,7 @@ export default function ResourceDetailPage() {
                   }
                 }}
                 disabled={saving}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 disabled:opacity-50 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-text-white bg-button-danger-bg hover:bg-button-danger-bg-hover disabled:opacity-50 rounded-lg transition-colors"
               >
                 {saving ? "Deleting..." : "Delete Resource"}
               </button>
