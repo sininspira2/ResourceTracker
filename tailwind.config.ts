@@ -56,8 +56,7 @@ export default {
         "status-at-target-bg": "var(--color-status-at-target-bg)",
         "status-at-target-text": "var(--color-status-at-target-text)",
         "status-at-target-border": "var(--color-status-at-target-border)",
-        "status-at-target-bg-subtle":
-          "var(--color-status-at-target-bg-subtle)",
+        "status-at-target-bg-subtle": "var(--color-status-at-target-bg-subtle)",
         "status-above-target-bg": "var(--color-status-above-target-bg)",
         "status-above-target-text": "var(--color-status-above-target-text)",
         "status-above-target-border": "var(--color-status-above-target-border)",
@@ -112,8 +111,7 @@ export default {
         "category-bp-bg": "var(--color-category-bp-bg)",
         "category-bp-bg-hover": "var(--color-category-bp-bg-hover)",
 
-        "progress-bar-at-target-bg":
-          "var(--color-progress-bar-at-target-bg)",
+        "progress-bar-at-target-bg": "var(--color-progress-bar-at-target-bg)",
         "progress-bar-below-target-bg":
           "var(--color-progress-bar-below-target-bg)",
         "progress-bar-critical-bg": "var(--color-progress-bar-critical-bg)",
@@ -165,8 +163,7 @@ export default {
           "var(--color-button-subtle-yellow-bg-hover)",
         "button-subtle-yellow-text": "var(--color-button-subtle-yellow-text)",
         "button-subtle-red-bg": "var(--color-button-subtle-red-bg)",
-        "button-subtle-red-bg-hover":
-          "var(--color-button-subtle-red-bg-hover)",
+        "button-subtle-red-bg-hover": "var(--color-button-subtle-red-bg-hover)",
         "button-subtle-red-text": "var(--color-button-subtle-red-text)",
         "button-subtle-gray-bg": "var(--color-button-subtle-gray-bg)",
         "button-subtle-gray-text": "var(--color-button-subtle-gray-text)",
@@ -204,7 +201,8 @@ export default {
         "version-tag-bg": "var(--color-version-tag-bg)",
         "version-tag-text": "var(--color-version-tag-text)",
 
-        "button-secondary-neutral-bg": "var(--color-button-secondary-neutral-bg)",
+        "button-secondary-neutral-bg":
+          "var(--color-button-secondary-neutral-bg)",
         "button-secondary-neutral-bg-hover":
           "var(--color-button-secondary-neutral-bg-hover)",
 
@@ -215,8 +213,7 @@ export default {
         "text-purple-subtle": "var(--color-text-purple-subtle)",
 
         "button-prominent-bg": "var(--color-button-prominent-bg)",
-        "button-prominent-blue-text":
-          "var(--color-button-prominent-blue-text)",
+        "button-prominent-blue-text": "var(--color-button-prominent-blue-text)",
         "button-prominent-blue-bg-hover":
           "var(--color-button-prominent-blue-bg-hover)",
         "button-prominent-red-text": "var(--color-button-prominent-red-text)",
@@ -228,8 +225,6 @@ export default {
 
         "tag-discord-role-bg": "var(--color-tag-discord-role-bg)",
         "tag-discord-role-text": "var(--color-tag-discord-role-text)",
-
-        "background-loading": "var(--color-background-loading)",
       },
       backgroundImage: {
         "gradient-success":

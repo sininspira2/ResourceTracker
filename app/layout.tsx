@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} bg-background-primary`}>
+      <body className={inter.className}>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -45,9 +45,11 @@ export default function RootLayout({
         />
         <ThemeProvider>
           <SessionProvider>
-            <MigrationBanner />
-            {children}
-            <WhatsNewModal />
+            <div className="bg-background-primary min-h-screen">
+              <MigrationBanner />
+              {children}
+              <WhatsNewModal />
+            </div>
           </SessionProvider>
         </ThemeProvider>
       </body>
