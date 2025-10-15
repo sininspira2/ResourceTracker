@@ -260,7 +260,7 @@ export function ResourceHistoryChart({
                                 hoveredPoint.newQuantityDeepDesert,
                             )}
                           </div>
-                          <div className="text-gray-300">
+                          <div className="text-text-tooltip-secondary">
                             {hoveredPoint.changeAmountHagga +
                               hoveredPoint.changeAmountDeepDesert >
                             0
@@ -271,10 +271,10 @@ export function ResourceHistoryChart({
                                 hoveredPoint.changeAmountDeepDesert,
                             )}
                           </div>
-                          <div className="text-gray-300">
+                          <div className="text-text-tooltip-secondary">
                             By: {hoveredPoint.updatedBy}
                           </div>
-                          <div className="text-gray-300">
+                          <div className="text-text-tooltip-secondary">
                             {new Date(
                               hoveredPoint.createdAt,
                             ).toLocaleDateString()}

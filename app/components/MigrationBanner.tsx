@@ -23,7 +23,7 @@ export async function MigrationBanner() {
           href="https://github.com/sininspira2/ResourceTracker/blob/main/DB_MIGRATION.md"
           target="_blank"
           rel="noopener noreferrer"
-          className="underline hover:text-blue-800"
+          className="underline hover:text-text-link-hover"
         >
           here
         </Link>{" "}

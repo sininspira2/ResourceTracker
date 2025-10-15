@@ -323,10 +323,10 @@ export default function PrivacyPage() {
 
           {/* Contact Information */}
           <div className="bg-background-info border border-border-info rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+            <h2 className="text-lg font-semibold text-version-tag-text mb-2">
               Need Help?
             </h2>
-            <p className="text-blue-800 dark:text-blue-200 text-sm">
+            <p className="text-button-subtle-blue-text text-sm">
               If you have questions about your data or need assistance with
               privacy-related requests, please contact the server administrators
               through Discord.

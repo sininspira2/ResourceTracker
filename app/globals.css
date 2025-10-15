@@ -17,6 +17,7 @@
   --color-background-modal: theme(colors.black / 50%);
   --color-background-danger: theme(colors.red.50);
   --color-background-info: theme(colors.blue.50);
+  --color-background-info-hover: theme(colors.blue.100);
   --color-background-success: theme(colors.green.50);
 
   --color-text-primary: theme(colors.gray.900);
@@ -44,6 +45,10 @@
   --color-button-danger-bg-hover: theme(colors.red.700);
   --color-button-success-bg: theme(colors.green.600);
   --color-button-success-bg-hover: theme(colors.green.700);
+  --color-button-neutral-bg: theme(colors.gray.500);
+  --color-button-neutral-bg-hover: theme(colors.gray.600);
+
+  --color-text-priority: theme(colors.red.500);
 
   --color-status-critical-bg: theme(colors.red.100);
   --color-status-critical-text: theme(colors.red.800);
@@ -107,6 +112,8 @@
   --color-category-components-text: theme(colors.green.800);
   --color-category-other-bg: theme(colors.purple.100);
   --color-category-other-text: theme(colors.purple.800);
+  --color-category-bp-bg: theme(colors.purple.200);
+  --color-category-bp-bg-hover: theme(colors.purple.300);
 
   --color-progress-bar-at-target-bg: theme(colors.green.500);
   --color-progress-bar-below-target-bg: theme(colors.orange.500);
@@ -180,6 +187,37 @@
   --color-text-tooltip: theme(colors.white);
   --color-text-tooltip-secondary: theme(colors.gray.300);
   --color-text-tooltip-accent: theme(colors.blue.300);
+
+  --color-modal-header-gradient-from: theme(colors.blue.600);
+  --color-modal-header-gradient-to: theme(colors.blue.700);
+  --color-modal-header-text: theme(colors.blue.100);
+  --color-modal-header-icon-hover-bg: theme(colors.blue.600);
+
+  --color-version-tag-bg: theme(colors.blue.100);
+  --color-version-tag-text: theme(colors.blue.800);
+
+  --color-button-secondary-neutral-bg: theme(colors.gray.600);
+  --color-button-secondary-neutral-bg-hover: theme(colors.gray.700);
+
+  --color-text-danger-hover: theme(colors.red.900);
+
+  --color-background-purple-subtle: theme(colors.purple.50);
+  --color-text-purple: theme(colors.purple.600);
+  --color-text-purple-subtle: theme(colors.purple.700);
+
+  --color-button-prominent-bg: theme(colors.white);
+  --color-button-prominent-blue-text: theme(colors.blue.700);
+  --color-button-prominent-blue-bg-hover: theme(colors.blue.50);
+  --color-button-prominent-red-text: theme(colors.red.700);
+  --color-button-prominent-red-bg-hover: theme(colors.red.50);
+
+  --color-icon-prominent-blue: theme(colors.blue.200);
+  --color-icon-prominent-red: theme(colors.red.200);
+
+  --color-tag-discord-role-bg: theme(colors.blue.100);
+  --color-tag-discord-role-text: theme(colors.blue.800);
+
+  --color-background-loading: theme(colors.gray.50);
 }
 
 html[data-theme="dark"] {
@@ -188,6 +226,7 @@ html[data-theme="dark"] {
   --color-background-tertiary: theme(colors.gray.700);
   --color-background-danger: theme(colors.red.900 / 20%);
   --color-background-info: theme(colors.blue.900 / 20%);
+  --color-background-info-hover: theme(colors.blue.900 / 70%);
   --color-background-success: theme(colors.green.900 / 20%);
 
   --color-text-primary: theme(colors.gray.100);
@@ -213,6 +252,10 @@ html[data-theme="dark"] {
   --color-button-danger-bg-hover: theme(colors.red.600);
   --color-button-success-bg: theme(colors.green.500);
   --color-button-success-bg-hover: theme(colors.green.600);
+  --color-button-neutral-bg: theme(colors.gray.500);
+  --color-button-neutral-bg-hover: theme(colors.gray.400);
+
+  --color-text-priority: theme(colors.red.400);
 
   --color-status-critical-bg: theme(colors.red.900 / 50%);
   --color-status-critical-text: theme(colors.red.200);
@@ -301,4 +344,38 @@ html[data-theme="dark"] {
   --color-button-icon-danger-text: theme(colors.red.400);
   --color-button-icon-danger-text-hover: theme(colors.red.300);
   --color-button-icon-danger-bg-hover: theme(colors.red.900 / 20%);
+
+  --color-category-bp-bg: theme(colors.violet.900 / 30%);
+  --color-category-bp-bg-hover: theme(colors.violet.900 / 50%);
+
+  --color-modal-header-gradient-from: theme(colors.blue.700);
+  --color-modal-header-gradient-to: theme(colors.blue.800);
+  --color-modal-header-text: theme(colors.blue.200);
+  --color-modal-header-icon-hover-bg: theme(colors.blue.700);
+
+  --color-version-tag-bg: theme(colors.blue.900);
+  --color-version-tag-text: theme(colors.blue.200);
+
+  --color-button-secondary-neutral-bg: theme(colors.gray.700);
+  --color-button-secondary-neutral-bg-hover: theme(colors.gray.600);
+
+  --color-text-danger-hover: theme(colors.red.100);
+
+  --color-background-purple-subtle: theme(colors.purple.900 / 20%);
+  --color-text-purple: theme(colors.purple.400);
+  --color-text-purple-subtle: theme(colors.purple.300);
+
+  --color-button-prominent-bg: theme(colors.gray.100);
+  --color-button-prominent-blue-text: theme(colors.blue.700);
+  --color-button-prominent-blue-bg-hover: theme(colors.blue.100);
+  --color-button-prominent-red-text: theme(colors.red.700);
+  --color-button-prominent-red-bg-hover: theme(colors.red.100);
+
+  --color-icon-prominent-blue: theme(colors.blue.300);
+  --color-icon-prominent-red: theme(colors.red.300);
+
+  --color-tag-discord-role-bg: theme(colors.blue.900);
+  --color-tag-discord-role-text: theme(colors.blue.200);
+
+  --color-background-loading: theme(colors.gray.900);
 }

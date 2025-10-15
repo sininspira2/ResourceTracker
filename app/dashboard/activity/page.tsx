@@ -259,8 +259,8 @@ export default function ActivityLogPage() {
                             <span
                               className={`text-xs px-2 py-0.5 rounded-full ${
                                 activity.changeType === "relative"
-                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
-                                  : "bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
+                                  ? "bg-button-subtle-blue-bg text-button-subtle-blue-text"
+                                  : "bg-button-subtle-gray-bg text-button-subtle-gray-text"
                               }`}
                             >
                               {activity.changeType === "relative"

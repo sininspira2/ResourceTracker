@@ -109,7 +109,7 @@ export default function LeaderboardPage() {
             </div>
             <button
               onClick={() => router.push("/resources")}
-              className="bg-gray-600 hover:bg-gray-700 text-text-white px-4 py-2 rounded-lg"
+              className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover text-text-white px-4 py-2 rounded-lg"
             >
               Back to Resources
             </button>
@@ -140,7 +140,7 @@ export default function LeaderboardPage() {
             <p className="text-text-danger">{error}</p>
             <button
               onClick={fetchLeaderboard}
-              className="mt-2 text-sm text-text-danger hover:text-red-900 dark:hover:text-red-100"
+              className="mt-2 text-sm text-text-danger hover:text-danger-hover"
             >
               Try again
             </button>

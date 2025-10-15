@@ -716,10 +716,10 @@ export default function ResourceDetailPage() {
 
   if (loading || sessionStatus === "loading") {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background-loading flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-text-link mx-auto"></div>
+          <p className="mt-4 text-text-tertiary">
             Loading resource details...
           </p>
         </div>
@@ -729,10 +729,10 @@ export default function ResourceDetailPage() {
 
   if (!resource) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background-loading flex items-center justify-center">
         <div className="text-center">
           <svg
-            className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4"
+            className="w-16 h-16 mx-auto text-text-quaternary mb-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -744,10 +744,10 @@ export default function ResourceDetailPage() {
               d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-2xl font-bold text-text-primary mb-2">
             Resource Not Found
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-text-tertiary mb-6">
             The resource you&apos;re looking for doesn&apos;t exist or you
             don&apos;t have permission to view it.
             {!canEdit && (
@@ -761,7 +761,7 @@ export default function ResourceDetailPage() {
           </p>
           <button
             onClick={() => router.push("/resources")}
-            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+            className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white px-4 py-2 rounded-lg transition-colors"
           >
             Back to Resources
           </button>
