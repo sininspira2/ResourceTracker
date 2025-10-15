@@ -45,7 +45,7 @@ export default async function Home() {
               <div className="bg-background-accent-secondary border border-border-accent-secondary rounded-lg p-4 mb-6">
                 <div className="flex items-center justify-center mb-2">
                   <svg
-                    className="w-6 h-6 text-red-400 dark:text-red-300 mr-2"
+                    className="w-6 h-6 text-text-danger mr-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -57,16 +57,16 @@ export default async function Home() {
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.888-.833-2.664 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z"
                     />
                   </svg>
-                  <span className="font-medium text-red-200 dark:text-red-300">
+                  <span className="font-medium text-text-danger">
                     Access Denied
                   </span>
                 </div>
-                <p className="text-red-200 dark:text-red-300 text-sm mb-3">
+                <p className="text-text-danger text-sm mb-3">
                   {session.user.isInGuild
                     ? "You need the required Discord roles to access this portal."
                     : "You must be a member of the Discord server to access this portal."}
                 </p>
-                <div className="text-red-100 dark:text-red-200 text-xs bg-background-accent-tertiary rounded-sm px-3 py-2">
+                <div className="text-text-danger text-xs bg-background-accent-tertiary rounded-sm px-3 py-2">
                   <div className="font-medium mb-1">Requirements:</div>
                   <ul className="list-disc list-inside space-y-1">
                     <li>Be a member of the Discord server</li>
@@ -81,7 +81,7 @@ export default async function Home() {
 
               <div className="space-y-4">
                 <LogoutButton variant="prominent" fullWidth={true} />
-                <p className="text-center text-blue-200/80 dark:text-blue-300/80 text-sm">
+                <p className="text-center text-text-accent text-sm">
                   Try logging in with a Discord account that has the required
                   server roles
                 </p>
@@ -99,7 +99,7 @@ export default async function Home() {
           )}
         </div>
 
-        <footer className="text-center mt-16 text-blue-200/60 dark:text-blue-300/60">
+        <footer className="text-center mt-16 text-text-accent">
           <p className="text-sm">
             Powered by Discord authentication • Secure role-based access
           </p>

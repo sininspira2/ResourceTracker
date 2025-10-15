@@ -11,6 +11,7 @@ export default {
         "background-modal": "var(--color-background-modal)",
         "background-danger": "var(--color-background-danger)",
         "background-info": "var(--color-background-info)",
+        "background-info-hover": "var(--color-background-info-hover)",
         "background-success": "var(--color-background-success)",
 
         "text-primary": "var(--color-text-primary)",
@@ -38,6 +39,10 @@ export default {
         "button-danger-bg-hover": "var(--color-button-danger-bg-hover)",
         "button-success-bg": "var(--color-button-success-bg)",
         "button-success-bg-hover": "var(--color-button-success-bg-hover)",
+        "button-neutral-bg": "var(--color-button-neutral-bg)",
+        "button-neutral-bg-hover": "var(--color-button-neutral-bg-hover)",
+
+        "text-priority": "var(--color-text-priority)",
 
         "status-critical-bg": "var(--color-status-critical-bg)",
         "status-critical-text": "var(--color-status-critical-text)",
@@ -104,6 +109,8 @@ export default {
         "category-components-text": "var(--color-category-components-text)",
         "category-other-bg": "var(--color-category-other-bg)",
         "category-other-text": "var(--color-category-other-text)",
+        "category-bp-bg": "var(--color-category-bp-bg)",
+        "category-bp-bg-hover": "var(--color-category-bp-bg-hover)",
 
         "progress-bar-at-target-bg":
           "var(--color-progress-bar-at-target-bg)",
@@ -190,6 +197,39 @@ export default {
         "text-tooltip": "var(--color-text-tooltip)",
         "text-tooltip-secondary": "var(--color-text-tooltip-secondary)",
         "text-tooltip-accent": "var(--color-text-tooltip-accent)",
+
+        "modal-header-text": "var(--color-modal-header-text)",
+        "modal-header-icon-hover-bg": "var(--color-modal-header-icon-hover-bg)",
+
+        "version-tag-bg": "var(--color-version-tag-bg)",
+        "version-tag-text": "var(--color-version-tag-text)",
+
+        "button-secondary-neutral-bg": "var(--color-button-secondary-neutral-bg)",
+        "button-secondary-neutral-bg-hover":
+          "var(--color-button-secondary-neutral-bg-hover)",
+
+        "text-danger-hover": "var(--color-text-danger-hover)",
+
+        "background-purple-subtle": "var(--color-background-purple-subtle)",
+        "text-purple": "var(--color-text-purple)",
+        "text-purple-subtle": "var(--color-text-purple-subtle)",
+
+        "button-prominent-bg": "var(--color-button-prominent-bg)",
+        "button-prominent-blue-text":
+          "var(--color-button-prominent-blue-text)",
+        "button-prominent-blue-bg-hover":
+          "var(--color-button-prominent-blue-bg-hover)",
+        "button-prominent-red-text": "var(--color-button-prominent-red-text)",
+        "button-prominent-red-bg-hover":
+          "var(--color-button-prominent-red-bg-hover)",
+
+        "icon-prominent-blue": "var(--color-icon-prominent-blue)",
+        "icon-prominent-red": "var(--color-icon-prominent-red)",
+
+        "tag-discord-role-bg": "var(--color-tag-discord-role-bg)",
+        "tag-discord-role-text": "var(--color-tag-discord-role-text)",
+
+        "background-loading": "var(--color-background-loading)",
       },
       backgroundImage: {
         "gradient-success":
@@ -198,6 +238,8 @@ export default {
           "linear-gradient(to right, var(--color-leaderboard-gradient-from), var(--color-leaderboard-gradient-to))",
         "leaderboard-gradient-hover":
           "linear-gradient(to right, var(--color-leaderboard-gradient-from-hover), var(--color-leaderboard-gradient-to-hover))",
+        "modal-header-gradient":
+          "linear-gradient(to right, var(--color-modal-header-gradient-from), var(--color-modal-header-gradient-to))",
       },
     },
   },

@@ -942,10 +942,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     <div
                       className={`w-2 h-2 rounded-full ${
                         activity.changeAmount > 0
-                          ? "bg-green-500"
+                          ? "bg-activity-positive-bg"
                           : activity.changeAmount < 0
-                            ? "bg-red-500"
-                            : "bg-gray-400"
+                            ? "bg-activity-negative-bg"
+                            : "bg-activity-neutral-bg"
                       }`}
                     ></div>
                     <div>
@@ -1335,7 +1335,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       multiplier: 1.0,
                     });
                   }}
-                  className="bg-gray-500 hover:bg-gray-600 text-text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="bg-button-neutral-bg hover:bg-button-neutral-bg-hover text-text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   Cancel
                 </button>
@@ -1583,7 +1583,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     : "border-border-primary"
                         } ${
                           resource.category === BP_CATEGORY
-                            ? "bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50"
+                            ? "bg-category-bp-bg hover:bg-category-bp-bg-hover"
                             : isOutdated
                               ? "bg-update-indicator-bg hover:bg-update-indicator-bg-hover"
                               : status === RESOURCE_STATUS.CRITICAL
@@ -1656,7 +1656,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         >
                           <h4 className="font-medium text-text-primary text-sm truncate group-hover:text-text-link transition-colors">
                             {resource.isPriority && (
-                              <span className="text-red-500">* </span>
+                              <span className="text-priority">* </span>
                             )}
                             {resource.name}
                           </h4>
@@ -1760,7 +1760,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       updateType: UPDATE_TYPE.RELATIVE,
                                     });
                                   }}
-                                  className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="flex-1 bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Add/Remove
                                 </button>
@@ -1773,7 +1773,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       updateType: UPDATE_TYPE.ABSOLUTE,
                                     });
                                   }}
-                                  className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="flex-1 bg-button-subtle-purple-bg hover:bg-button-subtle-purple-bg-hover text-button-subtle-purple-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Set Qty
                                 </button>
@@ -1787,7 +1787,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       resource: resource,
                                     });
                                   }}
-                                  className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="flex-1 bg-button-subtle-green-bg hover:bg-button-subtle-green-bg-hover text-button-subtle-green-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Transfer
                                 </button>
@@ -1800,7 +1800,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                         resource: resource,
                                       });
                                     }}
-                                    className="flex-1 bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="flex-1 bg-button-subtle-orange-bg hover:bg-button-subtle-orange-bg-hover text-button-subtle-orange-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
                                     Set Target
                                   </button>
@@ -1815,7 +1815,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       e.stopPropagation();
                                       startEditResource(resource);
                                     }}
-                                    className="flex-1 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="flex-1 bg-button-subtle-yellow-bg hover:bg-button-subtle-yellow-bg-hover text-button-subtle-yellow-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
                                     Edit
                                   </button>
@@ -1828,7 +1828,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                         showDialog: true,
                                       });
                                     }}
-                                    className="flex-1 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="flex-1 bg-button-subtle-red-bg hover:bg-button-subtle-red-bg-hover text-button-subtle-red-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                   >
                                     Delete
                                   </button>
@@ -1943,7 +1943,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           <div className="ml-4">
                             <div className="text-sm font-medium text-text-primary group-hover:text-text-link transition-colors break-words">
                               {resource.isPriority && (
-                                <span className="text-red-500">* </span>
+                                <span className="text-priority">* </span>
                               )}
                               {resource.name}
                               <svg
@@ -2025,7 +2025,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     updateType: UPDATE_TYPE.RELATIVE,
                                   })
                                 }
-                                className="flex-1 min-w-20 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="flex-1 min-w-20 bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                               >
                                 Add/Remove
                               </button>
@@ -2037,7 +2037,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     updateType: UPDATE_TYPE.ABSOLUTE,
                                   })
                                 }
-                                className="flex-1 min-w-20 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="flex-1 min-w-20 bg-button-subtle-purple-bg hover:bg-button-subtle-purple-bg-hover text-button-subtle-purple-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                               >
                                 Set Qty
                               </button>
@@ -2050,7 +2050,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     resource: resource,
                                   })
                                 }
-                                className="flex-1 min-w-20 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="flex-1 min-w-20 bg-button-subtle-green-bg hover:bg-button-subtle-green-bg-hover text-button-subtle-green-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                               >
                                 Transfer
                               </button>
@@ -2062,7 +2062,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       resource: resource,
                                     })
                                   }
-                                  className="flex-1 min-w-20 bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="flex-1 min-w-20 bg-button-subtle-orange-bg hover:bg-button-subtle-orange-bg-hover text-button-subtle-orange-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Set Target
                                 </button>
@@ -2074,7 +2074,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               <div className="flex gap-1">
                                 <button
                                   onClick={() => startEditResource(resource)}
-                                  className="flex-1 min-w-20 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="flex-1 min-w-20 bg-button-subtle-yellow-bg hover:bg-button-subtle-yellow-bg-hover text-button-subtle-yellow-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Edit
                                 </button>
@@ -2086,7 +2086,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       showDialog: true,
                                     })
                                   }
-                                  className="flex-1 min-w-20 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="flex-1 min-w-20 bg-button-subtle-red-bg hover:bg-button-subtle-red-bg-hover text-button-subtle-red-text px-2 py-1 rounded-sm text-xs font-medium transition-colors"
                                 >
                                   Delete
                                 </button>

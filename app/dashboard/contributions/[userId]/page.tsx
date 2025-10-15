@@ -108,7 +108,7 @@ export default function UserContributionsPage() {
       case "ADD":
         return (
           <svg
-            className="w-4 h-4 text-green-600"
+            className="w-4 h-4 text-text-success"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -124,7 +124,7 @@ export default function UserContributionsPage() {
       case "SET":
         return (
           <svg
-            className="w-4 h-4 text-blue-600"
+            className="w-4 h-4 text-text-link"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -140,7 +140,7 @@ export default function UserContributionsPage() {
       case "REMOVE":
         return (
           <svg
-            className="w-4 h-4 text-red-600"
+            className="w-4 h-4 text-text-danger"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -222,7 +222,7 @@ export default function UserContributionsPage() {
             </div>
             <button
               onClick={() => router.push("/resources")}
-              className="bg-gray-600 hover:bg-gray-700 text-text-white px-4 py-2 rounded-lg"
+              className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover text-text-white px-4 py-2 rounded-lg"
             >
               Back to Resources
             </button>
@@ -234,7 +234,7 @@ export default function UserContributionsPage() {
               <div className="text-2xl font-bold text-text-link">
                 {(data.summary?.totalPoints || 0).toFixed(1)}
               </div>
-              <div className="text-sm text-blue-700 dark:text-blue-300">
+              <div className="text-sm text-button-subtle-blue-text">
                 Total Points
               </div>
             </div>
@@ -242,15 +242,15 @@ export default function UserContributionsPage() {
               <div className="text-2xl font-bold text-text-success">
                 {data.summary?.totalActions || 0}
               </div>
-              <div className="text-sm text-green-700 dark:text-green-300">
+              <div className="text-sm text-button-subtle-green-text">
                 Total Actions
               </div>
             </div>
-            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+            <div className="bg-background-purple-subtle rounded-lg p-4">
+              <div className="text-2xl font-bold text-text-purple">
                 {data.rank ? `#${data.rank}` : "Unranked"}
               </div>
-              <div className="text-sm text-purple-700 dark:text-purple-300">
+              <div className="text-sm text-text-purple-subtle">
                 Current Rank
               </div>
             </div>
