@@ -21,7 +21,7 @@ export default async function Dashboard() {
   const displayName = getDisplayName(session.user);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-background-secondary transition-colors duration-300">
       <ClientNavigation
         title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}
         showDashboardLink={false}
@@ -30,10 +30,10 @@ export default async function Dashboard() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           <header className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+            <h1 className="text-3xl font-bold text-text-primary mb-2">
               Welcome back, {displayName}!
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-text-tertiary">
               Manage your profile and view your permissions
             </p>
           </header>
@@ -41,7 +41,7 @@ export default async function Dashboard() {
           {/* Resource Management - Prominent Section */}
           {session.user.permissions?.hasResourceAccess && (
             <div className="mb-8">
-              <div className="bg-linear-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-6 text-white">
+              <div className="bg-linear-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-6 text-text-white">
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold mb-2">
@@ -83,7 +83,7 @@ export default async function Dashboard() {
           {/* User Management - Prominent Section */}
           {session.user.permissions?.hasUserManagementAccess && (
             <div className="mb-8">
-              <div className="bg-linear-to-r from-red-600 to-red-700 rounded-lg shadow-lg p-6 text-white">
+              <div className="bg-linear-to-r from-red-600 to-red-700 rounded-lg shadow-lg p-6 text-text-white">
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold mb-2">User Management</h2>
@@ -136,8 +136,8 @@ export default async function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* User Info Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+              <h2 className="text-xl font-semibold mb-4 text-text-primary">
                 Profile
               </h2>
               <div className="space-y-3">
@@ -149,14 +149,12 @@ export default async function Dashboard() {
                   />
                 )}
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-gray-100">
-                    {displayName}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="font-medium text-text-primary">{displayName}</p>
+                  <p className="text-sm text-text-tertiary">
                     {session.user.email}
                   </p>
                   {session.user.discordNickname && (
-                    <p className="text-xs text-blue-600 dark:text-blue-400">
+                    <p className="text-xs text-text-link">
                       Discord: {session.user.discordNickname}
                     </p>
                   )}
@@ -165,18 +163,20 @@ export default async function Dashboard() {
             </div>
 
             {/* Community Status Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+              <h2 className="text-xl font-semibold mb-4 text-text-primary">
                 Community Status
               </h2>
               <div className="space-y-3">
                 <div className="flex items-center">
                   <span
                     className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                      session.user.isInGuild ? "bg-green-500" : "bg-red-500"
+                      session.user.isInGuild
+                        ? "bg-activity-positive-bg"
+                        : "bg-activity-negative-bg"
                     }`}
                   ></span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="text-sm text-text-tertiary">
                     {session.user.isInGuild
                       ? "Community Member"
                       : "Not in Community"}
@@ -184,10 +184,10 @@ export default async function Dashboard() {
                 </div>
                 {session.user.roles && session.user.roles.length > 0 && (
                   <div>
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="text-sm font-medium text-text-primary">
                       Roles:
                     </span>
-                    <span className="text-sm text-blue-600 dark:text-blue-400 ml-1">
+                    <span className="text-sm text-text-link ml-1">
                       {session.user.roles.length} role(s)
                     </span>
                   </div>
@@ -196,9 +196,9 @@ export default async function Dashboard() {
             </div>
 
             {/* Roles Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="text-xl font-semibold text-text-primary">
                   Your Roles
                 </h2>
                 <RefreshRolesButton />
@@ -210,7 +210,7 @@ export default async function Dashboard() {
                       key={roleId}
                       className="flex items-center justify-between"
                     >
-                      <span className="text-sm text-gray-900 dark:text-gray-100">
+                      <span className="text-sm text-text-primary">
                         Role ID: {roleId}
                       </span>
                       <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-sm">
@@ -219,9 +219,7 @@ export default async function Dashboard() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    No roles found
-                  </p>
+                  <p className="text-sm text-text-tertiary">No roles found</p>
                 )}
               </div>
             </div>
@@ -234,18 +232,18 @@ export default async function Dashboard() {
 
           {/* Quick Actions */}
           <div className="mt-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+              <h2 className="text-xl font-semibold mb-4 text-text-primary">
                 Quick Actions
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Link
                   href="/dashboard/activity"
-                  className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="p-4 border border-border-primary rounded-lg hover:bg-background-secondary transition-colors"
                 >
                   <div className="flex items-center">
                     <svg
-                      className="w-6 h-6 text-green-600 dark:text-green-400 mr-3"
+                      className="w-6 h-6 text-text-success mr-3"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -258,10 +256,10 @@ export default async function Dashboard() {
                       />
                     </svg>
                     <div>
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                      <h3 className="font-medium text-text-primary">
                         Activity Log
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-text-tertiary">
                         View your activity history
                       </p>
                     </div>
@@ -270,7 +268,7 @@ export default async function Dashboard() {
 
                 <Link
                   href="/dashboard/privacy"
-                  className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="p-4 border border-border-primary rounded-lg hover:bg-background-secondary transition-colors"
                 >
                   <div className="flex items-center">
                     <svg
@@ -287,10 +285,10 @@ export default async function Dashboard() {
                       />
                     </svg>
                     <div>
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                      <h3 className="font-medium text-text-primary">
                         Privacy & Data
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-text-tertiary">
                         Manage your data and privacy
                       </p>
                     </div>
