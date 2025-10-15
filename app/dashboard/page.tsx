@@ -47,12 +47,12 @@ export default async function Dashboard() {
                     <h2 className="text-2xl font-bold mb-2">
                       Resource Management
                     </h2>
-                    <p className="text-blue-100 mb-4">
+                    <p className="text-modal-header-text mb-4">
                       Track, update, and monitor all your resources in real-time
                     </p>
                     <Link
                       href="/resources"
-                      className="bg-white text-blue-700 hover:bg-blue-50 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 inline-flex"
+                      className="bg-button-prominent-bg text-button-prominent-blue-text hover:bg-button-prominent-blue-bg-hover px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 inline-flex"
                     >
                       <svg
                         className="w-5 h-5"
@@ -67,7 +67,7 @@ export default async function Dashboard() {
                   </div>
                   <div className="hidden md:block">
                     <svg
-                      className="w-20 h-20 text-blue-200"
+                      className="w-20 h-20 text-icon-prominent-blue"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                       xmlns="http://www.w3.org/2000/svg"
@@ -87,12 +87,12 @@ export default async function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold mb-2">User Management</h2>
-                    <p className="text-red-100 mb-4">
+                    <p className="text-modal-header-text mb-4">
                       View and manage user data
                     </p>
                     <Link
                       href="/users"
-                      className="bg-white text-red-700 hover:bg-red-50 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 inline-flex"
+                      className="bg-button-prominent-bg text-button-prominent-red-text hover:bg-button-prominent-red-bg-hover px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 inline-flex"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -115,7 +115,7 @@ export default async function Dashboard() {
                   <div className="hidden md:block">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-20 h-20 text-red-200"
+                      className="w-20 h-20 text-icon-prominent-red"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -213,7 +213,7 @@ export default async function Dashboard() {
                       <span className="text-sm text-text-primary">
                         Role ID: {roleId}
                       </span>
-                      <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-sm">
+                      <span className="text-xs bg-tag-discord-role-bg text-tag-discord-role-text px-2 py-1 rounded-sm">
                         Discord Role
                       </span>
                     </div>
@@ -272,7 +272,7 @@ export default async function Dashboard() {
                 >
                   <div className="flex items-center">
                     <svg
-                      className="w-6 h-6 text-purple-600 dark:text-purple-400 mr-3"
+                      className="w-6 h-6 text-text-purple mr-3"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

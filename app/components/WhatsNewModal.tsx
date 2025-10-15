@@ -132,13 +132,13 @@ export function WhatsNewModal({
         }`}
       >
         {/* Header */}
-        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-text-white p-6 rounded-t-lg flex-shrink-0">
+        <div className="bg-modal-header-gradient text-text-white p-6 rounded-t-lg flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <h2 id="whats-new-modal-title" className="text-2xl font-bold">
                 What&apos;s New
               </h2>
-              <p className="text-blue-100 mt-1">
+              <p className="text-modal-header-text mt-1">
                 Latest updates and improvements
               </p>
             </div>
@@ -147,7 +147,7 @@ export function WhatsNewModal({
                 href="https://github.com/sininspira2/ResourceTracker/issues/new"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-100 hover:text-white p-1 rounded-full hover:bg-blue-600 transition-colors"
+                className="text-modal-header-text hover:text-white p-1 rounded-full hover:bg-modal-header-icon-hover-bg transition-colors"
                 aria-label="Report a Bug"
                 title="Report a Bug"
               >
@@ -157,7 +157,7 @@ export function WhatsNewModal({
                 href="https://github.com/sininspira2/ResourceTracker"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-100 hover:text-white p-1 rounded-full hover:bg-blue-600 transition-colors"
+                className="text-modal-header-text hover:text-white p-1 rounded-full hover:bg-modal-header-icon-hover-bg transition-colors"
                 aria-label="Visit project Github"
                 title="Visit project Github"
               >
@@ -165,7 +165,7 @@ export function WhatsNewModal({
               </a>
               <button
                 onClick={() => handleClose(true)}
-                className="text-blue-100 hover:text-white p-1 rounded-full hover:bg-blue-600 transition-colors"
+                className="text-modal-header-text hover:text-white p-1 rounded-full hover:bg-modal-header-icon-hover-bg transition-colors"
               >
                 <svg
                   className="w-6 h-6"
@@ -208,7 +208,7 @@ export function WhatsNewModal({
                     <h3 className="text-xl font-bold text-text-primary">
                       {release.title}
                     </h3>
-                    <span className="text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-sm">
+                    <span className="text-sm bg-version-tag-bg text-version-tag-text px-2 py-1 rounded-sm">
                       v{release.version}
                     </span>
                   </div>
