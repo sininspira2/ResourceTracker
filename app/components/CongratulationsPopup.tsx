@@ -94,7 +94,7 @@ export function CongratulationsPopup({
         `}
       >
         {/* Header */}
-        <div className="bg-linear-to-r from-green-500 to-emerald-600 text-text-white p-4 rounded-t-lg">
+        <div className="bg-gradient-success text-text-white p-4 rounded-t-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg

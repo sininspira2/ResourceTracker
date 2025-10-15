@@ -133,6 +133,71 @@ export default {
 
         "text-bugfix": "var(--color-text-bugfix)",
         "text-breaking": "var(--color-text-breaking)",
+
+        "gradient-success-from": "var(--color-gradient-success-from)",
+        "gradient-success-to": "var(--color-gradient-success-to)",
+
+        "button-subtle-blue-bg": "var(--color-button-subtle-blue-bg)",
+        "button-subtle-blue-bg-hover":
+          "var(--color-button-subtle-blue-bg-hover)",
+        "button-subtle-blue-text": "var(--color-button-subtle-blue-text)",
+        "button-subtle-purple-bg": "var(--color-button-subtle-purple-bg)",
+        "button-subtle-purple-bg-hover":
+          "var(--color-button-subtle-purple-bg-hover)",
+        "button-subtle-purple-text": "var(--color-button-subtle-purple-text)",
+        "button-subtle-green-bg": "var(--color-button-subtle-green-bg)",
+        "button-subtle-green-bg-hover":
+          "var(--color-button-subtle-green-bg-hover)",
+        "button-subtle-green-text": "var(--color-button-subtle-green-text)",
+        "button-subtle-orange-bg": "var(--color-button-subtle-orange-bg)",
+        "button-subtle-orange-bg-hover":
+          "var(--color-button-subtle-orange-bg-hover)",
+        "button-subtle-orange-text": "var(--color-button-subtle-orange-text)",
+        "button-subtle-yellow-bg": "var(--color-button-subtle-yellow-bg)",
+        "button-subtle-yellow-bg-hover":
+          "var(--color-button-subtle-yellow-bg-hover)",
+        "button-subtle-yellow-text": "var(--color-button-subtle-yellow-text)",
+        "button-subtle-red-bg": "var(--color-button-subtle-red-bg)",
+        "button-subtle-red-bg-hover":
+          "var(--color-button-subtle-red-bg-hover)",
+        "button-subtle-red-text": "var(--color-button-subtle-red-text)",
+        "button-subtle-gray-bg": "var(--color-button-subtle-gray-bg)",
+        "button-subtle-gray-text": "var(--color-button-subtle-gray-text)",
+
+        "highlight-bg": "var(--color-highlight-bg)",
+        "highlight-border": "var(--color-highlight-border)",
+
+        "tag-selected-bg": "var(--color-tag-selected-bg)",
+        "tag-selected-text": "var(--color-tag-selected-text)",
+
+        "tag-neutral-bg": "var(--color-tag-neutral-bg)",
+        "tag-neutral-text": "var(--color-tag-neutral-text)",
+
+        "leaderboard-gradient-from": "var(--color-leaderboard-gradient-from)",
+        "leaderboard-gradient-to": "var(--color-leaderboard-gradient-to)",
+        "leaderboard-gradient-from-hover":
+          "var(--color-leaderboard-gradient-from-hover)",
+        "leaderboard-gradient-to-hover":
+          "var(--color-leaderboard-gradient-to-hover)",
+
+        "button-icon-danger-text": "var(--color-button-icon-danger-text)",
+        "button-icon-danger-text-hover":
+          "var(--color-button-icon-danger-text-hover)",
+        "button-icon-danger-bg-hover":
+          "var(--color-button-icon-danger-bg-hover)",
+
+        "background-tooltip": "var(--color-background-tooltip)",
+        "text-tooltip": "var(--color-text-tooltip)",
+        "text-tooltip-secondary": "var(--color-text-tooltip-secondary)",
+        "text-tooltip-accent": "var(--color-text-tooltip-accent)",
+      },
+      backgroundImage: {
+        "gradient-success":
+          "linear-gradient(to right, var(--color-gradient-success-from), var(--color-gradient-success-to))",
+        "leaderboard-gradient":
+          "linear-gradient(to right, var(--color-leaderboard-gradient-from), var(--color-leaderboard-gradient-to))",
+        "leaderboard-gradient-hover":
+          "linear-gradient(to right, var(--color-leaderboard-gradient-from-hover), var(--color-leaderboard-gradient-to-hover))",
       },
     },
   },

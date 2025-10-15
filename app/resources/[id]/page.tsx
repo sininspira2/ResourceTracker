@@ -971,7 +971,7 @@ export default function ResourceDetailPage() {
                                 updateType: "relative",
                               })
                             }
-                            className="bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                            className="bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
                             title="Add or remove from current quantity"
                           >
                             <Plus className="hidden md:inline-block w-4 h-4" />
@@ -985,7 +985,7 @@ export default function ResourceDetailPage() {
                                 updateType: "absolute",
                               })
                             }
-                            className="bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                            className="bg-button-subtle-purple-bg hover:bg-button-subtle-purple-bg-hover text-button-subtle-purple-text px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
                             title="Set a new absolute quantity"
                           >
                             <Baseline className="hidden md:inline-block w-4 h-4" />
@@ -995,7 +995,7 @@ export default function ResourceDetailPage() {
                             onClick={() =>
                               setTransferModalState({ isOpen: true, resource })
                             }
-                            className="bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                            className="bg-button-subtle-green-bg hover:bg-button-subtle-green-bg-hover text-button-subtle-green-text px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
                             title="Transfer quantities between Hagga and Deep Desert"
                           >
                             <ArrowRightLeft className="hidden md:inline-block w-4 h-4" />
@@ -1010,7 +1010,7 @@ export default function ResourceDetailPage() {
                                     resource,
                                   })
                                 }
-                                className="bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                                className="bg-button-subtle-orange-bg hover:bg-button-subtle-orange-bg-hover text-button-subtle-orange-text px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
                                 title="Change the target quantity for this resource"
                               >
                                 <Target className="hidden md:inline-block w-4 h-4" />
@@ -1018,7 +1018,7 @@ export default function ResourceDetailPage() {
                               </button>
                               <button
                                 onClick={() => startEditResource(resource)}
-                                className="bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                                className="bg-button-subtle-yellow-bg hover:bg-button-subtle-yellow-bg-hover text-button-subtle-yellow-text px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
                                 title="Edit resource metadata"
                               >
                                 <Pencil className="hidden md:inline-block w-4 h-4" />
@@ -1032,7 +1032,7 @@ export default function ResourceDetailPage() {
                                     showDialog: true,
                                   })
                                 }
-                                className="bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                                className="bg-button-subtle-red-bg hover:bg-button-subtle-red-bg-hover text-button-subtle-red-text px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
                                 title="Delete this resource"
                               >
                                 <Trash2 className="hidden md:inline-block w-4 h-4" />
@@ -1097,8 +1097,8 @@ export default function ResourceDetailPage() {
                       }}
                       className={`px-3 py-1 rounded-sm text-sm font-medium ${
                         updateType === "relative"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-700"
+                          ? "bg-button-subtle-blue-bg text-button-subtle-blue-text"
+                          : "bg-button-subtle-gray-bg text-button-subtle-gray-text"
                       }`}
                     >
                       {updateType === "relative" ? "+/-" : "="}
@@ -1461,7 +1461,7 @@ export default function ResourceDetailPage() {
                   {/* Hover Tooltip */}
                   {hoveredPoint && (
                     <div
-                      className="absolute bg-black text-white text-xs rounded-sm px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
+                      className="absolute bg-background-tooltip text-text-tooltip text-xs rounded-sm px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
                       style={{
                         left: mousePosition.x + 10,
                         top: mousePosition.y - 10,
@@ -1475,7 +1475,7 @@ export default function ResourceDetailPage() {
                             hoveredPoint.newQuantityDeepDesert,
                         )}
                       </div>
-                      <div className="text-gray-300">
+                      <div className="text-text-tooltip-secondary">
                         {hoveredPoint.changeAmountHagga +
                           hoveredPoint.changeAmountDeepDesert >
                         0
@@ -1486,13 +1486,13 @@ export default function ResourceDetailPage() {
                             hoveredPoint.changeAmountDeepDesert,
                         )}
                       </div>
-                      <div className="text-gray-300">
+                      <div className="text-text-tooltip-secondary">
                         By: {hoveredPoint.updatedBy}
                       </div>
-                      <div className="text-gray-300">
+                      <div className="text-text-tooltip-secondary">
                         {getRelativeTime(hoveredPoint.createdAt, currentTime)}
                       </div>
-                      <div className="text-blue-300 text-center mt-1">
+                      <div className="text-text-tooltip-accent text-center mt-1">
                         Click to highlight
                       </div>
                     </div>
@@ -1673,7 +1673,7 @@ export default function ResourceDetailPage() {
                 {leaderboard.slice(0, 10).map((entry, index) => (
                   <div
                     key={entry.userId}
-                    className="flex items-center justify-between p-3 bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:from-green-100 hover:to-blue-100 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all cursor-pointer"
+                    className="flex items-center justify-between p-3 bg-leaderboard-gradient hover:bg-leaderboard-gradient-hover rounded-lg transition-all cursor-pointer"
                     onClick={() =>
                       router.push(`/dashboard/contributions/${entry.userId}`)
                     }
@@ -1748,7 +1748,7 @@ export default function ResourceDetailPage() {
                 {selectedPointId && (
                   <button
                     onClick={() => setSelectedPointId(null)}
-                    className="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
+                    className="bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text px-3 py-1 rounded-lg text-sm transition-colors"
                   >
                     Clear Selection
                   </button>
@@ -1792,7 +1792,7 @@ export default function ResourceDetailPage() {
                       id={`history-entry-${entry.id}`}
                       className={`group flex items-start justify-between p-4 rounded-lg transition-all duration-300 cursor-pointer ${
                         isHighlighted
-                          ? "bg-blue-100 dark:bg-blue-900/50 border-2 border-border-info shadow-md transform scale-[1.02]"
+                          ? "bg-highlight-bg border-2 border-highlight-border shadow-md transform scale-[1.02]"
                           : "bg-background-secondary hover:bg-background-tertiary"
                       }`}
                       onClick={() =>
@@ -1848,16 +1848,16 @@ export default function ResourceDetailPage() {
                             <span
                               className={`text-xs px-2 py-0.5 rounded-full ${
                                 entry.changeType === "relative"
-                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+                                  ? "bg-button-subtle-blue-bg text-button-subtle-blue-text"
                                   : entry.changeType === "transfer"
-                                    ? "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
-                                    : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                                    ? "bg-button-subtle-yellow-bg text-button-subtle-yellow-text"
+                                    : "bg-tag-neutral-bg text-tag-neutral-text"
                               }`}
                             >
                               {entry.changeType}
                             </span>
                             {isHighlighted && (
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 animate-pulse">
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-tag-selected-bg text-tag-selected-text animate-pulse">
                                 Selected
                               </span>
                             )}
@@ -1903,7 +1903,7 @@ export default function ResourceDetailPage() {
                               deleteHistoryEntry(entry.id);
                             }}
                             disabled={saving}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-sm"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-button-icon-danger-text hover:text-button-icon-danger-text-hover hover:bg-button-icon-danger-bg-hover rounded-sm"
                             title="Delete this history entry"
                           >
                             <svg

@@ -133,6 +133,53 @@
 
   --color-text-bugfix: theme(colors.orange.600);
   --color-text-breaking: theme(colors.red.600);
+
+  --color-gradient-success-from: theme(colors.green.500);
+  --color-gradient-success-to: theme(colors.emerald.600);
+
+  --color-button-subtle-blue-bg: theme(colors.blue.100);
+  --color-button-subtle-blue-bg-hover: theme(colors.blue.200);
+  --color-button-subtle-blue-text: theme(colors.blue.700);
+  --color-button-subtle-purple-bg: theme(colors.purple.100);
+  --color-button-subtle-purple-bg-hover: theme(colors.purple.200);
+  --color-button-subtle-purple-text: theme(colors.purple.700);
+  --color-button-subtle-green-bg: theme(colors.green.100);
+  --color-button-subtle-green-bg-hover: theme(colors.green.200);
+  --color-button-subtle-green-text: theme(colors.green.700);
+  --color-button-subtle-orange-bg: theme(colors.orange.100);
+  --color-button-subtle-orange-bg-hover: theme(colors.orange.200);
+  --color-button-subtle-orange-text: theme(colors.orange.700);
+  --color-button-subtle-yellow-bg: theme(colors.yellow.100);
+  --color-button-subtle-yellow-bg-hover: theme(colors.yellow.200);
+  --color-button-subtle-yellow-text: theme(colors.yellow.700);
+  --color-button-subtle-red-bg: theme(colors.red.100);
+  --color-button-subtle-red-bg-hover: theme(colors.red.200);
+  --color-button-subtle-red-text: theme(colors.red.700);
+  --color-button-subtle-gray-bg: theme(colors.gray.100);
+  --color-button-subtle-gray-text: theme(colors.gray.700);
+
+  --color-highlight-bg: theme(colors.blue.100);
+  --color-highlight-border: var(--color-border-info);
+
+  --color-tag-selected-bg: theme(colors.blue.200);
+  --color-tag-selected-text: theme(colors.blue.800);
+
+  --color-tag-neutral-bg: theme(colors.gray.100);
+  --color-tag-neutral-text: theme(colors.gray.600);
+
+  --color-leaderboard-gradient-from: theme(colors.green.50);
+  --color-leaderboard-gradient-to: theme(colors.blue.50);
+  --color-leaderboard-gradient-from-hover: theme(colors.green.100);
+  --color-leaderboard-gradient-to-hover: theme(colors.blue.100);
+
+  --color-button-icon-danger-text: theme(colors.red.500);
+  --color-button-icon-danger-text-hover: theme(colors.red.700);
+  --color-button-icon-danger-bg-hover: theme(colors.red.50);
+
+  --color-background-tooltip: theme(colors.black);
+  --color-text-tooltip: theme(colors.white);
+  --color-text-tooltip-secondary: theme(colors.gray.300);
+  --color-text-tooltip-accent: theme(colors.blue.300);
 }
 
 html[data-theme="dark"] {
@@ -213,4 +260,45 @@ html[data-theme="dark"] {
   --color-rank-3-text: theme(colors.orange.200);
   --color-rank-other-bg: theme(colors.green.800);
   --color-rank-other-text: theme(colors.green.300);
+
+  --color-gradient-success-from: theme(colors.green.500);
+  --color-gradient-success-to: theme(colors.emerald.600);
+
+  --color-button-subtle-blue-bg: theme(colors.blue.900 / 50%);
+  --color-button-subtle-blue-bg-hover: theme(colors.blue.900 / 70%);
+  --color-button-subtle-blue-text: theme(colors.blue.300);
+  --color-button-subtle-purple-bg: theme(colors.purple.900 / 50%);
+  --color-button-subtle-purple-bg-hover: theme(colors.purple.900 / 70%);
+  --color-button-subtle-purple-text: theme(colors.purple.300);
+  --color-button-subtle-green-bg: theme(colors.green.900 / 50%);
+  --color-button-subtle-green-bg-hover: theme(colors.green.900 / 70%);
+  --color-button-subtle-green-text: theme(colors.green.300);
+  --color-button-subtle-orange-bg: theme(colors.orange.900 / 50%);
+  --color-button-subtle-orange-bg-hover: theme(colors.orange.900 / 70%);
+  --color-button-subtle-orange-text: theme(colors.orange.300);
+  --color-button-subtle-yellow-bg: theme(colors.yellow.900 / 50%);
+  --color-button-subtle-yellow-bg-hover: theme(colors.yellow.900 / 70%);
+  --color-button-subtle-yellow-text: theme(colors.yellow.300);
+  --color-button-subtle-red-bg: theme(colors.red.900 / 50%);
+  --color-button-subtle-red-bg-hover: theme(colors.red.900 / 70%);
+  --color-button-subtle-red-text: theme(colors.red.300);
+  --color-button-subtle-gray-bg: theme(colors.gray.700);
+  --color-button-subtle-gray-text: theme(colors.gray.400);
+
+  --color-highlight-bg: theme(colors.blue.900 / 50%);
+
+  --color-tag-selected-bg: theme(colors.blue.800);
+  --color-tag-selected-text: theme(colors.blue.200);
+
+  --color-tag-neutral-bg: theme(colors.gray.700);
+  --color-tag-neutral-text: theme(colors.gray.400);
+
+  --color-leaderboard-gradient-from: theme(colors.green.900 / 20%);
+  --color-leaderboard-gradient-to: theme(colors.blue.900 / 20%);
+  --color-leaderboard-gradient-from-hover: theme(colors.green.900 / 30%);
+  --color-leaderboard-gradient-to-hover: theme(colors.blue.900 / 30%);
+
+  --color-button-icon-danger-text: theme(colors.red.400);
+  --color-button-icon-danger-text-hover: theme(colors.red.300);
+  --color-button-icon-danger-bg-hover: theme(colors.red.900 / 20%);
 }
