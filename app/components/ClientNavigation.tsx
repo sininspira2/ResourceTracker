@@ -29,7 +29,7 @@ export function ClientNavigation({
 
   return (
     <>
-      <nav className="bg-white dark:bg-gray-800 shadow-xs border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+      <nav className="bg-background-primary shadow-xs border-b border-border-primary transition-colors duration-300">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Left side - Title and Version */}
@@ -37,14 +37,14 @@ export function ClientNavigation({
               {showDashboardLink && (
                 <Link
                   href="/dashboard"
-                  className="sm:hidden text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                  className="sm:hidden text-text-tertiary hover:text-text-link"
                 >
                   <ArrowLeft size={24} />
                 </Link>
               )}
               <Link
                 href="/"
-                className="text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate"
+                className="text-xl font-bold text-text-primary hover:text-text-link transition-colors truncate"
                 title={title}
               >
                 {title}
@@ -57,7 +57,7 @@ export function ClientNavigation({
               {session && showDashboardLink && (
                 <Link
                   href="/dashboard"
-                  className="hidden sm:flex text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-sm font-medium transition-colors"
+                  className="hidden sm:flex text-text-tertiary hover:text-text-link px-3 py-2 text-sm font-medium transition-colors"
                 >
                   Dashboard
                 </Link>

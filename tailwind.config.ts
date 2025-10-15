@@ -120,6 +120,13 @@ export default {
 
         "border-accent-primary": "var(--color-border-accent-primary)",
         "border-accent-secondary": "var(--color-border-accent-secondary)",
+
+        "text-warning": "var(--color-text-warning)",
+
+        "button-login-bg": "var(--color-button-login-bg)",
+        "button-login-bg-hover": "var(--color-button-login-bg-hover)",
+
+        "background-warning": "var(--color-background-warning)",
       },
     },
   },

@@ -74,7 +74,7 @@ export function ResourceHistoryChart({
         onClick={() => setIsOpen(true)}
         className={
           customButton?.className ||
-          "text-gray-600 hover:text-blue-600 transition-colors p-1 rounded-sm hover:bg-gray-100"
+          "text-text-tertiary hover:text-text-link transition-colors p-1 rounded-sm hover:bg-background-secondary"
         }
         title="View resource history"
       >
@@ -98,12 +98,12 @@ export function ResourceHistoryChart({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-background-modal flex items-center justify-center z-50">
+      <div className="bg-background-primary rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
           <div>
             <h2 className="text-xl font-semibold">{resourceName} - History</h2>
-            <p className="text-gray-600 text-sm">Last {days} days</p>
+            <p className="text-text-tertiary text-sm">Last {days} days</p>
           </div>
           <div className="flex items-center gap-4">
             <select
@@ -119,7 +119,7 @@ export function ResourceHistoryChart({
             </select>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-gray-500 hover:text-gray-700 text-xl font-bold"
+              className="text-text-quaternary hover:text-text-tertiary text-xl font-bold"
             >
               ×
             </button>
@@ -129,19 +129,19 @@ export function ResourceHistoryChart({
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {loading ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading history...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-link mx-auto"></div>
+              <p className="mt-2 text-text-tertiary">Loading history...</p>
             </div>
           ) : history.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">
+              <p className="text-text-quaternary">
                 No changes in the last {days} days
               </p>
             </div>
           ) : (
             <div className="space-y-4">
               {/* Simple line chart visualization */}
-              <div className="bg-gray-50 rounded-lg p-4">
+              <div className="bg-background-secondary rounded-lg p-4">
                 <h3 className="text-sm font-medium mb-3">Quantity Over Time</h3>
                 <div className="relative h-32">
                   {history.length > 1 && (
@@ -244,7 +244,7 @@ export function ResourceHistoryChart({
                       {/* Tooltip */}
                       {hoveredPoint && (
                         <div
-                          className="absolute bg-black text-white text-xs rounded-sm px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
+                          className="absolute bg-black text-text-white text-xs rounded-sm px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
                           style={{
                             left: mousePosition.x + 10,
                             top: mousePosition.y - 10,
@@ -293,7 +293,7 @@ export function ResourceHistoryChart({
                   {history.map((entry) => (
                     <div
                       key={entry.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-background-secondary rounded-lg"
                     >
                       <div className="flex items-center gap-3">
                         <div
@@ -301,12 +301,12 @@ export function ResourceHistoryChart({
                             entry.changeAmountHagga +
                               entry.changeAmountDeepDesert >
                             0
-                              ? "bg-green-500"
+                              ? "bg-activity-positive-bg"
                               : entry.changeAmountHagga +
                                     entry.changeAmountDeepDesert <
                                   0
-                                ? "bg-red-500"
-                                : "bg-gray-400"
+                                ? "bg-activity-negative-bg"
+                                : "bg-activity-neutral-bg"
                           }`}
                         ></div>
                         <div>
@@ -339,17 +339,17 @@ export function ResourceHistoryChart({
                               </div>
                             )}
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-text-tertiary">
                             By {entry.updatedBy}
                             {entry.reason && (
-                              <span className="ml-2 text-blue-600">
+                              <span className="ml-2 text-text-link">
                                 • {entry.reason}
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-text-quaternary">
                         {new Date(entry.createdAt).toLocaleDateString()}{" "}
                         {new Date(entry.createdAt).toLocaleTimeString()}
                       </div>

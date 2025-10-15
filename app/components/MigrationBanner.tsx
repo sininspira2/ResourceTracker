@@ -16,7 +16,7 @@ export async function MigrationBanner() {
   const message = messages[status];
 
   return (
-    <div className="w-full bg-yellow-400 p-2 text-center text-black">
+    <div className="w-full bg-background-warning p-2 text-center text-black">
       <span>
         {message}{" "}
         <Link

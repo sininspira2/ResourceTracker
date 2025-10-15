@@ -57,20 +57,20 @@ export function Pagination({
   const endItem = Math.min(currentPage * (itemsPerPage || 20), totalItems || 0);
 
   return (
-    <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
+    <div className="flex items-center justify-between border-t border-border-primary bg-background-primary px-4 py-3 sm:px-6">
       {/* Results info */}
       <div className="flex flex-1 justify-between sm:hidden">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={!hasPrevPage || isLoading}
-          className="relative inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="relative inline-flex items-center rounded-md border border-border-secondary bg-background-primary px-4 py-2 text-sm font-medium text-text-secondary hover:bg-background-secondary disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Previous
         </button>
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={!hasNextPage || isLoading}
-          className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="relative ml-3 inline-flex items-center rounded-md border border-border-secondary bg-background-primary px-4 py-2 text-sm font-medium text-text-secondary hover:bg-background-secondary disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next
         </button>
@@ -78,7 +78,7 @@ export function Pagination({
 
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
+          <p className="text-sm text-text-secondary">
             {totalItems && itemsPerPage ? (
               <>
                 Showing <span className="font-medium">{startItem}</span> to{" "}
@@ -102,7 +102,7 @@ export function Pagination({
             <button
               onClick={() => onPageChange(currentPage - 1)}
               disabled={!hasPrevPage || isLoading}
-              className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative inline-flex items-center rounded-l-md px-2 py-2 text-text-quaternary ring-1 ring-inset ring-border-secondary hover:bg-background-secondary focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="sr-only">Previous</span>
               <svg
@@ -125,7 +125,7 @@ export function Pagination({
                 return (
                   <span
                     key={`ellipsis-${index}`}
-                    className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-offset-0"
+                    className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-text-secondary ring-1 ring-inset ring-border-secondary focus:outline-offset-0"
                   >
                     ...
                   </span>
@@ -140,10 +140,10 @@ export function Pagination({
                   key={page}
                   onClick={() => onPageChange(pageNum)}
                   disabled={isLoading}
-                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-border-secondary focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed ${
                     isCurrent
-                      ? "z-10 bg-blue-600 text-white focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                      : "text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "z-10 bg-button-primary-bg text-text-white focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                      : "text-text-primary hover:bg-background-secondary"
                   }`}
                 >
                   {page}
@@ -155,7 +155,7 @@ export function Pagination({
             <button
               onClick={() => onPageChange(currentPage + 1)}
               disabled={!hasNextPage || isLoading}
-              className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative inline-flex items-center rounded-r-md px-2 py-2 text-text-quaternary ring-1 ring-inset ring-border-secondary hover:bg-background-secondary focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="sr-only">Next</span>
               <svg

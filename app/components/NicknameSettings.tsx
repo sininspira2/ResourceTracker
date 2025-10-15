@@ -11,14 +11,14 @@ export function NicknameSettings() {
     session.user.discordNickname || session.user.name || "Unknown User";
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
-      <h2 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
+    <div className="bg-background-primary rounded-lg shadow-sm p-4 border border-border-primary">
+      <h2 className="text-lg font-semibold mb-3 text-text-primary">
         Display Name
       </h2>
 
       <div className="space-y-3">
         {/* Current Display Name */}
-        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+        <div className="p-3 bg-background-info border border-border-info rounded-lg">
           <div className="flex items-center gap-2 mb-1">
             <svg
               className="w-4 h-4 text-blue-600 dark:text-blue-400"
@@ -44,8 +44,8 @@ export function NicknameSettings() {
         </div>
 
         {/* Info */}
-        <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-          <p className="text-xs text-gray-600 dark:text-gray-400">
+        <div className="p-3 bg-background-secondary rounded-lg">
+          <p className="text-xs text-text-tertiary">
             💡 Your display name is automatically synced from Discord.
             {session.user.discordNickname
               ? " Server admins can update your nickname in Discord."

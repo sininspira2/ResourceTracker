@@ -88,13 +88,13 @@ export function CongratulationsPopup({
     <div className="fixed inset-0 z-50 flex items-end justify-end p-4 pointer-events-none">
       <div
         className={`
-          bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700
+          bg-background-primary rounded-lg shadow-2xl border border-border-primary
           max-w-sm md:max-w-md w-full transform transition-all duration-300 pointer-events-auto
           ${isAnimating ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}
         `}
       >
         {/* Header */}
-        <div className="bg-linear-to-r from-green-500 to-emerald-600 text-white p-4 rounded-t-lg">
+        <div className="bg-linear-to-r from-green-500 to-emerald-600 text-text-white p-4 rounded-t-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg
@@ -140,64 +140,56 @@ export function CongratulationsPopup({
               <div className="text-center mb-4">
                 <div className="flex items-center justify-center gap-1 mb-2">
                   <svg
-                    className="w-6 h-6 text-yellow-500"
+                    className="w-6 h-6 text-text-warning"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
-                  <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  <span className="text-2xl font-bold text-text-success">
                     +{pointsEarned.toFixed(1)} points
                   </span>
                   <svg
-                    className="w-6 h-6 text-yellow-500"
+                    className="w-6 h-6 text-text-warning"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
+                <p className="text-sm text-text-tertiary">
                   {getActionText()} {resourceName}
                 </p>
               </div>
 
               {/* Points Breakdown */}
               {pointsCalculation && (
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4 text-sm text-gray-900 dark:text-gray-100">
+                <div className="bg-background-secondary rounded-lg p-3 mb-4 text-sm text-text-primary">
                   <div className="space-y-1">
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Base points:
-                      </span>
-                      <span className="text-gray-900 dark:text-gray-100">
+                      <span className="text-text-tertiary">Base points:</span>
+                      <span className="text-text-primary">
                         {pointsCalculation.basePoints.toFixed(1)}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Multiplier:
-                      </span>
-                      <span className="text-gray-900 dark:text-gray-100">
+                      <span className="text-text-tertiary">Multiplier:</span>
+                      <span className="text-text-primary">
                         {getMultiplierDisplay(
                           pointsCalculation.resourceMultiplier,
                         )}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Status bonus:
-                      </span>
-                      <span className="text-gray-900 dark:text-gray-100">
+                      <span className="text-text-tertiary">Status bonus:</span>
+                      <span className="text-text-primary">
                         {getBonusDisplay(pointsCalculation.statusBonus)}
                       </span>
                     </div>
-                    <hr className="my-2 border-gray-300 dark:border-gray-600" />
+                    <hr className="my-2 border-border-secondary" />
                     <div className="flex justify-between font-bold">
-                      <span className="text-gray-900 dark:text-gray-100">
-                        Total:
-                      </span>
-                      <span className="text-gray-900 dark:text-gray-100">
+                      <span className="text-text-primary">Total:</span>
+                      <span className="text-text-primary">
                         {pointsCalculation.finalPoints.toFixed(1)} pts
                       </span>
                     </div>
@@ -207,17 +199,17 @@ export function CongratulationsPopup({
 
               <button
                 onClick={handleViewContributions}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors font-medium"
+                className="w-full bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white py-2 px-4 rounded-lg transition-colors font-medium"
               >
                 View My Contributions
               </button>
             </>
           ) : (
             <div className="text-center">
-              <p className="text-gray-600 dark:text-gray-300 mb-2">
+              <p className="text-text-tertiary mb-2">
                 {getActionText()} {resourceName}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-text-quaternary">
                 No points earned for this action
               </p>
             </div>
