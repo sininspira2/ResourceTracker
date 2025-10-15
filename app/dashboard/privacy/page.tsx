@@ -190,7 +190,7 @@ export default function PrivacyPage() {
             <div
               className={`p-4 rounded-lg ${
                 message.type === "success"
-                  ? "bg-background-success border border-green-200 dark:border-green-700 text-text-success"
+                  ? "bg-background-success border border-border-success text-text-success"
                   : "bg-background-danger border border-border-danger text-text-danger"
               }`}
             >

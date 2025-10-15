@@ -27,6 +27,7 @@ export default {
         "border-secondary": "var(--color-border-secondary)",
         "border-danger": "var(--color-border-danger)",
         "border-info": "var(--color-border-info)",
+        "border-success": "var(--color-border-success)",
 
         "button-primary-bg": "var(--color-button-primary-bg)",
         "button-primary-bg-hover": "var(--color-button-primary-bg-hover)",
@@ -129,6 +130,9 @@ export default {
         "background-warning": "var(--color-background-warning)",
 
         "background-toggle-hover": "var(--color-background-toggle-hover)",
+
+        "text-bugfix": "var(--color-text-bugfix)",
+        "text-breaking": "var(--color-text-breaking)",
       },
     },
   },

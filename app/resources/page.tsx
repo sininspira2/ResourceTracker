@@ -25,10 +25,10 @@ export default async function ResourcesPage() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           <header className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+            <h1 className="text-3xl font-bold text-text-primary mb-2">
               Resource Management
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-text-tertiary">
               Track and manage your resources in real-time
             </p>
           </header>

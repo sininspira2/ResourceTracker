@@ -95,14 +95,14 @@ export const getChangeTypeIcon = (type: ChangelogEntry["type"]): string => {
 export const getChangeTypeColor = (type: ChangelogEntry["type"]): string => {
   switch (type) {
     case "feature":
-      return "text-blue-600 dark:text-blue-400";
+      return "text-text-link";
     case "improvement":
-      return "text-green-600 dark:text-green-400";
+      return "text-text-success";
     case "bugfix":
-      return "text-orange-600 dark:text-orange-400";
+      return "text-text-bugfix";
     case "breaking":
-      return "text-red-600 dark:text-red-400";
+      return "text-text-breaking";
     default:
-      return "text-gray-600 dark:text-gray-400";
+      return "text-text-tertiary";
   }
 };

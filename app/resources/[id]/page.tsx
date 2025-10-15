@@ -1792,7 +1792,7 @@ export default function ResourceDetailPage() {
                       id={`history-entry-${entry.id}`}
                       className={`group flex items-start justify-between p-4 rounded-lg transition-all duration-300 cursor-pointer ${
                         isHighlighted
-                          ? "bg-blue-100 dark:bg-blue-900/50 border-2 border-blue-300 dark:border-blue-500 shadow-md transform scale-[1.02]"
+                          ? "bg-blue-100 dark:bg-blue-900/50 border-2 border-border-info shadow-md transform scale-[1.02]"
                           : "bg-background-secondary hover:bg-background-tertiary"
                       }`}
                       onClick={() =>
