@@ -1,0 +1,98 @@
+import type { Config } from "tailwindcss";
+
+export default {
+  content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        "background-primary": "var(--color-background-primary)",
+        "background-secondary": "var(--color-background-secondary)",
+        "background-tertiary": "var(--color-background-tertiary)",
+        "background-modal": "var(--color-background-modal)",
+        "background-danger": "var(--color-background-danger)",
+        "background-info": "var(--color-background-info)",
+        "background-success": "var(--color-background-success)",
+
+        "text-primary": "var(--color-text-primary)",
+        "text-secondary": "var(--color-text-secondary)",
+        "text-tertiary": "var(--color-text-tertiary)",
+        "text-quaternary": "var(--color-text-quaternary)",
+        "text-link": "var(--color-text-link)",
+        "text-link-hover": "var(--color-text-link-hover)",
+        "text-danger": "var(--color-text-danger)",
+        "text-success": "var(--color-text-success)",
+        "text-white": "var(--color-text-white)",
+
+        "border-primary": "var(--color-border-primary)",
+        "border-secondary": "var(--color-border-secondary)",
+        "border-danger": "var(--color-border-danger)",
+        "border-info": "var(--color-border-info)",
+
+        "button-primary-bg": "var(--color-button-primary-bg)",
+        "button-primary-bg-hover": "var(--color-button-primary-bg-hover)",
+        "button-secondary-bg": "var(--color-button-secondary-bg)",
+        "button-secondary-bg-hover": "var(--color-button-secondary-bg-hover)",
+        "button-secondary-text": "var(--color-button-secondary-text)",
+        "button-danger-bg": "var(--color-button-danger-bg)",
+        "button-danger-bg-hover": "var(--color-button-danger-bg-hover)",
+        "button-success-bg": "var(--color-button-success-bg)",
+        "button-success-bg-hover": "var(--color-button-success-bg-hover)",
+
+        "status-critical-bg": "var(--color-status-critical-bg)",
+        "status-critical-text": "var(--color-status-critical-text)",
+        "status-critical-border": "var(--color-status-critical-border)",
+        "status-critical-bg-subtle": "var(--color-status-critical-bg-subtle)",
+        "status-below-target-bg": "var(--color-status-below-target-bg)",
+        "status-below-target-text": "var(--color-status-below-target-text)",
+        "status-below-target-border": "var(--color-status-below-target-border)",
+        "status-below-target-bg-subtle":
+          "var(--color-status-below-target-bg-subtle)",
+        "status-at-target-bg": "var(--color-status-at-target-bg)",
+        "status-at-target-text": "var(--color-status-at-target-text)",
+        "status-at-target-border": "var(--color-status-at-target-border)",
+        "status-at-target-bg-subtle":
+          "var(--color-status-at-target-bg-subtle)",
+        "status-above-target-bg": "var(--color-status-above-target-bg)",
+        "status-above-target-text": "var(--color-status-above-target-text)",
+        "status-above-target-border": "var(--color-status-above-target-border)",
+        "status-above-target-bg-subtle":
+          "var(--color-status-above-target-bg-subtle)",
+        "status-default-bg": "var(--color-status-default-bg)",
+        "status-default-text": "var(--color-status-default-text)",
+        "status-default-border": "var(--color-status-default-border)",
+        "status-default-bg-subtle": "var(--color-status-default-bg-subtle)",
+
+        "update-indicator-bg": "var(--color-update-indicator-bg)",
+        "update-indicator-bg-hover": "var(--color-update-indicator-bg-hover)",
+        "update-indicator-border": "var(--color-update-indicator-border)",
+        "update-indicator-ring": "var(--color-update-indicator-ring)",
+        "update-indicator-text": "var(--color-update-indicator-text)",
+
+        "multiplier-high-bg": "var(--color-multiplier-high-bg)",
+        "multiplier-high-text": "var(--color-multiplier-high-text)",
+        "multiplier-medium-bg": "var(--color-multiplier-medium-bg)",
+        "multiplier-medium-text": "var(--color-multiplier-medium-text)",
+        "multiplier-low-bg": "var(--color-multiplier-low-bg)",
+        "multiplier-low-text": "var(--color-multiplier-low-text)",
+        "multiplier-very-low-bg": "var(--color-multiplier-very-low-bg)",
+        "multiplier-very-low-text": "var(--color-multiplier-very-low-text)",
+        "multiplier-zero-bg": "var(--color-multiplier-zero-bg)",
+        "multiplier-zero-text": "var(--color-multiplier-zero-text)",
+
+        "rank-1-bg": "var(--color-rank-1-bg)",
+        "rank-1-text": "var(--color-rank-1-text)",
+        "rank-2-bg": "var(--color-rank-2-bg)",
+        "rank-2-text": "var(--color-rank-2-text)",
+        "rank-3-bg": "var(--color-rank-3-bg)",
+        "rank-3-text": "var(--color-rank-3-text)",
+        "rank-other-bg": "var(--color-rank-other-bg)",
+        "rank-other-text": "var(--color-rank-other-text)",
+
+        "activity-positive-bg": "var(--color-activity-positive-bg)",
+        "activity-negative-bg": "var(--color-activity-negative-bg)",
+        "activity-neutral-bg": "var(--color-activity-neutral-bg)",
+      },
+    },
+  },
+  plugins: [],
+} satisfies Config;
