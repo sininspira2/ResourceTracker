@@ -864,7 +864,9 @@ export default function ResourceDetailPage() {
                                   ? "bg-category-refined-bg text-category-refined-text"
                                   : resource.category === "Components"
                                     ? "bg-category-components-bg text-category-components-text"
-                                    : "bg-category-other-bg text-category-other-text"
+                                    : resource.category === "Blueprints"
+                                      ? "bg-category-bp-bg"
+                                      : "bg-category-other-bg text-category-other-text"
                             }`}
                           >
                             {resource.category}
