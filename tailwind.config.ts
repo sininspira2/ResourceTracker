@@ -195,6 +195,8 @@ export default {
         "text-tooltip-secondary": "var(--color-text-tooltip-secondary)",
         "text-tooltip-accent": "var(--color-text-tooltip-accent)",
 
+        "modal-header-gradient-from": "var(--color-modal-header-gradient-from)",
+        "modal-header-gradient-to": "var(--color-modal-header-gradient-to)",
         "modal-header-text": "var(--color-modal-header-text)",
         "modal-header-icon-hover-bg": "var(--color-modal-header-icon-hover-bg)",
 

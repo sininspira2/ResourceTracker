@@ -280,10 +280,10 @@ export default function LeaderboardPage() {
 
         {/* Points System Info */}
         <div className="bg-background-info border border-border-info rounded-lg p-6 mt-6">
-          <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-3">
+          <h3 className="text-lg font-semibold text-text-primary mb-3">
             📊 How Points Work
           </h3>
-          <div className="space-y-2 text-sm text-blue-700 dark:text-blue-300">
+          <div className="space-y-2 text-sm text-text-secondary">
             <p>
               <strong>ADD Actions:</strong> 0.1 points per resource (100 points
               per 1000 resources)
