@@ -96,7 +96,7 @@
   --color-activity-neutral-bg: theme(colors.gray.400);
 }
 
-[data-theme="dark"] {
+html[data-theme="dark"] {
   --color-background-primary: theme(colors.gray.900);
   --color-background-secondary: theme(colors.gray.800);
   --color-background-tertiary: theme(colors.gray.700);
