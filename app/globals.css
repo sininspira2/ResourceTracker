@@ -127,6 +127,8 @@
   --color-button-login-bg-hover: theme(colors.indigo.700);
 
   --color-background-warning: theme(colors.yellow.400);
+
+  --color-background-toggle-hover: theme(colors.yellow.400);
 }
 
 html[data-theme="dark"] {

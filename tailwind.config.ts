@@ -127,6 +127,8 @@ export default {
         "button-login-bg-hover": "var(--color-button-login-bg-hover)",
 
         "background-warning": "var(--color-background-warning)",
+
+        "background-toggle-hover": "var(--color-background-toggle-hover)",
       },
     },
   },
