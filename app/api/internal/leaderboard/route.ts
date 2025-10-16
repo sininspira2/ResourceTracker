@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLeaderboard } from "@/lib/leaderboard";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,7 +9,9 @@ export async function GET(request: NextRequest) {
 
     const allowedTimeFilters = ["24h", "7d", "30d", "all"];
     const timeFilterInput = searchParams.get("timeFilter") || "all";
-    const timeFilter = allowedTimeFilters.includes(timeFilterInput) ? timeFilterInput as "24h" | "7d" | "30d" | "all" : "all";
+    const timeFilter = allowedTimeFilters.includes(timeFilterInput)
+      ? (timeFilterInput as "24h" | "7d" | "30d" | "all")
+      : "all";
 
     const limit = parseInt(searchParams.get("limit") || "50", 10);
     const page = parseInt(searchParams.get("page") || "1", 10);
@@ -21,18 +23,16 @@ export async function GET(request: NextRequest) {
 
     const result = await getLeaderboard(timeFilter, effectiveLimit, offset);
 
-    return NextResponse.json(
-      {
-        leaderboard: result.rankings,
-        timeFilter,
-        total: result.total,
-        page,
-        pageSize: effectiveLimit,
-        totalPages: Math.ceil(result.total / effectiveLimit),
-        hasNextPage: offset + effectiveLimit < result.total,
-        hasPrevPage: page > 1,
-      },
-    );
+    return NextResponse.json({
+      leaderboard: result.rankings,
+      timeFilter,
+      total: result.total,
+      page,
+      pageSize: effectiveLimit,
+      totalPages: Math.ceil(result.total / effectiveLimit),
+      hasNextPage: offset + effectiveLimit < result.total,
+      hasPrevPage: page > 1,
+    });
   } catch (error) {
     console.error("Error fetching leaderboard:", error);
     return NextResponse.json(

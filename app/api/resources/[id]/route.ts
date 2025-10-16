@@ -229,9 +229,7 @@ export async function DELETE(
       await tx
         .delete(resourceHistory)
         .where(eq(resourceHistory.resourceId, id));
-      await tx
-        .delete(leaderboard)
-        .where(eq(leaderboard.resourceId, id));
+      await tx.delete(leaderboard).where(eq(leaderboard.resourceId, id));
       await tx.delete(resources).where(eq(resources.id, id));
     });
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, resourceHistory } from "@/lib/db";
 import { eq, gte, desc, and } from "drizzle-orm";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 // GET /api/internal/resources/[id]/history?days=7 - Get resource history (internal)
 export async function GET(
@@ -25,15 +25,18 @@ export async function GET(
       .where(
         and(
           eq(resourceHistory.resourceId, resourceId),
-          gte(resourceHistory.createdAt, daysAgo)
-        )
+          gte(resourceHistory.createdAt, daysAgo),
+        ),
       )
       .orderBy(desc(resourceHistory.createdAt))
       .limit(100); // Limit to reduce load
 
     return NextResponse.json(history);
   } catch (error) {
-    console.error('Error fetching resource history:', error);
-    return NextResponse.json({ error: 'Failed to fetch history' }, { status: 500 });
+    console.error("Error fetching resource history:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch history" },
+      { status: 500 },
+    );
   }
 }

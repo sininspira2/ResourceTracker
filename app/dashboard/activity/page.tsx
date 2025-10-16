@@ -168,9 +168,7 @@ export default function ActivityLogPage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-link mx-auto"></div>
-            <p className="mt-4 text-text-tertiary">
-              Loading your activity...
-            </p>
+            <p className="mt-4 text-text-tertiary">Loading your activity...</p>
           </div>
         ) : activities.length === 0 ? (
           <div className="text-center py-12">

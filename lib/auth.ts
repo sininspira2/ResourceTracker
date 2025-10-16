@@ -266,5 +266,11 @@ export function getDisplayName(user: {
 // Helper function to get user identifier for database tracking
 export function getUserIdentifier(session: Session): string {
   // Priority: Discord nickname > Discord username > email > id > fallback
-  return session.user?.discordNickname ?? session.user?.name ?? session.user?.email ?? session.user?.id ?? "unknown";
+  return (
+    session.user?.discordNickname ??
+    session.user?.name ??
+    session.user?.email ??
+    session.user?.id ??
+    "unknown"
+  );
 }
