@@ -11,7 +11,7 @@ export function NicknameSettings() {
     session.user.discordNickname || session.user.name || "Unknown User";
 
   return (
-    <div className="bg-background-primary rounded-lg shadow-sm p-4 border border-border-primary">
+    <div className="bg-background-modal-body rounded-lg shadow-sm p-4 border border-border-primary">
       <h2 className="text-lg font-semibold mb-3 text-text-primary">
         Display Name
       </h2>
@@ -44,7 +44,7 @@ export function NicknameSettings() {
         </div>
 
         {/* Info */}
-        <div className="p-3 bg-background-secondary rounded-lg">
+        <div className="p-3 bg-background-modal-body-secondary rounded-lg">
           <p className="text-xs text-text-tertiary">
             💡 Your display name is automatically synced from Discord.
             {session.user.discordNickname

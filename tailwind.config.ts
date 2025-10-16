@@ -128,6 +128,8 @@ export default {
         "progress-bar-critical-bg": "var(--color-progress-bar-critical-bg)",
 
         "text-accent": "var(--color-text-accent)",
+        "text-accent-red": "var(--color-text-accent-red)",
+        "text-accent-blue": "var(--color-text-accent-blue)",
         "text-accent-dark": "var(--color-text-accent-dark)",
 
         "background-accent-primary": "var(--color-background-accent-primary)",

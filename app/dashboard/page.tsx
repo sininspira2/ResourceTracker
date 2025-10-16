@@ -21,7 +21,7 @@ export default async function Dashboard() {
   const displayName = getDisplayName(session.user);
 
   return (
-    <div className="min-h-screen bg-background-secondary transition-colors duration-300">
+    <div className="min-h-screen bg-background-primary transition-colors duration-300">
       <ClientNavigation
         title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}
         showDashboardLink={false}
@@ -47,7 +47,7 @@ export default async function Dashboard() {
                     <h2 className="text-2xl font-bold mb-2">
                       Resource Management
                     </h2>
-                    <p className="text-modal-header-text mb-4">
+                    <p className="text-text-accent-blue mb-4">
                       Track, update, and monitor all your resources in real-time
                     </p>
                     <Link
@@ -87,7 +87,7 @@ export default async function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold mb-2">User Management</h2>
-                    <p className="text-modal-header-text mb-4">
+                    <p className="text-text-accent-red mb-4">
                       View and manage user data
                     </p>
                     <Link
@@ -136,7 +136,7 @@ export default async function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* User Info Card */}
-            <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
               <h2 className="text-xl font-semibold mb-4 text-text-primary">
                 Profile
               </h2>
@@ -163,7 +163,7 @@ export default async function Dashboard() {
             </div>
 
             {/* Community Status Card */}
-            <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
               <h2 className="text-xl font-semibold mb-4 text-text-primary">
                 Community Status
               </h2>
@@ -196,7 +196,7 @@ export default async function Dashboard() {
             </div>
 
             {/* Roles Card */}
-            <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-text-primary">
                   Your Roles
@@ -232,14 +232,14 @@ export default async function Dashboard() {
 
           {/* Quick Actions */}
           <div className="mt-8">
-            <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
               <h2 className="text-xl font-semibold mb-4 text-text-primary">
                 Quick Actions
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Link
                   href="/dashboard/activity"
-                  className="p-4 border border-border-primary rounded-lg hover:bg-background-secondary transition-colors"
+                  className="p-4 border border-border-primary rounded-lg bg-button-secondary-bg hover:bg-button-secondary-bg-hover transition-colors"
                 >
                   <div className="flex items-center">
                     <svg
@@ -268,7 +268,7 @@ export default async function Dashboard() {
 
                 <Link
                   href="/dashboard/privacy"
-                  className="p-4 border border-border-primary rounded-lg hover:bg-background-secondary transition-colors"
+                  className="p-4 border border-border-primary rounded-lg bg-button-secondary-bg hover:bg-button-secondary-bg-hover transition-colors"
                 >
                   <div className="flex items-center">
                     <svg

@@ -11,12 +11,12 @@
 }
 
 @theme {
-    --color-background-primary: theme(colors.white);
+    --color-background-primary: theme(colors.gray.50);
     --color-background-secondary: theme(colors.gray.300 / 40%);
     --color-background-tertiary: theme(colors.gray.100);
     --color-background-modal: theme(colors.black / 50%);
-    --color-background-modal-body: theme(colors.gray.200 / 60%);
-    --color-background-modal-body-secondary: theme(colors.gray.200);
+    --color-background-modal-body: theme(colors.gray.100);
+    --color-background-modal-body-secondary: theme(colors.gray.50);
     --color-background-danger: theme(colors.red.50);
     --color-background-info: theme(colors.blue.50);
     --color-background-info-hover: theme(colors.blue.100);
@@ -126,6 +126,8 @@
     --color-progress-bar-critical-bg: theme(colors.red.500);
 
     --color-text-accent: theme(colors.blue.200);
+    --color-text-accent-blue: theme(colors.blue.200);
+    --color-text-accent-red: theme(colors.red.200);
     --color-text-accent-dark: theme(colors.blue.300);
 
     --color-background-accent-primary: theme(colors.white / 10%);

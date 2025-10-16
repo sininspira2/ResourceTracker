@@ -117,7 +117,7 @@ export default function ActivityLogPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-background-secondary flex items-center justify-center">
+      <div className="min-h-screen bg-background-primary flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-text-link mx-auto"></div>
           <p className="mt-4 text-text-tertiary">Loading...</p>
@@ -127,9 +127,9 @@ export default function ActivityLogPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-secondary transition-colors duration-300">
+    <div className="min-h-screen bg-background-primary transition-colors duration-300">
       {/* Header */}
-      <div className="bg-background-primary shadow-xs border-b border-border-primary">
+      <div className="bg-background-secondary shadow-xs border-b border-border-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -196,7 +196,7 @@ export default function ActivityLogPage() {
         ) : (
           <div className="space-y-6">
             {/* Summary Stats */}
-            <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
               <h2 className="text-lg font-semibold text-text-primary mb-4">
                 Summary
               </h2>
@@ -225,7 +225,7 @@ export default function ActivityLogPage() {
             </div>
 
             {/* Activity Timeline */}
-            <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
               <h2 className="text-lg font-semibold text-text-primary mb-6">
                 Activity Timeline
               </h2>
@@ -233,7 +233,7 @@ export default function ActivityLogPage() {
                 {activities.map((activity) => (
                   <div
                     key={activity.id}
-                    className="flex items-start gap-4 p-4 bg-background-secondary rounded-lg hover:bg-background-tertiary transition-colors"
+                    className="flex items-start gap-4 p-4 bg-button-secondary-neutral-bg rounded-lg hover:bg-button-secondary-neutral-bg-hover transition-colors"
                   >
                     <div
                       className={`w-3 h-3 rounded-full mt-2 ${

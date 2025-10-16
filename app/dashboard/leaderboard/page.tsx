@@ -81,7 +81,7 @@ export default function LeaderboardPage() {
 
   if (loading && !data) {
     return (
-      <div className="min-h-screen bg-background-secondary py-8">
+      <div className="min-h-screen bg-background-primary py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-text-link mx-auto"></div>
@@ -93,10 +93,10 @@ export default function LeaderboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-secondary py-8">
+    <div className="min-h-screen bg-background-primary py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="bg-background-primary rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-background-modal-body rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-text-primary">
@@ -109,7 +109,7 @@ export default function LeaderboardPage() {
             </div>
             <button
               onClick={() => router.push("/resources")}
-              className="bg-button-secondary-bg hover:bg-button-secondary-bg-hover text-button-secondary-text px-4 py-2 rounded-lg"
+              className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover text-button-secondary-text px-4 py-2 rounded-lg"
             >
               Back to Resources
             </button>
@@ -123,7 +123,7 @@ export default function LeaderboardPage() {
             <select
               value={timeFilter}
               onChange={(e) => handleTimeFilterChange(e.target.value)}
-              className="text-xs bg-background-tertiary border border-border-secondary rounded-sm px-2 py-1"
+              className="text-xs bg-background-modal-body-secondary border border-border-secondary rounded-sm px-2 py-1"
             >
               {timeFilterOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -148,7 +148,7 @@ export default function LeaderboardPage() {
         )}
 
         {/* Leaderboard */}
-        <div className="bg-background-primary rounded-lg shadow-lg">
+        <div className="bg-background-modal-body rounded-lg shadow-lg">
           <div className="p-6 border-b border-border-primary">
             <h2 className="text-lg font-semibold text-text-primary">
               Rankings (
@@ -200,7 +200,7 @@ export default function LeaderboardPage() {
                   return (
                     <div
                       key={entry.userId}
-                      className="p-6 hover:bg-background-secondary transition-colors cursor-pointer"
+                      className="p-6 hover:bg-button-secondary-bg-hover transition-colors cursor-pointer"
                       onClick={() => handleUserClick(entry.userId)}
                     >
                       <div className="flex items-center justify-between">
