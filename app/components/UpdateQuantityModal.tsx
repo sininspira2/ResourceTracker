@@ -200,7 +200,7 @@ export function UpdateQuantityModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="update-quantity-modal-title"
-        className={`bg-background-primary rounded-lg p-6 md:p-8 max-w-md md:max-w-lg mx-4 border border-border-primary transition-all duration-300 ease-in-out transform ${
+        className={`bg-background-modal-body rounded-lg p-6 md:p-8 max-w-md md:max-w-lg mx-4 border border-border-primary transition-all duration-300 ease-in-out transform ${
           isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
@@ -223,7 +223,7 @@ export function UpdateQuantityModal({
                 setAmount(Math.max(0, parseInt(e.target.value) || 0))
               }
               onKeyDown={handleKeyDown}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
               min="0"
             />
           </div>
@@ -236,7 +236,7 @@ export function UpdateQuantityModal({
               onChange={(e) =>
                 setQuantityField(e.target.value as QuantityField)
               }
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
             >
               <option value={QUANTITY_FIELD.HAGGA}>Hagga</option>
               <option value={QUANTITY_FIELD.DEEP_DESERT}>Deep Desert</option>
@@ -256,7 +256,7 @@ export function UpdateQuantityModal({
                 <select
                   value={onBehalfOf}
                   onChange={(e) => setOnBehalfOf(e.target.value)}
-                  className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+                  className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
                   disabled={users.length === 0}
                 >
                   <option value="">Current User</option>
@@ -283,7 +283,7 @@ export function UpdateQuantityModal({
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
               maxLength={250}
               rows={3}
               placeholder="Add a reason for the change..."

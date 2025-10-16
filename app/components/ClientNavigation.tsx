@@ -29,7 +29,7 @@ export function ClientNavigation({
 
   return (
     <>
-      <nav className="bg-background-primary shadow-xs border-b border-border-primary transition-colors duration-300">
+      <nav className="bg-background-secondary shadow-xs border-b border-border-primary transition-colors duration-300">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Left side - Title and Version */}

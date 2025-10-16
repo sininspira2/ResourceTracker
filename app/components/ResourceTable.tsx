@@ -899,7 +899,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       {/* Dashboard Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Updates */}
-        <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+        <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-text-primary">
               Recent Updates
@@ -935,7 +935,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               {recentActivity.slice(0, 5).map((activity) => (
                 <div
                   key={activity.id}
-                  className="flex items-center justify-between p-3 bg-background-secondary rounded-lg hover:bg-background-tertiary transition-colors cursor-pointer"
+                  className="flex items-center justify-between p-3 bg-button-secondary-neutral-bg rounded-lg hover:bg-button-secondary-neutral-bg-hover transition-colors cursor-pointer"
                   onClick={() => handleResourceClick(activity.resourceId)}
                 >
                   <div className="flex items-center gap-3">
@@ -977,7 +977,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         </div>
 
         {/* Leaderboard */}
-        <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+        <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-text-primary">
               🏆 Leaderboard
@@ -1032,7 +1032,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 .map((entry, index) => (
                   <div
                     key={entry.userId}
-                    className="flex items-center justify-between p-3 bg-leaderboard-gradient hover:bg-leaderboard-gradient-hover rounded-lg transition-all cursor-pointer"
+                    className="flex items-center justify-between p-3 bg-linear-to-r from-leaderboard-gradient-from to-leaderboard-gradient-to hover:bg-linear-to-r hover:from-leaderboard-gradient-from-hover hover:to-leaderboard-gradient-to-hover rounded-lg transition-all cursor-pointer"
                     onClick={() =>
                       router.push(`/dashboard/contributions/${entry.userId}`)
                     }
@@ -1150,7 +1150,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           </div>
 
           {showCreateForm && (
-            <div className="bg-background-primary rounded-lg p-4 border border-border-secondary">
+            <div className="bg-background-modal-body rounded-lg p-4 border border-border-secondary">
               <h4 className="text-md font-medium text-text-primary mb-4">
                 Create New Resource
               </h4>
@@ -1168,7 +1168,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         name: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
                     placeholder="Resource name"
                   />
                 </div>
@@ -1185,7 +1185,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         category: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
                   >
                     {CATEGORY_OPTIONS.map((cat) => (
                       <option key={cat} value={cat}>
@@ -1208,7 +1208,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         description: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
                     placeholder="Optional description"
                   />
                 </div>
@@ -1226,7 +1226,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         imageUrl: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
@@ -1245,7 +1245,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         quantityHagga: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
                   />
                 </div>
                 <div>
@@ -1262,7 +1262,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         quantityDeepDesert: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
                   />
                 </div>
 
@@ -1280,7 +1280,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         targetQuantity: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
                   />
                 </div>
 
@@ -1299,7 +1299,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         multiplier: parseFloat(e.target.value) || 1.0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
                     placeholder="1.0"
                   />
                   <p className="text-xs text-text-quaternary mt-1">
@@ -1346,7 +1346,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       )}
 
       {/* Search and View Toggle */}
-      <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+      <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
         <div className="flex flex-col gap-4">
           {/* Search and Filters Row */}
           <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center justify-between">
@@ -1370,7 +1370,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 placeholder="Search resources..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary placeholder-text-quaternary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary placeholder-text-quaternary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
@@ -1380,7 +1380,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 onClick={() => setAndSaveViewMode(VIEW_MODE.TABLE)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   viewMode === VIEW_MODE.TABLE
-                    ? "bg-background-primary text-text-primary shadow-xs"
+                    ? "bg-background-modal-body text-text-primary shadow-xs"
                     : "text-text-tertiary hover:text-text-primary"
                 }`}
               >
@@ -1403,7 +1403,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 onClick={() => setAndSaveViewMode(VIEW_MODE.GRID)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   viewMode === VIEW_MODE.GRID
-                    ? "bg-background-primary text-text-primary shadow-xs"
+                    ? "bg-background-modal-body text-text-primary shadow-xs"
                     : "text-text-tertiary hover:text-text-primary"
                 }`}
               >
@@ -1435,7 +1435,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-border-secondary rounded-lg bg-background-primary text-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-3 py-1.5 text-sm border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -1453,7 +1453,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-border-secondary rounded-lg bg-background-primary text-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-3 py-1.5 text-sm border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {categoryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -1572,29 +1572,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         className={`border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer group ${
                           isOutdated
                             ? "border-update-indicator-border ring-1 ring-update-indicator-ring"
-                            : status === RESOURCE_STATUS.CRITICAL
-                              ? "border-status-critical-border"
-                              : status === RESOURCE_STATUS.BELOW_TARGET
-                                ? "border-status-below-target-border"
-                                : status === RESOURCE_STATUS.AT_TARGET
-                                  ? "border-status-at-target-border"
-                                  : status === RESOURCE_STATUS.ABOVE_TARGET
-                                    ? "border-status-above-target-border"
-                                    : "border-border-primary"
+                            : "border-border-primary"
                         } ${
                           resource.category === BP_CATEGORY
                             ? "bg-category-bp-bg hover:bg-category-bp-bg-hover"
                             : isOutdated
                               ? "bg-update-indicator-bg hover:bg-update-indicator-bg-hover"
-                              : status === RESOURCE_STATUS.CRITICAL
-                                ? "bg-status-critical-bg-subtle"
-                                : status === RESOURCE_STATUS.BELOW_TARGET
-                                  ? "bg-status-below-target-bg-subtle"
-                                  : status === RESOURCE_STATUS.AT_TARGET
-                                    ? "bg-status-at-target-bg-subtle"
-                                    : status === RESOURCE_STATUS.ABOVE_TARGET
-                                      ? "bg-status-above-target-bg-subtle"
-                                      : "bg-background-primary hover:bg-background-secondary"
+                              : "bg-background-modal-body hover:bg-background-modal-body-secondary"
                         }`}
                         onClick={() => handleResourceClick(resource.id)}
                         title={
@@ -1878,7 +1862,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-background-primary divide-y divide-border-primary">
+              <tbody className="bg-background-modal-body divide-y divide-border-primary">
                 {filteredResources.map((resource) => {
                   const status = calculateResourceStatus(
                     resource.quantityHagga + resource.quantityDeepDesert,
@@ -2128,7 +2112,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       {/* Delete Confirmation Dialog */}
       {deleteConfirm.showDialog && (
         <div className="fixed inset-0 bg-background-modal flex items-center justify-center z-50">
-          <div className="bg-background-primary rounded-lg p-6 max-w-md mx-4 border border-border-primary">
+          <div className="bg-background-modal-body rounded-lg p-6 max-w-md mx-4 border border-border-primary">
             <div className="flex items-center gap-3 mb-4">
               <Trash2 className="w-8 h-8 text-text-danger" />
               <h3 className="text-lg font-semibold text-text-primary">

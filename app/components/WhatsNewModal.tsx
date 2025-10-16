@@ -132,7 +132,7 @@ export function WhatsNewModal({
         }`}
       >
         {/* Header */}
-        <div className="bg-modal-header-gradient text-text-white p-6 rounded-t-lg flex-shrink-0">
+        <div className="bg-modal-header-gradient text-text-primary p-6 rounded-t-lg flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <h2 id="whats-new-modal-title" className="text-2xl font-bold">
@@ -257,7 +257,7 @@ export function WhatsNewModal({
             <>
               <button
                 onClick={() => handleClose(false)}
-                className="px-4 py-2 text-sm font-medium text-text-secondary bg-button-tertiary-bg hover:bg-button-tertiary-bg-hover border border-border-secondary rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-text-secondary bg-button-secondary-bg hover:bg-button-secondary-bg-hover border border-border-secondary rounded-lg transition-colors"
               >
                 Remind Me Later
               </button>

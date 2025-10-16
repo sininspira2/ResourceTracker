@@ -781,9 +781,9 @@ export default function ResourceDetailPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-background-secondary transition-colors duration-300">
+    <div className="min-h-screen bg-background-primary transition-colors duration-300">
       {/* Header */}
-      <div className="bg-background-primary shadow-xs border-b border-border-primary">
+      <div className="bg-background-secondary shadow-xs border-b border-border-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative flex items-center justify-center h-16">
             <button
@@ -1673,7 +1673,7 @@ export default function ResourceDetailPage() {
                 {leaderboard.slice(0, 10).map((entry, index) => (
                   <div
                     key={entry.userId}
-                    className="flex items-center justify-between p-3 bg-leaderboard-gradient hover:bg-leaderboard-gradient-hover rounded-lg transition-all cursor-pointer"
+                    className="flex items-center justify-between p-3 bg-linear-to-r from-leaderboard-gradient-from to-leaderboard-gradient-to hover:bg-linear-to-r hover:from-leaderboard-gradient-from-hover hover:to-leaderboard-gradient-to-hover rounded-lg transition-all cursor-pointer"
                     onClick={() =>
                       router.push(`/dashboard/contributions/${entry.userId}`)
                     }

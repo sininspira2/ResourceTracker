@@ -79,7 +79,7 @@ export function ChangeTargetModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="change-target-modal-title"
-        className={`bg-background-primary rounded-lg p-6 md:p-8 max-w-md md:max-w-lg mx-4 border border-border-primary transition-all duration-300 ease-in-out transform ${
+        className={`bg-background-modal-body rounded-lg p-6 md:p-8 max-w-md md:max-w-lg mx-4 border border-border-primary transition-all duration-300 ease-in-out transform ${
           isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
@@ -100,7 +100,7 @@ export function ChangeTargetModal({
               value={target}
               onChange={(e) => setTarget(Number(e.target.value) || 0)}
               onKeyDown={handleKeyDown}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-primary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
             />
           </div>
           {error && <p className="text-text-danger text-sm">{error}</p>}

@@ -16,7 +16,7 @@ export default async function ResourcesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-secondary transition-colors duration-300">
+    <div className="min-h-screen bg-background-primary transition-colors duration-300">
       <ClientNavigation
         title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}
         showDashboardLink={true}

@@ -9,6 +9,9 @@ export default {
         "background-secondary": "var(--color-background-secondary)",
         "background-tertiary": "var(--color-background-tertiary)",
         "background-modal": "var(--color-background-modal)",
+        "background-modal-body": "var(--color-background-modal-body)",
+        "background-modal-body-secondary":
+          "var(--color-background-modal-body-secondary)",
         "background-danger": "var(--color-background-danger)",
         "background-info": "var(--color-background-info)",
         "background-info-hover": "var(--color-background-info-hover)",
@@ -48,20 +51,28 @@ export default {
         "status-critical-text": "var(--color-status-critical-text)",
         "status-critical-border": "var(--color-status-critical-border)",
         "status-critical-bg-subtle": "var(--color-status-critical-bg-subtle)",
+        "status-critical-bg-subtle-hover":
+          "var(--color-status-critical-bg-subtle-hover)",
         "status-below-target-bg": "var(--color-status-below-target-bg)",
         "status-below-target-text": "var(--color-status-below-target-text)",
         "status-below-target-border": "var(--color-status-below-target-border)",
         "status-below-target-bg-subtle":
           "var(--color-status-below-target-bg-subtle)",
+        "status-below-target-bg-subtle-hover":
+          "var(--color-status-below-target-bg-subtle-hover)",
         "status-at-target-bg": "var(--color-status-at-target-bg)",
         "status-at-target-text": "var(--color-status-at-target-text)",
         "status-at-target-border": "var(--color-status-at-target-border)",
         "status-at-target-bg-subtle": "var(--color-status-at-target-bg-subtle)",
+        "status-at-target-bg-subtle-hover":
+          "var(--color-status-at-target-bg-subtle-hover)",
         "status-above-target-bg": "var(--color-status-above-target-bg)",
         "status-above-target-text": "var(--color-status-above-target-text)",
         "status-above-target-border": "var(--color-status-above-target-border)",
         "status-above-target-bg-subtle":
           "var(--color-status-above-target-bg-subtle)",
+        "status-above-target-bg-subtle-hover":
+          "var(--color-status-above-target-bg-subtle-hover)",
         "status-default-bg": "var(--color-status-default-bg)",
         "status-default-text": "var(--color-status-default-text)",
         "status-default-border": "var(--color-status-default-border)",
