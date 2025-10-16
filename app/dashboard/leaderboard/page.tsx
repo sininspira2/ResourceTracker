@@ -123,7 +123,7 @@ export default function LeaderboardPage() {
             <select
               value={timeFilter}
               onChange={(e) => handleTimeFilterChange(e.target.value)}
-              className="text-xs bg-background-modal-body-secondary border border-border-secondary rounded-sm px-2 py-1"
+              className="text-xs text-text-primary bg-background-modal-body-secondary border border-border-secondary rounded-sm px-2 py-1"
             >
               {timeFilterOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -200,7 +200,7 @@ export default function LeaderboardPage() {
                   return (
                     <div
                       key={entry.userId}
-                      className="p-6 hover:bg-button-secondary-bg-hover transition-colors cursor-pointer"
+                      className="p-6 hover:bg-button-secondary-bg transition-colors cursor-pointer"
                       onClick={() => handleUserClick(entry.userId)}
                     >
                       <div className="flex items-center justify-between">

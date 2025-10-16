@@ -175,7 +175,7 @@ export default function UserContributionsPage() {
 
   if (loading && !data) {
     return (
-      <div className="min-h-screen bg-background-secondary py-8">
+      <div className="min-h-screen bg-background-primary py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-text-link mx-auto"></div>
@@ -188,7 +188,7 @@ export default function UserContributionsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background-secondary py-8">
+      <div className="min-h-screen bg-background-primary py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <p className="text-text-danger">{error}</p>
@@ -209,10 +209,10 @@ export default function UserContributionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-secondary py-8">
+    <div className="min-h-screen bg-background-primary py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="bg-background-primary rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-background-modal-body rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-text-primary">
@@ -222,7 +222,7 @@ export default function UserContributionsPage() {
             </div>
             <button
               onClick={() => router.push("/resources")}
-              className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover text-text-white px-4 py-2 rounded-lg"
+              className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover text-button-secondary-text px-4 py-2 rounded-lg"
             >
               Back to Resources
             </button>
@@ -230,7 +230,7 @@ export default function UserContributionsPage() {
 
           {/* Summary Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-background-info rounded-lg p-4">
+            <div className="bg-button-subtle-blue-bg rounded-lg p-4">
               <div className="text-2xl font-bold text-text-link">
                 {(data.summary?.totalPoints || 0).toFixed(1)}
               </div>
@@ -238,7 +238,7 @@ export default function UserContributionsPage() {
                 Total Points
               </div>
             </div>
-            <div className="bg-background-success rounded-lg p-4">
+            <div className="bg-button-subtle-green-bg rounded-lg p-4">
               <div className="text-2xl font-bold text-text-success">
                 {data.summary?.totalActions || 0}
               </div>
@@ -246,7 +246,7 @@ export default function UserContributionsPage() {
                 Total Actions
               </div>
             </div>
-            <div className="bg-background-purple-subtle rounded-lg p-4">
+            <div className="bg-button-subtle-purple-bg rounded-lg p-4">
               <div className="text-2xl font-bold text-text-purple">
                 {data.rank ? `#${data.rank}` : "Unranked"}
               </div>
@@ -258,15 +258,15 @@ export default function UserContributionsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-background-primary rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-background-modal-body rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center gap-4">
-            <label className="text-sm font-medium text-text-secondary">
+            <label className="text-sm font-medium text-text-primary">
               Time Period:
             </label>
             <select
               value={timeFilter}
               onChange={(e) => handleTimeFilterChange(e.target.value)}
-              className="bg-background-primary border border-border-secondary rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+              className="bg-background-modal-body-secondary border border-border-secondary rounded-lg px-3 py-2 text-sm text-text-primary focus:ring-2 focus:ring-blue-500"
             >
               {timeFilterOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -278,7 +278,7 @@ export default function UserContributionsPage() {
         </div>
 
         {/* Contributions List */}
-        <div className="bg-background-primary rounded-lg shadow-lg">
+        <div className="bg-background-modal-body rounded-lg shadow-lg">
           <div className="p-6 border-b border-border-primary">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-text-primary">
@@ -322,7 +322,7 @@ export default function UserContributionsPage() {
                 {data.contributions.map((contribution) => (
                   <div
                     key={contribution.id}
-                    className="p-6 hover:bg-background-secondary"
+                    className="p-6 hover:bg-button-secondary-bg"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">

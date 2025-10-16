@@ -991,7 +991,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       .value as (typeof LEADERBOARD_TIME_FILTERS)[keyof typeof LEADERBOARD_TIME_FILTERS],
                   )
                 }
-                className="text-xs bg-background-tertiary border border-border-secondary rounded-sm px-2 py-1"
+                className="text-xs bg-background-modal-body-secondary border border-border-secondary rounded-sm px-2 py-1"
               >
                 <option value={LEADERBOARD_TIME_FILTERS["24H"]}>24h</option>
                 <option value={LEADERBOARD_TIME_FILTERS["7D"]}>7d</option>
@@ -1375,12 +1375,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             </div>
 
             {/* View Toggle Buttons */}
-            <div className="flex items-center bg-background-tertiary rounded-lg p-1">
+            <div className="flex items-center bg-background-modal-body-secondary rounded-lg p-1">
               <button
                 onClick={() => setAndSaveViewMode(VIEW_MODE.TABLE)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   viewMode === VIEW_MODE.TABLE
-                    ? "bg-background-modal-body text-text-primary shadow-xs"
+                    ? "bg-button-secondary-neutral-bg-hover text-text-primary shadow-xs"
                     : "text-text-tertiary hover:text-text-primary"
                 }`}
               >
@@ -1403,7 +1403,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 onClick={() => setAndSaveViewMode(VIEW_MODE.GRID)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   viewMode === VIEW_MODE.GRID
-                    ? "bg-background-modal-body text-text-primary shadow-xs"
+                    ? "bg-button-secondary-neutral-bg-hover text-text-primary shadow-xs"
                     : "text-text-tertiary hover:text-text-primary"
                 }`}
               >
@@ -1640,7 +1640,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         >
                           <h4 className="font-medium text-text-primary text-sm truncate group-hover:text-text-link transition-colors">
                             {resource.isPriority && (
-                              <span className="text-priority">* </span>
+                              <span className="text-text-priority">* </span>
                             )}
                             {resource.name}
                           </h4>

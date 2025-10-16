@@ -137,7 +137,7 @@ export default function PrivacyPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-background-secondary flex items-center justify-center">
+      <div className="min-h-screen bg-background-primary flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-text-link mx-auto"></div>
           <p className="mt-4 text-text-tertiary">Loading...</p>
@@ -149,9 +149,9 @@ export default function PrivacyPage() {
   const displayName = session ? getDisplayName(session.user) : "User";
 
   return (
-    <div className="min-h-screen bg-background-secondary transition-colors duration-300">
+    <div className="min-h-screen bg-background-primary transition-colors duration-300">
       {/* Header */}
-      <div className="bg-background-primary shadow-xs border-b border-border-primary">
+      <div className="bg-background-secondary shadow-xs border-b border-border-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -199,7 +199,7 @@ export default function PrivacyPage() {
           )}
 
           {/* Data Rights Overview */}
-          <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+          <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
             <h2 className="text-xl font-semibold text-text-primary mb-4">
               Your Data Rights
             </h2>
@@ -212,7 +212,7 @@ export default function PrivacyPage() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="border border-border-secondary rounded-lg p-4 bg-background-secondary">
+              <div className="border border-border-secondary rounded-lg p-4 bg-background-modal-body-secondary">
                 <h3 className="font-semibold text-text-primary mb-2">
                   🔍 Right to Access
                 </h3>
@@ -229,7 +229,7 @@ export default function PrivacyPage() {
                 </button>
               </div>
 
-              <div className="border border-border-secondary rounded-lg p-4 bg-background-secondary">
+              <div className="border border-border-secondary rounded-lg p-4 bg-background-modal-body-secondary">
                 <h3 className="font-semibold text-text-primary mb-2">
                   🗑️ Right to Erasure
                 </h3>
@@ -252,7 +252,7 @@ export default function PrivacyPage() {
           </div>
 
           {/* Data We Collect */}
-          <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+          <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
             <h2 className="text-xl font-semibold text-text-primary mb-4">
               Data We Collect
             </h2>
@@ -287,7 +287,7 @@ export default function PrivacyPage() {
           </div>
 
           {/* Data Retention */}
-          <div className="bg-background-primary rounded-lg shadow-sm p-6 border border-border-primary">
+          <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
             <h2 className="text-xl font-semibold text-text-primary mb-4">
               Data Retention
             </h2>
