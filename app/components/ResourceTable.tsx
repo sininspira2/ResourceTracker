@@ -1578,7 +1578,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             ? "bg-category-bp-bg hover:bg-category-bp-bg-hover"
                             : isOutdated
                               ? "bg-update-indicator-bg hover:bg-update-indicator-bg-hover"
-                              : "bg-background-modal-body hover:bg-background-modal-body-secondary"
+                              : "bg-background-modal-body hover:bg-button-secondary-neutral-bg"
                         }`}
                         onClick={() => handleResourceClick(resource.id)}
                         title={
