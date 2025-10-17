@@ -99,7 +99,7 @@ export function EditResourceModal({
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center z-50 transition-colors duration-300 ease-in-out ${
-        isAnimating ? "bg-background-modal" : "bg-black/0"
+        isAnimating ? "bg-background-overlay" : "bg-black/0"
       }`}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) {
@@ -111,7 +111,7 @@ export function EditResourceModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="edit-resource-modal-title"
-        className={`bg-background-modal-body rounded-lg p-6 md:p-8 max-w-lg lg:max-w-xl w-full mx-4 border border-border-secondary transition-all duration-300 ease-in-out transform ${
+        className={`bg-background-modal-content rounded-lg p-6 md:p-8 max-w-lg lg:max-w-xl w-full mx-4 border border-border-secondary transition-all duration-300 ease-in-out transform ${
           isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
@@ -155,7 +155,7 @@ export function EditResourceModal({
                 setFormData({ ...formData, name: e.target.value })
               }
               onKeyDown={handleKeyDown}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
             />
           </div>
 
@@ -168,7 +168,7 @@ export function EditResourceModal({
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
             >
               {CATEGORY_OPTIONS.map((cat) => (
                 <option key={cat} value={cat}>
@@ -187,7 +187,7 @@ export function EditResourceModal({
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
               rows={4}
             />
           </div>
@@ -203,7 +203,7 @@ export function EditResourceModal({
                 setFormData({ ...formData, imageUrl: e.target.value })
               }
               onKeyDown={handleKeyDown}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
             />
           </div>
 
@@ -223,7 +223,7 @@ export function EditResourceModal({
                 })
               }
               onKeyDown={handleKeyDown}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
             />
           </div>
 

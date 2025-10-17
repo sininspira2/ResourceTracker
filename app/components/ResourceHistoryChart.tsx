@@ -98,7 +98,7 @@ export function ResourceHistoryChart({
   }
 
   return (
-    <div className="fixed inset-0 bg-background-modal flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-background-overlay flex items-center justify-center z-50">
       <div className="bg-background-primary rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
           <div>

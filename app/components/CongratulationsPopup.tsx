@@ -88,7 +88,7 @@ export function CongratulationsPopup({
     <div className="fixed inset-0 z-50 flex items-end justify-end p-4 pointer-events-none">
       <div
         className={`
-          bg-background-modal-body rounded-lg shadow-2xl border border-border-primary
+          bg-background-modal-content rounded-lg shadow-2xl border border-border-primary
           max-w-sm md:max-w-md w-full transform transition-all duration-300 pointer-events-auto
           ${isAnimating ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}
         `}

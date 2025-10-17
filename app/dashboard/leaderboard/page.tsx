@@ -96,7 +96,7 @@ export default function LeaderboardPage() {
     <div className="min-h-screen bg-background-primary py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="bg-background-modal-body rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-background-panel rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-text-primary">
@@ -123,7 +123,7 @@ export default function LeaderboardPage() {
             <select
               value={timeFilter}
               onChange={(e) => handleTimeFilterChange(e.target.value)}
-              className="text-xs text-text-primary bg-background-modal-body-secondary border border-border-secondary rounded-sm px-2 py-1"
+              className="text-xs text-text-primary bg-background-panel-inset border border-border-secondary rounded-sm px-2 py-1"
             >
               {timeFilterOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -148,7 +148,7 @@ export default function LeaderboardPage() {
         )}
 
         {/* Leaderboard */}
-        <div className="bg-background-modal-body rounded-lg shadow-lg">
+        <div className="bg-background-panel rounded-lg shadow-lg">
           <div className="p-6 border-b border-border-primary">
             <h2 className="text-lg font-semibold text-text-primary">
               Rankings (

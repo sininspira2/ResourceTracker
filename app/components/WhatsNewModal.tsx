@@ -115,7 +115,7 @@ export function WhatsNewModal({
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center p-4 z-50 transition-colors duration-300 ease-in-out ${
-        isAnimating ? "bg-background-modal" : "bg-black/0"
+        isAnimating ? "bg-background-overlay" : "bg-black/0"
       }`}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) {

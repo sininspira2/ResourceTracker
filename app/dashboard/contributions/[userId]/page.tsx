@@ -212,7 +212,7 @@ export default function UserContributionsPage() {
     <div className="min-h-screen bg-background-primary py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="bg-background-modal-body rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-background-panel rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-text-primary">
@@ -258,7 +258,7 @@ export default function UserContributionsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-background-modal-body rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-background-panel rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-text-primary">
               Time Period:
@@ -266,7 +266,7 @@ export default function UserContributionsPage() {
             <select
               value={timeFilter}
               onChange={(e) => handleTimeFilterChange(e.target.value)}
-              className="bg-background-modal-body-secondary border border-border-secondary rounded-lg px-3 py-2 text-sm text-text-primary focus:ring-2 focus:ring-blue-500"
+              className="bg-background-panel-inset border border-border-secondary rounded-lg px-3 py-2 text-sm text-text-primary focus:ring-2 focus:ring-blue-500"
             >
               {timeFilterOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -278,7 +278,7 @@ export default function UserContributionsPage() {
         </div>
 
         {/* Contributions List */}
-        <div className="bg-background-modal-body rounded-lg shadow-lg">
+        <div className="bg-background-panel rounded-lg shadow-lg">
           <div className="p-6 border-b border-border-primary">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-text-primary">

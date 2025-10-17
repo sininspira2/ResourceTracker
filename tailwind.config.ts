@@ -8,10 +8,12 @@ export default {
         "background-primary": "var(--color-background-primary)",
         "background-secondary": "var(--color-background-secondary)",
         "background-tertiary": "var(--color-background-tertiary)",
-        "background-modal": "var(--color-background-modal)",
-        "background-modal-body": "var(--color-background-modal-body)",
-        "background-modal-body-secondary":
-          "var(--color-background-modal-body-secondary)",
+        "background-overlay": "var(--color-background-overlay)",
+        "background-panel": "var(--color-background-panel)",
+        "background-panel-inset": "var(--color-background-panel-inset)",
+        "background-modal-content": "var(--color-background-modal-content)",
+        "background-modal-content-inset":
+          "var(--color-background-modal-content-inset)",
         "background-danger": "var(--color-background-danger)",
         "background-info": "var(--color-background-info)",
         "background-info-hover": "var(--color-background-info-hover)",

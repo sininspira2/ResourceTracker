@@ -817,7 +817,7 @@ export default function ResourceDetailPage() {
         <div className="space-y-8">
           {/* Resource Info Card - Full Width Horizontal Layout */}
           <div className="w-full">
-            <div className="bg-background-modal-body rounded-lg shadow-md p-6 border border-border-primary">
+            <div className="bg-background-modal-content rounded-lg shadow-md p-6 border border-border-primary">
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Resource Image */}
                 <div className="shrink-0">
@@ -1051,8 +1051,8 @@ export default function ResourceDetailPage() {
 
           {/* Edit Mode Modal/Overlay */}
           {editMode && canEdit && (
-            <div className="fixed inset-0 bg-background-modal flex items-center justify-center z-50">
-              <div className="bg-background-modal-body rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div className="fixed inset-0 bg-background-overlay flex items-center justify-center z-50">
+              <div className="bg-background-modal-content rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-text-primary">
                     Update Quantity
@@ -1159,7 +1159,7 @@ export default function ResourceDetailPage() {
         {/* History and Leaderboard Section - Full Width */}
         <div className="w-full space-y-8 mt-8">
           {/* Activity Timeline with Chart */}
-          <div className="bg-background-modal-body rounded-lg shadow-md p-6 border border-border-primary">
+          <div className="bg-background-modal-content rounded-lg shadow-md p-6 border border-border-primary">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-text-primary">
                 Activity Timeline
@@ -1183,7 +1183,7 @@ export default function ResourceDetailPage() {
 
             {/* History Chart */}
             {!historyLoading && history.length > 1 && (
-              <div className="mb-6 p-4 bg-background-modal-body-secondary rounded-lg border border-border-secondary">
+              <div className="mb-6 p-4 bg-background-modal-content-inset rounded-lg border border-border-secondary">
                 <h4 className="text-md font-medium text-text-secondary mb-4">
                   Quantity Over Time
                 </h4>
@@ -1550,7 +1550,7 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* Resource-Specific Contribution Leaderboard */}
-          <div className="bg-background-modal-body rounded-lg shadow-md p-6 border border-border-primary">
+          <div className="bg-background-modal-content rounded-lg shadow-md p-6 border border-border-primary">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-text-primary">
                 Contribution Leaderboard
@@ -1641,7 +1641,7 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* Global Points Leaderboard */}
-          <div className="bg-background-modal-body rounded-lg shadow-md p-6 border border-border-primary">
+          <div className="bg-background-modal-content rounded-lg shadow-md p-6 border border-border-primary">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-text-primary">
                 🏆 Points Leaderboard
@@ -1734,7 +1734,7 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* History Timeline */}
-          <div className="bg-background-modal-body rounded-lg shadow-md p-6 border border-border-primary">
+          <div className="bg-background-modal-content rounded-lg shadow-md p-6 border border-border-primary">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-text-primary">
                 Recent Changes
@@ -2000,8 +2000,8 @@ export default function ResourceDetailPage() {
       )}
 
       {deleteConfirm.showDialog && (
-        <div className="fixed inset-0 bg-background-modal flex items-center justify-center z-50">
-          <div className="bg-background-primary rounded-lg p-6 max-w-md mx-4 border border-border-primary">
+        <div className="fixed inset-0 bg-background-overlay flex items-center justify-center z-50">
+          <div className="bg-background-modal-content rounded-lg p-6 max-w-md mx-4 border border-border-primary">
             <div className="flex items-center gap-3 mb-4">
               <Trash2 className="w-8 h-8 text-text-danger" />
               <h3 className="text-lg font-semibold text-text-primary">

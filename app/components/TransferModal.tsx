@@ -86,7 +86,7 @@ export function TransferModal({
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center z-50 transition-colors duration-300 ease-in-out ${
-        isAnimating ? "bg-background-modal" : "bg-black/0"
+        isAnimating ? "bg-background-overlay" : "bg-black/0"
       }`}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) {
@@ -98,7 +98,7 @@ export function TransferModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="transfer-modal-title"
-        className={`bg-background-modal-body rounded-lg p-6 md:p-8 max-w-md md:max-w-lg mx-4 border border-border-primary transition-all duration-300 ease-in-out transform ${
+        className={`bg-background-modal-content rounded-lg p-6 md:p-8 max-w-md md:max-w-lg mx-4 border border-border-primary transition-all duration-300 ease-in-out transform ${
           isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
@@ -119,7 +119,7 @@ export function TransferModal({
               value={amount}
               onChange={(e) => setAmount(parseInt(e.target.value) || 0)}
               onKeyDown={handleKeyDown}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
             />
           </div>
           <div>
@@ -131,7 +131,7 @@ export function TransferModal({
               onChange={(e) =>
                 setDirection(e.target.value as TransferDirection)
               }
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
             >
               <option value={TRANSFER_DIRECTION.TO_DEEP_DESERT}>
                 Hagga to Deep Desert
