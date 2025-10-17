@@ -196,7 +196,7 @@ export default function ActivityLogPage() {
         ) : (
           <div className="space-y-6">
             {/* Summary Stats */}
-            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
               <h2 className="text-lg font-semibold text-text-primary mb-4">
                 Summary
               </h2>
@@ -225,7 +225,7 @@ export default function ActivityLogPage() {
             </div>
 
             {/* Activity Timeline */}
-            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
               <h2 className="text-lg font-semibold text-text-primary mb-6">
                 Activity Timeline
               </h2>

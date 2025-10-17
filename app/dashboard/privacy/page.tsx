@@ -199,7 +199,7 @@ export default function PrivacyPage() {
           )}
 
           {/* Data Rights Overview */}
-          <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+          <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
             <h2 className="text-xl font-semibold text-text-primary mb-4">
               Your Data Rights
             </h2>
@@ -212,7 +212,7 @@ export default function PrivacyPage() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="border border-border-secondary rounded-lg p-4 bg-background-modal-body-secondary">
+              <div className="border border-border-secondary rounded-lg p-4 bg-background-panel-inset">
                 <h3 className="font-semibold text-text-primary mb-2">
                   🔍 Right to Access
                 </h3>
@@ -229,7 +229,7 @@ export default function PrivacyPage() {
                 </button>
               </div>
 
-              <div className="border border-border-secondary rounded-lg p-4 bg-background-modal-body-secondary">
+              <div className="border border-border-secondary rounded-lg p-4 bg-background-panel-inset">
                 <h3 className="font-semibold text-text-primary mb-2">
                   🗑️ Right to Erasure
                 </h3>
@@ -252,7 +252,7 @@ export default function PrivacyPage() {
           </div>
 
           {/* Data We Collect */}
-          <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+          <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
             <h2 className="text-xl font-semibold text-text-primary mb-4">
               Data We Collect
             </h2>
@@ -287,7 +287,7 @@ export default function PrivacyPage() {
           </div>
 
           {/* Data Retention */}
-          <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+          <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
             <h2 className="text-xl font-semibold text-text-primary mb-4">
               Data Retention
             </h2>

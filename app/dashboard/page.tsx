@@ -136,7 +136,7 @@ export default async function Dashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* User Info Card */}
-            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
               <h2 className="text-xl font-semibold mb-4 text-text-primary">
                 Profile
               </h2>
@@ -163,7 +163,7 @@ export default async function Dashboard() {
             </div>
 
             {/* Community Status Card */}
-            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
               <h2 className="text-xl font-semibold mb-4 text-text-primary">
                 Community Status
               </h2>
@@ -196,7 +196,7 @@ export default async function Dashboard() {
             </div>
 
             {/* Roles Card */}
-            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-text-primary">
                   Your Roles
@@ -232,7 +232,7 @@ export default async function Dashboard() {
 
           {/* Quick Actions */}
           <div className="mt-8">
-            <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+            <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
               <h2 className="text-xl font-semibold mb-4 text-text-primary">
                 Quick Actions
               </h2>

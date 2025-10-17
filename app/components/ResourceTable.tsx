@@ -899,7 +899,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       {/* Dashboard Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Updates */}
-        <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+        <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-text-primary">
               Recent Updates
@@ -977,7 +977,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         </div>
 
         {/* Leaderboard */}
-        <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+        <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-text-primary">
               🏆 Leaderboard
@@ -991,7 +991,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       .value as (typeof LEADERBOARD_TIME_FILTERS)[keyof typeof LEADERBOARD_TIME_FILTERS],
                   )
                 }
-                className="text-xs bg-background-modal-body-secondary border border-border-secondary rounded-sm px-2 py-1"
+                className="text-xs bg-background-panel-inset border border-border-secondary rounded-sm px-2 py-1"
               >
                 <option value={LEADERBOARD_TIME_FILTERS["24H"]}>24h</option>
                 <option value={LEADERBOARD_TIME_FILTERS["7D"]}>7d</option>
@@ -1150,7 +1150,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           </div>
 
           {showCreateForm && (
-            <div className="bg-background-modal-body rounded-lg p-4 border border-border-secondary">
+            <div className="bg-background-panel rounded-lg p-4 border border-border-secondary">
               <h4 className="text-md font-medium text-text-primary mb-4">
                 Create New Resource
               </h4>
@@ -1168,7 +1168,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         name: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary"
                     placeholder="Resource name"
                   />
                 </div>
@@ -1185,7 +1185,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         category: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary"
                   >
                     {CATEGORY_OPTIONS.map((cat) => (
                       <option key={cat} value={cat}>
@@ -1208,7 +1208,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         description: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary"
                     placeholder="Optional description"
                   />
                 </div>
@@ -1226,7 +1226,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         imageUrl: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary"
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
@@ -1245,7 +1245,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         quantityHagga: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary"
                   />
                 </div>
                 <div>
@@ -1262,7 +1262,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         quantityDeepDesert: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary"
                   />
                 </div>
 
@@ -1280,7 +1280,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         targetQuantity: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary"
                   />
                 </div>
 
@@ -1299,7 +1299,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         multiplier: parseFloat(e.target.value) || 1.0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary"
+                    className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary"
                     placeholder="1.0"
                   />
                   <p className="text-xs text-text-quaternary mt-1">
@@ -1346,7 +1346,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       )}
 
       {/* Search and View Toggle */}
-      <div className="bg-background-modal-body rounded-lg shadow-sm p-6 border border-border-primary">
+      <div className="bg-background-panel rounded-lg shadow-sm p-6 border border-border-primary">
         <div className="flex flex-col gap-4">
           {/* Search and Filters Row */}
           <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center justify-between">
@@ -1370,12 +1370,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 placeholder="Search resources..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary placeholder-text-quaternary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary placeholder-text-quaternary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
             {/* View Toggle Buttons */}
-            <div className="flex items-center bg-background-modal-body-secondary rounded-lg p-1">
+            <div className="flex items-center bg-background-panel-inset rounded-lg p-1">
               <button
                 onClick={() => setAndSaveViewMode(VIEW_MODE.TABLE)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
@@ -1435,7 +1435,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-3 py-1.5 text-sm border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -1453,7 +1453,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-border-secondary rounded-lg bg-background-modal-body-secondary text-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-3 py-1.5 text-sm border border-border-secondary rounded-lg bg-background-panel-inset text-text-primary focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {categoryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -1578,7 +1578,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             ? "bg-category-bp-bg hover:bg-category-bp-bg-hover"
                             : isOutdated
                               ? "bg-update-indicator-bg hover:bg-update-indicator-bg-hover"
-                              : "bg-background-modal-body hover:bg-button-secondary-neutral-bg"
+                              : "bg-background-panel hover:bg-button-secondary-neutral-bg"
                         }`}
                         onClick={() => handleResourceClick(resource.id)}
                         title={
@@ -1862,7 +1862,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-background-modal-body divide-y divide-border-primary">
+              <tbody className="bg-background-panel divide-y divide-border-primary">
                 {filteredResources.map((resource) => {
                   const status = calculateResourceStatus(
                     resource.quantityHagga + resource.quantityDeepDesert,
@@ -2111,8 +2111,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       {/* Delete Confirmation Dialog */}
       {deleteConfirm.showDialog && (
-        <div className="fixed inset-0 bg-background-modal flex items-center justify-center z-50">
-          <div className="bg-background-modal-body rounded-lg p-6 max-w-md mx-4 border border-border-primary">
+        <div className="fixed inset-0 bg-background-overlay flex items-center justify-center z-50">
+          <div className="bg-background-panel rounded-lg p-6 max-w-md mx-4 border border-border-primary">
             <div className="flex items-center gap-3 mb-4">
               <Trash2 className="w-8 h-8 text-text-danger" />
               <h3 className="text-lg font-semibold text-text-primary">
