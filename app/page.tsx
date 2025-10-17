@@ -13,39 +13,39 @@ export default async function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-blue-900 to-purple-900 dark:from-gray-900 dark:to-blue-900 text-text-white transition-colors duration-300">
+    <main className="text-text-white min-h-screen bg-linear-to-br from-blue-900 to-purple-900 transition-colors duration-300 dark:from-gray-900 dark:to-blue-900">
       <div className="container mx-auto px-4 py-16">
-        <header className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-4">
+        <header className="mb-16 text-center">
+          <h1 className="mb-4 text-5xl font-bold">
             {process.env.NEXT_PUBLIC_APP_NAME || "Resource Tracker"}
           </h1>
-          <p className="text-xl text-text-accent dark:text-text-accent-dark">
+          <p className="text-text-homepage-intro dark:text-text-homepage-intro text-xl">
             Resource management and tracking portal for{" "}
             {process.env.NEXT_PUBLIC_ORGANIZATION_NAME || "your organization"}
           </p>
         </header>
 
-        <div className="max-w-md mx-auto">
+        <div className="mx-auto max-w-md">
           {session ? (
             // User is logged in but doesn't have access
-            <div className="bg-background-accent-primary backdrop-blur-md rounded-lg p-8 text-center border border-border-accent-primary">
+            <div className="bg-background-accent-primary border-border-accent-primary rounded-lg border p-8 text-center backdrop-blur-md">
               <div className="mb-6">
                 {session.user.image && (
                   <img
                     src={session.user.image}
                     alt="Profile"
-                    className="w-16 h-16 rounded-full mx-auto mb-4"
+                    className="mx-auto mb-4 h-16 w-16 rounded-full"
                   />
                 )}
-                <h2 className="text-xl font-bold mb-2">
+                <h2 className="mb-2 text-xl font-bold">
                   Welcome, {session.user.name}!
                 </h2>
               </div>
 
-              <div className="bg-background-accent-secondary border border-border-accent-secondary rounded-lg p-4 mb-6">
-                <div className="flex items-center justify-center mb-2">
+              <div className="bg-background-accent-secondary border-border-accent-secondary mb-6 rounded-lg border p-4">
+                <div className="mb-2 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-text-danger mr-2"
+                    className="text-text-danger mr-2 h-6 w-6"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -57,18 +57,18 @@ export default async function Home() {
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.888-.833-2.664 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z"
                     />
                   </svg>
-                  <span className="font-medium text-text-danger">
+                  <span className="text-text-danger font-medium">
                     Access Denied
                   </span>
                 </div>
-                <p className="text-text-danger text-sm mb-3">
+                <p className="text-text-danger mb-3 text-sm">
                   {session.user.isInGuild
                     ? "You need the required Discord roles to access this portal."
                     : "You must be a member of the Discord server to access this portal."}
                 </p>
-                <div className="text-text-danger text-xs bg-background-accent-tertiary rounded-sm px-3 py-2">
-                  <div className="font-medium mb-1">Requirements:</div>
-                  <ul className="list-disc list-inside space-y-1">
+                <div className="text-text-danger bg-background-accent-tertiary rounded-sm px-3 py-2 text-xs">
+                  <div className="mb-1 font-medium">Requirements:</div>
+                  <ul className="list-inside list-disc space-y-1">
                     <li>Be a member of the Discord server</li>
                     <li>Have appropriate resource management roles</li>
                     <li>
@@ -81,7 +81,7 @@ export default async function Home() {
 
               <div className="space-y-4">
                 <LogoutButton variant="prominent" fullWidth={true} />
-                <p className="text-center text-text-accent text-sm">
+                <p className="text-text-homepage-intro text-center text-sm">
                   Try logging in with a Discord account that has the required
                   server roles
                 </p>
@@ -89,9 +89,9 @@ export default async function Home() {
             </div>
           ) : (
             // User is not logged in
-            <div className="bg-background-accent-primary backdrop-blur-md rounded-lg p-8 text-center border border-border-accent-primary">
-              <h2 className="text-2xl font-bold mb-4">Sign In Required</h2>
-              <p className="text-text-accent dark:text-text-accent-dark mb-8">
+            <div className="bg-background-accent-primary border-border-accent-primary rounded-lg border p-8 text-center backdrop-blur-md">
+              <h2 className="mb-4 text-2xl font-bold">Sign In Required</h2>
+              <p className="text-text-homepage-intro dark:text-text-homepage-intro mb-8">
                 Please sign in with Discord to access the resource portal.
               </p>
               <LoginButton />
@@ -99,7 +99,7 @@ export default async function Home() {
           )}
         </div>
 
-        <footer className="text-center mt-16 text-text-accent">
+        <footer className="text-text-homepage-footer mt-16 text-center">
           <p className="text-sm">
             Powered by Discord authentication • Secure role-based access
           </p>

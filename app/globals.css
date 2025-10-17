@@ -19,6 +19,7 @@
   --color-background-panel-inset: theme(colors.gray.50);
   --color-background-modal-content: theme(colors.gray.100);
   --color-background-modal-content-inset: theme(colors.gray.50);
+  --color-tile-background: theme(colors.gray.100);
   --color-background-danger: theme(colors.red.50);
   --color-background-info: theme(colors.blue.50);
   --color-background-info-hover: theme(colors.blue.100);
@@ -43,6 +44,7 @@
   --color-button-primary-bg: theme(colors.blue.600);
   --color-button-primary-bg-hover: theme(colors.blue.700);
   --color-button-secondary-bg: theme(colors.gray.200);
+  --color-table-row-hover-leaderboard-bg: theme(colors.gray.200);
   --color-button-secondary-bg-hover: theme(colors.gray.300);
   --color-button-secondary-text: theme(colors.gray.700);
   --color-button-danger-bg: theme(colors.red.600);
@@ -127,7 +129,12 @@
   --color-progress-bar-below-target-bg: theme(colors.orange.500);
   --color-progress-bar-critical-bg: theme(colors.red.500);
 
+  --color-text-homepage-intro: theme(colors.blue.200);
+  --color-text-homepage-footer: theme(colors.blue.200);
   --color-text-accent: theme(colors.blue.200);
+  --color-gradient-heading-from: theme(colors.blue.200);
+  --color-gradient-heading-to: theme(colors.red.200);
+  --color-text-danger-subtle: theme(colors.red.200);
   --color-text-accent-blue: theme(colors.blue.200);
   --color-text-accent-red: theme(colors.red.200);
   --color-text-accent-dark: theme(colors.blue.300);
@@ -175,8 +182,8 @@
   --color-button-subtle-gray-bg: theme(colors.gray.200);
   --color-button-subtle-gray-text: theme(colors.gray.700);
 
-  --color-highlight-bg: theme(colors.blue.100);
-  --color-highlight-border: var(--color-border-info);
+  --color-background-highlight: theme(colors.blue.100);
+  --color-border-highlight: var(--color-border-info);
 
   --color-tag-selected-bg: theme(colors.blue.200);
   --color-tag-selected-text: theme(colors.blue.800);
@@ -238,6 +245,7 @@ html[data-theme="dark"] {
   --color-background-panel-inset: theme(colors.gray.700);
   --color-background-modal-content: theme(colors.gray.800);
   --color-background-modal-content-inset: theme(colors.gray.700);
+  --color-tile-background: theme(colors.gray.800);
   --color-background-info: theme(colors.blue.900 / 20%);
   --color-background-info-hover: theme(colors.blue.900 / 70%);
   --color-background-success: theme(colors.green.900 / 20%);
@@ -259,6 +267,7 @@ html[data-theme="dark"] {
   --color-button-primary-bg: theme(colors.blue.500);
   --color-button-primary-bg-hover: theme(colors.blue.600);
   --color-button-secondary-bg: theme(colors.gray.600);
+  --color-table-row-hover-leaderboard-bg: theme(colors.gray.600);
   --color-button-secondary-bg-hover: theme(colors.gray.500);
   --color-button-secondary-text: theme(colors.gray.300);
   --color-button-danger-bg: theme(colors.red.500);
@@ -341,7 +350,8 @@ html[data-theme="dark"] {
   --color-button-subtle-gray-bg: theme(colors.gray.700);
   --color-button-subtle-gray-text: theme(colors.gray.400);
 
-  --color-highlight-bg: theme(colors.blue.900 / 50%);
+  --color-background-highlight: theme(colors.blue.900 / 50%);
+  --color-border-highlight: var(--color-border-info);
 
   --color-tag-selected-bg: theme(colors.blue.800);
   --color-tag-selected-text: theme(colors.blue.200);
@@ -372,6 +382,8 @@ html[data-theme="dark"] {
   --color-button-secondary-neutral-bg: theme(colors.gray.700);
   --color-button-secondary-neutral-bg-hover: theme(colors.gray.600);
 
+  --color-text-homepage-intro: theme(colors.blue.300);
+  --color-text-homepage-footer: theme(colors.gray.400);
   --color-text-danger-hover: theme(colors.red.100);
 
   --color-background-purple-subtle: theme(colors.purple.900 / 20%);
@@ -387,6 +399,9 @@ html[data-theme="dark"] {
   --color-icon-prominent-blue: theme(colors.blue.300);
   --color-icon-prominent-red: theme(colors.red.300);
 
+  --color-gradient-heading-from: theme(colors.blue.300);
+  --color-gradient-heading-to: theme(colors.red.300);
+  --color-text-danger-subtle: theme(colors.red.300);
   --color-tag-discord-role-bg: theme(colors.blue.900);
   --color-tag-discord-role-text: theme(colors.blue.200);
 }
