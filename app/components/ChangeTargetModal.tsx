@@ -66,7 +66,7 @@ export function ChangeTargetModal({
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center z-50 transition-colors duration-300 ease-in-out ${
+      className={`fixed inset-0 z-50 flex items-center justify-center transition-colors duration-300 ease-in-out ${
         isAnimating ? "bg-background-overlay" : "bg-black/0"
       }`}
       onMouseDown={(e) => {
@@ -79,19 +79,19 @@ export function ChangeTargetModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="change-target-modal-title"
-        className={`bg-background-modal-content rounded-lg p-6 md:p-8 max-w-md md:max-w-lg mx-4 border border-border-primary transition-all duration-300 ease-in-out transform ${
-          isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-95"
+        className={`bg-background-modal-content border-border-primary mx-4 max-w-md transform rounded-lg border p-6 transition-all duration-300 ease-in-out md:max-w-lg md:p-8 ${
+          isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
         <h3
           id="change-target-modal-title"
-          className="text-lg font-semibold text-text-primary mb-4"
+          className="text-text-primary mb-4 text-lg font-semibold"
         >
           Change Target for {resource.name}
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
+            <label className="text-text-secondary mb-1 block text-sm font-medium">
               New Target Quantity
             </label>
             <input
@@ -100,21 +100,21 @@ export function ChangeTargetModal({
               value={target}
               onChange={(e) => setTarget(Number(e.target.value) || 0)}
               onKeyDown={handleKeyDown}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
+              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
             />
           </div>
           {error && <p className="text-text-danger text-sm">{error}</p>}
         </div>
-        <div className="flex gap-3 justify-end mt-6">
+        <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg transition-colors"
+            className="text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="px-4 py-2 text-sm font-medium text-text-white bg-button-primary-bg hover:bg-button-primary-bg-hover rounded-lg transition-colors"
+            className="text-text-white bg-button-primary-bg hover:bg-button-primary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors"
           >
             Save
           </button>

@@ -64,57 +64,57 @@ export function UserTable() {
   if (loading) {
     return (
       <div className="p-8 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-link mx-auto"></div>
-        <p className="mt-2 text-text-tertiary">Loading users...</p>
+        <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
+        <p className="text-text-tertiary mt-2">Loading users...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-background-primary shadow-xs rounded-lg overflow-hidden border border-border-primary">
+    <div className="bg-background-primary border-border-primary overflow-hidden rounded-lg border shadow-xs">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-border-primary">
+        <table className="divide-border-primary min-w-full divide-y">
           <thead className="bg-background-secondary">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-text-quaternary uppercase tracking-wider">
+              <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                 Username
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-text-quaternary uppercase tracking-wider">
+              <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                 Custom Nickname
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-text-quaternary uppercase tracking-wider">
+              <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                 Created At
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-text-quaternary uppercase tracking-wider">
+              <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                 Last Login
               </th>
               {session?.user.permissions?.hasUserManagementAccess && (
-                <th className="px-3 py-2 text-right text-xs font-medium text-text-quaternary uppercase tracking-wider">
+                <th className="text-text-quaternary px-3 py-2 text-right text-xs font-medium tracking-wider uppercase">
                   Actions
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="bg-background-primary divide-y divide-border-primary">
+          <tbody className="bg-background-primary divide-border-primary divide-y">
             {users.map((user) => (
               <tr key={user.id}>
-                <td className="px-3 py-3 whitespace-nowrap text-sm text-text-primary">
+                <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
                   {user.username}
                 </td>
-                <td className="px-3 py-3 whitespace-nowrap text-sm text-text-primary">
+                <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
                   {user.customNickname}
                 </td>
-                <td className="px-3 py-3 whitespace-nowrap text-sm text-text-primary">
+                <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
                   {new Date(user.createdAt).toLocaleString()}
                 </td>
-                <td className="px-3 py-3 whitespace-nowrap text-sm text-text-primary">
+                <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
                   {new Date(user.lastLogin).toLocaleString()}
                 </td>
                 {session?.user.permissions?.hasUserManagementAccess && (
-                  <td className="px-3 py-3 whitespace-nowrap text-sm text-text-primary text-right">
+                  <td className="text-text-primary px-3 py-3 text-right text-sm whitespace-nowrap">
                     <button
                       onClick={() => handleExport(user.id)}
-                      className="px-3 py-1 text-sm font-medium text-text-white bg-button-primary-bg rounded-md hover:bg-button-primary-bg-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="text-text-white bg-button-primary-bg hover:bg-button-primary-bg-hover rounded-md px-3 py-1 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
                     >
                       Export Data
                     </button>

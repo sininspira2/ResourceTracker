@@ -14,10 +14,13 @@ export default {
         "background-modal-content": "var(--color-background-modal-content)",
         "background-modal-content-inset":
           "var(--color-background-modal-content-inset)",
+        "tile-background": "var(--color-tile-background)",
         "background-danger": "var(--color-background-danger)",
         "background-info": "var(--color-background-info)",
         "background-info-hover": "var(--color-background-info-hover)",
         "background-success": "var(--color-background-success)",
+        "table-row-hover-leaderboard-bg":
+          "var(--color-table-row-hover-leaderboard-bg)",
 
         "text-primary": "var(--color-text-primary)",
         "text-secondary": "var(--color-text-secondary)",
@@ -129,7 +132,12 @@ export default {
           "var(--color-progress-bar-below-target-bg)",
         "progress-bar-critical-bg": "var(--color-progress-bar-critical-bg)",
 
+        "text-homepage-intro": "var(--color-text-homepage-intro)",
+        "text-homepage-footer": "var(--color-text-homepage-footer)",
         "text-accent": "var(--color-text-accent)",
+        "gradient-heading-from": "var(--color-gradient-heading-from)",
+        "gradient-heading-to": "var(--color-gradient-heading-to)",
+        "text-danger-subtle": "var(--color-text-danger-subtle)",
         "text-accent-red": "var(--color-text-accent-red)",
         "text-accent-blue": "var(--color-text-accent-blue)",
         "text-accent-dark": "var(--color-text-accent-dark)",
@@ -183,8 +191,8 @@ export default {
         "button-subtle-gray-bg": "var(--color-button-subtle-gray-bg)",
         "button-subtle-gray-text": "var(--color-button-subtle-gray-text)",
 
-        "highlight-bg": "var(--color-highlight-bg)",
-        "highlight-border": "var(--color-highlight-border)",
+        "background-highlight": "var(--color-background-highlight)",
+        "border-highlight": "var(--color-border-highlight)",
 
         "tag-selected-bg": "var(--color-tag-selected-bg)",
         "tag-selected-text": "var(--color-tag-selected-text)",

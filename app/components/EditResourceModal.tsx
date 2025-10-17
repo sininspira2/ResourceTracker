@@ -98,7 +98,7 @@ export function EditResourceModal({
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center z-50 transition-colors duration-300 ease-in-out ${
+      className={`fixed inset-0 z-50 flex items-center justify-center transition-colors duration-300 ease-in-out ${
         isAnimating ? "bg-background-overlay" : "bg-black/0"
       }`}
       onMouseDown={(e) => {
@@ -111,14 +111,14 @@ export function EditResourceModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="edit-resource-modal-title"
-        className={`bg-background-modal-content rounded-lg p-6 md:p-8 max-w-lg lg:max-w-xl w-full mx-4 border border-border-secondary transition-all duration-300 ease-in-out transform ${
-          isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-95"
+        className={`bg-background-modal-content border-border-secondary mx-4 w-full max-w-lg transform rounded-lg border p-6 transition-all duration-300 ease-in-out md:p-8 lg:max-w-xl ${
+          isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <h3
             id="edit-resource-modal-title"
-            className="text-lg font-semibold text-text-primary"
+            className="text-text-primary text-lg font-semibold"
           >
             Edit {resource.name}
           </h3>
@@ -128,7 +128,7 @@ export function EditResourceModal({
             disabled={saving}
           >
             <svg
-              className="w-6 h-6"
+              className="h-6 w-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -145,7 +145,7 @@ export function EditResourceModal({
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
+            <label className="text-text-secondary mb-1 block text-sm font-medium">
               Name *
             </label>
             <input
@@ -155,12 +155,12 @@ export function EditResourceModal({
                 setFormData({ ...formData, name: e.target.value })
               }
               onKeyDown={handleKeyDown}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
+              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
+            <label className="text-text-secondary mb-1 block text-sm font-medium">
               Category
             </label>
             <select
@@ -168,7 +168,7 @@ export function EditResourceModal({
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
+              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
             >
               {CATEGORY_OPTIONS.map((cat) => (
                 <option key={cat} value={cat}>
@@ -179,7 +179,7 @@ export function EditResourceModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
+            <label className="text-text-secondary mb-1 block text-sm font-medium">
               Description
             </label>
             <textarea
@@ -187,13 +187,13 @@ export function EditResourceModal({
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
+              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
               rows={4}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
+            <label className="text-text-secondary mb-1 block text-sm font-medium">
               Image URL
             </label>
             <input
@@ -203,12 +203,12 @@ export function EditResourceModal({
                 setFormData({ ...formData, imageUrl: e.target.value })
               }
               onKeyDown={handleKeyDown}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
+              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
+            <label className="text-text-secondary mb-1 block text-sm font-medium">
               Points Multiplier
             </label>
             <input
@@ -223,7 +223,7 @@ export function EditResourceModal({
                 })
               }
               onKeyDown={handleKeyDown}
-              className="w-full px-3 py-2 border border-border-secondary rounded-lg bg-background-modal-content-inset text-text-primary"
+              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
             />
           </div>
 
@@ -235,11 +235,11 @@ export function EditResourceModal({
               onChange={(e) =>
                 setFormData({ ...formData, isPriority: e.target.checked })
               }
-              className="h-4 w-4 text-text-link border-border-secondary rounded focus:ring-blue-500"
+              className="text-text-link border-border-secondary h-4 w-4 rounded focus:ring-blue-500"
             />
             <label
               htmlFor="isPriority"
-              className="ml-2 block text-sm text-text-secondary"
+              className="text-text-secondary ml-2 block text-sm"
             >
               Priority Resource
             </label>
@@ -248,18 +248,18 @@ export function EditResourceModal({
           {error && <p className="text-text-danger text-sm">{error}</p>}
         </div>
 
-        <div className="flex gap-3 justify-end mt-6">
+        <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onClose}
             disabled={saving}
-            className="px-4 py-2 text-sm font-medium text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg transition-colors"
+            className="text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-4 py-2 text-sm font-medium text-text-white bg-button-primary-bg hover:bg-button-primary-bg-hover rounded-lg transition-colors disabled:opacity-50"
+            className="text-text-white bg-button-primary-bg hover:bg-button-primary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
