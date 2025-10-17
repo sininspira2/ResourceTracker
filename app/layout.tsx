@@ -25,11 +25,31 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function getInitialTheme() {
+                  try {
+                    const savedTheme = localStorage.getItem('theme');
+                    if (savedTheme) return savedTheme;
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                  } catch (e) {
+                    return 'light';
+                  }
+                }
+                document.documentElement.setAttribute('data-theme', getInitialTheme());
+              })();
+            `,
+          }}
+        />
         <ThemeProvider>
           <SessionProvider>
-            <MigrationBanner />
-            {children}
-            <WhatsNewModal />
+            <div className="bg-background-primary min-h-screen">
+              <MigrationBanner />
+              {children}
+              <WhatsNewModal />
+            </div>
           </SessionProvider>
         </ThemeProvider>
       </body>

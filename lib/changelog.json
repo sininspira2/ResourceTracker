@@ -1,6 +1,30 @@
 {
-  "currentVersion": "4.1.0",
+  "currentVersion": "4.1.1",
   "releases": [
+    {
+      "version": "4.1.1",
+      "date": "2025-10-16",
+      "title": "Comprehensive Theming System and UI Refactoring",
+      "type": "patch",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Implemented a comprehensive, robust theming system using Tailwind CSS custom properties, allowing for easy management of light and dark modes across the application. All major UI components (modals, navigation, tables, dashboards) have been refactored to utilize these new theme variables, ensuring a consistent visual experience."
+        },
+        {
+          "type": "improvement",
+          "description": "Refactored CSS color variables to use more semantic and intuitive names (e.g., replacing `--color-background-modal-content` with `--color-tile-background`). Color definitions are now centralized in `app/globals.css` and mapped in `tailwind.config.ts`, simplifying future color adjustments and maintenance."
+        },
+        {
+          "type": "improvement",
+          "description": "The theme switching logic was enhanced with a pre-hydration script to prevent visual flickering during initial page loads, providing a smoother user experience."
+        },
+        {
+          "type": "other",
+          "description": "Added Prettier and the Tailwind CSS plugin to enforce a consistent code style across the project. The entire codebase has been formatted to adhere to this new setup, reordering Tailwind CSS classes for consistency."
+        }
+      ]
+    },
     {
       "version": "4.1.0",
       "date": "2025-10-10",
@@ -43,7 +67,7 @@
           "type": "bugfix",
           "description": "Added robust input validation to the leaderboard API route, including an allowlist for `timeFilter` and fallbacks for `limit`, `page`, and `pageSize` to prevent `NaN` errors from invalid user input."
         },
-		{
+        {
           "type": "improvement",
           "description": "Refactored the codebase to use modern JavaScript features (ES2022), including optional chaining and nullish coalescing. This improves code clarity, safety, and maintainability by simplifying property access and providing safer default values for variables."
         }

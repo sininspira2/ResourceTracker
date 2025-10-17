@@ -117,42 +117,40 @@ export default function ActivityLogPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="bg-background-primary flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+          <div className="border-text-link mx-auto h-12 w-12 animate-spin rounded-full border-b-2"></div>
+          <p className="text-text-tertiary mt-4">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="bg-background-primary min-h-screen transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-xs border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <div className="bg-background-secondary border-border-primary border-b shadow-xs">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
                 href="/dashboard"
-                className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                className="text-text-tertiary hover:text-text-primary flex items-center transition-colors"
               >
-                <ArrowLeft className="w-5 h-5 sm:mr-2" />
+                <ArrowLeft className="h-5 w-5 sm:mr-2" />
                 <span className="hidden sm:inline">Back to Dashboard</span>
               </Link>
-              <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              <div className="bg-border-secondary h-6 w-px"></div>
+              <h1 className="text-text-primary text-xl font-semibold">
                 Your Activity Log
               </h1>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                Time Range:
-              </span>
+              <span className="text-text-tertiary text-sm">Time Range:</span>
               <select
                 value={timeFilter}
                 onChange={(e) => setTimeFilter(parseInt(e.target.value))}
-                className="border border-gray-300 dark:border-gray-600 rounded-sm px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="border-border-secondary bg-background-primary text-text-primary rounded-sm border px-3 py-1 text-sm"
               >
                 <option value={7}>Last 7 days</option>
                 <option value={14}>Last 14 days</option>
@@ -166,18 +164,16 @@ export default function ActivityLogPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">
-              Loading your activity...
-            </p>
+          <div className="py-12 text-center">
+            <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
+            <p className="text-text-tertiary mt-4">Loading your activity...</p>
           </div>
         ) : activities.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <svg
-              className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4"
+              className="text-text-quaternary mx-auto mb-4 h-16 w-16"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -189,10 +185,10 @@ export default function ActivityLogPage() {
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-text-primary mb-2 text-lg font-medium">
               No activity found
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-text-tertiary">
               You haven&apos;t made any resource changes in the last{" "}
               {timeFilter} days.
             </p>
@@ -200,73 +196,69 @@ export default function ActivityLogPage() {
         ) : (
           <div className="space-y-6">
             {/* Summary Stats */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <div className="bg-background-panel border-border-primary rounded-lg border p-6 shadow-sm">
+              <h2 className="text-text-primary mb-4 text-lg font-semibold">
                 Summary
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  <div className="text-text-primary text-2xl font-bold">
                     {activities.length}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-text-tertiary text-sm">
                     Total Changes
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-text-success text-2xl font-bold">
                     {activities.filter((a) => a.changeAmount > 0).length}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Additions
-                  </div>
+                  <div className="text-text-tertiary text-sm">Additions</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">
+                  <div className="text-text-danger text-2xl font-bold">
                     {activities.filter((a) => a.changeAmount < 0).length}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Removals
-                  </div>
+                  <div className="text-text-tertiary text-sm">Removals</div>
                 </div>
               </div>
             </div>
 
             {/* Activity Timeline */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">
+            <div className="bg-background-panel border-border-primary rounded-lg border p-6 shadow-sm">
+              <h2 className="text-text-primary mb-6 text-lg font-semibold">
                 Activity Timeline
               </h2>
               <div className="space-y-4">
                 {activities.map((activity) => (
                   <div
                     key={activity.id}
-                    className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                    className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover flex items-start gap-4 rounded-lg p-4 transition-colors"
                   >
                     <div
-                      className={`w-3 h-3 rounded-full mt-2 ${
+                      className={`mt-2 h-3 w-3 rounded-full ${
                         activity.changeAmount > 0
-                          ? "bg-green-500"
+                          ? "bg-activity-positive-bg"
                           : activity.changeAmount < 0
-                            ? "bg-red-500"
-                            : "bg-gray-400"
+                            ? "bg-activity-negative-bg"
+                            : "bg-activity-neutral-bg"
                       }`}
                     ></div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
                         <div>
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="mb-1 flex items-center gap-2">
                             <Link
                               href={`/resources/${activity.resourceId}`}
-                              className="font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                              className="text-text-primary hover:text-text-link font-medium transition-colors"
                             >
                               {activity.resourceName}
                             </Link>
                             <span
-                              className={`text-xs px-2 py-0.5 rounded-full ${
+                              className={`rounded-full px-2 py-0.5 text-xs ${
                                 activity.changeType === "relative"
-                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
-                                  : "bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
+                                  ? "bg-button-subtle-blue-bg text-button-subtle-blue-text"
+                                  : "bg-button-subtle-gray-bg text-button-subtle-gray-text"
                               }`}
                             >
                               {activity.changeType === "relative"
@@ -274,7 +266,7 @@ export default function ActivityLogPage() {
                                 : "Set"}
                             </span>
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                          <div className="text-text-tertiary text-sm">
                             {activity.changeType === "transfer" ? (
                               <span>
                                 Transfer {activity.transferAmount}{" "}
@@ -302,10 +294,10 @@ export default function ActivityLogPage() {
                             <span
                               className={`ml-2 font-medium ${
                                 activity.changeAmount > 0
-                                  ? "text-green-600"
+                                  ? "text-text-success"
                                   : activity.changeAmount < 0
-                                    ? "text-red-600"
-                                    : "text-gray-600 dark:text-gray-400"
+                                    ? "text-text-danger"
+                                    : "text-text-tertiary"
                               }`}
                             >
                               (Total change:{" "}
@@ -314,14 +306,14 @@ export default function ActivityLogPage() {
                             </span>
                           </div>
                           {activity.reason && (
-                            <div className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                            <div className="text-text-link mt-1 text-sm">
                               Reason: {activity.reason}
                             </div>
                           )}
                         </div>
-                        <div className="text-right text-sm text-gray-500 dark:text-gray-400">
+                        <div className="text-text-quaternary text-right text-sm">
                           <div
-                            className="cursor-help hover:underline decoration-dotted"
+                            className="cursor-help decoration-dotted hover:underline"
                             title={`${new Date(activity.createdAt).toLocaleDateString()} at ${new Date(activity.createdAt).toLocaleTimeString()}`}
                           >
                             {getRelativeTime(activity.createdAt, currentTime)}

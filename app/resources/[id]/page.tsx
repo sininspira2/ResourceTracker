@@ -716,12 +716,10 @@ export default function ResourceDetailPage() {
 
   if (loading || sessionStatus === "loading") {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="bg-background-primary flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
-            Loading resource details...
-          </p>
+          <div className="border-text-link mx-auto h-12 w-12 animate-spin rounded-full border-b-2"></div>
+          <p className="text-text-tertiary mt-4">Loading resource details...</p>
         </div>
       </div>
     );
@@ -729,10 +727,10 @@ export default function ResourceDetailPage() {
 
   if (!resource) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="bg-background-primary flex min-h-screen items-center justify-center">
         <div className="text-center">
           <svg
-            className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4"
+            className="text-text-quaternary mx-auto mb-4 h-16 w-16"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -744,10 +742,10 @@ export default function ResourceDetailPage() {
               d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-text-primary mb-2 text-2xl font-bold">
             Resource Not Found
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-text-tertiary mb-6">
             The resource you&apos;re looking for doesn&apos;t exist or you
             don&apos;t have permission to view it.
             {!canEdit && (
@@ -761,7 +759,7 @@ export default function ResourceDetailPage() {
           </p>
           <button
             onClick={() => router.push("/resources")}
-            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+            className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white rounded-lg px-4 py-2 transition-colors"
           >
             Back to Resources
           </button>
@@ -782,46 +780,18 @@ export default function ResourceDetailPage() {
       )
     : null;
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case "Raw":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
-      case "Refined":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-      case "Components":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "Other":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "at_target":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "below_target":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
-      case "critical":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="bg-background-primary min-h-screen transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-xs border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative flex items-center justify-center h-16">
+      <div className="bg-background-secondary border-border-primary border-b shadow-xs">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="relative flex h-16 items-center justify-center">
             <button
               onClick={() => router.push("/resources")}
-              className="absolute left-0 flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+              className="text-text-tertiary hover:text-text-primary absolute left-0 flex items-center transition-colors"
             >
               <svg
-                className="w-5 h-5 md:mr-2"
+                className="h-5 w-5 md:mr-2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -835,7 +805,7 @@ export default function ResourceDetailPage() {
               </svg>
               <span className="hidden md:inline">Back to Resources</span>
             </button>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 text-center">
+            <h1 className="text-text-primary text-center text-xl font-semibold">
               Resource Details
             </h1>
           </div>
@@ -843,19 +813,19 @@ export default function ResourceDetailPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-8">
           {/* Resource Info Card - Full Width Horizontal Layout */}
           <div className="w-full">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-              <div className="flex flex-col md:flex-row gap-6">
+            <div className="bg-tile-background border-border-primary rounded-lg border p-6 shadow-md">
+              <div className="flex flex-col gap-6 md:flex-row">
                 {/* Resource Image */}
                 <div className="shrink-0">
                   {resource.imageUrl ? (
                     <img
                       src={resource.imageUrl}
                       alt={resource.name}
-                      className="w-32 h-32 object-cover rounded-lg border border-gray-200 dark:border-gray-600 mx-auto md:mx-0"
+                      className="border-border-secondary mx-auto h-32 w-32 rounded-lg border object-cover md:mx-0"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
@@ -866,9 +836,9 @@ export default function ResourceDetailPage() {
                     />
                   ) : null}
                   <div
-                    className={`w-32 h-32 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center mx-auto md:mx-0 ${resource.imageUrl ? "hidden" : "flex"}`}
+                    className={`bg-background-tertiary mx-auto flex h-32 w-32 items-center justify-center rounded-lg md:mx-0 ${resource.imageUrl ? "hidden" : "flex"}`}
                   >
-                    <span className="text-gray-400 dark:text-gray-500 text-sm">
+                    <span className="text-text-quaternary text-sm">
                       No Image
                     </span>
                   </div>
@@ -876,24 +846,40 @@ export default function ResourceDetailPage() {
 
                 {/* Resource Info */}
                 <div className="flex-1 space-y-4">
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div className="text-center md:text-left">
                       {/* Resource Name */}
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                      <h2 className="text-text-primary mb-2 text-2xl font-bold">
                         {resource.name}
                       </h2>
 
                       {/* Category and Status */}
-                      <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-2">
+                      <div className="mb-2 flex flex-wrap justify-center gap-2 md:justify-start">
                         {resource.category && (
                           <span
-                            className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getCategoryColor(resource.category)}`}
+                            className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${
+                              resource.category === "Raw"
+                                ? "bg-category-raw-bg text-category-raw-text"
+                                : resource.category === "Refined"
+                                  ? "bg-category-refined-bg text-category-refined-text"
+                                  : resource.category === "Components"
+                                    ? "bg-category-components-bg text-category-components-text"
+                                    : resource.category === "Blueprints"
+                                      ? "bg-category-bp-bg"
+                                      : "bg-category-other-bg text-category-other-text"
+                            }`}
                           >
                             {resource.category}
                           </span>
                         )}
                         <span
-                          className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(status)}`}
+                          className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${
+                            status === "at_target"
+                              ? "bg-status-at-target-bg text-status-at-target-text"
+                              : status === "below_target"
+                                ? "bg-status-below-target-bg text-status-below-target-text"
+                                : "bg-status-critical-bg text-status-critical-text"
+                          }`}
                         >
                           {formatStatusForDisplay(status)}
                         </span>
@@ -901,33 +887,33 @@ export default function ResourceDetailPage() {
 
                       {/* Description */}
                       {resource.description && (
-                        <p className="text-gray-600 dark:text-gray-400 text-center md:text-left">
+                        <p className="text-text-tertiary text-center md:text-left">
                           <LinkifiedText text={resource.description} />
                         </p>
                       )}
                     </div>
 
                     {/* Quantities */}
-                    <div className="flex flex-col sm:flex-row gap-6 text-center">
+                    <div className="flex flex-col gap-6 text-center sm:flex-row">
                       <div>
-                        <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                        <div className="text-text-primary text-xl font-bold">
                           Hagga: {formatNumber(resource.quantityHagga)}
                         </div>
-                        <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                        <div className="text-text-primary text-xl font-bold">
                           Deep Desert:{" "}
                           {formatNumber(resource.quantityDeepDesert)}
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <div className="text-text-tertiary text-sm">
                           Current Quantities
                         </div>
                       </div>
                       <div>
-                        <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        <div className="text-text-primary text-3xl font-bold">
                           {resource.targetQuantity
                             ? formatNumber(resource.targetQuantity)
                             : "N/A"}
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <div className="text-text-tertiary text-sm">
                           Target Quantity
                         </div>
                       </div>
@@ -937,18 +923,18 @@ export default function ResourceDetailPage() {
                   {/* Progress Bar */}
                   {percentage !== null && (
                     <div>
-                      <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      <div className="text-text-tertiary mb-2 flex justify-between text-sm">
                         <span>Progress to Target</span>
                         <span>{percentage}%</span>
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                      <div className="bg-background-tertiary h-3 w-full rounded-full">
                         <div
                           className={`h-3 rounded-full transition-all duration-500 ${
                             percentage >= 100
-                              ? "bg-green-500"
+                              ? "bg-progress-bar-at-target-bg"
                               : percentage >= 50
-                                ? "bg-orange-500"
-                                : "bg-red-500"
+                                ? "bg-progress-bar-below-target-bg"
+                                : "bg-progress-bar-critical-bg"
                           }`}
                           style={{ width: `${Math.min(percentage, 100)}%` }}
                         ></div>
@@ -957,16 +943,16 @@ export default function ResourceDetailPage() {
                   )}
 
                   {/* Last Updated & Actions */}
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                    <div className="text-center md:text-left text-sm text-gray-600 dark:text-gray-400">
+                  <div className="border-border-primary flex flex-col gap-4 border-t pt-4 md:flex-row md:items-center md:justify-between">
+                    <div className="text-text-tertiary text-center text-sm md:text-left">
                       <div>
                         Last updated by:{" "}
-                        <span className="font-medium text-gray-900 dark:text-gray-100">
+                        <span className="text-text-primary font-medium">
                           {resource.lastUpdatedBy}
                         </span>
                       </div>
                       <div
-                        className="cursor-help hover:underline decoration-dotted"
+                        className="cursor-help decoration-dotted hover:underline"
                         title={new Date(resource.updatedAt).toLocaleString()}
                       >
                         {getRelativeTime(resource.updatedAt, currentTime)}
@@ -985,10 +971,10 @@ export default function ResourceDetailPage() {
                                 updateType: "relative",
                               })
                             }
-                            className="bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                            className="bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
                             title="Add or remove from current quantity"
                           >
-                            <Plus className="hidden md:inline-block w-4 h-4" />
+                            <Plus className="hidden h-4 w-4 md:inline-block" />
                             Add/Remove
                           </button>
                           <button
@@ -999,20 +985,20 @@ export default function ResourceDetailPage() {
                                 updateType: "absolute",
                               })
                             }
-                            className="bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                            className="bg-button-subtle-purple-bg hover:bg-button-subtle-purple-bg-hover text-button-subtle-purple-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
                             title="Set a new absolute quantity"
                           >
-                            <Baseline className="hidden md:inline-block w-4 h-4" />
+                            <Baseline className="hidden h-4 w-4 md:inline-block" />
                             Set Qty
                           </button>
                           <button
                             onClick={() =>
                               setTransferModalState({ isOpen: true, resource })
                             }
-                            className="bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                            className="bg-button-subtle-green-bg hover:bg-button-subtle-green-bg-hover text-button-subtle-green-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
                             title="Transfer quantities between Hagga and Deep Desert"
                           >
-                            <ArrowRightLeft className="hidden md:inline-block w-4 h-4" />
+                            <ArrowRightLeft className="hidden h-4 w-4 md:inline-block" />
                             Transfer
                           </button>
                           {isResourceAdmin && (
@@ -1024,18 +1010,18 @@ export default function ResourceDetailPage() {
                                     resource,
                                   })
                                 }
-                                className="bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                                className="bg-button-subtle-orange-bg hover:bg-button-subtle-orange-bg-hover text-button-subtle-orange-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
                                 title="Change the target quantity for this resource"
                               >
-                                <Target className="hidden md:inline-block w-4 h-4" />
+                                <Target className="hidden h-4 w-4 md:inline-block" />
                                 Set Target
                               </button>
                               <button
                                 onClick={() => startEditResource(resource)}
-                                className="bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                                className="bg-button-subtle-yellow-bg hover:bg-button-subtle-yellow-bg-hover text-button-subtle-yellow-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
                                 title="Edit resource metadata"
                               >
-                                <Pencil className="hidden md:inline-block w-4 h-4" />
+                                <Pencil className="hidden h-4 w-4 md:inline-block" />
                                 Edit
                               </button>
                               <button
@@ -1046,10 +1032,10 @@ export default function ResourceDetailPage() {
                                     showDialog: true,
                                   })
                                 }
-                                className="bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 w-full"
+                                className="bg-button-subtle-red-bg hover:bg-button-subtle-red-bg-hover text-button-subtle-red-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
                                 title="Delete this resource"
                               >
-                                <Trash2 className="hidden md:inline-block w-4 h-4" />
+                                <Trash2 className="hidden h-4 w-4 md:inline-block" />
                                 Delete
                               </button>
                             </>
@@ -1065,18 +1051,18 @@ export default function ResourceDetailPage() {
 
           {/* Edit Mode Modal/Overlay */}
           {editMode && canEdit && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">
+            <div className="bg-background-overlay fixed inset-0 z-50 flex items-center justify-center">
+              <div className="bg-tile-background mx-4 w-full max-w-md rounded-lg p-6 shadow-xl">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-text-primary text-lg font-semibold">
                     Update Quantity
                   </h3>
                   <button
                     onClick={() => setEditMode(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-text-quaternary hover:text-text-tertiary"
                   >
                     <svg
-                      className="w-6 h-6"
+                      className="h-6 w-6"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1109,15 +1095,15 @@ export default function ResourceDetailPage() {
                           );
                         }
                       }}
-                      className={`px-3 py-1 rounded-sm text-sm font-medium ${
+                      className={`rounded-sm px-3 py-1 text-sm font-medium ${
                         updateType === "relative"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-700"
+                          ? "bg-button-subtle-blue-bg text-button-subtle-blue-text"
+                          : "bg-button-subtle-gray-bg text-button-subtle-gray-text"
                       }`}
                     >
                       {updateType === "relative" ? "+/-" : "="}
                     </button>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-text-tertiary text-sm">
                       {updateType === "relative"
                         ? "Relative Change"
                         : "Absolute Value"}
@@ -1143,11 +1129,11 @@ export default function ResourceDetailPage() {
                       placeholder={
                         updateType === "relative" ? "±0" : "New quantity"
                       }
-                      className="w-full px-3 py-2 border rounded-lg text-right"
+                      className="w-full rounded-lg border px-3 py-2 text-right"
                       min={updateType === "absolute" ? "0" : undefined}
                     />
                     {updateType === "relative" && (
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-text-quaternary mt-1 text-xs">
                         New quantity:{" "}
                         {formatNumber(
                           Math.max(0, resource.quantityHagga + newQuantity),
@@ -1160,7 +1146,7 @@ export default function ResourceDetailPage() {
                   <button
                     onClick={updateResource}
                     disabled={saving}
-                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2 rounded-lg font-medium"
+                    className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white w-full rounded-lg py-2 font-medium disabled:opacity-50"
                   >
                     {saving ? "Updating..." : "Update Quantity"}
                   </button>
@@ -1171,21 +1157,19 @@ export default function ResourceDetailPage() {
         </div>
 
         {/* History and Leaderboard Section - Full Width */}
-        <div className="w-full space-y-8 mt-8">
+        <div className="mt-8 w-full space-y-8">
           {/* Activity Timeline with Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <div className="bg-tile-background border-border-primary rounded-lg border p-6 shadow-md">
+            <div className="mb-6 flex items-center justify-between">
+              <h3 className="text-text-primary text-lg font-semibold">
                 Activity Timeline
               </h3>
               <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Time Range:
-                </span>
+                <span className="text-text-tertiary text-sm">Time Range:</span>
                 <select
                   value={timeFilter}
                   onChange={(e) => setTimeFilter(parseInt(e.target.value))}
-                  className="border border-gray-300 dark:border-gray-600 rounded-sm px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="border-border-secondary bg-background-primary text-text-primary rounded-sm border px-3 py-1 text-sm"
                 >
                   <option value={1}>Last 24 hours</option>
                   <option value={3}>Last 3 days</option>
@@ -1199,13 +1183,13 @@ export default function ResourceDetailPage() {
 
             {/* History Chart */}
             {!historyLoading && history.length > 1 && (
-              <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-4">
+              <div className="bg-background-modal-content-inset border-border-secondary mb-6 rounded-lg border p-4">
+                <h4 className="text-md text-text-secondary mb-4 font-medium">
                   Quantity Over Time
                 </h4>
                 <div className="relative h-72">
                   <svg
-                    className="w-full h-full"
+                    className="h-full w-full"
                     onMouseMove={(e) => {
                       const rect = e.currentTarget.getBoundingClientRect();
                       setMousePosition({
@@ -1477,7 +1461,7 @@ export default function ResourceDetailPage() {
                   {/* Hover Tooltip */}
                   {hoveredPoint && (
                     <div
-                      className="absolute bg-black text-white text-xs rounded-sm px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
+                      className="bg-background-tooltip text-text-tooltip pointer-events-none absolute z-10 rounded-sm px-2 py-1 text-xs whitespace-nowrap"
                       style={{
                         left: mousePosition.x + 10,
                         top: mousePosition.y - 10,
@@ -1491,7 +1475,7 @@ export default function ResourceDetailPage() {
                             hoveredPoint.newQuantityDeepDesert,
                         )}
                       </div>
-                      <div className="text-gray-300">
+                      <div className="text-text-tooltip-secondary">
                         {hoveredPoint.changeAmountHagga +
                           hoveredPoint.changeAmountDeepDesert >
                         0
@@ -1502,41 +1486,41 @@ export default function ResourceDetailPage() {
                             hoveredPoint.changeAmountDeepDesert,
                         )}
                       </div>
-                      <div className="text-gray-300">
+                      <div className="text-text-tooltip-secondary">
                         By: {hoveredPoint.updatedBy}
                       </div>
-                      <div className="text-gray-300">
+                      <div className="text-text-tooltip-secondary">
                         {getRelativeTime(hoveredPoint.createdAt, currentTime)}
                       </div>
-                      <div className="text-blue-300 text-center mt-1">
+                      <div className="text-text-tooltip-accent mt-1 text-center">
                         Click to highlight
                       </div>
                     </div>
                   )}
                 </div>
-                <div className="flex items-center justify-center gap-6 mt-4 text-xs text-gray-600 dark:text-gray-400">
+                <div className="text-text-tertiary mt-4 flex items-center justify-center gap-6 text-xs">
                   <div className="flex items-center gap-1">
                     <div
-                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      className="h-3 w-3 flex-shrink-0 rounded-full"
                       style={{ backgroundColor: CHART_COLORS.total }}
                     ></div>
                     <span>Total</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <div
-                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      className="h-3 w-3 flex-shrink-0 rounded-full"
                       style={{ backgroundColor: CHART_COLORS.hagga }}
                     ></div>
                     <span>Hagga</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <div
-                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      className="h-3 w-3 flex-shrink-0 rounded-full"
                       style={{ backgroundColor: CHART_COLORS.deepDesert }}
                     ></div>
                     <span>Deep Desert</span>
                   </div>
-                  <div className="text-gray-500 dark:text-gray-400 ml-4">
+                  <div className="text-text-quaternary ml-4">
                     💡 Hover points for details, click to highlight below •
                     Times update automatically
                   </div>
@@ -1545,9 +1529,9 @@ export default function ResourceDetailPage() {
             )}
 
             {!historyLoading && history.length <= 1 && (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <div className="text-text-quaternary py-8 text-center">
                 <svg
-                  className="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-500"
+                  className="text-text-quaternary mx-auto mb-4 h-12 w-12"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1566,34 +1550,34 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* Resource-Specific Contribution Leaderboard */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <div className="bg-tile-background border-border-primary rounded-lg border p-6 shadow-md">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-text-primary text-lg font-semibold">
                 Contribution Leaderboard
               </h3>
-              <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-sm">
+              <div className="text-text-quaternary bg-background-tertiary rounded-sm px-2 py-1 text-xs">
                 Only +/- changes count
               </div>
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            <div className="text-text-tertiary mb-6 text-sm">
               Tracks contributions and consumption from relative changes (+500,
               -200, etc.) for this resource. Administrative value updates are
               not included.
             </div>
 
             {historyLoading ? (
-              <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="py-4 text-center">
+                <div className="border-text-link mx-auto h-6 w-6 animate-spin rounded-full border-b-2"></div>
               </div>
             ) : history.length === 0 ? (
-              <div className="text-center py-4 text-gray-500">
+              <div className="text-text-quaternary py-4 text-center">
                 No activity in the selected time period
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* Top Contributors */}
                 <div>
-                  <h4 className="text-md font-medium text-green-700 dark:text-green-300 mb-3">
+                  <h4 className="text-md text-text-success mb-3 font-medium">
                     🏆 Top Contributors
                   </h4>
                   <div className="space-y-2">
@@ -1604,17 +1588,17 @@ export default function ResourceDetailPage() {
                       .map(([user, stats], index) => (
                         <div
                           key={user}
-                          className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-sm"
+                          className="bg-background-success flex items-center justify-between rounded-sm p-2"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <span className="text-text-primary text-sm font-medium">
                               #{index + 1}
                             </span>
-                            <span className="text-sm text-gray-900 dark:text-gray-100">
+                            <span className="text-text-primary text-sm">
                               {user}
                             </span>
                           </div>
-                          <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                          <span className="text-text-success text-sm font-medium">
                             +{formatNumber(stats.contributed)}
                           </span>
                         </div>
@@ -1624,7 +1608,7 @@ export default function ResourceDetailPage() {
 
                 {/* Top Consumers */}
                 <div>
-                  <h4 className="text-md font-medium text-red-700 dark:text-red-300 mb-3">
+                  <h4 className="text-md text-text-danger mb-3 font-medium">
                     📉 Top Consumers
                   </h4>
                   <div className="space-y-2">
@@ -1635,17 +1619,17 @@ export default function ResourceDetailPage() {
                       .map(([user, stats], index) => (
                         <div
                           key={user}
-                          className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-900/20 rounded-sm"
+                          className="bg-background-danger flex items-center justify-between rounded-sm p-2"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <span className="text-text-primary text-sm font-medium">
                               #{index + 1}
                             </span>
-                            <span className="text-sm text-gray-900 dark:text-gray-100">
+                            <span className="text-text-primary text-sm">
                               {user}
                             </span>
                           </div>
-                          <span className="text-sm font-medium text-red-700 dark:text-red-300">
+                          <span className="text-text-danger text-sm font-medium">
                             -{formatNumber(stats.taken)}
                           </span>
                         </div>
@@ -1657,29 +1641,29 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* Global Points Leaderboard */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <div className="bg-tile-background border-border-primary rounded-lg border p-6 shadow-md">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-text-primary text-lg font-semibold">
                 🏆 Points Leaderboard
               </h3>
-              <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-sm">
+              <div className="text-text-quaternary bg-background-tertiary rounded-sm px-2 py-1 text-xs">
                 Global rankings (last 7 days)
               </div>
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            <div className="text-text-tertiary mb-6 text-sm">
               Rankings based on points earned from resource contributions across
               all resources.
             </div>
 
             {leaderboardLoading ? (
-              <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              <div className="py-4 text-center">
+                <div className="border-text-link mx-auto h-6 w-6 animate-spin rounded-full border-b-2"></div>
+                <p className="text-text-tertiary mt-2 text-sm">
                   Loading leaderboard...
                 </p>
               </div>
             ) : leaderboard.length === 0 ? (
-              <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+              <div className="text-text-tertiary py-4 text-center">
                 <p className="text-sm">
                   No contributions in the selected time period
                 </p>
@@ -1689,7 +1673,7 @@ export default function ResourceDetailPage() {
                 {leaderboard.slice(0, 10).map((entry, index) => (
                   <div
                     key={entry.userId}
-                    className="flex items-center justify-between p-3 bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:from-green-100 hover:to-blue-100 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all cursor-pointer"
+                    className="from-leaderboard-gradient-from to-leaderboard-gradient-to hover:from-leaderboard-gradient-from-hover hover:to-leaderboard-gradient-to-hover flex cursor-pointer items-center justify-between rounded-lg bg-linear-to-r p-3 transition-all hover:bg-linear-to-r"
                     onClick={() =>
                       router.push(`/dashboard/contributions/${entry.userId}`)
                     }
@@ -1697,31 +1681,31 @@ export default function ResourceDetailPage() {
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
+                        className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
                           index === 0
-                            ? "bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200"
+                            ? "bg-rank-1-bg text-rank-1-text"
                             : index === 1
-                              ? "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                              ? "bg-rank-2-bg text-rank-2-text"
                               : index === 2
-                                ? "bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200"
-                                : "bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300"
+                                ? "bg-rank-3-bg text-rank-3-text"
+                                : "bg-rank-other-bg text-rank-other-text"
                         }`}
                       >
                         #{index + 1}
                       </div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <div className="text-text-primary text-sm font-medium">
                         {entry.userId}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-text-quaternary text-xs">
                         ({entry.totalActions} actions)
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                      <div className="text-text-link text-sm font-bold">
                         {entry.totalPoints.toFixed(1)} pts
                       </div>
                       <svg
-                        className="w-4 h-4 text-gray-400 dark:text-gray-500"
+                        className="text-text-quaternary h-4 w-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -1737,10 +1721,10 @@ export default function ResourceDetailPage() {
                   </div>
                 ))}
 
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="border-border-primary border-t pt-4">
                   <button
                     onClick={() => router.push("/dashboard/leaderboard")}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
+                    className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors"
                   >
                     View Full Leaderboard
                   </button>
@@ -1750,21 +1734,21 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* History Timeline */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <div className="bg-tile-background border-border-primary rounded-lg border p-6 shadow-md">
+            <div className="mb-6 flex items-center justify-between">
+              <h3 className="text-text-primary text-lg font-semibold">
                 Recent Changes
               </h3>
               <div className="flex items-center gap-3">
                 {selectedPointId && (
-                  <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-sm">
+                  <div className="text-text-tertiary bg-background-tertiary rounded-sm px-2 py-1 text-sm">
                     Point selected on chart
                   </div>
                 )}
                 {selectedPointId && (
                   <button
                     onClick={() => setSelectedPointId(null)}
-                    className="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
+                    className="bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text rounded-lg px-3 py-1 text-sm transition-colors"
                   >
                     Clear Selection
                   </button>
@@ -1773,16 +1757,14 @@ export default function ResourceDetailPage() {
             </div>
 
             {historyLoading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">
-                  Loading history...
-                </p>
+              <div className="py-8 text-center">
+                <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
+                <p className="text-text-tertiary mt-2">Loading history...</p>
               </div>
             ) : history.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <div className="text-text-quaternary py-8 text-center">
                 <svg
-                  className="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-500"
+                  className="text-text-quaternary mx-auto mb-4 h-12 w-12"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1808,10 +1790,10 @@ export default function ResourceDetailPage() {
                     <div
                       key={entry.id}
                       id={`history-entry-${entry.id}`}
-                      className={`group flex items-start justify-between p-4 rounded-lg transition-all duration-300 cursor-pointer ${
+                      className={`group flex cursor-pointer items-start justify-between rounded-lg p-4 transition-all duration-300 ${
                         isHighlighted
-                          ? "bg-blue-100 dark:bg-blue-900/50 border-2 border-blue-300 dark:border-blue-500 shadow-md transform scale-[1.02]"
-                          : "bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                          ? "bg-background-highlight border-border-highlight scale-[1.02] transform border-2 shadow-md"
+                          : "bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover"
                       }`}
                       onClick={() =>
                         setSelectedPointId(
@@ -1819,22 +1801,22 @@ export default function ResourceDetailPage() {
                         )
                       }
                     >
-                      <div className="flex items-start gap-4 flex-1 min-w-0">
+                      <div className="flex min-w-0 flex-1 items-start gap-4">
                         <div
-                          className={`mt-1.5 w-3 h-3 rounded-full flex-shrink-0 ${
+                          className={`mt-1.5 h-3 w-3 flex-shrink-0 rounded-full ${
                             entry.changeAmountHagga +
                               entry.changeAmountDeepDesert >
                             0
-                              ? "bg-green-500"
+                              ? "bg-activity-positive-bg"
                               : entry.changeAmountHagga +
                                     entry.changeAmountDeepDesert <
                                   0
-                                ? "bg-red-500"
-                                : "bg-gray-400"
-                          } ${isHighlighted ? "ring-2 ring-blue-400 dark:ring-blue-500" : ""}`}
+                                ? "bg-activity-negative-bg"
+                                : "bg-activity-neutral-bg"
+                          } ${isHighlighted ? "ring-highlight-border ring-2" : ""}`}
                         ></div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center flex-wrap gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="text-text-primary flex flex-wrap items-center gap-2 font-medium">
                             {entry.changeType === "transfer" ? (
                               <span>
                                 Transfer {entry.transferAmount}{" "}
@@ -1864,50 +1846,50 @@ export default function ResourceDetailPage() {
                             )}
                             {/* Change Type Indicator */}
                             <span
-                              className={`text-xs px-2 py-0.5 rounded-full ${
+                              className={`rounded-full px-2 py-0.5 text-xs ${
                                 entry.changeType === "relative"
-                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+                                  ? "bg-button-subtle-blue-bg text-button-subtle-blue-text"
                                   : entry.changeType === "transfer"
-                                    ? "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
-                                    : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                                    ? "bg-button-subtle-yellow-bg text-button-subtle-yellow-text"
+                                    : "bg-tag-neutral-bg text-tag-neutral-text"
                               }`}
                             >
                               {entry.changeType}
                             </span>
                             {isHighlighted && (
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 animate-pulse">
+                              <span className="bg-tag-selected-bg text-tag-selected-text animate-pulse rounded-full px-2 py-0.5 text-xs">
                                 Selected
                               </span>
                             )}
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <div className="text-text-tertiary mt-1 text-sm">
                             By{" "}
                             <span className="font-medium">
                               {entry.updatedBy}
                             </span>
                             {entry.changeType === "relative" && (
-                              <span className="ml-2 text-green-600 dark:text-green-400 text-xs">
+                              <span className="text-text-success ml-2 text-xs">
                                 • Counts toward leaderboard
                               </span>
                             )}
                           </div>
                           {entry.reason && (
-                            <div className="mt-2 text-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-900/40 p-2 rounded-md whitespace-pre-wrap break-words">
+                            <div className="text-text-secondary bg-background-tertiary mt-2 rounded-md p-2 text-sm break-words whitespace-pre-wrap">
                               <LinkifiedText text={entry.reason} />
                             </div>
                           )}
                         </div>
                       </div>
                       <div className="flex items-start gap-3 pl-4">
-                        <div className="text-sm text-gray-500 dark:text-gray-400 text-right flex-shrink-0">
+                        <div className="text-text-quaternary flex-shrink-0 text-right text-sm">
                           <div
-                            className="cursor-help hover:underline decoration-dotted"
+                            className="cursor-help decoration-dotted hover:underline"
                             title={`${new Date(entry.createdAt).toLocaleDateString()} at ${new Date(entry.createdAt).toLocaleTimeString()}`}
                           >
                             {getRelativeTime(entry.createdAt, currentTime)}
                           </div>
                           {isHighlighted && (
-                            <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                            <div className="text-text-link mt-1 text-xs">
                               📍 Chart point
                             </div>
                           )}
@@ -1921,11 +1903,11 @@ export default function ResourceDetailPage() {
                               deleteHistoryEntry(entry.id);
                             }}
                             disabled={saving}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-sm"
+                            className="text-button-icon-danger-text hover:text-button-icon-danger-text-hover hover:bg-button-icon-danger-bg-hover rounded-sm p-1 opacity-0 transition-opacity group-hover:opacity-100"
                             title="Delete this history entry"
                           >
                             <svg
-                              className="w-4 h-4"
+                              className="h-4 w-4"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -2018,28 +2000,28 @@ export default function ResourceDetailPage() {
       )}
 
       {deleteConfirm.showDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-3 mb-4">
-              <Trash2 className="w-8 h-8 text-red-600 dark:text-red-400" />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <div className="bg-background-overlay fixed inset-0 z-50 flex items-center justify-center">
+          <div className="bg-tile-background border-border-primary mx-4 max-w-md rounded-lg border p-6">
+            <div className="mb-4 flex items-center gap-3">
+              <Trash2 className="text-text-danger h-8 w-8" />
+              <h3 className="text-text-primary text-lg font-semibold">
                 Delete Resource
               </h3>
             </div>
 
             <div className="mb-6">
-              <p className="text-gray-700 dark:text-gray-300 mb-2">
+              <p className="text-text-secondary mb-2">
                 Are you sure you want to delete{" "}
                 <strong>&quot;{deleteConfirm.resourceName}&quot;</strong>?
               </p>
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3">
+              <div className="bg-background-danger border-border-danger rounded-lg border p-3">
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+                  <AlertTriangle className="text-text-danger mt-0.5 h-5 w-5 shrink-0" />
                   <div className="text-sm">
-                    <p className="font-medium text-red-800 dark:text-red-200 mb-1">
+                    <p className="text-text-danger mb-1 font-medium">
                       Warning: This action cannot be undone
                     </p>
-                    <p className="text-red-700 dark:text-red-300">
+                    <p className="text-text-danger">
                       This will permanently delete the resource and{" "}
                       <strong>all its history data</strong>. All tracking
                       records, changes, and analytics for this resource will be
@@ -2050,7 +2032,7 @@ export default function ResourceDetailPage() {
               </div>
             </div>
 
-            <div className="flex gap-3 justify-end">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() =>
                   setDeleteConfirm({
@@ -2059,7 +2041,7 @@ export default function ResourceDetailPage() {
                     showDialog: false,
                   })
                 }
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg transition-colors"
+                className="text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors"
               >
                 Cancel
               </button>
@@ -2070,7 +2052,7 @@ export default function ResourceDetailPage() {
                   }
                 }}
                 disabled={saving}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 disabled:opacity-50 rounded-lg transition-colors"
+                className="text-text-white bg-button-danger-bg hover:bg-button-danger-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
               >
                 {saving ? "Deleting..." : "Delete Resource"}
               </button>

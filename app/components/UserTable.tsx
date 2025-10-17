@@ -64,59 +64,57 @@ export function UserTable() {
   if (loading) {
     return (
       <div className="p-8 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Loading users...
-        </p>
+        <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
+        <p className="text-text-tertiary mt-2">Loading users...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-xs rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+    <div className="bg-background-primary border-border-primary overflow-hidden rounded-lg border shadow-xs">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-900">
+        <table className="divide-border-primary min-w-full divide-y">
+          <thead className="bg-background-secondary">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                 Username
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                 Custom Nickname
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                 Created At
               </th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                 Last Login
               </th>
               {session?.user.permissions?.hasUserManagementAccess && (
-                <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="text-text-quaternary px-3 py-2 text-right text-xs font-medium tracking-wider uppercase">
                   Actions
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="bg-background-primary divide-border-primary divide-y">
             {users.map((user) => (
               <tr key={user.id}>
-                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
                   {user.username}
                 </td>
-                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
                   {user.customNickname}
                 </td>
-                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
                   {new Date(user.createdAt).toLocaleString()}
                 </td>
-                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
                   {new Date(user.lastLogin).toLocaleString()}
                 </td>
                 {session?.user.permissions?.hasUserManagementAccess && (
-                  <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 text-right">
+                  <td className="text-text-primary px-3 py-3 text-right text-sm whitespace-nowrap">
                     <button
                       onClick={() => handleExport(user.id)}
-                      className="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="text-text-white bg-button-primary-bg hover:bg-button-primary-bg-hover rounded-md px-3 py-1 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
                     >
                       Export Data
                     </button>

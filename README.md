@@ -7,7 +7,28 @@ A comprehensive resource management and tracking portal with Discord authenticat
 Made for Dune: Awakening. Originally forked from `https://github.com/theyetty` and adapted to the specific needs of my guild.
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
+---
 
+## 🚀 Release Notes - Version 4.1.1: Comprehensive Theming System and UI Refactoring
+
+**Release Date:** October 16, 2025
+
+---
+
+### ✨ New Features
+
+#### Comprehensive Theming System Implementation
+A robust theming system has been implemented across the application using **Tailwind CSS custom properties (CSS variables)**, transitioning away from hardcoded color values.
+
+* **Light/Dark Mode Management:** The system allows for easy and centralized management of light and dark modes across the application.
+* **Refactored UI Components:** All major UI components, including modals, navigation, tables, and dashboards, have been refactored to utilize the new theme variables, ensuring a **consistent visual experience** and **improved scalability**.
+* **Centralized Definitions:** Color definitions are now centralized in `app/globals.css` and mapped in `tailwind.config.ts`, simplifying future color adjustments and maintenance.
+
+### 🚀 Improvements
+
+* **Smoother Theme Switching:** The theme switching logic was enhanced with a **pre-hydration script** to prevent visual flickering during initial page loads, providing a smoother user experience.
+* **Semantic Color Naming:** CSS color variables in `tailwind.config.ts` and `app/globals.css` were refactored for **improved modularity and semantic naming**. Generic variables like `--color-background-modal-content` have been replaced with more descriptive names such as `--color-tile-background`.
+* **Consistent Code Style:** **Prettier** and the **Tailwind CSS plugin** were added to the project to enforce a consistent code style. The entire codebase was formatted with the new setup, specifically **reordering Tailwind CSS classes for uniformity**.
 ---
 
 ## 🚀 Release Notes - Version 4.1.0: Vercel Data Cache, Improved Migrations, and API Stability
@@ -19,25 +40,27 @@ Removed from fork network due to original author repository being deleted, and d
 ### ✨ Architectural Features
 
 #### Improved Database Migration System
+
 The database migration tracking system has been completely overhauled from a manual, tag-based approach to an **improved, hash-based system**.
 
-* **Simplified Workflow:** The new system simplifies the database workflow for users, who can now handle all subsequent migrations using a single command: `npm run db:migrate`.
-* **Integrity and Consistency:** The system now automatically calculates the SHA256 hash of each migration file, ensuring cross-platform consistency.
-* **Schema Update:** The database schema now includes a new `global_settings` table and new `tier`/`subcategory` columns in the `resources` table. **These columns are included to support future features** but allow for more granular classification.
+- **Simplified Workflow:** The new system simplifies the database workflow for users, who can now handle all subsequent migrations using a single command: `npm run db:migrate`.
+- **Integrity and Consistency:** The system now automatically calculates the SHA256 hash of each migration file, ensuring cross-platform consistency.
+- **Schema Update:** The database schema now includes a new `global_settings` table and new `tier`/`subcategory` columns in the `resources` table. **These columns are included to support future features** but allow for more granular classification.
 
 #### Vercel Data Cache Implementation
+
 All API routes have been refactored to utilize **Vercel's fetch-based Data Cache**, resulting in significant performance gains and reduced load times.
 
-* **Caching Strategy:** `GET` API routes have been refactored to use a public/internal pattern to leverage this new caching strategy with appropriate revalidation times.
-* **Security and Authentication:**
-    * Application protection logic was simplified by replacing the old middleware with a lightweight 'include list'.
-    * **Fixed a critical 401 error** by ensuring 'cookie' and 'authorization' headers are correctly forwarded in internal API calls when using Vercel Authentication.
+- **Caching Strategy:** `GET` API routes have been refactored to use a public/internal pattern to leverage this new caching strategy with appropriate revalidation times.
+- **Security and Authentication:**
+  - Application protection logic was simplified by replacing the old middleware with a lightweight 'include list'.
+  - **Fixed a critical 401 error** by ensuring 'cookie' and 'authorization' headers are correctly forwarded in internal API calls when using Vercel Authentication.
 
 ### 🐛 Critical Bug Fixes & Stability
 
-* **Next.js 15 Compatibility:** Resolved persistent build errors by updating all dynamic API route handlers to correctly use the **asynchronous `params` object signature** required by Next.js 15.
-* **Data Integrity on Deletion:** Ensured database integrity during resource deletion by updating the `DELETE` handler to also delete associated records from the `resource_history` and `leaderboard` tables. This logic is now safely wrapped in a **database transaction**.
-* **Leaderboard Validation:** Added robust input validation to the leaderboard API route, including an allowlist for the `timeFilter` parameter and fallbacks for other parameters to prevent `NaN` errors from invalid input.
+- **Next.js 15 Compatibility:** Resolved persistent build errors by updating all dynamic API route handlers to correctly use the **asynchronous `params` object signature** required by Next.js 15.
+- **Data Integrity on Deletion:** Ensured database integrity during resource deletion by updating the `DELETE` handler to also delete associated records from the `resource_history` and `leaderboard` tables. This logic is now safely wrapped in a **database transaction**.
+- **Leaderboard Validation:** Added robust input validation to the leaderboard API route, including an allowlist for the `timeFilter` parameter and fallbacks for other parameters to prevent `NaN` errors from invalid input.
 
 _See `lib/changelog.json` for previous update history._
 

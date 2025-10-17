@@ -108,7 +108,7 @@ export default function UserContributionsPage() {
       case "ADD":
         return (
           <svg
-            className="w-4 h-4 text-green-600"
+            className="text-text-success h-4 w-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -124,7 +124,7 @@ export default function UserContributionsPage() {
       case "SET":
         return (
           <svg
-            className="w-4 h-4 text-blue-600"
+            className="text-text-link h-4 w-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -140,7 +140,7 @@ export default function UserContributionsPage() {
       case "REMOVE":
         return (
           <svg
-            className="w-4 h-4 text-red-600"
+            className="text-text-danger h-4 w-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -161,27 +161,25 @@ export default function UserContributionsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "critical":
-        return "text-red-600 bg-red-100 dark:bg-red-900/20";
+        return "text-status-critical-text bg-status-critical-bg-subtle";
       case "below_target":
-        return "text-orange-600 bg-orange-100 dark:bg-orange-900/20";
+        return "text-status-below-target-text bg-status-below-target-bg-subtle";
       case "at_target":
-        return "text-green-600 bg-green-100 dark:bg-green-900/20";
+        return "text-status-at-target-text bg-status-at-target-bg-subtle";
       case "above_target":
-        return "text-purple-600 bg-purple-100 dark:bg-purple-900/20";
+        return "text-status-above-target-text bg-status-above-target-bg-subtle";
       default:
-        return "text-gray-600 bg-gray-100 dark:bg-gray-900/20";
+        return "text-status-default-text bg-status-default-bg-subtle";
     }
   };
 
   if (loading && !data) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-background-primary min-h-screen py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">
-              Loading contributions...
-            </p>
+            <div className="border-text-link mx-auto h-12 w-12 animate-spin rounded-full border-b-2"></div>
+            <p className="text-text-tertiary mt-4">Loading contributions...</p>
           </div>
         </div>
       </div>
@@ -190,13 +188,13 @@ export default function UserContributionsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-background-primary min-h-screen py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-red-600 dark:text-red-400">{error}</p>
+            <p className="text-text-danger">{error}</p>
             <button
               onClick={() => router.push("/resources")}
-              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+              className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white mt-4 rounded-lg px-4 py-2"
             >
               Back to Resources
             </button>
@@ -211,50 +209,48 @@ export default function UserContributionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-background-primary min-h-screen py-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-background-panel mb-6 rounded-lg p-6 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-text-primary text-2xl font-bold">
                 Contribution History
               </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">
-                User: {userId}
-              </p>
+              <p className="text-text-tertiary mt-1">User: {userId}</p>
             </div>
             <button
               onClick={() => router.push("/resources")}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
+              className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover text-button-secondary-text rounded-lg px-4 py-2"
             >
               Back to Resources
             </button>
           </div>
 
           {/* Summary Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="bg-button-subtle-blue-bg rounded-lg p-4">
+              <div className="text-text-link text-2xl font-bold">
                 {(data.summary?.totalPoints || 0).toFixed(1)}
               </div>
-              <div className="text-sm text-blue-700 dark:text-blue-300">
+              <div className="text-button-subtle-blue-text text-sm">
                 Total Points
               </div>
             </div>
-            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+            <div className="bg-button-subtle-green-bg rounded-lg p-4">
+              <div className="text-text-success text-2xl font-bold">
                 {data.summary?.totalActions || 0}
               </div>
-              <div className="text-sm text-green-700 dark:text-green-300">
+              <div className="text-button-subtle-green-text text-sm">
                 Total Actions
               </div>
             </div>
-            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+            <div className="bg-button-subtle-purple-bg rounded-lg p-4">
+              <div className="text-text-purple text-2xl font-bold">
                 {data.rank ? `#${data.rank}` : "Unranked"}
               </div>
-              <div className="text-sm text-purple-700 dark:text-purple-300">
+              <div className="text-text-purple-subtle text-sm">
                 Current Rank
               </div>
             </div>
@@ -262,15 +258,15 @@ export default function UserContributionsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-background-panel mb-6 rounded-lg p-6 shadow-lg">
           <div className="flex items-center gap-4">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="text-text-primary text-sm font-medium">
               Time Period:
             </label>
             <select
               value={timeFilter}
               onChange={(e) => handleTimeFilterChange(e.target.value)}
-              className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+              className="bg-background-panel-inset border-border-secondary text-text-primary rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
             >
               {timeFilterOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -282,14 +278,14 @@ export default function UserContributionsPage() {
         </div>
 
         {/* Contributions List */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="bg-background-panel rounded-lg shadow-lg">
+          <div className="border-border-primary border-b p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h2 className="text-text-primary text-lg font-semibold">
                 Recent Contributions
               </h2>
               {data.total > 0 && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-text-quaternary text-sm">
                   {data.total} total contributions
                 </p>
               )}
@@ -298,15 +294,13 @@ export default function UserContributionsPage() {
 
           {loading ? (
             <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600 dark:text-gray-300">
-                Loading...
-              </p>
+              <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
+              <p className="text-text-tertiary mt-2">Loading...</p>
             </div>
           ) : data.contributions.length === 0 ? (
             <div className="p-8 text-center">
               <svg
-                className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4"
+                className="text-text-quaternary mx-auto mb-4 h-16 w-16"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -318,17 +312,17 @@ export default function UserContributionsPage() {
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-text-quaternary">
                 No contributions found for this time period
               </p>
             </div>
           ) : (
             <>
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              <div className="divide-border-primary divide-y">
                 {data.contributions.map((contribution) => (
                   <div
                     key={contribution.id}
-                    className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    className="hover:bg-button-secondary-bg p-6"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
@@ -337,16 +331,16 @@ export default function UserContributionsPage() {
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                            <h3 className="text-text-primary font-medium">
                               {contribution.resourceName}
                             </h3>
                             <span
-                              className={`px-2 py-1 rounded-full text-xs ${getStatusColor(contribution.resourceStatus)}`}
+                              className={`rounded-full px-2 py-1 text-xs ${getStatusColor(contribution.resourceStatus)}`}
                             >
                               {contribution.resourceStatus.replace("_", " ")}
                             </span>
                           </div>
-                          <div className="flex items-center gap-4 mt-1 text-sm text-gray-500 dark:text-gray-400">
+                          <div className="text-text-quaternary mt-1 flex items-center gap-4 text-sm">
                             <span>
                               {contribution.actionType.toLowerCase()}{" "}
                               {contribution.quantityChanged.toLocaleString()}
@@ -359,10 +353,10 @@ export default function UserContributionsPage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-bold text-green-600 dark:text-green-400">
+                        <div className="text-text-success font-bold">
                           +{contribution.finalPoints.toFixed(1)} pts
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-text-quaternary text-xs">
                           {contribution.resourceMultiplier}x multiplier
                         </div>
                       </div>
@@ -387,11 +381,11 @@ export default function UserContributionsPage() {
         </div>
 
         {/* Points System Info */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6 mt-6">
-          <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-3">
+        <div className="bg-background-info border-border-info mt-6 rounded-lg border p-6">
+          <h3 className="text-text-primary mb-3 text-lg font-semibold">
             📊 How Points Work
           </h3>
-          <div className="space-y-2 text-sm text-blue-700 dark:text-blue-300">
+          <div className="text-text-secondary space-y-2 text-sm">
             <p>
               <strong>ADD Actions:</strong> 0.1 points per resource (100 points
               per 1000 resources)

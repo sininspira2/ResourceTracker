@@ -32,8 +32,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (mounted) {
       const root = window.document.documentElement;
-      root.classList.remove("light", "dark");
-      root.classList.add(theme);
+      root.setAttribute("data-theme", theme);
       localStorage.setItem("theme", theme);
     }
   }, [theme, mounted]);
@@ -41,11 +40,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
-
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

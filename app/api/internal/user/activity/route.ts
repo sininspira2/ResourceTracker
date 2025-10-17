@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, resourceHistory, resources } from "@/lib/db";
 import { eq, gte, desc, and, or } from "drizzle-orm";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 // GET /api/internal/user/activity - Get user's activity history
 export async function GET(request: NextRequest) {
@@ -13,12 +13,14 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "500", 10);
     const userId = searchParams.get("userId");
     const oldUserIdsString = searchParams.get("oldUserIds");
-    const oldUserIds = oldUserIdsString ? oldUserIdsString.split(',') : [];
+    const oldUserIds = oldUserIdsString ? oldUserIdsString.split(",") : [];
 
     if (!isGlobal && !userId) {
-      return NextResponse.json({ error: "userId is required for non-global activity" }, { status: 400 });
+      return NextResponse.json(
+        { error: "userId is required for non-global activity" },
+        { status: 400 },
+      );
     }
-
 
     // Calculate date threshold
     const daysAgo = new Date();

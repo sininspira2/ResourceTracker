@@ -74,13 +74,13 @@ export function ResourceHistoryChart({
         onClick={() => setIsOpen(true)}
         className={
           customButton?.className ||
-          "text-gray-600 hover:text-blue-600 transition-colors p-1 rounded-sm hover:bg-gray-100"
+          "text-text-tertiary hover:text-text-link hover:bg-background-secondary rounded-sm p-1 transition-colors"
         }
         title="View resource history"
       >
         {customButton?.children || (
           <svg
-            className="w-4 h-4"
+            className="h-4 w-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -98,18 +98,18 @@ export function ResourceHistoryChart({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b">
+    <div className="bg-background-overlay fixed inset-0 z-50 flex items-center justify-center">
+      <div className="bg-background-primary mx-4 max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg shadow-xl">
+        <div className="flex items-center justify-between border-b p-6">
           <div>
             <h2 className="text-xl font-semibold">{resourceName} - History</h2>
-            <p className="text-gray-600 text-sm">Last {days} days</p>
+            <p className="text-text-tertiary text-sm">Last {days} days</p>
           </div>
           <div className="flex items-center gap-4">
             <select
               value={days}
               onChange={(e) => setDays(parseInt(e.target.value))}
-              className="border rounded-sm px-3 py-1 text-sm"
+              className="rounded-sm border px-3 py-1 text-sm"
             >
               <option value={1}>1 day</option>
               <option value={3}>3 days</option>
@@ -119,35 +119,35 @@ export function ResourceHistoryChart({
             </select>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-gray-500 hover:text-gray-700 text-xl font-bold"
+              className="text-text-quaternary hover:text-text-tertiary text-xl font-bold"
             >
               ×
             </button>
           </div>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+        <div className="max-h-[calc(90vh-120px)] overflow-y-auto p-6">
           {loading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading history...</p>
+            <div className="py-8 text-center">
+              <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
+              <p className="text-text-tertiary mt-2">Loading history...</p>
             </div>
           ) : history.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500">
+            <div className="py-8 text-center">
+              <p className="text-text-quaternary">
                 No changes in the last {days} days
               </p>
             </div>
           ) : (
             <div className="space-y-4">
               {/* Simple line chart visualization */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-medium mb-3">Quantity Over Time</h3>
+              <div className="bg-background-secondary rounded-lg p-4">
+                <h3 className="mb-3 text-sm font-medium">Quantity Over Time</h3>
                 <div className="relative h-32">
                   {history.length > 1 && (
                     <div className="relative">
                       <svg
-                        className="w-full h-full"
+                        className="h-full w-full"
                         onMouseMove={(e) => {
                           const rect = e.currentTarget.getBoundingClientRect();
                           setMousePosition({
@@ -233,7 +233,7 @@ export function ResourceHistoryChart({
                                 fill="#3b82f6"
                                 stroke="white"
                                 strokeWidth="2"
-                                className="cursor-pointer hover:r-6 transition-all"
+                                className="hover:r-6 cursor-pointer transition-all"
                                 onMouseEnter={() => setHoveredPoint(entry)}
                                 onMouseLeave={() => setHoveredPoint(null)}
                               />
@@ -244,7 +244,7 @@ export function ResourceHistoryChart({
                       {/* Tooltip */}
                       {hoveredPoint && (
                         <div
-                          className="absolute bg-black text-white text-xs rounded-sm px-2 py-1 pointer-events-none z-10 whitespace-nowrap"
+                          className="text-text-white pointer-events-none absolute z-10 rounded-sm bg-black px-2 py-1 text-xs whitespace-nowrap"
                           style={{
                             left: mousePosition.x + 10,
                             top: mousePosition.y - 10,
@@ -260,7 +260,7 @@ export function ResourceHistoryChart({
                                 hoveredPoint.newQuantityDeepDesert,
                             )}
                           </div>
-                          <div className="text-gray-300">
+                          <div className="text-text-tooltip-secondary">
                             {hoveredPoint.changeAmountHagga +
                               hoveredPoint.changeAmountDeepDesert >
                             0
@@ -271,10 +271,10 @@ export function ResourceHistoryChart({
                                 hoveredPoint.changeAmountDeepDesert,
                             )}
                           </div>
-                          <div className="text-gray-300">
+                          <div className="text-text-tooltip-secondary">
                             By: {hoveredPoint.updatedBy}
                           </div>
-                          <div className="text-gray-300">
+                          <div className="text-text-tooltip-secondary">
                             {new Date(
                               hoveredPoint.createdAt,
                             ).toLocaleDateString()}
@@ -288,25 +288,25 @@ export function ResourceHistoryChart({
 
               {/* History list */}
               <div>
-                <h3 className="text-sm font-medium mb-3">Recent Changes</h3>
+                <h3 className="mb-3 text-sm font-medium">Recent Changes</h3>
                 <div className="space-y-3">
                   {history.map((entry) => (
                     <div
                       key={entry.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="bg-background-secondary flex items-center justify-between rounded-lg p-3"
                     >
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-3 h-3 rounded-full ${
+                          className={`h-3 w-3 rounded-full ${
                             entry.changeAmountHagga +
                               entry.changeAmountDeepDesert >
                             0
-                              ? "bg-green-500"
+                              ? "bg-activity-positive-bg"
                               : entry.changeAmountHagga +
                                     entry.changeAmountDeepDesert <
                                   0
-                                ? "bg-red-500"
-                                : "bg-gray-400"
+                                ? "bg-activity-negative-bg"
+                                : "bg-activity-neutral-bg"
                           }`}
                         ></div>
                         <div>
@@ -339,17 +339,17 @@ export function ResourceHistoryChart({
                               </div>
                             )}
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-text-tertiary text-sm">
                             By {entry.updatedBy}
                             {entry.reason && (
-                              <span className="ml-2 text-blue-600">
+                              <span className="text-text-link ml-2">
                                 • {entry.reason}
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-text-quaternary text-sm">
                         {new Date(entry.createdAt).toLocaleDateString()}{" "}
                         {new Date(entry.createdAt).toLocaleTimeString()}
                       </div>

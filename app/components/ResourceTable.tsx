@@ -97,22 +97,6 @@ const needsUpdating = (updatedAt: string, isPriority: boolean): boolean => {
   return now.getTime() - new Date(updatedAt).getTime() > threshold;
 };
 
-// Function to get status background color for grid view
-const getStatusBackgroundColor = (status: string): string => {
-  switch (status) {
-    case RESOURCE_STATUS.CRITICAL:
-      return "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800";
-    case RESOURCE_STATUS.BELOW_TARGET:
-      return "bg-orange-50 dark:bg-orange-900/10 border-orange-200 dark:border-orange-800";
-    case RESOURCE_STATUS.AT_TARGET:
-      return "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800";
-    case RESOURCE_STATUS.ABOVE_TARGET:
-      return "bg-purple-50 dark:bg-purple-900/10 border-purple-200 dark:border-purple-800";
-    default:
-      return "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700";
-  }
-};
-
 const getStatusText = (status: string): string => {
   switch (status) {
     case RESOURCE_STATUS.CRITICAL:
@@ -131,31 +115,30 @@ const getStatusText = (status: string): string => {
 const getStatusColor = (status: string): string => {
   switch (status) {
     case RESOURCE_STATUS.CRITICAL:
-      return "text-red-700 dark:text-red-300";
+      return "text-status-critical-text";
     case RESOURCE_STATUS.BELOW_TARGET:
-      return "text-orange-700 dark:text-orange-300";
+      return "text-status-below-target-text";
     case RESOURCE_STATUS.AT_TARGET:
-      return "text-green-700 dark:text-green-300";
+      return "text-status-at-target-text";
     case RESOURCE_STATUS.ABOVE_TARGET:
-      return "text-purple-700 dark:text-purple-300";
+      return "text-status-above-target-text";
     default:
-      return "text-gray-700 dark:text-gray-300";
+      return "text-status-default-text";
   }
 };
 
-// Function to get combined status styling for table view (background + text colors)
 const getStatusTableColor = (status: string): string => {
   switch (status) {
     case RESOURCE_STATUS.CRITICAL:
-      return "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200";
+      return "bg-status-critical-bg text-status-critical-text";
     case RESOURCE_STATUS.BELOW_TARGET:
-      return "bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200";
+      return "bg-status-below-target-bg text-status-below-target-text";
     case RESOURCE_STATUS.AT_TARGET:
-      return "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200";
+      return "bg-status-at-target-bg text-status-at-target-text";
     case RESOURCE_STATUS.ABOVE_TARGET:
-      return "bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200";
+      return "bg-status-above-target-bg text-status-above-target-text";
     default:
-      return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200";
+      return "bg-status-default-bg text-status-default-text";
   }
 };
 
@@ -905,10 +888,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   if (loading) {
     return (
       <div className="p-8 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Loading resources...
-        </p>
+        <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
+        <p className="text-text-tertiary mt-2">Loading resources...</p>
       </div>
     );
   }
@@ -916,15 +897,15 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   return (
     <div className="space-y-6">
       {/* Dashboard Overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Recent Updates */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <div className="bg-background-panel border-border-primary rounded-lg border p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-text-primary text-lg font-semibold">
               Recent Updates
             </h3>
             <svg
-              className="w-5 h-5 text-gray-400 dark:text-gray-500"
+              className="text-text-quaternary h-5 w-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -939,14 +920,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           </div>
 
           {activityLoading ? (
-            <div className="text-center py-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <div className="py-4 text-center">
+              <div className="border-text-link mx-auto h-6 w-6 animate-spin rounded-full border-b-2"></div>
+              <p className="text-text-tertiary mt-2 text-sm">
                 Loading updates...
               </p>
             </div>
           ) : recentActivity.length === 0 ? (
-            <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+            <div className="text-text-tertiary py-4 text-center">
               <p className="text-sm">No recent updates</p>
             </div>
           ) : (
@@ -954,24 +935,24 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               {recentActivity.slice(0, 5).map((activity) => (
                 <div
                   key={activity.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+                  className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover flex cursor-pointer items-center justify-between rounded-lg p-3 transition-colors"
                   onClick={() => handleResourceClick(activity.resourceId)}
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-2 h-2 rounded-full ${
+                      className={`h-2 w-2 rounded-full ${
                         activity.changeAmount > 0
-                          ? "bg-green-500"
+                          ? "bg-activity-positive-bg"
                           : activity.changeAmount < 0
-                            ? "bg-red-500"
-                            : "bg-gray-400"
+                            ? "bg-activity-negative-bg"
+                            : "bg-activity-neutral-bg"
                       }`}
                     ></div>
                     <div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <div className="text-text-primary text-sm font-medium">
                         {activity.resourceName}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-text-quaternary text-xs">
                         By {activity.updatedBy} •{" "}
                         {getRelativeTime(activity.createdAt)}
                       </div>
@@ -980,10 +961,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   <div
                     className={`text-sm font-medium ${
                       activity.changeAmount > 0
-                        ? "text-green-600 dark:text-green-400"
+                        ? "text-text-success"
                         : activity.changeAmount < 0
-                          ? "text-red-600 dark:text-red-400"
-                          : "text-gray-600 dark:text-gray-400"
+                          ? "text-text-danger"
+                          : "text-text-tertiary"
                     }`}
                   >
                     {activity.changeAmount > 0 ? "+" : ""}
@@ -996,9 +977,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         </div>
 
         {/* Leaderboard */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <div className="bg-background-panel border-border-primary rounded-lg border p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-text-primary text-lg font-semibold">
               🏆 Leaderboard
             </h3>
             <div className="flex items-center gap-2">
@@ -1010,7 +991,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       .value as (typeof LEADERBOARD_TIME_FILTERS)[keyof typeof LEADERBOARD_TIME_FILTERS],
                   )
                 }
-                className="text-xs bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-sm px-2 py-1"
+                className="bg-background-panel-inset border-border-secondary rounded-sm border px-2 py-1 text-xs"
               >
                 <option value={LEADERBOARD_TIME_FILTERS["24H"]}>24h</option>
                 <option value={LEADERBOARD_TIME_FILTERS["7D"]}>7d</option>
@@ -1018,7 +999,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 <option value={LEADERBOARD_TIME_FILTERS.ALL}>All</option>
               </select>
               <svg
-                className="w-5 h-5 text-gray-400 dark:text-gray-500"
+                className="text-text-quaternary h-5 w-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -1034,14 +1015,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           </div>
 
           {leaderboardLoading ? (
-            <div className="text-center py-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <div className="py-4 text-center">
+              <div className="border-text-link mx-auto h-6 w-6 animate-spin rounded-full border-b-2"></div>
+              <p className="text-text-tertiary mt-2 text-sm">
                 Loading leaderboard...
               </p>
             </div>
           ) : leaderboard.length === 0 ? (
-            <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+            <div className="text-text-tertiary py-4 text-center">
               <p className="text-sm">No contributions in this time period</p>
             </div>
           ) : (
@@ -1051,7 +1032,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 .map((entry, index) => (
                   <div
                     key={entry.userId}
-                    className="flex items-center justify-between p-3 bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:from-green-100 hover:to-blue-100 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 transition-all cursor-pointer"
+                    className="from-leaderboard-gradient-from to-leaderboard-gradient-to hover:from-leaderboard-gradient-from-hover hover:to-leaderboard-gradient-to-hover flex cursor-pointer items-center justify-between rounded-lg bg-linear-to-r p-3 transition-all hover:bg-linear-to-r"
                     onClick={() =>
                       router.push(`/dashboard/contributions/${entry.userId}`)
                     }
@@ -1059,31 +1040,31 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
+                        className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
                           index === 0
-                            ? "bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200"
+                            ? "bg-rank-1-bg text-rank-1-text"
                             : index === 1
-                              ? "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                              ? "bg-rank-2-bg text-rank-2-text"
                               : index === 2
-                                ? "bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200"
-                                : "bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300"
+                                ? "bg-rank-3-bg text-rank-3-text"
+                                : "bg-rank-other-bg text-rank-other-text"
                         }`}
                       >
                         #{index + 1}
                       </div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <div className="text-text-primary text-sm font-medium">
                         {entry.userId}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-text-quaternary text-xs">
                         ({entry.totalActions} actions)
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                      <div className="text-text-link text-sm font-bold">
                         {entry.totalPoints.toFixed(1)} pts
                       </div>
                       <svg
-                        className="w-4 h-4 text-gray-400 dark:text-gray-500"
+                        className="text-text-quaternary h-4 w-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -1103,7 +1084,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 {leaderboard.length > 5 && (
                   <button
                     onClick={() => setLeaderboardExpanded(!leaderboardExpanded)}
-                    className="w-full text-center py-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                    className="text-text-link hover:text-text-link-hover w-full py-2 text-center text-sm transition-colors"
                   >
                     {leaderboardExpanded
                       ? "Show Less"
@@ -1113,7 +1094,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                 <button
                   onClick={() => router.push("/dashboard/leaderboard")}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
+                  className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors"
                 >
                   View Full Leaderboard
                 </button>
@@ -1125,11 +1106,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       {/* Admin Panel */}
       {isResourceAdmin && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-background-danger border-border-danger rounded-lg border p-6">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <svg
-                className="w-6 h-6 text-red-600 dark:text-red-400"
+                className="text-text-danger h-6 w-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -1141,17 +1122,17 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                 />
               </svg>
-              <h3 className="text-lg font-semibold text-red-800 dark:text-red-200">
+              <h3 className="text-text-danger text-lg font-semibold">
                 Admin Panel
               </h3>
             </div>
             {!showCreateForm && (
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                className="bg-button-success-bg hover:bg-button-success-bg-hover text-text-white flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
               >
                 <svg
-                  className="w-4 h-4"
+                  className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1169,13 +1150,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           </div>
 
           {showCreateForm && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
-              <h4 className="text-md font-medium text-gray-900 dark:text-gray-100 mb-4">
+            <div className="bg-background-panel border-border-secondary rounded-lg border p-4">
+              <h4 className="text-md text-text-primary mb-4 font-medium">
                 Create New Resource
               </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="text-text-secondary mb-1 block text-sm font-medium">
                     Name *
                   </label>
                   <input
@@ -1187,13 +1168,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         name: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
                     placeholder="Resource name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="text-text-secondary mb-1 block text-sm font-medium">
                     Category *
                   </label>
                   <select
@@ -1204,7 +1185,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         category: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
                   >
                     {CATEGORY_OPTIONS.map((cat) => (
                       <option key={cat} value={cat}>
@@ -1215,7 +1196,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="text-text-secondary mb-1 block text-sm font-medium">
                     Description
                   </label>
                   <input
@@ -1227,13 +1208,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         description: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
                     placeholder="Optional description"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="text-text-secondary mb-1 block text-sm font-medium">
                     Image URL
                   </label>
                   <input
@@ -1245,13 +1226,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         imageUrl: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="text-text-secondary mb-1 block text-sm font-medium">
                     Initial Quantity (Hagga)
                   </label>
                   <input
@@ -1264,11 +1245,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         quantityHagga: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="text-text-secondary mb-1 block text-sm font-medium">
                     Initial Quantity (Deep Desert)
                   </label>
                   <input
@@ -1281,12 +1262,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         quantityDeepDesert: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="text-text-secondary mb-1 block text-sm font-medium">
                     Target Quantity
                   </label>
                   <input
@@ -1299,12 +1280,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         targetQuantity: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="text-text-secondary mb-1 block text-sm font-medium">
                     Points Multiplier
                   </label>
                   <input
@@ -1318,17 +1299,17 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         multiplier: parseFloat(e.target.value) || 1.0,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
                     placeholder="1.0"
                   />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-text-quaternary mt-1 text-xs">
                     Points multiplier for this resource (e.g., 0.1 for
                     low-value, 5.0 for high-value)
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-4">
+              <div className="mt-4 flex gap-3">
                 <button
                   onClick={createNewResource}
                   disabled={
@@ -1336,7 +1317,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     !createResourceForm.name ||
                     !createResourceForm.category
                   }
-                  className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="bg-button-success-bg hover:bg-button-success-bg-hover text-text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
                 >
                   {saving ? "Creating..." : "Create Resource"}
                 </button>
@@ -1354,7 +1335,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       multiplier: 1.0,
                     });
                   }}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="bg-button-neutral-bg hover:bg-button-neutral-bg-hover text-text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors"
                 >
                   Cancel
                 </button>
@@ -1365,14 +1346,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       )}
 
       {/* Search and View Toggle */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+      <div className="bg-background-panel border-border-primary rounded-lg border p-6 shadow-sm">
         <div className="flex flex-col gap-4">
           {/* Search and Filters Row */}
-          <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center justify-between">
+          <div className="flex flex-col flex-wrap items-start justify-between gap-4 sm:flex-row sm:items-center">
             {/* Search Bar */}
-            <div className="relative flex-1 max-w-md">
+            <div className="relative max-w-md flex-1">
               <svg
-                className="absolute left-3 top-3 h-4 w-4 text-gray-400 dark:text-gray-500"
+                className="text-text-quaternary absolute top-3 left-3 h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -1389,22 +1370,22 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 placeholder="Search resources..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border-border-secondary bg-background-panel-inset text-text-primary placeholder-text-quaternary w-full rounded-lg border py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* View Toggle Buttons */}
-            <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <div className="bg-background-panel-inset flex items-center rounded-lg p-1">
               <button
                 onClick={() => setAndSaveViewMode(VIEW_MODE.TABLE)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                   viewMode === VIEW_MODE.TABLE
-                    ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-xs"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                    ? "bg-button-secondary-neutral-bg-hover text-text-primary shadow-xs"
+                    : "text-text-tertiary hover:text-text-primary"
                 }`}
               >
                 <svg
-                  className="w-4 h-4"
+                  className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1420,14 +1401,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </button>
               <button
                 onClick={() => setAndSaveViewMode(VIEW_MODE.GRID)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                   viewMode === VIEW_MODE.GRID
-                    ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-xs"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                    ? "bg-button-secondary-neutral-bg-hover text-text-primary shadow-xs"
+                    : "text-text-tertiary hover:text-text-primary"
                 }`}
               >
                 <svg
-                  className="w-4 h-4"
+                  className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1445,16 +1426,16 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           </div>
 
           {/* Filters Row */}
-          <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center">
+          <div className="flex flex-col flex-wrap items-start gap-4 sm:flex-row sm:items-center">
             {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-text-secondary text-sm font-medium">
                 Status:
               </label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border-border-secondary bg-background-panel-inset text-text-primary rounded-lg border px-3 py-1.5 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
               >
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -1466,13 +1447,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
             {/* Category Filter */}
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-text-secondary text-sm font-medium">
                 Category:
               </label>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border-border-secondary bg-background-panel-inset text-text-primary rounded-lg border px-3 py-1.5 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
               >
                 {categoryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -1484,16 +1465,16 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
             {/* Needs Updating Filter */}
             <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+              <label className="text-text-secondary flex cursor-pointer items-center gap-2 text-sm font-medium">
                 <input
                   type="checkbox"
                   checked={needsUpdateFilter}
                   onChange={(e) => setNeedsUpdateFilter(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  className="text-text-link bg-background-tertiary border-border-secondary focus:ring-highlight-border h-4 w-4 rounded-sm focus:ring-2"
                 />
                 <span>Needs updating ({needsUpdateCount})</span>
                 <span
-                  className="text-xs text-gray-500 dark:text-gray-400"
+                  className="text-text-quaternary text-xs"
                   title="Priority items are flagged after 24 hours, non-priority after 7 days."
                 >
                   (24h/7d)
@@ -1503,12 +1484,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
             {/* Priority Filter */}
             <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+              <label className="text-text-secondary flex cursor-pointer items-center gap-2 text-sm font-medium">
                 <input
                   type="checkbox"
                   checked={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  className="text-text-link bg-background-tertiary border-border-secondary focus:ring-highlight-border h-4 w-4 rounded-sm focus:ring-2"
                 />
                 <span>Priority</span>
               </label>
@@ -1520,7 +1501,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               searchTerm ||
               categoryFilter !== "all" ||
               priorityFilter) && (
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-text-tertiary flex items-center gap-2 text-sm">
                 <span>
                   Showing {filteredResources.length} of {resources.length}{" "}
                   resources
@@ -1533,7 +1514,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     setCategoryFilter("all");
                     setPriorityFilter(false);
                   }}
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                  className="text-text-link hover:underline"
                 >
                   Clear filters
                 </button>
@@ -1543,7 +1524,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         </div>
 
         {/* Helper text */}
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
+        <p className="text-text-quaternary mt-3 text-sm">
           💡 Click any resource to view detailed history and analytics
         </p>
       </div>
@@ -1570,10 +1551,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             })
             .map(([category, categoryResources]) => (
               <div key={category} className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
+                <h3 className="text-text-primary border-border-primary border-b pb-2 text-lg font-semibold">
                   {category} ({categoryResources.length})
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                   {categoryResources.map((resource) => {
                     const status = calculateResourceStatus(
                       resource.quantityHagga + resource.quantityDeepDesert,
@@ -1588,16 +1569,16 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     return (
                       <div
                         key={resource.id}
-                        className={`border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer group ${
+                        className={`group cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
                           isOutdated
-                            ? "border-amber-300 dark:border-amber-600 ring-1 ring-amber-200 dark:ring-amber-800"
-                            : "border-gray-200 dark:border-gray-700"
+                            ? "border-update-indicator-border ring-update-indicator-ring ring-1"
+                            : "border-border-primary"
                         } ${
                           resource.category === BP_CATEGORY
-                            ? "bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50"
+                            ? "bg-category-bp-bg hover:bg-category-bp-bg-hover"
                             : isOutdated
-                              ? "bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20"
-                              : "bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+                              ? "bg-update-indicator-bg hover:bg-update-indicator-bg-hover"
+                              : "bg-background-panel hover:bg-button-secondary-neutral-bg"
                         }`}
                         onClick={() => handleResourceClick(resource.id)}
                         title={
@@ -1609,12 +1590,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         }
                       >
                         {/* Resource Image */}
-                        <div className="aspect-square mb-3 relative">
+                        <div className="relative mb-3 aspect-square">
                           {resource.imageUrl ? (
                             <img
                               src={resource.imageUrl}
                               alt={resource.name}
-                              className="w-full h-full object-cover rounded-lg"
+                              className="h-full w-full rounded-lg object-cover"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.style.display = "none";
@@ -1625,19 +1606,19 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             />
                           ) : null}
                           <div
-                            className={`w-full h-full rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center ${
+                            className={`bg-background-tertiary flex h-full w-full items-center justify-center rounded-lg ${
                               resource.imageUrl ? "hidden" : "flex"
                             }`}
                           >
-                            <span className="text-gray-400 dark:text-gray-500 text-xs">
+                            <span className="text-text-quaternary text-xs">
                               No Image
                             </span>
                           </div>
 
                           {/* Click indicator */}
-                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
                             <svg
-                              className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                              className="text-text-link h-4 w-4"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -1657,9 +1638,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           className="space-y-2"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <h4 className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                          <h4 className="text-text-primary group-hover:text-text-link truncate text-sm font-medium transition-colors">
                             {resource.isPriority && (
-                              <span className="text-red-500">* </span>
+                              <span className="text-text-priority">* </span>
                             )}
                             {resource.name}
                           </h4>
@@ -1667,7 +1648,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           {/* Status Badge */}
                           <div className="flex items-center justify-between">
                             <span
-                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                              className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(
                                 status,
                               )} ${statusChange ? "animate-pulse" : ""}`}
                             >
@@ -1676,16 +1657,16 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                             {/* Multiplier Badge */}
                             <span
-                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
                                 resource.multiplier === 0
-                                  ? "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                  ? "bg-multiplier-zero-bg text-multiplier-zero-text"
                                   : (resource.multiplier || 1.0) >= 3.0
-                                    ? "bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200"
+                                    ? "bg-multiplier-high-bg text-multiplier-high-text"
                                     : (resource.multiplier || 1.0) >= 2.0
-                                      ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200"
+                                      ? "bg-multiplier-medium-bg text-multiplier-medium-text"
                                       : (resource.multiplier || 1.0) >= 1.0
-                                        ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200"
-                                        : "bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200"
+                                        ? "bg-multiplier-low-bg text-multiplier-low-text"
+                                        : "bg-multiplier-very-low-bg text-multiplier-very-low-text"
                               }`}
                             >
                               {resource.multiplier === 0
@@ -1696,14 +1677,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                           {/* Quantity Display */}
                           <div className="text-center">
-                            <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                            <div className="text-text-primary text-sm font-bold">
                               Hagga: {formatNumber(resource.quantityHagga)}
                             </div>
-                            <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                            <div className="text-text-primary text-sm font-bold">
                               Deep Desert:{" "}
                               {formatNumber(resource.quantityDeepDesert)}
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                            <div className="text-text-quaternary text-xs">
                               {resource.targetQuantity
                                 ? `Target: ${formatNumber(
                                     resource.targetQuantity,
@@ -1713,17 +1694,17 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           </div>
 
                           {/* Last Updated Info */}
-                          <div className="text-center pt-2 border-t border-gray-100 dark:border-gray-700">
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                          <div className="border-background-tertiary border-t pt-2 text-center">
+                            <div className="text-text-quaternary text-xs">
                               Updated by{" "}
-                              <span className="font-medium text-gray-600 dark:text-gray-300">
+                              <span className="text-text-tertiary font-medium">
                                 {resource.lastUpdatedBy}
                               </span>
                             </div>
                             <div className="flex items-center justify-center gap-1">
                               {isOutdated && (
                                 <svg
-                                  className="w-3 h-3 text-amber-500 dark:text-amber-400"
+                                  className="text-update-indicator-text h-3 w-3"
                                   fill="currentColor"
                                   viewBox="0 0 20 20"
                                 >
@@ -1735,10 +1716,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 </svg>
                               )}
                               <div
-                                className={`text-xs cursor-help hover:underline decoration-dotted ${
+                                className={`cursor-help text-xs decoration-dotted hover:underline ${
                                   isOutdated
-                                    ? "text-amber-600 dark:text-amber-400 font-medium"
-                                    : "text-gray-400 dark:text-gray-500"
+                                    ? "text-update-indicator-text font-medium"
+                                    : "text-text-quaternary"
                                 }`}
                                 title={new Date(
                                   resource.updatedAt,
@@ -1763,7 +1744,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       updateType: UPDATE_TYPE.RELATIVE,
                                     });
                                   }}
-                                  className="flex-1 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                                 >
                                   Add/Remove
                                 </button>
@@ -1776,7 +1757,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       updateType: UPDATE_TYPE.ABSOLUTE,
                                     });
                                   }}
-                                  className="flex-1 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="bg-button-subtle-purple-bg hover:bg-button-subtle-purple-bg-hover text-button-subtle-purple-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                                 >
                                   Set Qty
                                 </button>
@@ -1790,7 +1771,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       resource: resource,
                                     });
                                   }}
-                                  className="flex-1 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="bg-button-subtle-green-bg hover:bg-button-subtle-green-bg-hover text-button-subtle-green-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                                 >
                                   Transfer
                                 </button>
@@ -1803,7 +1784,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                         resource: resource,
                                       });
                                     }}
-                                    className="flex-1 bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                    className="bg-button-subtle-orange-bg hover:bg-button-subtle-orange-bg-hover text-button-subtle-orange-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                                   >
                                     Set Target
                                   </button>
@@ -1818,7 +1799,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       e.stopPropagation();
                                       startEditResource(resource);
                                     }}
-                                    className="flex-1 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                    className="bg-button-subtle-yellow-bg hover:bg-button-subtle-yellow-bg-hover text-button-subtle-yellow-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                                   >
                                     Edit
                                   </button>
@@ -1831,7 +1812,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                         showDialog: true,
                                       });
                                     }}
-                                    className="flex-1 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                    className="bg-button-subtle-red-bg hover:bg-button-subtle-red-bg-hover text-button-subtle-red-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                                   >
                                     Delete
                                   </button>
@@ -1851,37 +1832,37 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       {/* Table View */}
       {viewMode === VIEW_MODE.TABLE && (
-        <div className="bg-white dark:bg-gray-800 shadow-xs rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div className="bg-background-primary border-border-primary overflow-hidden rounded-lg border shadow-xs">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-fixed">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+            <table className="divide-border-primary min-w-full table-fixed divide-y">
+              <thead className="bg-background-secondary">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-1/4">
+                  <th className="text-text-quaternary w-1/4 px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     Resource
                   </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     Category
                   </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     Multiplier
                   </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     Status
                   </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     Quantity
                   </th>
                   {canEdit && (
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                       Target
                     </th>
                   )}
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-48">
+                  <th className="text-text-quaternary w-48 px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="bg-background-panel divide-border-primary divide-y">
                 {filteredResources.map((resource) => {
                   const status = calculateResourceStatus(
                     resource.quantityHagga + resource.quantityDeepDesert,
@@ -1896,16 +1877,16 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   return (
                     <tr
                       key={resource.id}
-                      className={`cursor-pointer transition-colors group ${
+                      className={`group cursor-pointer transition-colors ${
                         isOutdated
-                          ? "border-l-4 border-l-amber-400 dark:border-l-amber-500"
+                          ? "border-l-update-indicator-border border-l-4"
                           : ""
                       } ${
                         resource.category === BP_CATEGORY
-                          ? "bg-purple-200 dark:bg-violet-900/30 hover:bg-purple-300 dark:hover:bg-violet-900/50"
+                          ? "bg-category-bp-bg hover:bg-category-bp-bg-hover"
                           : isOutdated
-                            ? "bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20"
-                            : "hover:bg-gray-50 dark:hover:bg-gray-700"
+                            ? "bg-update-indicator-bg hover:bg-update-indicator-bg-hover"
+                            : "hover:bg-background-secondary"
                       }`}
                       onClick={() => handleResourceClick(resource.id)}
                       title={
@@ -1918,7 +1899,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     >
                       <td className="px-3 py-3">
                         <div className="flex items-center">
-                          <div className="shrink-0 h-12 w-12">
+                          <div className="h-12 w-12 shrink-0">
                             {resource.imageUrl ? (
                               <img
                                 className="h-12 w-12 rounded-lg object-cover"
@@ -1934,23 +1915,23 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               />
                             ) : null}
                             <div
-                              className={`h-12 w-12 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center ${
+                              className={`bg-background-tertiary flex h-12 w-12 items-center justify-center rounded-lg ${
                                 resource.imageUrl ? "hidden" : "flex"
                               }`}
                             >
-                              <span className="text-gray-400 dark:text-gray-500 text-xs">
+                              <span className="text-text-quaternary text-xs">
                                 No image
                               </span>
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-words">
+                            <div className="text-text-primary group-hover:text-text-link text-sm font-medium break-words transition-colors">
                               {resource.isPriority && (
-                                <span className="text-red-500">* </span>
+                                <span className="text-priority">* </span>
                               )}
                               {resource.name}
                               <svg
-                                className="w-3 h-3 inline ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="ml-1 inline h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -1967,22 +1948,22 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         </div>
                       </td>
                       <td className="px-3 py-3 whitespace-nowrap">
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+                        <span className="bg-background-tertiary text-text-secondary inline-flex rounded-full px-2 py-1 text-xs font-semibold">
                           {resource.category || UNCATEGORIZED}
                         </span>
                       </td>
                       <td className="px-3 py-3 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
                             resource.multiplier === 0
-                              ? "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                              ? "bg-multiplier-zero-bg text-multiplier-zero-text"
                               : (resource.multiplier || 1.0) >= 3.0
-                                ? "bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200"
+                                ? "bg-multiplier-high-bg text-multiplier-high-text"
                                 : (resource.multiplier || 1.0) >= 2.0
-                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200"
+                                  ? "bg-multiplier-medium-bg text-multiplier-medium-text"
                                   : (resource.multiplier || 1.0) >= 1.0
-                                    ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200"
-                                    : "bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200"
+                                    ? "bg-multiplier-low-bg text-multiplier-low-text"
+                                    : "bg-multiplier-very-low-bg text-multiplier-very-low-text"
                           }`}
                         >
                           {resource.multiplier === 0
@@ -1992,20 +1973,20 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       </td>
                       <td className="px-3 py-3 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusTableColor(
+                          className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusTableColor(
                             status,
                           )} ${statusChange ? "animate-pulse" : ""}`}
                         >
                           {getStatusText(status)}
                         </span>
                       </td>
-                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
                         Hagga: {formatNumber(resource.quantityHagga)}
                         <br />
                         Deep Desert: {formatNumber(resource.quantityDeepDesert)}
                       </td>
                       {canEdit && (
-                        <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                        <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
                           {resource.targetQuantity
                             ? formatNumber(resource.targetQuantity)
                             : "No target set"}
@@ -2028,7 +2009,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     updateType: UPDATE_TYPE.RELATIVE,
                                   })
                                 }
-                                className="flex-1 min-w-20 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                               >
                                 Add/Remove
                               </button>
@@ -2040,7 +2021,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     updateType: UPDATE_TYPE.ABSOLUTE,
                                   })
                                 }
-                                className="flex-1 min-w-20 bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="bg-button-subtle-purple-bg hover:bg-button-subtle-purple-bg-hover text-button-subtle-purple-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                               >
                                 Set Qty
                               </button>
@@ -2053,7 +2034,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     resource: resource,
                                   })
                                 }
-                                className="flex-1 min-w-20 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 text-green-700 dark:text-green-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                className="bg-button-subtle-green-bg hover:bg-button-subtle-green-bg-hover text-button-subtle-green-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                               >
                                 Transfer
                               </button>
@@ -2065,7 +2046,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       resource: resource,
                                     })
                                   }
-                                  className="flex-1 min-w-20 bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-900/70 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="bg-button-subtle-orange-bg hover:bg-button-subtle-orange-bg-hover text-button-subtle-orange-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                                 >
                                   Set Target
                                 </button>
@@ -2077,7 +2058,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               <div className="flex gap-1">
                                 <button
                                   onClick={() => startEditResource(resource)}
-                                  className="flex-1 min-w-20 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="bg-button-subtle-yellow-bg hover:bg-button-subtle-yellow-bg-hover text-button-subtle-yellow-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                                 >
                                   Edit
                                 </button>
@@ -2089,7 +2070,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       showDialog: true,
                                     })
                                   }
-                                  className="flex-1 min-w-20 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 text-red-700 dark:text-red-300 px-2 py-1 rounded-sm text-xs font-medium transition-colors"
+                                  className="bg-button-subtle-red-bg hover:bg-button-subtle-red-bg-hover text-button-subtle-red-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
                                 >
                                   Delete
                                 </button>
@@ -2109,51 +2090,49 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       {/* Empty State */}
       {filteredResources.length === 0 && !loading && (
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           {searchTerm ? (
             <div>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-text-quaternary">
                 No resources found matching &quot;{searchTerm}&quot;
               </p>
               <button
                 onClick={() => setSearchTerm("")}
-                className="mt-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
+                className="text-text-link hover:text-text-link-hover mt-2 text-sm font-medium"
               >
                 Clear search
               </button>
             </div>
           ) : (
-            <p className="text-gray-500 dark:text-gray-400">
-              No resources found
-            </p>
+            <p className="text-text-quaternary">No resources found</p>
           )}
         </div>
       )}
 
       {/* Delete Confirmation Dialog */}
       {deleteConfirm.showDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-3 mb-4">
-              <Trash2 className="w-8 h-8 text-red-600 dark:text-red-400" />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <div className="bg-background-overlay fixed inset-0 z-50 flex items-center justify-center">
+          <div className="bg-background-panel border-border-primary mx-4 max-w-md rounded-lg border p-6">
+            <div className="mb-4 flex items-center gap-3">
+              <Trash2 className="text-text-danger h-8 w-8" />
+              <h3 className="text-text-primary text-lg font-semibold">
                 Delete Resource
               </h3>
             </div>
 
             <div className="mb-6">
-              <p className="text-gray-700 dark:text-gray-300 mb-2">
+              <p className="text-text-secondary mb-2">
                 Are you sure you want to delete{" "}
                 <strong>&quot;{deleteConfirm.resourceName}&quot;</strong>?
               </p>
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3">
+              <div className="bg-background-danger border-border-danger rounded-lg border p-3">
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+                  <AlertTriangle className="text-text-danger mt-0.5 h-5 w-5 shrink-0" />
                   <div className="text-sm">
-                    <p className="font-medium text-red-800 dark:text-red-200 mb-1">
+                    <p className="text-text-danger mb-1 font-medium">
                       Warning: This action cannot be undone
                     </p>
-                    <p className="text-red-700 dark:text-red-300">
+                    <p className="text-text-danger">
                       This will permanently delete the resource and{" "}
                       <strong>all its history data</strong>. All tracking
                       records, changes, and analytics for this resource will be
@@ -2164,7 +2143,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </div>
             </div>
 
-            <div className="flex gap-3 justify-end">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() =>
                   setDeleteConfirm({
@@ -2173,7 +2152,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     showDialog: false,
                   })
                 }
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg transition-colors"
+                className="text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors"
               >
                 Cancel
               </button>
@@ -2184,7 +2163,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   }
                 }}
                 disabled={saving}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 disabled:opacity-50 rounded-lg transition-colors"
+                className="text-text-white bg-button-danger-bg hover:bg-button-danger-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
               >
                 {saving ? "Deleting..." : "Delete Resource"}
               </button>

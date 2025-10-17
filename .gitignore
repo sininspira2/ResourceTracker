@@ -139,3 +139,11 @@ dist
 *.db
 *.sqlite
 *.sqlite3
+
+# OS generated files (Mac) #
+######################
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+*.DS_Store
