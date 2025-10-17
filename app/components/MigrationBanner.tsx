@@ -16,14 +16,14 @@ export async function MigrationBanner() {
   const message = messages[status];
 
   return (
-    <div className="w-full bg-background-warning p-2 text-center text-black">
+    <div className="bg-background-warning w-full p-2 text-center text-black">
       <span>
         {message}{" "}
         <Link
           href="https://github.com/sininspira2/ResourceTracker/blob/main/DB_MIGRATION.md"
           target="_blank"
           rel="noopener noreferrer"
-          className="underline hover:text-text-link-hover"
+          className="hover:text-text-link-hover underline"
         >
           here
         </Link>{" "}

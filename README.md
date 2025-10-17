@@ -19,25 +19,27 @@ Removed from fork network due to original author repository being deleted, and d
 ### ✨ Architectural Features
 
 #### Improved Database Migration System
+
 The database migration tracking system has been completely overhauled from a manual, tag-based approach to an **improved, hash-based system**.
 
-* **Simplified Workflow:** The new system simplifies the database workflow for users, who can now handle all subsequent migrations using a single command: `npm run db:migrate`.
-* **Integrity and Consistency:** The system now automatically calculates the SHA256 hash of each migration file, ensuring cross-platform consistency.
-* **Schema Update:** The database schema now includes a new `global_settings` table and new `tier`/`subcategory` columns in the `resources` table. **These columns are included to support future features** but allow for more granular classification.
+- **Simplified Workflow:** The new system simplifies the database workflow for users, who can now handle all subsequent migrations using a single command: `npm run db:migrate`.
+- **Integrity and Consistency:** The system now automatically calculates the SHA256 hash of each migration file, ensuring cross-platform consistency.
+- **Schema Update:** The database schema now includes a new `global_settings` table and new `tier`/`subcategory` columns in the `resources` table. **These columns are included to support future features** but allow for more granular classification.
 
 #### Vercel Data Cache Implementation
+
 All API routes have been refactored to utilize **Vercel's fetch-based Data Cache**, resulting in significant performance gains and reduced load times.
 
-* **Caching Strategy:** `GET` API routes have been refactored to use a public/internal pattern to leverage this new caching strategy with appropriate revalidation times.
-* **Security and Authentication:**
-    * Application protection logic was simplified by replacing the old middleware with a lightweight 'include list'.
-    * **Fixed a critical 401 error** by ensuring 'cookie' and 'authorization' headers are correctly forwarded in internal API calls when using Vercel Authentication.
+- **Caching Strategy:** `GET` API routes have been refactored to use a public/internal pattern to leverage this new caching strategy with appropriate revalidation times.
+- **Security and Authentication:**
+  - Application protection logic was simplified by replacing the old middleware with a lightweight 'include list'.
+  - **Fixed a critical 401 error** by ensuring 'cookie' and 'authorization' headers are correctly forwarded in internal API calls when using Vercel Authentication.
 
 ### 🐛 Critical Bug Fixes & Stability
 
-* **Next.js 15 Compatibility:** Resolved persistent build errors by updating all dynamic API route handlers to correctly use the **asynchronous `params` object signature** required by Next.js 15.
-* **Data Integrity on Deletion:** Ensured database integrity during resource deletion by updating the `DELETE` handler to also delete associated records from the `resource_history` and `leaderboard` tables. This logic is now safely wrapped in a **database transaction**.
-* **Leaderboard Validation:** Added robust input validation to the leaderboard API route, including an allowlist for the `timeFilter` parameter and fallbacks for other parameters to prevent `NaN` errors from invalid input.
+- **Next.js 15 Compatibility:** Resolved persistent build errors by updating all dynamic API route handlers to correctly use the **asynchronous `params` object signature** required by Next.js 15.
+- **Data Integrity on Deletion:** Ensured database integrity during resource deletion by updating the `DELETE` handler to also delete associated records from the `resource_history` and `leaderboard` tables. This logic is now safely wrapped in a **database transaction**.
+- **Leaderboard Validation:** Added robust input validation to the leaderboard API route, including an allowlist for the `timeFilter` parameter and fallbacks for other parameters to prevent `NaN` errors from invalid input.
 
 _See `lib/changelog.json` for previous update history._
 

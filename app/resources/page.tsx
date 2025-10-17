@@ -16,16 +16,16 @@ export default async function ResourcesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-primary transition-colors duration-300">
+    <div className="bg-background-primary min-h-screen transition-colors duration-300">
       <ClientNavigation
         title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}
         showDashboardLink={true}
       />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="mx-auto max-w-7xl">
           <header className="mb-8">
-            <h1 className="text-3xl font-bold text-text-primary mb-2">
+            <h1 className="text-text-primary mb-2 text-3xl font-bold">
               Resource Management
             </h1>
             <p className="text-text-tertiary">
