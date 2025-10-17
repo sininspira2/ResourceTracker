@@ -74,7 +74,7 @@ export function ResourceHistoryChart({
         onClick={() => setIsOpen(true)}
         className={
           customButton?.className ||
-          "text-text-tertiary hover:text-text-link hover:bg-background-secondary rounded-sm p-1 transition-colors"
+          "rounded-sm p-1 text-text-tertiary transition-colors hover:bg-background-secondary hover:text-text-link"
         }
         title="View resource history"
       >
@@ -98,12 +98,12 @@ export function ResourceHistoryChart({
   }
 
   return (
-    <div className="bg-background-overlay fixed inset-0 z-50 flex items-center justify-center">
-      <div className="bg-background-primary mx-4 max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-overlay">
+      <div className="mx-4 max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg bg-background-primary shadow-xl">
         <div className="flex items-center justify-between border-b p-6">
           <div>
             <h2 className="text-xl font-semibold">{resourceName} - History</h2>
-            <p className="text-text-tertiary text-sm">Last {days} days</p>
+            <p className="text-sm text-text-tertiary">Last {days} days</p>
           </div>
           <div className="flex items-center gap-4">
             <select
@@ -119,7 +119,7 @@ export function ResourceHistoryChart({
             </select>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-text-quaternary hover:text-text-tertiary text-xl font-bold"
+              className="text-xl font-bold text-text-quaternary hover:text-text-tertiary"
             >
               ×
             </button>
@@ -129,8 +129,8 @@ export function ResourceHistoryChart({
         <div className="max-h-[calc(90vh-120px)] overflow-y-auto p-6">
           {loading ? (
             <div className="py-8 text-center">
-              <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
-              <p className="text-text-tertiary mt-2">Loading history...</p>
+              <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-text-link"></div>
+              <p className="mt-2 text-text-tertiary">Loading history...</p>
             </div>
           ) : history.length === 0 ? (
             <div className="py-8 text-center">
@@ -141,7 +141,7 @@ export function ResourceHistoryChart({
           ) : (
             <div className="space-y-4">
               {/* Simple line chart visualization */}
-              <div className="bg-background-secondary rounded-lg p-4">
+              <div className="rounded-lg bg-background-secondary p-4">
                 <h3 className="mb-3 text-sm font-medium">Quantity Over Time</h3>
                 <div className="relative h-32">
                   {history.length > 1 && (
@@ -244,7 +244,7 @@ export function ResourceHistoryChart({
                       {/* Tooltip */}
                       {hoveredPoint && (
                         <div
-                          className="text-text-white pointer-events-none absolute z-10 rounded-sm bg-black px-2 py-1 text-xs whitespace-nowrap"
+                          className="pointer-events-none absolute z-10 rounded-sm bg-black px-2 py-1 text-xs whitespace-nowrap text-text-white"
                           style={{
                             left: mousePosition.x + 10,
                             top: mousePosition.y - 10,
@@ -293,7 +293,7 @@ export function ResourceHistoryChart({
                   {history.map((entry) => (
                     <div
                       key={entry.id}
-                      className="bg-background-secondary flex items-center justify-between rounded-lg p-3"
+                      className="flex items-center justify-between rounded-lg bg-background-secondary p-3"
                     >
                       <div className="flex items-center gap-3">
                         <div
@@ -339,17 +339,17 @@ export function ResourceHistoryChart({
                               </div>
                             )}
                           </div>
-                          <div className="text-text-tertiary text-sm">
+                          <div className="text-sm text-text-tertiary">
                             By {entry.updatedBy}
                             {entry.reason && (
-                              <span className="text-text-link ml-2">
+                              <span className="ml-2 text-text-link">
                                 • {entry.reason}
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
-                      <div className="text-text-quaternary text-sm">
+                      <div className="text-sm text-text-quaternary">
                         {new Date(entry.createdAt).toLocaleDateString()}{" "}
                         {new Date(entry.createdAt).toLocaleTimeString()}
                       </div>

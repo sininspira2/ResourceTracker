@@ -1,4 +1,6 @@
 {
+  "tailwindStylesheet": "./app/globals.css",
+  "tailwindConfig": "./tailwind.config.js",
   "plugins": ["prettier-plugin-tailwindcss"],
   "tailwindPreserveDuplicates": true,
   "tailwindFunctions": ["clsx", "cva", "tw"]

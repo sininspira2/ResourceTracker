@@ -45,7 +45,7 @@ export default function RootLayout({
         />
         <ThemeProvider>
           <SessionProvider>
-            <div className="bg-background-primary min-h-screen">
+            <div className="min-h-screen bg-background-primary">
               <MigrationBanner />
               {children}
               <WhatsNewModal />

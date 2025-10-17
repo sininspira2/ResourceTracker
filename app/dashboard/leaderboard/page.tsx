@@ -81,11 +81,11 @@ export default function LeaderboardPage() {
 
   if (loading && !data) {
     return (
-      <div className="bg-background-primary min-h-screen py-8">
+      <div className="min-h-screen bg-background-primary py-8">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="border-text-link mx-auto h-12 w-12 animate-spin rounded-full border-b-2"></div>
-            <p className="text-text-tertiary mt-4">Loading leaderboard...</p>
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
+            <p className="mt-4 text-text-tertiary">Loading leaderboard...</p>
           </div>
         </div>
       </div>
@@ -93,23 +93,23 @@ export default function LeaderboardPage() {
   }
 
   return (
-    <div className="bg-background-primary min-h-screen py-8">
+    <div className="min-h-screen bg-background-primary py-8">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="bg-background-panel mb-6 rounded-lg p-6 shadow-lg">
+        <div className="mb-6 rounded-lg bg-background-panel p-6 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-text-primary text-3xl font-bold">
+              <h1 className="text-3xl font-bold text-text-primary">
                 🏆 Leaderboard
               </h1>
-              <p className="text-text-secondary mt-1">
+              <p className="mt-1 text-text-secondary">
                 Top contributors in the{" "}
                 {process.env.NEXT_PUBLIC_ORG_NAME || "community"}
               </p>
             </div>
             <button
               onClick={() => router.push("/resources")}
-              className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover text-button-secondary-text rounded-lg px-4 py-2"
+              className="rounded-lg bg-button-secondary-neutral-bg px-4 py-2 text-button-secondary-text hover:bg-button-secondary-neutral-bg-hover"
             >
               Back to Resources
             </button>
@@ -117,13 +117,13 @@ export default function LeaderboardPage() {
 
           {/* Time Filter */}
           <div className="mt-6">
-            <label className="text-text-secondary mb-2 block text-sm font-medium">
+            <label className="mb-2 block text-sm font-medium text-text-secondary">
               Time Period:
             </label>
             <select
               value={timeFilter}
               onChange={(e) => handleTimeFilterChange(e.target.value)}
-              className="text-text-primary bg-background-panel-inset border-border-secondary rounded-sm border px-2 py-1 text-xs"
+              className="rounded-sm border border-border-secondary bg-background-panel-inset px-2 py-1 text-xs text-text-primary"
             >
               {timeFilterOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -136,11 +136,11 @@ export default function LeaderboardPage() {
 
         {/* Error State */}
         {error && (
-          <div className="bg-background-danger border-border-danger mb-6 rounded-lg border p-4">
+          <div className="mb-6 rounded-lg border border-border-danger bg-background-danger p-4">
             <p className="text-text-danger">{error}</p>
             <button
               onClick={fetchLeaderboard}
-              className="text-text-danger hover:text-danger-hover mt-2 text-sm"
+              className="hover:text-danger-hover mt-2 text-sm text-text-danger"
             >
               Try again
             </button>
@@ -148,15 +148,15 @@ export default function LeaderboardPage() {
         )}
 
         {/* Leaderboard */}
-        <div className="bg-background-panel rounded-lg shadow-lg">
-          <div className="border-border-primary border-b p-6">
-            <h2 className="text-text-primary text-lg font-semibold">
+        <div className="rounded-lg bg-background-panel shadow-lg">
+          <div className="border-b border-border-primary p-6">
+            <h2 className="text-lg font-semibold text-text-primary">
               Rankings (
               {timeFilterOptions.find((opt) => opt.value === timeFilter)?.label}
               )
             </h2>
             {data && (
-              <p className="text-text-quaternary mt-1 text-sm">
+              <p className="mt-1 text-sm text-text-quaternary">
                 Showing {data.total} contributors
               </p>
             )}
@@ -164,13 +164,13 @@ export default function LeaderboardPage() {
 
           {loading ? (
             <div className="p-8 text-center">
-              <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
-              <p className="text-text-tertiary mt-2">Loading...</p>
+              <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-text-link"></div>
+              <p className="mt-2 text-text-tertiary">Loading...</p>
             </div>
           ) : !data || data.leaderboard.length === 0 ? (
             <div className="p-8 text-center">
               <svg
-                className="text-text-quaternary mx-auto mb-4 h-16 w-16"
+                className="mx-auto mb-4 h-16 w-16 text-text-quaternary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -185,14 +185,14 @@ export default function LeaderboardPage() {
               <p className="text-text-quaternary">
                 No contributions found for this time period
               </p>
-              <p className="text-text-quaternary mt-1 text-sm">
+              <p className="mt-1 text-sm text-text-quaternary">
                 Try selecting a different time period or start contributing to
                 appear on the leaderboard!
               </p>
             </div>
           ) : (
             <>
-              <div className="divide-border-primary divide-y">
+              <div className="divide-y divide-border-primary">
                 {data.leaderboard.map((entry, index) => {
                   // Calculate global rank based on current page
                   const globalRank = (currentPage - 1) * pageSize + index + 1;
@@ -200,7 +200,7 @@ export default function LeaderboardPage() {
                   return (
                     <div
                       key={entry.userId}
-                      className="hover:bg-table-row-hover-leaderboard-bg cursor-pointer p-6 transition-colors"
+                      className="cursor-pointer p-6 transition-colors hover:bg-table-row-hover-leaderboard-bg"
                       onClick={() => handleUserClick(entry.userId)}
                     >
                       <div className="flex items-center justify-between">
@@ -219,10 +219,10 @@ export default function LeaderboardPage() {
                             #{globalRank}
                           </div>
                           <div>
-                            <h3 className="text-text-primary font-medium">
+                            <h3 className="font-medium text-text-primary">
                               {entry.userId}
                             </h3>
-                            <div className="text-text-quaternary mt-1 flex items-center gap-4 text-sm">
+                            <div className="mt-1 flex items-center gap-4 text-sm text-text-quaternary">
                               <span>{entry.totalActions} actions</span>
                               <span>•</span>
                               <span>
@@ -235,10 +235,10 @@ export default function LeaderboardPage() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-text-link text-xl font-bold">
+                          <div className="text-xl font-bold text-text-link">
                             {entry.totalPoints.toFixed(1)} pts
                           </div>
-                          <div className="text-text-quaternary flex items-center gap-1 text-xs">
+                          <div className="flex items-center gap-1 text-xs text-text-quaternary">
                             Click to view details
                             <svg
                               className="h-3 w-3"
@@ -279,11 +279,11 @@ export default function LeaderboardPage() {
         </div>
 
         {/* Points System Info */}
-        <div className="bg-background-info border-border-info mt-6 rounded-lg border p-6">
-          <h3 className="text-text-primary mb-3 text-lg font-semibold">
+        <div className="mt-6 rounded-lg border border-border-info bg-background-info p-6">
+          <h3 className="mb-3 text-lg font-semibold text-text-primary">
             📊 How Points Work
           </h3>
-          <div className="text-text-secondary space-y-2 text-sm">
+          <div className="space-y-2 text-sm text-text-secondary">
             <p>
               <strong>ADD Actions:</strong> 0.1 points per resource (100 points
               per 1000 resources)

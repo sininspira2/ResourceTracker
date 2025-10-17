@@ -16,7 +16,7 @@ export default async function UsersPage() {
   }
 
   return (
-    <div className="bg-background-primary min-h-screen transition-colors duration-300">
+    <div className="min-h-screen bg-background-primary transition-colors duration-300">
       <ClientNavigation
         title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}
         showDashboardLink={true}
@@ -25,7 +25,7 @@ export default async function UsersPage() {
       <main className="container mx-auto px-4 py-8">
         <div className="mx-auto max-w-7xl">
           <header className="mb-8">
-            <h1 className="text-text-primary mb-2 text-3xl font-bold">
+            <h1 className="mb-2 text-3xl font-bold text-text-primary">
               User Management
             </h1>
             <p className="text-text-tertiary">View and manage user data</p>

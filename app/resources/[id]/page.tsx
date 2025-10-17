@@ -716,10 +716,10 @@ export default function ResourceDetailPage() {
 
   if (loading || sessionStatus === "loading") {
     return (
-      <div className="bg-background-primary flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-background-primary">
         <div className="text-center">
-          <div className="border-text-link mx-auto h-12 w-12 animate-spin rounded-full border-b-2"></div>
-          <p className="text-text-tertiary mt-4">Loading resource details...</p>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
+          <p className="mt-4 text-text-tertiary">Loading resource details...</p>
         </div>
       </div>
     );
@@ -727,10 +727,10 @@ export default function ResourceDetailPage() {
 
   if (!resource) {
     return (
-      <div className="bg-background-primary flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-background-primary">
         <div className="text-center">
           <svg
-            className="text-text-quaternary mx-auto mb-4 h-16 w-16"
+            className="mx-auto mb-4 h-16 w-16 text-text-quaternary"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -742,10 +742,10 @@ export default function ResourceDetailPage() {
               d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h2 className="text-text-primary mb-2 text-2xl font-bold">
+          <h2 className="mb-2 text-2xl font-bold text-text-primary">
             Resource Not Found
           </h2>
-          <p className="text-text-tertiary mb-6">
+          <p className="mb-6 text-text-tertiary">
             The resource you&apos;re looking for doesn&apos;t exist or you
             don&apos;t have permission to view it.
             {!canEdit && (
@@ -759,7 +759,7 @@ export default function ResourceDetailPage() {
           </p>
           <button
             onClick={() => router.push("/resources")}
-            className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white rounded-lg px-4 py-2 transition-colors"
+            className="rounded-lg bg-button-primary-bg px-4 py-2 text-text-white transition-colors hover:bg-button-primary-bg-hover"
           >
             Back to Resources
           </button>
@@ -781,14 +781,14 @@ export default function ResourceDetailPage() {
     : null;
 
   return (
-    <div className="bg-background-primary min-h-screen transition-colors duration-300">
+    <div className="min-h-screen bg-background-primary transition-colors duration-300">
       {/* Header */}
-      <div className="bg-background-secondary border-border-primary border-b shadow-xs">
+      <div className="border-b border-border-primary bg-background-secondary shadow-xs">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-center">
             <button
               onClick={() => router.push("/resources")}
-              className="text-text-tertiary hover:text-text-primary absolute left-0 flex items-center transition-colors"
+              className="absolute left-0 flex items-center text-text-tertiary transition-colors hover:text-text-primary"
             >
               <svg
                 className="h-5 w-5 md:mr-2"
@@ -805,7 +805,7 @@ export default function ResourceDetailPage() {
               </svg>
               <span className="hidden md:inline">Back to Resources</span>
             </button>
-            <h1 className="text-text-primary text-center text-xl font-semibold">
+            <h1 className="text-center text-xl font-semibold text-text-primary">
               Resource Details
             </h1>
           </div>
@@ -817,7 +817,7 @@ export default function ResourceDetailPage() {
         <div className="space-y-8">
           {/* Resource Info Card - Full Width Horizontal Layout */}
           <div className="w-full">
-            <div className="bg-tile-background border-border-primary rounded-lg border p-6 shadow-md">
+            <div className="rounded-lg border border-border-primary bg-tile-background p-6 shadow-md">
               <div className="flex flex-col gap-6 md:flex-row">
                 {/* Resource Image */}
                 <div className="shrink-0">
@@ -825,7 +825,7 @@ export default function ResourceDetailPage() {
                     <img
                       src={resource.imageUrl}
                       alt={resource.name}
-                      className="border-border-secondary mx-auto h-32 w-32 rounded-lg border object-cover md:mx-0"
+                      className="mx-auto h-32 w-32 rounded-lg border border-border-secondary object-cover md:mx-0"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
@@ -836,9 +836,9 @@ export default function ResourceDetailPage() {
                     />
                   ) : null}
                   <div
-                    className={`bg-background-tertiary mx-auto flex h-32 w-32 items-center justify-center rounded-lg md:mx-0 ${resource.imageUrl ? "hidden" : "flex"}`}
+                    className={`mx-auto flex h-32 w-32 items-center justify-center rounded-lg bg-background-tertiary md:mx-0 ${resource.imageUrl ? "hidden" : "flex"}`}
                   >
-                    <span className="text-text-quaternary text-sm">
+                    <span className="text-sm text-text-quaternary">
                       No Image
                     </span>
                   </div>
@@ -849,7 +849,7 @@ export default function ResourceDetailPage() {
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div className="text-center md:text-left">
                       {/* Resource Name */}
-                      <h2 className="text-text-primary mb-2 text-2xl font-bold">
+                      <h2 className="mb-2 text-2xl font-bold text-text-primary">
                         {resource.name}
                       </h2>
 
@@ -887,7 +887,7 @@ export default function ResourceDetailPage() {
 
                       {/* Description */}
                       {resource.description && (
-                        <p className="text-text-tertiary text-center md:text-left">
+                        <p className="text-center text-text-tertiary md:text-left">
                           <LinkifiedText text={resource.description} />
                         </p>
                       )}
@@ -896,24 +896,24 @@ export default function ResourceDetailPage() {
                     {/* Quantities */}
                     <div className="flex flex-col gap-6 text-center sm:flex-row">
                       <div>
-                        <div className="text-text-primary text-xl font-bold">
+                        <div className="text-xl font-bold text-text-primary">
                           Hagga: {formatNumber(resource.quantityHagga)}
                         </div>
-                        <div className="text-text-primary text-xl font-bold">
+                        <div className="text-xl font-bold text-text-primary">
                           Deep Desert:{" "}
                           {formatNumber(resource.quantityDeepDesert)}
                         </div>
-                        <div className="text-text-tertiary text-sm">
+                        <div className="text-sm text-text-tertiary">
                           Current Quantities
                         </div>
                       </div>
                       <div>
-                        <div className="text-text-primary text-3xl font-bold">
+                        <div className="text-3xl font-bold text-text-primary">
                           {resource.targetQuantity
                             ? formatNumber(resource.targetQuantity)
                             : "N/A"}
                         </div>
-                        <div className="text-text-tertiary text-sm">
+                        <div className="text-sm text-text-tertiary">
                           Target Quantity
                         </div>
                       </div>
@@ -923,11 +923,11 @@ export default function ResourceDetailPage() {
                   {/* Progress Bar */}
                   {percentage !== null && (
                     <div>
-                      <div className="text-text-tertiary mb-2 flex justify-between text-sm">
+                      <div className="mb-2 flex justify-between text-sm text-text-tertiary">
                         <span>Progress to Target</span>
                         <span>{percentage}%</span>
                       </div>
-                      <div className="bg-background-tertiary h-3 w-full rounded-full">
+                      <div className="h-3 w-full rounded-full bg-background-tertiary">
                         <div
                           className={`h-3 rounded-full transition-all duration-500 ${
                             percentage >= 100
@@ -943,11 +943,11 @@ export default function ResourceDetailPage() {
                   )}
 
                   {/* Last Updated & Actions */}
-                  <div className="border-border-primary flex flex-col gap-4 border-t pt-4 md:flex-row md:items-center md:justify-between">
-                    <div className="text-text-tertiary text-center text-sm md:text-left">
+                  <div className="flex flex-col gap-4 border-t border-border-primary pt-4 md:flex-row md:items-center md:justify-between">
+                    <div className="text-center text-sm text-text-tertiary md:text-left">
                       <div>
                         Last updated by:{" "}
-                        <span className="text-text-primary font-medium">
+                        <span className="font-medium text-text-primary">
                           {resource.lastUpdatedBy}
                         </span>
                       </div>
@@ -971,7 +971,7 @@ export default function ResourceDetailPage() {
                                 updateType: "relative",
                               })
                             }
-                            className="bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                            className="flex w-full items-center justify-center gap-2 rounded-md bg-button-subtle-blue-bg px-3 py-1.5 text-sm font-medium text-button-subtle-blue-text transition-colors hover:bg-button-subtle-blue-bg-hover"
                             title="Add or remove from current quantity"
                           >
                             <Plus className="hidden h-4 w-4 md:inline-block" />
@@ -985,7 +985,7 @@ export default function ResourceDetailPage() {
                                 updateType: "absolute",
                               })
                             }
-                            className="bg-button-subtle-purple-bg hover:bg-button-subtle-purple-bg-hover text-button-subtle-purple-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                            className="flex w-full items-center justify-center gap-2 rounded-md bg-button-subtle-purple-bg px-3 py-1.5 text-sm font-medium text-button-subtle-purple-text transition-colors hover:bg-button-subtle-purple-bg-hover"
                             title="Set a new absolute quantity"
                           >
                             <Baseline className="hidden h-4 w-4 md:inline-block" />
@@ -995,7 +995,7 @@ export default function ResourceDetailPage() {
                             onClick={() =>
                               setTransferModalState({ isOpen: true, resource })
                             }
-                            className="bg-button-subtle-green-bg hover:bg-button-subtle-green-bg-hover text-button-subtle-green-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                            className="flex w-full items-center justify-center gap-2 rounded-md bg-button-subtle-green-bg px-3 py-1.5 text-sm font-medium text-button-subtle-green-text transition-colors hover:bg-button-subtle-green-bg-hover"
                             title="Transfer quantities between Hagga and Deep Desert"
                           >
                             <ArrowRightLeft className="hidden h-4 w-4 md:inline-block" />
@@ -1010,7 +1010,7 @@ export default function ResourceDetailPage() {
                                     resource,
                                   })
                                 }
-                                className="bg-button-subtle-orange-bg hover:bg-button-subtle-orange-bg-hover text-button-subtle-orange-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                                className="flex w-full items-center justify-center gap-2 rounded-md bg-button-subtle-orange-bg px-3 py-1.5 text-sm font-medium text-button-subtle-orange-text transition-colors hover:bg-button-subtle-orange-bg-hover"
                                 title="Change the target quantity for this resource"
                               >
                                 <Target className="hidden h-4 w-4 md:inline-block" />
@@ -1018,7 +1018,7 @@ export default function ResourceDetailPage() {
                               </button>
                               <button
                                 onClick={() => startEditResource(resource)}
-                                className="bg-button-subtle-yellow-bg hover:bg-button-subtle-yellow-bg-hover text-button-subtle-yellow-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                                className="flex w-full items-center justify-center gap-2 rounded-md bg-button-subtle-yellow-bg px-3 py-1.5 text-sm font-medium text-button-subtle-yellow-text transition-colors hover:bg-button-subtle-yellow-bg-hover"
                                 title="Edit resource metadata"
                               >
                                 <Pencil className="hidden h-4 w-4 md:inline-block" />
@@ -1032,7 +1032,7 @@ export default function ResourceDetailPage() {
                                     showDialog: true,
                                   })
                                 }
-                                className="bg-button-subtle-red-bg hover:bg-button-subtle-red-bg-hover text-button-subtle-red-text flex w-full items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                                className="flex w-full items-center justify-center gap-2 rounded-md bg-button-subtle-red-bg px-3 py-1.5 text-sm font-medium text-button-subtle-red-text transition-colors hover:bg-button-subtle-red-bg-hover"
                                 title="Delete this resource"
                               >
                                 <Trash2 className="hidden h-4 w-4 md:inline-block" />
@@ -1051,10 +1051,10 @@ export default function ResourceDetailPage() {
 
           {/* Edit Mode Modal/Overlay */}
           {editMode && canEdit && (
-            <div className="bg-background-overlay fixed inset-0 z-50 flex items-center justify-center">
-              <div className="bg-tile-background mx-4 w-full max-w-md rounded-lg p-6 shadow-xl">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-overlay">
+              <div className="mx-4 w-full max-w-md rounded-lg bg-tile-background p-6 shadow-xl">
                 <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-text-primary text-lg font-semibold">
+                  <h3 className="text-lg font-semibold text-text-primary">
                     Update Quantity
                   </h3>
                   <button
@@ -1103,7 +1103,7 @@ export default function ResourceDetailPage() {
                     >
                       {updateType === "relative" ? "+/-" : "="}
                     </button>
-                    <span className="text-text-tertiary text-sm">
+                    <span className="text-sm text-text-tertiary">
                       {updateType === "relative"
                         ? "Relative Change"
                         : "Absolute Value"}
@@ -1133,7 +1133,7 @@ export default function ResourceDetailPage() {
                       min={updateType === "absolute" ? "0" : undefined}
                     />
                     {updateType === "relative" && (
-                      <div className="text-text-quaternary mt-1 text-xs">
+                      <div className="mt-1 text-xs text-text-quaternary">
                         New quantity:{" "}
                         {formatNumber(
                           Math.max(0, resource.quantityHagga + newQuantity),
@@ -1146,7 +1146,7 @@ export default function ResourceDetailPage() {
                   <button
                     onClick={updateResource}
                     disabled={saving}
-                    className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white w-full rounded-lg py-2 font-medium disabled:opacity-50"
+                    className="w-full rounded-lg bg-button-primary-bg py-2 font-medium text-text-white hover:bg-button-primary-bg-hover disabled:opacity-50"
                   >
                     {saving ? "Updating..." : "Update Quantity"}
                   </button>
@@ -1159,17 +1159,17 @@ export default function ResourceDetailPage() {
         {/* History and Leaderboard Section - Full Width */}
         <div className="mt-8 w-full space-y-8">
           {/* Activity Timeline with Chart */}
-          <div className="bg-tile-background border-border-primary rounded-lg border p-6 shadow-md">
+          <div className="rounded-lg border border-border-primary bg-tile-background p-6 shadow-md">
             <div className="mb-6 flex items-center justify-between">
-              <h3 className="text-text-primary text-lg font-semibold">
+              <h3 className="text-lg font-semibold text-text-primary">
                 Activity Timeline
               </h3>
               <div className="flex items-center gap-4">
-                <span className="text-text-tertiary text-sm">Time Range:</span>
+                <span className="text-sm text-text-tertiary">Time Range:</span>
                 <select
                   value={timeFilter}
                   onChange={(e) => setTimeFilter(parseInt(e.target.value))}
-                  className="border-border-secondary bg-background-primary text-text-primary rounded-sm border px-3 py-1 text-sm"
+                  className="rounded-sm border border-border-secondary bg-background-primary px-3 py-1 text-sm text-text-primary"
                 >
                   <option value={1}>Last 24 hours</option>
                   <option value={3}>Last 3 days</option>
@@ -1183,8 +1183,8 @@ export default function ResourceDetailPage() {
 
             {/* History Chart */}
             {!historyLoading && history.length > 1 && (
-              <div className="bg-background-modal-content-inset border-border-secondary mb-6 rounded-lg border p-4">
-                <h4 className="text-md text-text-secondary mb-4 font-medium">
+              <div className="mb-6 rounded-lg border border-border-secondary bg-background-modal-content-inset p-4">
+                <h4 className="text-md mb-4 font-medium text-text-secondary">
                   Quantity Over Time
                 </h4>
                 <div className="relative h-72">
@@ -1461,7 +1461,7 @@ export default function ResourceDetailPage() {
                   {/* Hover Tooltip */}
                   {hoveredPoint && (
                     <div
-                      className="bg-background-tooltip text-text-tooltip pointer-events-none absolute z-10 rounded-sm px-2 py-1 text-xs whitespace-nowrap"
+                      className="pointer-events-none absolute z-10 rounded-sm bg-background-tooltip px-2 py-1 text-xs whitespace-nowrap text-text-tooltip"
                       style={{
                         left: mousePosition.x + 10,
                         top: mousePosition.y - 10,
@@ -1492,13 +1492,13 @@ export default function ResourceDetailPage() {
                       <div className="text-text-tooltip-secondary">
                         {getRelativeTime(hoveredPoint.createdAt, currentTime)}
                       </div>
-                      <div className="text-text-tooltip-accent mt-1 text-center">
+                      <div className="mt-1 text-center text-text-tooltip-accent">
                         Click to highlight
                       </div>
                     </div>
                   )}
                 </div>
-                <div className="text-text-tertiary mt-4 flex items-center justify-center gap-6 text-xs">
+                <div className="mt-4 flex items-center justify-center gap-6 text-xs text-text-tertiary">
                   <div className="flex items-center gap-1">
                     <div
                       className="h-3 w-3 flex-shrink-0 rounded-full"
@@ -1520,7 +1520,7 @@ export default function ResourceDetailPage() {
                     ></div>
                     <span>Deep Desert</span>
                   </div>
-                  <div className="text-text-quaternary ml-4">
+                  <div className="ml-4 text-text-quaternary">
                     💡 Hover points for details, click to highlight below •
                     Times update automatically
                   </div>
@@ -1529,9 +1529,9 @@ export default function ResourceDetailPage() {
             )}
 
             {!historyLoading && history.length <= 1 && (
-              <div className="text-text-quaternary py-8 text-center">
+              <div className="py-8 text-center text-text-quaternary">
                 <svg
-                  className="text-text-quaternary mx-auto mb-4 h-12 w-12"
+                  className="mx-auto mb-4 h-12 w-12 text-text-quaternary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1550,16 +1550,16 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* Resource-Specific Contribution Leaderboard */}
-          <div className="bg-tile-background border-border-primary rounded-lg border p-6 shadow-md">
+          <div className="rounded-lg border border-border-primary bg-tile-background p-6 shadow-md">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-text-primary text-lg font-semibold">
+              <h3 className="text-lg font-semibold text-text-primary">
                 Contribution Leaderboard
               </h3>
-              <div className="text-text-quaternary bg-background-tertiary rounded-sm px-2 py-1 text-xs">
+              <div className="rounded-sm bg-background-tertiary px-2 py-1 text-xs text-text-quaternary">
                 Only +/- changes count
               </div>
             </div>
-            <div className="text-text-tertiary mb-6 text-sm">
+            <div className="mb-6 text-sm text-text-tertiary">
               Tracks contributions and consumption from relative changes (+500,
               -200, etc.) for this resource. Administrative value updates are
               not included.
@@ -1567,17 +1567,17 @@ export default function ResourceDetailPage() {
 
             {historyLoading ? (
               <div className="py-4 text-center">
-                <div className="border-text-link mx-auto h-6 w-6 animate-spin rounded-full border-b-2"></div>
+                <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-text-link"></div>
               </div>
             ) : history.length === 0 ? (
-              <div className="text-text-quaternary py-4 text-center">
+              <div className="py-4 text-center text-text-quaternary">
                 No activity in the selected time period
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* Top Contributors */}
                 <div>
-                  <h4 className="text-md text-text-success mb-3 font-medium">
+                  <h4 className="text-md mb-3 font-medium text-text-success">
                     🏆 Top Contributors
                   </h4>
                   <div className="space-y-2">
@@ -1588,17 +1588,17 @@ export default function ResourceDetailPage() {
                       .map(([user, stats], index) => (
                         <div
                           key={user}
-                          className="bg-background-success flex items-center justify-between rounded-sm p-2"
+                          className="flex items-center justify-between rounded-sm bg-background-success p-2"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-text-primary text-sm font-medium">
+                            <span className="text-sm font-medium text-text-primary">
                               #{index + 1}
                             </span>
-                            <span className="text-text-primary text-sm">
+                            <span className="text-sm text-text-primary">
                               {user}
                             </span>
                           </div>
-                          <span className="text-text-success text-sm font-medium">
+                          <span className="text-sm font-medium text-text-success">
                             +{formatNumber(stats.contributed)}
                           </span>
                         </div>
@@ -1608,7 +1608,7 @@ export default function ResourceDetailPage() {
 
                 {/* Top Consumers */}
                 <div>
-                  <h4 className="text-md text-text-danger mb-3 font-medium">
+                  <h4 className="text-md mb-3 font-medium text-text-danger">
                     📉 Top Consumers
                   </h4>
                   <div className="space-y-2">
@@ -1619,17 +1619,17 @@ export default function ResourceDetailPage() {
                       .map(([user, stats], index) => (
                         <div
                           key={user}
-                          className="bg-background-danger flex items-center justify-between rounded-sm p-2"
+                          className="flex items-center justify-between rounded-sm bg-background-danger p-2"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-text-primary text-sm font-medium">
+                            <span className="text-sm font-medium text-text-primary">
                               #{index + 1}
                             </span>
-                            <span className="text-text-primary text-sm">
+                            <span className="text-sm text-text-primary">
                               {user}
                             </span>
                           </div>
-                          <span className="text-text-danger text-sm font-medium">
+                          <span className="text-sm font-medium text-text-danger">
                             -{formatNumber(stats.taken)}
                           </span>
                         </div>
@@ -1641,29 +1641,29 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* Global Points Leaderboard */}
-          <div className="bg-tile-background border-border-primary rounded-lg border p-6 shadow-md">
+          <div className="rounded-lg border border-border-primary bg-tile-background p-6 shadow-md">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-text-primary text-lg font-semibold">
+              <h3 className="text-lg font-semibold text-text-primary">
                 🏆 Points Leaderboard
               </h3>
-              <div className="text-text-quaternary bg-background-tertiary rounded-sm px-2 py-1 text-xs">
+              <div className="rounded-sm bg-background-tertiary px-2 py-1 text-xs text-text-quaternary">
                 Global rankings (last 7 days)
               </div>
             </div>
-            <div className="text-text-tertiary mb-6 text-sm">
+            <div className="mb-6 text-sm text-text-tertiary">
               Rankings based on points earned from resource contributions across
               all resources.
             </div>
 
             {leaderboardLoading ? (
               <div className="py-4 text-center">
-                <div className="border-text-link mx-auto h-6 w-6 animate-spin rounded-full border-b-2"></div>
-                <p className="text-text-tertiary mt-2 text-sm">
+                <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-text-link"></div>
+                <p className="mt-2 text-sm text-text-tertiary">
                   Loading leaderboard...
                 </p>
               </div>
             ) : leaderboard.length === 0 ? (
-              <div className="text-text-tertiary py-4 text-center">
+              <div className="py-4 text-center text-text-tertiary">
                 <p className="text-sm">
                   No contributions in the selected time period
                 </p>
@@ -1673,7 +1673,7 @@ export default function ResourceDetailPage() {
                 {leaderboard.slice(0, 10).map((entry, index) => (
                   <div
                     key={entry.userId}
-                    className="from-leaderboard-gradient-from to-leaderboard-gradient-to hover:from-leaderboard-gradient-from-hover hover:to-leaderboard-gradient-to-hover flex cursor-pointer items-center justify-between rounded-lg bg-linear-to-r p-3 transition-all hover:bg-linear-to-r"
+                    className="flex cursor-pointer items-center justify-between rounded-lg bg-linear-to-r from-leaderboard-gradient-from to-leaderboard-gradient-to p-3 transition-all hover:bg-linear-to-r hover:from-leaderboard-gradient-from-hover hover:to-leaderboard-gradient-to-hover"
                     onClick={() =>
                       router.push(`/dashboard/contributions/${entry.userId}`)
                     }
@@ -1693,19 +1693,19 @@ export default function ResourceDetailPage() {
                       >
                         #{index + 1}
                       </div>
-                      <div className="text-text-primary text-sm font-medium">
+                      <div className="text-sm font-medium text-text-primary">
                         {entry.userId}
                       </div>
-                      <div className="text-text-quaternary text-xs">
+                      <div className="text-xs text-text-quaternary">
                         ({entry.totalActions} actions)
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="text-text-link text-sm font-bold">
+                      <div className="text-sm font-bold text-text-link">
                         {entry.totalPoints.toFixed(1)} pts
                       </div>
                       <svg
-                        className="text-text-quaternary h-4 w-4"
+                        className="h-4 w-4 text-text-quaternary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -1721,10 +1721,10 @@ export default function ResourceDetailPage() {
                   </div>
                 ))}
 
-                <div className="border-border-primary border-t pt-4">
+                <div className="border-t border-border-primary pt-4">
                   <button
                     onClick={() => router.push("/dashboard/leaderboard")}
-                    className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                    className="w-full rounded-lg bg-button-primary-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-primary-bg-hover"
                   >
                     View Full Leaderboard
                   </button>
@@ -1734,21 +1734,21 @@ export default function ResourceDetailPage() {
           </div>
 
           {/* History Timeline */}
-          <div className="bg-tile-background border-border-primary rounded-lg border p-6 shadow-md">
+          <div className="rounded-lg border border-border-primary bg-tile-background p-6 shadow-md">
             <div className="mb-6 flex items-center justify-between">
-              <h3 className="text-text-primary text-lg font-semibold">
+              <h3 className="text-lg font-semibold text-text-primary">
                 Recent Changes
               </h3>
               <div className="flex items-center gap-3">
                 {selectedPointId && (
-                  <div className="text-text-tertiary bg-background-tertiary rounded-sm px-2 py-1 text-sm">
+                  <div className="rounded-sm bg-background-tertiary px-2 py-1 text-sm text-text-tertiary">
                     Point selected on chart
                   </div>
                 )}
                 {selectedPointId && (
                   <button
                     onClick={() => setSelectedPointId(null)}
-                    className="bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text rounded-lg px-3 py-1 text-sm transition-colors"
+                    className="rounded-lg bg-button-subtle-blue-bg px-3 py-1 text-sm text-button-subtle-blue-text transition-colors hover:bg-button-subtle-blue-bg-hover"
                   >
                     Clear Selection
                   </button>
@@ -1758,13 +1758,13 @@ export default function ResourceDetailPage() {
 
             {historyLoading ? (
               <div className="py-8 text-center">
-                <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
-                <p className="text-text-tertiary mt-2">Loading history...</p>
+                <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-text-link"></div>
+                <p className="mt-2 text-text-tertiary">Loading history...</p>
               </div>
             ) : history.length === 0 ? (
-              <div className="text-text-quaternary py-8 text-center">
+              <div className="py-8 text-center text-text-quaternary">
                 <svg
-                  className="text-text-quaternary mx-auto mb-4 h-12 w-12"
+                  className="mx-auto mb-4 h-12 w-12 text-text-quaternary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1792,7 +1792,7 @@ export default function ResourceDetailPage() {
                       id={`history-entry-${entry.id}`}
                       className={`group flex cursor-pointer items-start justify-between rounded-lg p-4 transition-all duration-300 ${
                         isHighlighted
-                          ? "bg-background-highlight border-border-highlight scale-[1.02] transform border-2 shadow-md"
+                          ? "scale-[1.02] transform border-2 border-border-highlight bg-background-highlight shadow-md"
                           : "bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover"
                       }`}
                       onClick={() =>
@@ -1816,7 +1816,7 @@ export default function ResourceDetailPage() {
                           } ${isHighlighted ? "ring-highlight-border ring-2" : ""}`}
                         ></div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-text-primary flex flex-wrap items-center gap-2 font-medium">
+                          <div className="flex flex-wrap items-center gap-2 font-medium text-text-primary">
                             {entry.changeType === "transfer" ? (
                               <span>
                                 Transfer {entry.transferAmount}{" "}
@@ -1857,31 +1857,31 @@ export default function ResourceDetailPage() {
                               {entry.changeType}
                             </span>
                             {isHighlighted && (
-                              <span className="bg-tag-selected-bg text-tag-selected-text animate-pulse rounded-full px-2 py-0.5 text-xs">
+                              <span className="animate-pulse rounded-full bg-tag-selected-bg px-2 py-0.5 text-xs text-tag-selected-text">
                                 Selected
                               </span>
                             )}
                           </div>
-                          <div className="text-text-tertiary mt-1 text-sm">
+                          <div className="mt-1 text-sm text-text-tertiary">
                             By{" "}
                             <span className="font-medium">
                               {entry.updatedBy}
                             </span>
                             {entry.changeType === "relative" && (
-                              <span className="text-text-success ml-2 text-xs">
+                              <span className="ml-2 text-xs text-text-success">
                                 • Counts toward leaderboard
                               </span>
                             )}
                           </div>
                           {entry.reason && (
-                            <div className="text-text-secondary bg-background-tertiary mt-2 rounded-md p-2 text-sm break-words whitespace-pre-wrap">
+                            <div className="mt-2 rounded-md bg-background-tertiary p-2 text-sm break-words whitespace-pre-wrap text-text-secondary">
                               <LinkifiedText text={entry.reason} />
                             </div>
                           )}
                         </div>
                       </div>
                       <div className="flex items-start gap-3 pl-4">
-                        <div className="text-text-quaternary flex-shrink-0 text-right text-sm">
+                        <div className="flex-shrink-0 text-right text-sm text-text-quaternary">
                           <div
                             className="cursor-help decoration-dotted hover:underline"
                             title={`${new Date(entry.createdAt).toLocaleDateString()} at ${new Date(entry.createdAt).toLocaleTimeString()}`}
@@ -1889,7 +1889,7 @@ export default function ResourceDetailPage() {
                             {getRelativeTime(entry.createdAt, currentTime)}
                           </div>
                           {isHighlighted && (
-                            <div className="text-text-link mt-1 text-xs">
+                            <div className="mt-1 text-xs text-text-link">
                               📍 Chart point
                             </div>
                           )}
@@ -1903,7 +1903,7 @@ export default function ResourceDetailPage() {
                               deleteHistoryEntry(entry.id);
                             }}
                             disabled={saving}
-                            className="text-button-icon-danger-text hover:text-button-icon-danger-text-hover hover:bg-button-icon-danger-bg-hover rounded-sm p-1 opacity-0 transition-opacity group-hover:opacity-100"
+                            className="rounded-sm p-1 text-button-icon-danger-text opacity-0 transition-opacity group-hover:opacity-100 hover:bg-button-icon-danger-bg-hover hover:text-button-icon-danger-text-hover"
                             title="Delete this history entry"
                           >
                             <svg
@@ -2000,25 +2000,25 @@ export default function ResourceDetailPage() {
       )}
 
       {deleteConfirm.showDialog && (
-        <div className="bg-background-overlay fixed inset-0 z-50 flex items-center justify-center">
-          <div className="bg-tile-background border-border-primary mx-4 max-w-md rounded-lg border p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-overlay">
+          <div className="mx-4 max-w-md rounded-lg border border-border-primary bg-tile-background p-6">
             <div className="mb-4 flex items-center gap-3">
-              <Trash2 className="text-text-danger h-8 w-8" />
-              <h3 className="text-text-primary text-lg font-semibold">
+              <Trash2 className="h-8 w-8 text-text-danger" />
+              <h3 className="text-lg font-semibold text-text-primary">
                 Delete Resource
               </h3>
             </div>
 
             <div className="mb-6">
-              <p className="text-text-secondary mb-2">
+              <p className="mb-2 text-text-secondary">
                 Are you sure you want to delete{" "}
                 <strong>&quot;{deleteConfirm.resourceName}&quot;</strong>?
               </p>
-              <div className="bg-background-danger border-border-danger rounded-lg border p-3">
+              <div className="rounded-lg border border-border-danger bg-background-danger p-3">
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="text-text-danger mt-0.5 h-5 w-5 shrink-0" />
+                  <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-text-danger" />
                   <div className="text-sm">
-                    <p className="text-text-danger mb-1 font-medium">
+                    <p className="mb-1 font-medium text-text-danger">
                       Warning: This action cannot be undone
                     </p>
                     <p className="text-text-danger">
@@ -2041,7 +2041,7 @@ export default function ResourceDetailPage() {
                     showDialog: false,
                   })
                 }
-                className="text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                className="rounded-lg bg-button-secondary-bg px-4 py-2 text-sm font-medium text-button-secondary-text transition-colors hover:bg-button-secondary-bg-hover"
               >
                 Cancel
               </button>
@@ -2052,7 +2052,7 @@ export default function ResourceDetailPage() {
                   }
                 }}
                 disabled={saving}
-                className="text-text-white bg-button-danger-bg hover:bg-button-danger-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+                className="rounded-lg bg-button-danger-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-danger-bg-hover disabled:opacity-50"
               >
                 {saving ? "Deleting..." : "Delete Resource"}
               </button>

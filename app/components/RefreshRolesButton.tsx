@@ -25,7 +25,7 @@ export function RefreshRolesButton() {
     <button
       onClick={handleRefresh}
       disabled={isRefreshing}
-      className="text-text-link bg-background-info border-border-info hover:bg-background-info-hover inline-flex items-center gap-2 rounded-lg border px-3 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+      className="inline-flex items-center gap-2 rounded-lg border border-border-info bg-background-info px-3 py-1 text-xs font-medium text-text-link transition-colors hover:bg-background-info-hover disabled:cursor-not-allowed disabled:opacity-50"
     >
       <svg
         className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`}

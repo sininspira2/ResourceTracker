@@ -87,10 +87,10 @@ export function CongratulationsPopup({
   return (
     <div className="pointer-events-none fixed inset-0 z-50 flex items-end justify-end p-4">
       <div
-        className={`bg-background-modal-content border-border-primary pointer-events-auto w-full max-w-sm transform rounded-lg border shadow-2xl transition-all duration-300 md:max-w-md ${isAnimating ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"} `}
+        className={`pointer-events-auto w-full max-w-sm transform rounded-lg border border-border-primary bg-background-modal-content shadow-2xl transition-all duration-300 md:max-w-md ${isAnimating ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"} `}
       >
         {/* Header */}
-        <div className="bg-gradient-success text-text-white rounded-t-lg p-4">
+        <div className="bg-gradient-success rounded-t-lg p-4 text-text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg
@@ -136,31 +136,31 @@ export function CongratulationsPopup({
               <div className="mb-4 text-center">
                 <div className="mb-2 flex items-center justify-center gap-1">
                   <svg
-                    className="text-text-warning h-6 w-6"
+                    className="h-6 w-6 text-text-warning"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
-                  <span className="text-text-success text-2xl font-bold">
+                  <span className="text-2xl font-bold text-text-success">
                     +{pointsEarned.toFixed(1)} points
                   </span>
                   <svg
-                    className="text-text-warning h-6 w-6"
+                    className="h-6 w-6 text-text-warning"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
                 </div>
-                <p className="text-text-tertiary text-sm">
+                <p className="text-sm text-text-tertiary">
                   {getActionText()} {resourceName}
                 </p>
               </div>
 
               {/* Points Breakdown */}
               {pointsCalculation && (
-                <div className="bg-background-secondary text-text-primary mb-4 rounded-lg p-3 text-sm">
+                <div className="mb-4 rounded-lg bg-background-secondary p-3 text-sm text-text-primary">
                   <div className="space-y-1">
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">Base points:</span>
@@ -182,7 +182,7 @@ export function CongratulationsPopup({
                         {getBonusDisplay(pointsCalculation.statusBonus)}
                       </span>
                     </div>
-                    <hr className="border-border-secondary my-2" />
+                    <hr className="my-2 border-border-secondary" />
                     <div className="flex justify-between font-bold">
                       <span className="text-text-primary">Total:</span>
                       <span className="text-text-primary">
@@ -195,17 +195,17 @@ export function CongratulationsPopup({
 
               <button
                 onClick={handleViewContributions}
-                className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white w-full rounded-lg px-4 py-2 font-medium transition-colors"
+                className="w-full rounded-lg bg-button-primary-bg px-4 py-2 font-medium text-text-white transition-colors hover:bg-button-primary-bg-hover"
               >
                 View My Contributions
               </button>
             </>
           ) : (
             <div className="text-center">
-              <p className="text-text-tertiary mb-2">
+              <p className="mb-2 text-text-tertiary">
                 {getActionText()} {resourceName}
               </p>
-              <p className="text-text-quaternary text-sm">
+              <p className="text-sm text-text-quaternary">
                 No points earned for this action
               </p>
             </div>

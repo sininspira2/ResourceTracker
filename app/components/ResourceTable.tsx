@@ -888,8 +888,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   if (loading) {
     return (
       <div className="p-8 text-center">
-        <div className="border-text-link mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
-        <p className="text-text-tertiary mt-2">Loading resources...</p>
+        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-text-link"></div>
+        <p className="mt-2 text-text-tertiary">Loading resources...</p>
       </div>
     );
   }
@@ -899,13 +899,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       {/* Dashboard Overview */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Recent Updates */}
-        <div className="bg-background-panel border-border-primary rounded-lg border p-6 shadow-sm">
+        <div className="rounded-lg border border-border-primary bg-background-panel p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-text-primary text-lg font-semibold">
+            <h3 className="text-lg font-semibold text-text-primary">
               Recent Updates
             </h3>
             <svg
-              className="text-text-quaternary h-5 w-5"
+              className="h-5 w-5 text-text-quaternary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -921,13 +921,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
           {activityLoading ? (
             <div className="py-4 text-center">
-              <div className="border-text-link mx-auto h-6 w-6 animate-spin rounded-full border-b-2"></div>
-              <p className="text-text-tertiary mt-2 text-sm">
+              <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-text-link"></div>
+              <p className="mt-2 text-sm text-text-tertiary">
                 Loading updates...
               </p>
             </div>
           ) : recentActivity.length === 0 ? (
-            <div className="text-text-tertiary py-4 text-center">
+            <div className="py-4 text-center text-text-tertiary">
               <p className="text-sm">No recent updates</p>
             </div>
           ) : (
@@ -935,7 +935,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               {recentActivity.slice(0, 5).map((activity) => (
                 <div
                   key={activity.id}
-                  className="bg-button-secondary-neutral-bg hover:bg-button-secondary-neutral-bg-hover flex cursor-pointer items-center justify-between rounded-lg p-3 transition-colors"
+                  className="flex cursor-pointer items-center justify-between rounded-lg bg-button-secondary-neutral-bg p-3 transition-colors hover:bg-button-secondary-neutral-bg-hover"
                   onClick={() => handleResourceClick(activity.resourceId)}
                 >
                   <div className="flex items-center gap-3">
@@ -949,10 +949,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       }`}
                     ></div>
                     <div>
-                      <div className="text-text-primary text-sm font-medium">
+                      <div className="text-sm font-medium text-text-primary">
                         {activity.resourceName}
                       </div>
-                      <div className="text-text-quaternary text-xs">
+                      <div className="text-xs text-text-quaternary">
                         By {activity.updatedBy} •{" "}
                         {getRelativeTime(activity.createdAt)}
                       </div>
@@ -977,9 +977,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         </div>
 
         {/* Leaderboard */}
-        <div className="bg-background-panel border-border-primary rounded-lg border p-6 shadow-sm">
+        <div className="rounded-lg border border-border-primary bg-background-panel p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-text-primary text-lg font-semibold">
+            <h3 className="text-lg font-semibold text-text-primary">
               🏆 Leaderboard
             </h3>
             <div className="flex items-center gap-2">
@@ -991,7 +991,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       .value as (typeof LEADERBOARD_TIME_FILTERS)[keyof typeof LEADERBOARD_TIME_FILTERS],
                   )
                 }
-                className="bg-background-panel-inset border-border-secondary rounded-sm border px-2 py-1 text-xs"
+                className="rounded-sm border border-border-secondary bg-background-panel-inset px-2 py-1 text-xs"
               >
                 <option value={LEADERBOARD_TIME_FILTERS["24H"]}>24h</option>
                 <option value={LEADERBOARD_TIME_FILTERS["7D"]}>7d</option>
@@ -999,7 +999,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 <option value={LEADERBOARD_TIME_FILTERS.ALL}>All</option>
               </select>
               <svg
-                className="text-text-quaternary h-5 w-5"
+                className="h-5 w-5 text-text-quaternary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -1016,13 +1016,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
           {leaderboardLoading ? (
             <div className="py-4 text-center">
-              <div className="border-text-link mx-auto h-6 w-6 animate-spin rounded-full border-b-2"></div>
-              <p className="text-text-tertiary mt-2 text-sm">
+              <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-text-link"></div>
+              <p className="mt-2 text-sm text-text-tertiary">
                 Loading leaderboard...
               </p>
             </div>
           ) : leaderboard.length === 0 ? (
-            <div className="text-text-tertiary py-4 text-center">
+            <div className="py-4 text-center text-text-tertiary">
               <p className="text-sm">No contributions in this time period</p>
             </div>
           ) : (
@@ -1032,7 +1032,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 .map((entry, index) => (
                   <div
                     key={entry.userId}
-                    className="from-leaderboard-gradient-from to-leaderboard-gradient-to hover:from-leaderboard-gradient-from-hover hover:to-leaderboard-gradient-to-hover flex cursor-pointer items-center justify-between rounded-lg bg-linear-to-r p-3 transition-all hover:bg-linear-to-r"
+                    className="flex cursor-pointer items-center justify-between rounded-lg bg-linear-to-r from-leaderboard-gradient-from to-leaderboard-gradient-to p-3 transition-all hover:bg-linear-to-r hover:from-leaderboard-gradient-from-hover hover:to-leaderboard-gradient-to-hover"
                     onClick={() =>
                       router.push(`/dashboard/contributions/${entry.userId}`)
                     }
@@ -1052,19 +1052,19 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       >
                         #{index + 1}
                       </div>
-                      <div className="text-text-primary text-sm font-medium">
+                      <div className="text-sm font-medium text-text-primary">
                         {entry.userId}
                       </div>
-                      <div className="text-text-quaternary text-xs">
+                      <div className="text-xs text-text-quaternary">
                         ({entry.totalActions} actions)
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="text-text-link text-sm font-bold">
+                      <div className="text-sm font-bold text-text-link">
                         {entry.totalPoints.toFixed(1)} pts
                       </div>
                       <svg
-                        className="text-text-quaternary h-4 w-4"
+                        className="h-4 w-4 text-text-quaternary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -1084,7 +1084,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 {leaderboard.length > 5 && (
                   <button
                     onClick={() => setLeaderboardExpanded(!leaderboardExpanded)}
-                    className="text-text-link hover:text-text-link-hover w-full py-2 text-center text-sm transition-colors"
+                    className="w-full py-2 text-center text-sm text-text-link transition-colors hover:text-text-link-hover"
                   >
                     {leaderboardExpanded
                       ? "Show Less"
@@ -1094,7 +1094,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                 <button
                   onClick={() => router.push("/dashboard/leaderboard")}
-                  className="bg-button-primary-bg hover:bg-button-primary-bg-hover text-text-white w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                  className="w-full rounded-lg bg-button-primary-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-primary-bg-hover"
                 >
                   View Full Leaderboard
                 </button>
@@ -1106,11 +1106,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       {/* Admin Panel */}
       {isResourceAdmin && (
-        <div className="bg-background-danger border-border-danger rounded-lg border p-6">
+        <div className="rounded-lg border border-border-danger bg-background-danger p-6">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <svg
-                className="text-text-danger h-6 w-6"
+                className="h-6 w-6 text-text-danger"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -1122,14 +1122,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                 />
               </svg>
-              <h3 className="text-text-danger text-lg font-semibold">
+              <h3 className="text-lg font-semibold text-text-danger">
                 Admin Panel
               </h3>
             </div>
             {!showCreateForm && (
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="bg-button-success-bg hover:bg-button-success-bg-hover text-text-white flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                className="flex items-center gap-2 rounded-lg bg-button-success-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-success-bg-hover"
               >
                 <svg
                   className="h-4 w-4"
@@ -1150,13 +1150,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           </div>
 
           {showCreateForm && (
-            <div className="bg-background-panel border-border-secondary rounded-lg border p-4">
-              <h4 className="text-md text-text-primary mb-4 font-medium">
+            <div className="rounded-lg border border-border-secondary bg-background-panel p-4">
+              <h4 className="text-md mb-4 font-medium text-text-primary">
                 Create New Resource
               </h4>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="text-text-secondary mb-1 block text-sm font-medium">
+                  <label className="mb-1 block text-sm font-medium text-text-secondary">
                     Name *
                   </label>
                   <input
@@ -1168,13 +1168,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         name: e.target.value,
                       }))
                     }
-                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
+                    className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
                     placeholder="Resource name"
                   />
                 </div>
 
                 <div>
-                  <label className="text-text-secondary mb-1 block text-sm font-medium">
+                  <label className="mb-1 block text-sm font-medium text-text-secondary">
                     Category *
                   </label>
                   <select
@@ -1185,7 +1185,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         category: e.target.value,
                       }))
                     }
-                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
+                    className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
                   >
                     {CATEGORY_OPTIONS.map((cat) => (
                       <option key={cat} value={cat}>
@@ -1196,7 +1196,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 </div>
 
                 <div>
-                  <label className="text-text-secondary mb-1 block text-sm font-medium">
+                  <label className="mb-1 block text-sm font-medium text-text-secondary">
                     Description
                   </label>
                   <input
@@ -1208,13 +1208,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         description: e.target.value,
                       }))
                     }
-                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
+                    className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
                     placeholder="Optional description"
                   />
                 </div>
 
                 <div>
-                  <label className="text-text-secondary mb-1 block text-sm font-medium">
+                  <label className="mb-1 block text-sm font-medium text-text-secondary">
                     Image URL
                   </label>
                   <input
@@ -1226,13 +1226,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         imageUrl: e.target.value,
                       }))
                     }
-                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
+                    className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
 
                 <div>
-                  <label className="text-text-secondary mb-1 block text-sm font-medium">
+                  <label className="mb-1 block text-sm font-medium text-text-secondary">
                     Initial Quantity (Hagga)
                   </label>
                   <input
@@ -1245,11 +1245,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         quantityHagga: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
+                    className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
                   />
                 </div>
                 <div>
-                  <label className="text-text-secondary mb-1 block text-sm font-medium">
+                  <label className="mb-1 block text-sm font-medium text-text-secondary">
                     Initial Quantity (Deep Desert)
                   </label>
                   <input
@@ -1262,12 +1262,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         quantityDeepDesert: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
+                    className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="text-text-secondary mb-1 block text-sm font-medium">
+                  <label className="mb-1 block text-sm font-medium text-text-secondary">
                     Target Quantity
                   </label>
                   <input
@@ -1280,12 +1280,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         targetQuantity: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
+                    className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="text-text-secondary mb-1 block text-sm font-medium">
+                  <label className="mb-1 block text-sm font-medium text-text-secondary">
                     Points Multiplier
                   </label>
                   <input
@@ -1299,10 +1299,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         multiplier: parseFloat(e.target.value) || 1.0,
                       }))
                     }
-                    className="border-border-secondary bg-background-panel-inset text-text-primary w-full rounded-lg border px-3 py-2"
+                    className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
                     placeholder="1.0"
                   />
-                  <p className="text-text-quaternary mt-1 text-xs">
+                  <p className="mt-1 text-xs text-text-quaternary">
                     Points multiplier for this resource (e.g., 0.1 for
                     low-value, 5.0 for high-value)
                   </p>
@@ -1317,7 +1317,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     !createResourceForm.name ||
                     !createResourceForm.category
                   }
-                  className="bg-button-success-bg hover:bg-button-success-bg-hover text-text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+                  className="rounded-lg bg-button-success-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-success-bg-hover disabled:opacity-50"
                 >
                   {saving ? "Creating..." : "Create Resource"}
                 </button>
@@ -1335,7 +1335,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       multiplier: 1.0,
                     });
                   }}
-                  className="bg-button-neutral-bg hover:bg-button-neutral-bg-hover text-text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                  className="rounded-lg bg-button-neutral-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-neutral-bg-hover"
                 >
                   Cancel
                 </button>
@@ -1346,14 +1346,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       )}
 
       {/* Search and View Toggle */}
-      <div className="bg-background-panel border-border-primary rounded-lg border p-6 shadow-sm">
+      <div className="rounded-lg border border-border-primary bg-background-panel p-6 shadow-sm">
         <div className="flex flex-col gap-4">
           {/* Search and Filters Row */}
           <div className="flex flex-col flex-wrap items-start justify-between gap-4 sm:flex-row sm:items-center">
             {/* Search Bar */}
             <div className="relative max-w-md flex-1">
               <svg
-                className="text-text-quaternary absolute top-3 left-3 h-4 w-4"
+                className="absolute top-3 left-3 h-4 w-4 text-text-quaternary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -1370,12 +1370,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 placeholder="Search resources..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="border-border-secondary bg-background-panel-inset text-text-primary placeholder-text-quaternary w-full rounded-lg border py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-border-secondary bg-background-panel-inset py-2 pr-4 pl-10 text-text-primary placeholder-text-quaternary focus:border-transparent focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* View Toggle Buttons */}
-            <div className="bg-background-panel-inset flex items-center rounded-lg p-1">
+            <div className="flex items-center rounded-lg bg-background-panel-inset p-1">
               <button
                 onClick={() => setAndSaveViewMode(VIEW_MODE.TABLE)}
                 className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
@@ -1429,13 +1429,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           <div className="flex flex-col flex-wrap items-start gap-4 sm:flex-row sm:items-center">
             {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <label className="text-text-secondary text-sm font-medium">
+              <label className="text-sm font-medium text-text-secondary">
                 Status:
               </label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="border-border-secondary bg-background-panel-inset text-text-primary rounded-lg border px-3 py-1.5 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                className="rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-1.5 text-sm text-text-primary focus:border-transparent focus:ring-2 focus:ring-blue-500"
               >
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -1447,13 +1447,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
             {/* Category Filter */}
             <div className="flex items-center gap-2">
-              <label className="text-text-secondary text-sm font-medium">
+              <label className="text-sm font-medium text-text-secondary">
                 Category:
               </label>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="border-border-secondary bg-background-panel-inset text-text-primary rounded-lg border px-3 py-1.5 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                className="rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-1.5 text-sm text-text-primary focus:border-transparent focus:ring-2 focus:ring-blue-500"
               >
                 {categoryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -1465,16 +1465,16 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
             {/* Needs Updating Filter */}
             <div className="flex items-center gap-2">
-              <label className="text-text-secondary flex cursor-pointer items-center gap-2 text-sm font-medium">
+              <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-text-secondary">
                 <input
                   type="checkbox"
                   checked={needsUpdateFilter}
                   onChange={(e) => setNeedsUpdateFilter(e.target.checked)}
-                  className="text-text-link bg-background-tertiary border-border-secondary focus:ring-highlight-border h-4 w-4 rounded-sm focus:ring-2"
+                  className="focus:ring-highlight-border h-4 w-4 rounded-sm border-border-secondary bg-background-tertiary text-text-link focus:ring-2"
                 />
                 <span>Needs updating ({needsUpdateCount})</span>
                 <span
-                  className="text-text-quaternary text-xs"
+                  className="text-xs text-text-quaternary"
                   title="Priority items are flagged after 24 hours, non-priority after 7 days."
                 >
                   (24h/7d)
@@ -1484,12 +1484,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
             {/* Priority Filter */}
             <div className="flex items-center gap-2">
-              <label className="text-text-secondary flex cursor-pointer items-center gap-2 text-sm font-medium">
+              <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-text-secondary">
                 <input
                   type="checkbox"
                   checked={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.checked)}
-                  className="text-text-link bg-background-tertiary border-border-secondary focus:ring-highlight-border h-4 w-4 rounded-sm focus:ring-2"
+                  className="focus:ring-highlight-border h-4 w-4 rounded-sm border-border-secondary bg-background-tertiary text-text-link focus:ring-2"
                 />
                 <span>Priority</span>
               </label>
@@ -1501,7 +1501,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               searchTerm ||
               categoryFilter !== "all" ||
               priorityFilter) && (
-              <div className="text-text-tertiary flex items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 text-sm text-text-tertiary">
                 <span>
                   Showing {filteredResources.length} of {resources.length}{" "}
                   resources
@@ -1524,7 +1524,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         </div>
 
         {/* Helper text */}
-        <p className="text-text-quaternary mt-3 text-sm">
+        <p className="mt-3 text-sm text-text-quaternary">
           💡 Click any resource to view detailed history and analytics
         </p>
       </div>
@@ -1551,7 +1551,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             })
             .map(([category, categoryResources]) => (
               <div key={category} className="space-y-4">
-                <h3 className="text-text-primary border-border-primary border-b pb-2 text-lg font-semibold">
+                <h3 className="border-b border-border-primary pb-2 text-lg font-semibold text-text-primary">
                   {category} ({categoryResources.length})
                 </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -1571,7 +1571,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         key={resource.id}
                         className={`group cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
                           isOutdated
-                            ? "border-update-indicator-border ring-update-indicator-ring ring-1"
+                            ? "border-update-indicator-border ring-1 ring-update-indicator-ring"
                             : "border-border-primary"
                         } ${
                           resource.category === BP_CATEGORY
@@ -1606,11 +1606,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             />
                           ) : null}
                           <div
-                            className={`bg-background-tertiary flex h-full w-full items-center justify-center rounded-lg ${
+                            className={`flex h-full w-full items-center justify-center rounded-lg bg-background-tertiary ${
                               resource.imageUrl ? "hidden" : "flex"
                             }`}
                           >
-                            <span className="text-text-quaternary text-xs">
+                            <span className="text-xs text-text-quaternary">
                               No Image
                             </span>
                           </div>
@@ -1618,7 +1618,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           {/* Click indicator */}
                           <div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
                             <svg
-                              className="text-text-link h-4 w-4"
+                              className="h-4 w-4 text-text-link"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -1638,7 +1638,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           className="space-y-2"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <h4 className="text-text-primary group-hover:text-text-link truncate text-sm font-medium transition-colors">
+                          <h4 className="truncate text-sm font-medium text-text-primary transition-colors group-hover:text-text-link">
                             {resource.isPriority && (
                               <span className="text-text-priority">* </span>
                             )}
@@ -1677,14 +1677,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                           {/* Quantity Display */}
                           <div className="text-center">
-                            <div className="text-text-primary text-sm font-bold">
+                            <div className="text-sm font-bold text-text-primary">
                               Hagga: {formatNumber(resource.quantityHagga)}
                             </div>
-                            <div className="text-text-primary text-sm font-bold">
+                            <div className="text-sm font-bold text-text-primary">
                               Deep Desert:{" "}
                               {formatNumber(resource.quantityDeepDesert)}
                             </div>
-                            <div className="text-text-quaternary text-xs">
+                            <div className="text-xs text-text-quaternary">
                               {resource.targetQuantity
                                 ? `Target: ${formatNumber(
                                     resource.targetQuantity,
@@ -1694,17 +1694,17 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           </div>
 
                           {/* Last Updated Info */}
-                          <div className="border-background-tertiary border-t pt-2 text-center">
-                            <div className="text-text-quaternary text-xs">
+                          <div className="border-t border-background-tertiary pt-2 text-center">
+                            <div className="text-xs text-text-quaternary">
                               Updated by{" "}
-                              <span className="text-text-tertiary font-medium">
+                              <span className="font-medium text-text-tertiary">
                                 {resource.lastUpdatedBy}
                               </span>
                             </div>
                             <div className="flex items-center justify-center gap-1">
                               {isOutdated && (
                                 <svg
-                                  className="text-update-indicator-text h-3 w-3"
+                                  className="h-3 w-3 text-update-indicator-text"
                                   fill="currentColor"
                                   viewBox="0 0 20 20"
                                 >
@@ -1718,7 +1718,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               <div
                                 className={`cursor-help text-xs decoration-dotted hover:underline ${
                                   isOutdated
-                                    ? "text-update-indicator-text font-medium"
+                                    ? "font-medium text-update-indicator-text"
                                     : "text-text-quaternary"
                                 }`}
                                 title={new Date(
@@ -1744,7 +1744,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       updateType: UPDATE_TYPE.RELATIVE,
                                     });
                                   }}
-                                  className="bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                  className="flex-1 rounded-sm bg-button-subtle-blue-bg px-2 py-1 text-xs font-medium text-button-subtle-blue-text transition-colors hover:bg-button-subtle-blue-bg-hover"
                                 >
                                   Add/Remove
                                 </button>
@@ -1757,7 +1757,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       updateType: UPDATE_TYPE.ABSOLUTE,
                                     });
                                   }}
-                                  className="bg-button-subtle-purple-bg hover:bg-button-subtle-purple-bg-hover text-button-subtle-purple-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                  className="flex-1 rounded-sm bg-button-subtle-purple-bg px-2 py-1 text-xs font-medium text-button-subtle-purple-text transition-colors hover:bg-button-subtle-purple-bg-hover"
                                 >
                                   Set Qty
                                 </button>
@@ -1771,7 +1771,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       resource: resource,
                                     });
                                   }}
-                                  className="bg-button-subtle-green-bg hover:bg-button-subtle-green-bg-hover text-button-subtle-green-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                  className="flex-1 rounded-sm bg-button-subtle-green-bg px-2 py-1 text-xs font-medium text-button-subtle-green-text transition-colors hover:bg-button-subtle-green-bg-hover"
                                 >
                                   Transfer
                                 </button>
@@ -1784,7 +1784,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                         resource: resource,
                                       });
                                     }}
-                                    className="bg-button-subtle-orange-bg hover:bg-button-subtle-orange-bg-hover text-button-subtle-orange-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                    className="flex-1 rounded-sm bg-button-subtle-orange-bg px-2 py-1 text-xs font-medium text-button-subtle-orange-text transition-colors hover:bg-button-subtle-orange-bg-hover"
                                   >
                                     Set Target
                                   </button>
@@ -1799,7 +1799,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       e.stopPropagation();
                                       startEditResource(resource);
                                     }}
-                                    className="bg-button-subtle-yellow-bg hover:bg-button-subtle-yellow-bg-hover text-button-subtle-yellow-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                    className="flex-1 rounded-sm bg-button-subtle-yellow-bg px-2 py-1 text-xs font-medium text-button-subtle-yellow-text transition-colors hover:bg-button-subtle-yellow-bg-hover"
                                   >
                                     Edit
                                   </button>
@@ -1812,7 +1812,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                         showDialog: true,
                                       });
                                     }}
-                                    className="bg-button-subtle-red-bg hover:bg-button-subtle-red-bg-hover text-button-subtle-red-text flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                    className="flex-1 rounded-sm bg-button-subtle-red-bg px-2 py-1 text-xs font-medium text-button-subtle-red-text transition-colors hover:bg-button-subtle-red-bg-hover"
                                   >
                                     Delete
                                   </button>
@@ -1832,37 +1832,37 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       {/* Table View */}
       {viewMode === VIEW_MODE.TABLE && (
-        <div className="bg-background-primary border-border-primary overflow-hidden rounded-lg border shadow-xs">
+        <div className="overflow-hidden rounded-lg border border-border-primary bg-background-primary shadow-xs">
           <div className="overflow-x-auto">
-            <table className="divide-border-primary min-w-full table-fixed divide-y">
+            <table className="min-w-full table-fixed divide-y divide-border-primary">
               <thead className="bg-background-secondary">
                 <tr>
-                  <th className="text-text-quaternary w-1/4 px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
+                  <th className="w-1/4 px-3 py-2 text-left text-xs font-medium tracking-wider text-text-quaternary uppercase">
                     Resource
                   </th>
-                  <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
+                  <th className="px-3 py-2 text-left text-xs font-medium tracking-wider text-text-quaternary uppercase">
                     Category
                   </th>
-                  <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
+                  <th className="px-3 py-2 text-left text-xs font-medium tracking-wider text-text-quaternary uppercase">
                     Multiplier
                   </th>
-                  <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
+                  <th className="px-3 py-2 text-left text-xs font-medium tracking-wider text-text-quaternary uppercase">
                     Status
                   </th>
-                  <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
+                  <th className="px-3 py-2 text-left text-xs font-medium tracking-wider text-text-quaternary uppercase">
                     Quantity
                   </th>
                   {canEdit && (
-                    <th className="text-text-quaternary px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
+                    <th className="px-3 py-2 text-left text-xs font-medium tracking-wider text-text-quaternary uppercase">
                       Target
                     </th>
                   )}
-                  <th className="text-text-quaternary w-48 px-3 py-2 text-left text-xs font-medium tracking-wider uppercase">
+                  <th className="w-48 px-3 py-2 text-left text-xs font-medium tracking-wider text-text-quaternary uppercase">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-background-panel divide-border-primary divide-y">
+              <tbody className="divide-y divide-border-primary bg-background-panel">
                 {filteredResources.map((resource) => {
                   const status = calculateResourceStatus(
                     resource.quantityHagga + resource.quantityDeepDesert,
@@ -1879,7 +1879,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       key={resource.id}
                       className={`group cursor-pointer transition-colors ${
                         isOutdated
-                          ? "border-l-update-indicator-border border-l-4"
+                          ? "border-l-4 border-l-update-indicator-border"
                           : ""
                       } ${
                         resource.category === BP_CATEGORY
@@ -1915,17 +1915,17 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               />
                             ) : null}
                             <div
-                              className={`bg-background-tertiary flex h-12 w-12 items-center justify-center rounded-lg ${
+                              className={`flex h-12 w-12 items-center justify-center rounded-lg bg-background-tertiary ${
                                 resource.imageUrl ? "hidden" : "flex"
                               }`}
                             >
-                              <span className="text-text-quaternary text-xs">
+                              <span className="text-xs text-text-quaternary">
                                 No image
                               </span>
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-text-primary group-hover:text-text-link text-sm font-medium break-words transition-colors">
+                            <div className="text-sm font-medium break-words text-text-primary transition-colors group-hover:text-text-link">
                               {resource.isPriority && (
                                 <span className="text-priority">* </span>
                               )}
@@ -1948,7 +1948,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         </div>
                       </td>
                       <td className="px-3 py-3 whitespace-nowrap">
-                        <span className="bg-background-tertiary text-text-secondary inline-flex rounded-full px-2 py-1 text-xs font-semibold">
+                        <span className="inline-flex rounded-full bg-background-tertiary px-2 py-1 text-xs font-semibold text-text-secondary">
                           {resource.category || UNCATEGORIZED}
                         </span>
                       </td>
@@ -1980,13 +1980,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           {getStatusText(status)}
                         </span>
                       </td>
-                      <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
+                      <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
                         Hagga: {formatNumber(resource.quantityHagga)}
                         <br />
                         Deep Desert: {formatNumber(resource.quantityDeepDesert)}
                       </td>
                       {canEdit && (
-                        <td className="text-text-primary px-3 py-3 text-sm whitespace-nowrap">
+                        <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
                           {resource.targetQuantity
                             ? formatNumber(resource.targetQuantity)
                             : "No target set"}
@@ -2009,7 +2009,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     updateType: UPDATE_TYPE.RELATIVE,
                                   })
                                 }
-                                className="bg-button-subtle-blue-bg hover:bg-button-subtle-blue-bg-hover text-button-subtle-blue-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                className="min-w-20 flex-1 rounded-sm bg-button-subtle-blue-bg px-2 py-1 text-xs font-medium text-button-subtle-blue-text transition-colors hover:bg-button-subtle-blue-bg-hover"
                               >
                                 Add/Remove
                               </button>
@@ -2021,7 +2021,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     updateType: UPDATE_TYPE.ABSOLUTE,
                                   })
                                 }
-                                className="bg-button-subtle-purple-bg hover:bg-button-subtle-purple-bg-hover text-button-subtle-purple-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                className="min-w-20 flex-1 rounded-sm bg-button-subtle-purple-bg px-2 py-1 text-xs font-medium text-button-subtle-purple-text transition-colors hover:bg-button-subtle-purple-bg-hover"
                               >
                                 Set Qty
                               </button>
@@ -2034,7 +2034,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     resource: resource,
                                   })
                                 }
-                                className="bg-button-subtle-green-bg hover:bg-button-subtle-green-bg-hover text-button-subtle-green-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                className="min-w-20 flex-1 rounded-sm bg-button-subtle-green-bg px-2 py-1 text-xs font-medium text-button-subtle-green-text transition-colors hover:bg-button-subtle-green-bg-hover"
                               >
                                 Transfer
                               </button>
@@ -2046,7 +2046,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       resource: resource,
                                     })
                                   }
-                                  className="bg-button-subtle-orange-bg hover:bg-button-subtle-orange-bg-hover text-button-subtle-orange-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                  className="min-w-20 flex-1 rounded-sm bg-button-subtle-orange-bg px-2 py-1 text-xs font-medium text-button-subtle-orange-text transition-colors hover:bg-button-subtle-orange-bg-hover"
                                 >
                                   Set Target
                                 </button>
@@ -2058,7 +2058,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               <div className="flex gap-1">
                                 <button
                                   onClick={() => startEditResource(resource)}
-                                  className="bg-button-subtle-yellow-bg hover:bg-button-subtle-yellow-bg-hover text-button-subtle-yellow-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                  className="min-w-20 flex-1 rounded-sm bg-button-subtle-yellow-bg px-2 py-1 text-xs font-medium text-button-subtle-yellow-text transition-colors hover:bg-button-subtle-yellow-bg-hover"
                                 >
                                   Edit
                                 </button>
@@ -2070,7 +2070,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                       showDialog: true,
                                     })
                                   }
-                                  className="bg-button-subtle-red-bg hover:bg-button-subtle-red-bg-hover text-button-subtle-red-text min-w-20 flex-1 rounded-sm px-2 py-1 text-xs font-medium transition-colors"
+                                  className="min-w-20 flex-1 rounded-sm bg-button-subtle-red-bg px-2 py-1 text-xs font-medium text-button-subtle-red-text transition-colors hover:bg-button-subtle-red-bg-hover"
                                 >
                                   Delete
                                 </button>
@@ -2098,7 +2098,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </p>
               <button
                 onClick={() => setSearchTerm("")}
-                className="text-text-link hover:text-text-link-hover mt-2 text-sm font-medium"
+                className="mt-2 text-sm font-medium text-text-link hover:text-text-link-hover"
               >
                 Clear search
               </button>
@@ -2111,25 +2111,25 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       {/* Delete Confirmation Dialog */}
       {deleteConfirm.showDialog && (
-        <div className="bg-background-overlay fixed inset-0 z-50 flex items-center justify-center">
-          <div className="bg-background-panel border-border-primary mx-4 max-w-md rounded-lg border p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-overlay">
+          <div className="mx-4 max-w-md rounded-lg border border-border-primary bg-background-panel p-6">
             <div className="mb-4 flex items-center gap-3">
-              <Trash2 className="text-text-danger h-8 w-8" />
-              <h3 className="text-text-primary text-lg font-semibold">
+              <Trash2 className="h-8 w-8 text-text-danger" />
+              <h3 className="text-lg font-semibold text-text-primary">
                 Delete Resource
               </h3>
             </div>
 
             <div className="mb-6">
-              <p className="text-text-secondary mb-2">
+              <p className="mb-2 text-text-secondary">
                 Are you sure you want to delete{" "}
                 <strong>&quot;{deleteConfirm.resourceName}&quot;</strong>?
               </p>
-              <div className="bg-background-danger border-border-danger rounded-lg border p-3">
+              <div className="rounded-lg border border-border-danger bg-background-danger p-3">
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="text-text-danger mt-0.5 h-5 w-5 shrink-0" />
+                  <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-text-danger" />
                   <div className="text-sm">
-                    <p className="text-text-danger mb-1 font-medium">
+                    <p className="mb-1 font-medium text-text-danger">
                       Warning: This action cannot be undone
                     </p>
                     <p className="text-text-danger">
@@ -2152,7 +2152,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     showDialog: false,
                   })
                 }
-                className="text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                className="rounded-lg bg-button-secondary-bg px-4 py-2 text-sm font-medium text-button-secondary-text transition-colors hover:bg-button-secondary-bg-hover"
               >
                 Cancel
               </button>
@@ -2163,7 +2163,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   }
                 }}
                 disabled={saving}
-                className="text-text-white bg-button-danger-bg hover:bg-button-danger-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+                className="rounded-lg bg-button-danger-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-danger-bg-hover disabled:opacity-50"
               >
                 {saving ? "Deleting..." : "Delete Resource"}
               </button>

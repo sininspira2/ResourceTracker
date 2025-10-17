@@ -79,19 +79,19 @@ export function ChangeTargetModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="change-target-modal-title"
-        className={`bg-background-modal-content border-border-primary mx-4 max-w-md transform rounded-lg border p-6 transition-all duration-300 ease-in-out md:max-w-lg md:p-8 ${
+        className={`mx-4 max-w-md transform rounded-lg border border-border-primary bg-background-modal-content p-6 transition-all duration-300 ease-in-out md:max-w-lg md:p-8 ${
           isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
         <h3
           id="change-target-modal-title"
-          className="text-text-primary mb-4 text-lg font-semibold"
+          className="mb-4 text-lg font-semibold text-text-primary"
         >
           Change Target for {resource.name}
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="text-text-secondary mb-1 block text-sm font-medium">
+            <label className="mb-1 block text-sm font-medium text-text-secondary">
               New Target Quantity
             </label>
             <input
@@ -100,21 +100,21 @@ export function ChangeTargetModal({
               value={target}
               onChange={(e) => setTarget(Number(e.target.value) || 0)}
               onKeyDown={handleKeyDown}
-              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
+              className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
             />
           </div>
-          {error && <p className="text-text-danger text-sm">{error}</p>}
+          {error && <p className="text-sm text-text-danger">{error}</p>}
         </div>
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+            className="rounded-lg bg-button-secondary-bg px-4 py-2 text-sm font-medium text-button-secondary-text transition-colors hover:bg-button-secondary-bg-hover"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="text-text-white bg-button-primary-bg hover:bg-button-primary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+            className="rounded-lg bg-button-primary-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-primary-bg-hover"
           >
             Save
           </button>

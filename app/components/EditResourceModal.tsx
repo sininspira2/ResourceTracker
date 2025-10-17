@@ -111,14 +111,14 @@ export function EditResourceModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="edit-resource-modal-title"
-        className={`bg-background-modal-content border-border-secondary mx-4 w-full max-w-lg transform rounded-lg border p-6 transition-all duration-300 ease-in-out md:p-8 lg:max-w-xl ${
+        className={`mx-4 w-full max-w-lg transform rounded-lg border border-border-secondary bg-background-modal-content p-6 transition-all duration-300 ease-in-out md:p-8 lg:max-w-xl ${
           isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
         <div className="mb-4 flex items-center justify-between">
           <h3
             id="edit-resource-modal-title"
-            className="text-text-primary text-lg font-semibold"
+            className="text-lg font-semibold text-text-primary"
           >
             Edit {resource.name}
           </h3>
@@ -145,7 +145,7 @@ export function EditResourceModal({
 
         <div className="space-y-4">
           <div>
-            <label className="text-text-secondary mb-1 block text-sm font-medium">
+            <label className="mb-1 block text-sm font-medium text-text-secondary">
               Name *
             </label>
             <input
@@ -155,12 +155,12 @@ export function EditResourceModal({
                 setFormData({ ...formData, name: e.target.value })
               }
               onKeyDown={handleKeyDown}
-              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
+              className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
             />
           </div>
 
           <div>
-            <label className="text-text-secondary mb-1 block text-sm font-medium">
+            <label className="mb-1 block text-sm font-medium text-text-secondary">
               Category
             </label>
             <select
@@ -168,7 +168,7 @@ export function EditResourceModal({
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
+              className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
             >
               {CATEGORY_OPTIONS.map((cat) => (
                 <option key={cat} value={cat}>
@@ -179,7 +179,7 @@ export function EditResourceModal({
           </div>
 
           <div>
-            <label className="text-text-secondary mb-1 block text-sm font-medium">
+            <label className="mb-1 block text-sm font-medium text-text-secondary">
               Description
             </label>
             <textarea
@@ -187,13 +187,13 @@ export function EditResourceModal({
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
+              className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
               rows={4}
             />
           </div>
 
           <div>
-            <label className="text-text-secondary mb-1 block text-sm font-medium">
+            <label className="mb-1 block text-sm font-medium text-text-secondary">
               Image URL
             </label>
             <input
@@ -203,12 +203,12 @@ export function EditResourceModal({
                 setFormData({ ...formData, imageUrl: e.target.value })
               }
               onKeyDown={handleKeyDown}
-              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
+              className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
             />
           </div>
 
           <div>
-            <label className="text-text-secondary mb-1 block text-sm font-medium">
+            <label className="mb-1 block text-sm font-medium text-text-secondary">
               Points Multiplier
             </label>
             <input
@@ -223,7 +223,7 @@ export function EditResourceModal({
                 })
               }
               onKeyDown={handleKeyDown}
-              className="border-border-secondary bg-background-modal-content-inset text-text-primary w-full rounded-lg border px-3 py-2"
+              className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
             />
           </div>
 
@@ -235,31 +235,31 @@ export function EditResourceModal({
               onChange={(e) =>
                 setFormData({ ...formData, isPriority: e.target.checked })
               }
-              className="text-text-link border-border-secondary h-4 w-4 rounded focus:ring-blue-500"
+              className="h-4 w-4 rounded border-border-secondary text-text-link focus:ring-blue-500"
             />
             <label
               htmlFor="isPriority"
-              className="text-text-secondary ml-2 block text-sm"
+              className="ml-2 block text-sm text-text-secondary"
             >
               Priority Resource
             </label>
           </div>
 
-          {error && <p className="text-text-danger text-sm">{error}</p>}
+          {error && <p className="text-sm text-text-danger">{error}</p>}
         </div>
 
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onClose}
             disabled={saving}
-            className="text-button-secondary-text bg-button-secondary-bg hover:bg-button-secondary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+            className="rounded-lg bg-button-secondary-bg px-4 py-2 text-sm font-medium text-button-secondary-text transition-colors hover:bg-button-secondary-bg-hover"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="text-text-white bg-button-primary-bg hover:bg-button-primary-bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+            className="rounded-lg bg-button-primary-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-primary-bg-hover disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
