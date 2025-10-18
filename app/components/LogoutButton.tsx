@@ -20,7 +20,7 @@ export function LogoutButton({
     return (
       <AuthButton
         onClick={handleSignOut}
-        className={`bg-button-danger-bg hover:bg-button-danger-bg-hover ${
+        className={`bg-button-danger-bg px-6 py-3 font-semibold hover:bg-button-danger-bg-hover ${
           fullWidth ? "w-full" : ""
         }`}
       >
