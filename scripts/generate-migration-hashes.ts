@@ -10,7 +10,10 @@ const OUTPUT_FILE = path.join(process.cwd(), "lib", "migration-hashes.ts");
  * of all .sql files in the drizzle directory. It normalizes line endings
  * to ensure hashes are consistent across platforms.
  */
-function generateMigrationHashes() {
+export function generateMigrationHashes(
+  migrationsDir = MIGRATIONS_DIR,
+  outputFile = OUTPUT_FILE,
+) {
   try {
     console.log("🔍 Starting migration hash generation...");
     const migrationFiles = fs
@@ -55,4 +58,7 @@ function generateMigrationHashes() {
   }
 }
 
-generateMigrationHashes();
+// Run the function only if the script is executed directly
+if (require.main === module) {
+  generateMigrationHashes();
+}
