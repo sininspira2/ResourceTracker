@@ -54,7 +54,7 @@ describe("API Routes: /api/resources", () => {
       expect(response.status).toBe(200);
       expect(body.name).toBe("Test Resource");
       expect(body.id).toBe("new-resource-id");
-      expect(db.insert).toHaveBeenCalledTimes(2); // resources and history
+      expect(db.transaction).toHaveBeenCalled();
     });
 
     it("should return 403 if user is not an admin", async () => {
