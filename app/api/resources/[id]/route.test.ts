@@ -1,9 +1,6 @@
 /**
  * @jest-environment node
  */
-/**
- * @jest-environment node
- */
 import { PUT, DELETE } from "./route";
 import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
