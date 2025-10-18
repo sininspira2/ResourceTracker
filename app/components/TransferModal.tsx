@@ -110,10 +110,11 @@ export function TransferModal({
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
+            <label htmlFor="amount-input" className="mb-1 block text-sm font-medium text-text-secondary">
               Amount
             </label>
             <input
+              id="amount-input"
               type="number"
               min="1"
               value={amount}
@@ -123,10 +124,11 @@ export function TransferModal({
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
+            <label htmlFor="direction-select" className="mb-1 block text-sm font-medium text-text-secondary">
               Direction
             </label>
             <select
+              id="direction-select"
               value={direction}
               onChange={(e) =>
                 setDirection(e.target.value as TransferDirection)
