@@ -87,7 +87,14 @@ describe("auth helpers", () => {
 });
 
 describe("authOptions.callbacks.jwt", () => {
-    const jwtCallback = authOptions.callbacks!.jwt!;
+    const jwtCallback = authOptions.callbacks?.jwt;
+
+    if (!jwtCallback) {
+        test.only("jwt callback is not defined", () => {
+            fail("authOptions.callbacks.jwt is not defined");
+        });
+        return;
+    }
 
     beforeEach(() => {
         jest.clearAllMocks();
