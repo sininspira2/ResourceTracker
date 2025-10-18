@@ -21,7 +21,7 @@ export const db = {
   ) {
     return mockDbExecution().then(resolve, reject);
   },
-  transaction: jest.fn((callback) => callback(db)),
+  transaction: jest.fn(async (callback) => await callback(db)),
 };
 
 export const leaderboard = "leaderboard";
