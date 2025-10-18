@@ -21,8 +21,8 @@ describe("Pagination", () => {
     );
 
     // Check that the pagination component is rendered
-    const pageInfo = screen.getByText("Page 2 of 10");
-    expect(pageInfo).toBeInTheDocument();
+    const pageInfo = container.querySelector('.sm\\:flex p');
+    expect(pageInfo?.textContent?.replace(/\s+/g, ' ')).toBe("Page 2 of 10");
 
 
     // Click the "Next" button (we target the one that is not aria-hidden)
