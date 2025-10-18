@@ -96,32 +96,43 @@ export function UserTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border-primary bg-background-primary">
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
-                  {user.username}
-                </td>
-                <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
-                  {user.customNickname}
-                </td>
-                <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
-                  {new Date(user.createdAt).toLocaleString()}
-                </td>
-                <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
-                  {new Date(user.lastLogin).toLocaleString()}
-                </td>
-                {session?.user.permissions?.hasUserManagementAccess && (
-                  <td className="px-3 py-3 text-right text-sm whitespace-nowrap text-text-primary">
-                    <button
-                      onClick={() => handleExport(user.id)}
-                      className="rounded-md bg-button-primary-bg px-3 py-1 text-sm font-medium text-text-white hover:bg-button-primary-bg-hover focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-                    >
-                      Export Data
-                    </button>
+            {users.length > 0 ? (
+              users.map((user) => (
+                <tr key={user.id}>
+                  <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
+                    {user.username}
                   </td>
-                )}
+                  <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
+                    {user.customNickname}
+                  </td>
+                  <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
+                    {new Date(user.createdAt).toLocaleString()}
+                  </td>
+                  <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
+                    {new Date(user.lastLogin).toLocaleString()}
+                  </td>
+                  {session?.user.permissions?.hasUserManagementAccess && (
+                    <td className="px-3 py-3 text-right text-sm whitespace-nowrap text-text-primary">
+                      <button
+                        onClick={() => handleExport(user.id)}
+                        className="rounded-md bg-button-primary-bg px-3 py-1 text-sm font-medium text-text-white hover:bg-button-primary-bg-hover focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                      >
+                        Export Data
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={session?.user.permissions?.hasUserManagementAccess ? 5 : 4}
+                  className="py-12 text-center text-text-tertiary"
+                >
+                  No users found.
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

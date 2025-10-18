@@ -76,9 +76,7 @@ describe("UserTable", () => {
 
     // Wait for the users to be fetched and rendered
     await waitFor(() => {
-        expect(screen.queryByRole("table")).toBeInTheDocument();
+        expect(screen.getByText("No users found.")).toBeInTheDocument();
     });
-
-    expect(screen.queryByText("No users found.")).toBeNull();
   });
 });
