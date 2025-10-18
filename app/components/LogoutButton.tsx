@@ -2,6 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import { AuthButton } from "./AuthButton";
+import { cn } from "@/lib/utils";
 
 interface LogoutButtonProps {
   variant?: "default" | "prominent";
@@ -16,25 +17,20 @@ export function LogoutButton({
     signOut({ callbackUrl: "/" });
   };
 
-  if (variant === "prominent") {
-    return (
-      <AuthButton
-        onClick={handleSignOut}
-        className={`bg-button-danger-bg px-6 py-3 font-semibold hover:bg-button-danger-bg-hover ${
-          fullWidth ? "w-full" : ""
-        }`}
-      >
-        Sign Out & Try Different Account
-      </AuthButton>
-    );
-  }
-
   return (
     <AuthButton
       onClick={handleSignOut}
-      className="bg-button-danger-bg hover:bg-button-danger-bg-hover"
+      className={cn(
+        "bg-button-danger-bg hover:bg-button-danger-bg-hover",
+        {
+          "px-6 py-3 font-semibold": variant === "prominent",
+          "w-full": fullWidth,
+        },
+      )}
     >
-      Sign Out
+      {variant === "prominent"
+        ? "Sign Out & Try Different Account"
+        : "Sign Out"}
     </AuthButton>
   );
 }
