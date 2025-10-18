@@ -117,25 +117,32 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date(),
     };
 
-    await db.insert(resources).values(newResource);
+    const [createdResource] = await db.transaction(async (tx) => {
+      const inserted = await tx
+        .insert(resources)
+        .values(newResource)
+        .returning();
 
-    // Log the creation in history
-    await db.insert(resourceHistory).values({
-      id: nanoid(),
-      resourceId: newResource.id,
-      previousQuantityHagga: 0,
-      newQuantityHagga: newResource.quantityHagga,
-      changeAmountHagga: newResource.quantityHagga,
-      previousQuantityDeepDesert: 0,
-      newQuantityDeepDesert: newResource.quantityDeepDesert,
-      changeAmountDeepDesert: newResource.quantityDeepDesert,
-      changeType: "absolute",
-      updatedBy: userId,
-      reason: "Resource created",
-      createdAt: new Date(),
+      // Log the creation in history
+      await tx.insert(resourceHistory).values({
+        id: nanoid(),
+        resourceId: inserted[0].id,
+        previousQuantityHagga: 0,
+        newQuantityHagga: inserted[0].quantityHagga,
+        changeAmountHagga: inserted[0].quantityHagga,
+        previousQuantityDeepDesert: 0,
+        newQuantityDeepDesert: inserted[0].quantityDeepDesert,
+        changeAmountDeepDesert: inserted[0].quantityDeepDesert,
+        changeType: "absolute",
+        updatedBy: userId,
+        reason: "Resource created",
+        createdAt: new Date(),
+      });
+
+      return inserted;
     });
 
-    return NextResponse.json(newResource, {
+    return NextResponse.json(createdResource, {
       headers: {
         "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
         Pragma: "no-cache",

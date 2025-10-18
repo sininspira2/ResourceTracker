@@ -5,4 +5,7 @@ module.exports = {
   moduleNameMapper: {
     "^@/lib/(.*)$": "<rootDir>/lib/$1",
   },
+  transformIgnorePatterns: [
+    "/node_modules/(?!nanoid/.*)",
+  ],
 };
