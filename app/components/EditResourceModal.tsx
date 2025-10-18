@@ -145,10 +145,11 @@ export function EditResourceModal({
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
+            <label htmlFor="name-input" className="mb-1 block text-sm font-medium text-text-secondary">
               Name *
             </label>
             <input
+              id="name-input"
               type="text"
               value={formData.name}
               onChange={(e) =>
@@ -160,10 +161,11 @@ export function EditResourceModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
+            <label htmlFor="category-select" className="mb-1 block text-sm font-medium text-text-secondary">
               Category
             </label>
             <select
+              id="category-select"
               value={formData.category}
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
@@ -179,10 +181,11 @@ export function EditResourceModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
+            <label htmlFor="description-textarea" className="mb-1 block text-sm font-medium text-text-secondary">
               Description
             </label>
             <textarea
+              id="description-textarea"
               value={formData.description}
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
@@ -193,10 +196,11 @@ export function EditResourceModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
+            <label htmlFor="image-url-input" className="mb-1 block text-sm font-medium text-text-secondary">
               Image URL
             </label>
             <input
+              id="image-url-input"
               type="url"
               value={formData.imageUrl}
               onChange={(e) =>
@@ -208,10 +212,11 @@ export function EditResourceModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
+            <label htmlFor="multiplier-input" className="mb-1 block text-sm font-medium text-text-secondary">
               Points Multiplier
             </label>
             <input
+              id="multiplier-input"
               type="number"
               step="0.1"
               min="0"

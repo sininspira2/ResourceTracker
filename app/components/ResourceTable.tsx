@@ -1447,10 +1447,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
             {/* Category Filter */}
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-text-secondary">
+              <label htmlFor="category-filter" className="text-sm font-medium text-text-secondary">
                 Category:
               </label>
               <select
+                id="category-filter"
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 className="rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-1.5 text-sm text-text-primary focus:border-transparent focus:ring-2 focus:ring-blue-500"

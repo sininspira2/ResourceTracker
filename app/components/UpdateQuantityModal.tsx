@@ -213,10 +213,11 @@ export function UpdateQuantityModal({
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
+            <label htmlFor="quantity-input" className="mb-1 block text-sm font-medium text-text-secondary">
               {updateType === UPDATE_TYPE.ABSOLUTE ? "New Quantity" : "Amount"}
             </label>
             <input
+              id="quantity-input"
               type="number"
               value={amount}
               onChange={(e) =>
@@ -228,10 +229,11 @@ export function UpdateQuantityModal({
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
+            <label htmlFor="base-select" className="mb-1 block text-sm font-medium text-text-secondary">
               Base
             </label>
             <select
+              id="base-select"
               value={quantityField}
               onChange={(e) =>
                 setQuantityField(e.target.value as QuantityField)
@@ -245,7 +247,7 @@ export function UpdateQuantityModal({
 
           {session?.user.permissions?.hasResourceAdminAccess && (
             <div>
-              <label className="mb-1 block text-sm font-medium text-text-secondary">
+              <label htmlFor="on-behalf-of-select" className="mb-1 block text-sm font-medium text-text-secondary">
                 On Behalf Of (Admin)
               </label>
               {userFetchError ? (
@@ -254,6 +256,7 @@ export function UpdateQuantityModal({
                 </div>
               ) : (
                 <select
+                  id="on-behalf-of-select"
                   value={onBehalfOf}
                   onChange={(e) => setOnBehalfOf(e.target.value)}
                   className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"

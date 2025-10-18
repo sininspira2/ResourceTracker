@@ -91,10 +91,11 @@ export function ChangeTargetModal({
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
+            <label htmlFor="target-quantity-input" className="mb-1 block text-sm font-medium text-text-secondary">
               New Target Quantity
             </label>
             <input
+              id="target-quantity-input"
               type="number"
               min="0"
               value={target}
