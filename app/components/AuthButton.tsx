@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 interface AuthButtonProps {
   onClick: () => void;
@@ -14,7 +15,10 @@ export function AuthButton({
   return (
     <button
       onClick={onClick}
-      className={`flex h-10 items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-text-white transition-colors ${className}`}
+      className={cn(
+        "flex h-10 items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-text-white transition-colors",
+        className,
+      )}
     >
       {children}
     </button>

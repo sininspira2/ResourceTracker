@@ -23,13 +23,16 @@
   },
   "dependencies": {
     "@libsql/client": "^0.15.15",
+    "clsx": "^2.1.1",
     "drizzle-orm": "^0.44.6",
     "lucide-react": "^0.546.0",
     "nanoid": "^5.1.6",
     "next": "^15.1.1",
     "next-auth": "^4.24.5",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "react-icons": "^5.5.0",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
