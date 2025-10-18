@@ -45,7 +45,8 @@ describe("API Routes: /api/resources", () => {
         category: "Test Category",
         quantityHagga: 100,
       };
-      mockDbExecution.mockResolvedValue(undefined); // For the insert
+      // Mock the .returning() call to provide the created resource
+      mockDbExecution.mockResolvedValue([{ ...newResourceData, id: "new-resource-id" }]);
 
       const request = mockRequest(newResourceData);
       const response = await POST(request);
@@ -55,6 +56,7 @@ describe("API Routes: /api/resources", () => {
       expect(body.name).toBe("Test Resource");
       expect(body.id).toBe("new-resource-id");
       expect(db.transaction).toHaveBeenCalled();
+      expect(db.returning).toHaveBeenCalled();
     });
 
     it("should return 403 if user is not an admin", async () => {

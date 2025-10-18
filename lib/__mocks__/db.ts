@@ -4,6 +4,7 @@ const subqueryMock = { rank: "rank_col", userId: "userId_col" };
 export const db = {
   insert: jest.fn().mockReturnThis(),
   values: jest.fn().mockReturnThis(),
+  returning: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
   update: jest.fn().mockReturnThis(),
   set: jest.fn().mockReturnThis(),

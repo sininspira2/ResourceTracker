@@ -117,26 +117,29 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date(),
     };
 
-    const createdResource = await db.transaction(async (tx) => {
-      await tx.insert(resources).values(newResource);
+    const [createdResource] = await db.transaction(async (tx) => {
+      const inserted = await tx
+        .insert(resources)
+        .values(newResource)
+        .returning();
 
       // Log the creation in history
       await tx.insert(resourceHistory).values({
         id: nanoid(),
-        resourceId: newResource.id,
+        resourceId: inserted[0].id,
         previousQuantityHagga: 0,
-        newQuantityHagga: newResource.quantityHagga,
-        changeAmountHagga: newResource.quantityHagga,
+        newQuantityHagga: inserted[0].quantityHagga,
+        changeAmountHagga: inserted[0].quantityHagga,
         previousQuantityDeepDesert: 0,
-        newQuantityDeepDesert: newResource.quantityDeepDesert,
-        changeAmountDeepDesert: newResource.quantityDeepDesert,
+        newQuantityDeepDesert: inserted[0].quantityDeepDesert,
+        changeAmountDeepDesert: inserted[0].quantityDeepDesert,
         changeType: "absolute",
         updatedBy: userId,
         reason: "Resource created",
         createdAt: new Date(),
       });
 
-      return newResource;
+      return inserted;
     });
 
     return NextResponse.json(createdResource, {
