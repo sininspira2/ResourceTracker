@@ -5,6 +5,9 @@ export const db = {
   insert: jest.fn().mockReturnThis(),
   values: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
+  update: jest.fn().mockReturnThis(),
+  set: jest.fn().mockReturnThis(),
+  delete: jest.fn().mockReturnThis(),
   from: jest.fn().mockReturnThis(),
   where: jest.fn().mockReturnThis(),
   groupBy: jest.fn().mockReturnThis(),
@@ -18,6 +21,7 @@ export const db = {
   ) {
     return mockDbExecution().then(resolve, reject);
   },
+  transaction: jest.fn((callback) => callback(db)),
 };
 
 export const leaderboard = "leaderboard";
