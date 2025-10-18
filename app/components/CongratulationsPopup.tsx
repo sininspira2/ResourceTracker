@@ -111,6 +111,7 @@ export function CongratulationsPopup({
             <button
               onClick={handleClose}
               className="text-white/80 transition-colors hover:text-white"
+              aria-label="close"
             >
               <svg
                 className="h-5 w-5"
