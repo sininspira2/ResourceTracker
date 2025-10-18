@@ -235,7 +235,8 @@
   --color-tag-discord-role-text: theme(colors.blue.800);
 }
 
-html[data-theme="dark"] {
+
+.dark {
   --color-background-primary: theme(colors.gray.900);
   --color-background-secondary: theme(colors.gray.800);
   --color-background-tertiary: theme(colors.gray.700);
