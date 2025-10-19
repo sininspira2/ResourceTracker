@@ -7,6 +7,7 @@ A comprehensive resource management and tracking portal with Discord authenticat
 Made for Dune: Awakening. Originally forked from `https://github.com/theyetty` and adapted to the specific needs of my guild.
 
 Removed from fork network due to original author repository being deleted, and database/backend changes incompatible with other forks.
+
 ---
 
 ## 🚀 Release Notes - Version 4.1.1: Comprehensive Theming System and UI Refactoring
