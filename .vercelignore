@@ -1,0 +1,134 @@
+# ============================================
+# Test Files & Coverage
+# ============================================
+**/*.test.ts
+**/*.test.tsx
+**/__tests__/
+**/__mocks__/
+coverage/
+jest.config.js
+jest.setup.js
+.swc/
+
+# ============================================
+# Development & Build Tools
+# ============================================
+.git/
+.github/
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# CI/CD workflows (already run before deployment)
+.github/workflows/
+
+# ============================================
+# Documentation
+# ============================================
+README.md
+AGENTS.md
+CONTRIBUTING.md
+DB_MIGRATION.md
+ENVIRONMENT.md
+LICENSE
+*.md
+docs/
+
+# Screenshot/image assets for documentation
+*.png
+*.jpg
+*.jpeg
+*.gif
+!public/**/*.png
+!public/**/*.jpg
+!public/**/*.jpeg
+!public/**/*.gif
+
+# ============================================
+# Environment & Config Files
+# ============================================
+.env
+.env.local
+.env.development
+.env.test
+.env*.local
+.env.example
+
+# Editor configs
+.editorconfig
+.prettierrc
+.prettierignore
+.eslintcache
+
+# ============================================
+# Scripts (not needed at runtime)
+# ============================================
+scripts/populate-resources.ts
+scripts/populate-resources-dune.ts
+scripts/populate-blueprints-dune.ts
+scripts/add-resources-with-images.ts
+scripts/update-version.js
+scripts/log-initial-migration.ts
+
+# Keep only necessary database migration files
+# Uncomment if migrations are handled separately
+# drizzle/
+
+# ============================================
+# Dependencies & Logs
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# ============================================
+# OS & Temporary Files
+# ============================================
+.DS_Store
+*.swp
+*.swo
+*~
+.tmp/
+tmp/
+Thumbs.db
+
+# ============================================
+# Build artifacts (Vercel builds these)
+# ============================================
+.next/
+out/
+dist/
+build/
+
+# ============================================
+# Git & Version Control
+# ============================================
+.git
+.gitignore
+.gitattributes
+.gitmodules
+
+# ============================================
+# Package manager lock files (only need one)
+# ============================================
+# Uncomment if you want to exclude lock files
+# (Vercel will generate its own)
+package-lock.json
+
+
+# ============================================
+# TypeScript
+# ============================================
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ============================================
+# Miscellaneous
+# ============================================
+.vercel
+.turbo
+*.log
