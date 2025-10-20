@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db } from "@/lib/db";
 
 describe("Database Connection", () => {
   const OLD_ENV = process.env;

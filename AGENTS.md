@@ -35,7 +35,7 @@ npm install
 
 ## Testing
 
-The project uses Jest for unit and integration testing.
+The project uses Jest for unit and integration testing. All test files are located in the `tests/` directory at the root of the project.
 
 - **Run all tests**:
   ```bash

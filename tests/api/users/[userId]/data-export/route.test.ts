@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { GET } from "./route";
+import { GET } from "@/app/api/users/[userId]/data-export/route";
 import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 
