@@ -192,4 +192,19 @@ describe("authOptions.callbacks.jwt", () => {
 
     expect(token.userRoles).toEqual(["role1"]);
   });
+
+  it("should handle member object without nick property", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ roles: ["role1"] }),
+    });
+
+    const token = await jwtCallback({
+      token: { sub: "123", name: "test" },
+      account: { access_token: "token" } as any,
+      user: { global_name: "global" } as any,
+    });
+
+    expect(token.discordNickname).toBeNull();
+  });
 });

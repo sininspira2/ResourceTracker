@@ -222,4 +222,30 @@ describe("ResourceTable", () => {
       expect(screen.queryByRole("table")).toBeNull();
     });
   });
+
+  it("clears all filters when the 'Clear filters' button is clicked", async () => {
+    render(<ResourceTable userId="test-user" />);
+    await screen.findByText("Recent Updates");
+
+    // Set some filters
+    fireEvent.change(screen.getByPlaceholderText("Search resources..."), {
+      target: { value: "test" },
+    });
+    fireEvent.change(screen.getByLabelText("Category:"), {
+      target: { value: "Raw" },
+    });
+    fireEvent.click(screen.getByLabelText(/Needs updating/));
+    fireEvent.click(screen.getByLabelText("Priority"));
+
+    // Verify the clear button is visible and click it
+    const clearButton = screen.getByText("Clear filters");
+    expect(clearButton).toBeInTheDocument();
+    fireEvent.click(clearButton);
+
+    // Verify the filters are cleared
+    expect(screen.getByPlaceholderText("Search resources...")).toHaveValue("");
+    expect(screen.getByLabelText("Category:")).toHaveValue("all");
+    expect(screen.getByLabelText(/Needs updating/)).not.toBeChecked();
+    expect(screen.getByLabelText("Priority")).not.toBeChecked();
+  });
 });

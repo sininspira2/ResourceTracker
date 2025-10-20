@@ -67,4 +67,27 @@ describe("TransferModal", () => {
     // Check that the onClose function was called
     expect(mockOnClose).toHaveBeenCalled();
   });
+
+  it("shows an error message for insufficient quantity", async () => {
+    render(
+      <TransferModal
+        isOpen={true}
+        resource={mockResource}
+        onClose={mockOnClose}
+        onTransfer={mockOnTransfer}
+      />,
+    );
+
+    // Try to transfer more than available
+    const amountInput = screen.getByLabelText("Amount");
+    fireEvent.change(amountInput, { target: { value: "120" } }); // More than quantityHagga
+
+    const submitButton = screen.getByText("Transfer");
+    fireEvent.click(submitButton);
+
+    // Check for error message
+    expect(
+      await screen.findByText("Insufficient quantity in Hagga base."),
+    ).toBeInTheDocument();
+  });
 });

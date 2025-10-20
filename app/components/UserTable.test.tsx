@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { UserTable } from "./UserTable";
 import { useSession } from "next-auth/react";
 
@@ -77,6 +77,25 @@ describe("UserTable", () => {
     // Wait for the users to be fetched and rendered
     await waitFor(() => {
       expect(screen.getByText("No users found.")).toBeInTheDocument();
+    });
+  });
+
+  it("shows 'Export Data' button for admins and triggers export", async () => {
+    window.URL.createObjectURL = jest.fn();
+    window.URL.revokeObjectURL = jest.fn();
+
+    render(<UserTable />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("table")).toBeInTheDocument();
+    });
+
+    const exportButtons = screen.getAllByText("Export Data");
+    expect(exportButtons.length).toBe(2);
+    fireEvent.click(exportButtons[0]);
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith("/api/users/1/data-export");
     });
   });
 });
