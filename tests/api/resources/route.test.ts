@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { POST, PUT, GET } from "./route";
+import { POST, PUT, GET } from "@/app/api/resources/route";
 import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { db, mockDbExecution } from "@/lib/db";

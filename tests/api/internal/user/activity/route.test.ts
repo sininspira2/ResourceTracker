@@ -55,7 +55,7 @@ describe("GET /api/internal/user/activity", () => {
       },
     ];
     mockLimit.mockResolvedValue(mockActivity);
-    const { GET } = await import("./route");
+    const { GET } = await import("@/app/api/internal/user/activity/route");
 
     const req = new NextRequest(
       "http://localhost/api/internal/user/activity?global=true",
@@ -79,7 +79,7 @@ describe("GET /api/internal/user/activity", () => {
       },
     ];
     mockLimit.mockResolvedValue(mockActivity);
-    const { GET } = await import("./route");
+    const { GET } = await import("@/app/api/internal/user/activity/route");
 
     const req = new NextRequest(
       "http://localhost/api/internal/user/activity?userId=user2",
@@ -95,7 +95,7 @@ describe("GET /api/internal/user/activity", () => {
   // Test case for backward compatibility with old user identifiers
   it("should consider oldUserIds for user-specific activity", async () => {
     mockLimit.mockResolvedValue([]);
-    const { GET } = await import("./route");
+    const { GET } = await import("@/app/api/internal/user/activity/route");
 
     const req = new NextRequest(
       "http://localhost/api/internal/user/activity?userId=user3&oldUserIds=oldUser1,oldUser2",
@@ -107,7 +107,7 @@ describe("GET /api/internal/user/activity", () => {
 
   // Test case for missing userId on non-global requests
   it("should return 400 if userId is missing for non-global request", async () => {
-    const { GET } = await import("./route");
+    const { GET } = await import("@/app/api/internal/user/activity/route");
     const req = new NextRequest("http://localhost/api/internal/user/activity");
     const res = await GET(req);
     const body = await res.json();
@@ -119,7 +119,7 @@ describe("GET /api/internal/user/activity", () => {
   // Test case for graceful failure on database errors
   it("should handle database errors gracefully", async () => {
     mockLimit.mockRejectedValue(new Error("DB Error"));
-    const { GET } = await import("./route");
+    const { GET } = await import("@/app/api/internal/user/activity/route");
 
     const req = new NextRequest(
       "http://localhost/api/internal/user/activity?global=true",

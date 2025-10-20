@@ -4,11 +4,11 @@ import {
   getLeaderboard,
   getUserContributions,
   getUserRank,
-} from "./leaderboard";
-import { db, mockDbExecution } from "./db";
+} from "@/lib/leaderboard";
+import { db, mockDbExecution } from "@/lib/db";
 
 // Tell Jest to use the manual mock in `lib/__mocks__/db.ts`
-jest.mock("./db");
+jest.mock("@/lib/db");
 
 // Mock other external dependencies
 jest.mock("nanoid", () => ({

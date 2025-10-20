@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { generateMigrationHashes } from "./generate-migration-hashes";
+import { generateMigrationHashes } from "@/scripts/generate-migration-hashes";
 
 jest.mock("fs");
 

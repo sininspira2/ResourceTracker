@@ -6,7 +6,7 @@ import {
   fireEvent,
   within,
 } from "@testing-library/react";
-import { ResourceTable } from "./ResourceTable";
+import { ResourceTable } from "@/app/components/ResourceTable";
 import { useSession } from "next-auth/react";
 import {
   RESOURCES_API_PATH,

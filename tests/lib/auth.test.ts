@@ -4,7 +4,7 @@ import {
   getDisplayName,
   getUserIdentifier,
   authOptions,
-} from "./auth";
+} from "@/lib/auth";
 import { db } from "@/lib/db";
 
 // Mock the database

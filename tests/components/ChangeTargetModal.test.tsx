@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ChangeTargetModal } from "./ChangeTargetModal";
+import { ChangeTargetModal } from "@/app/components/ChangeTargetModal";
 
 const mockResource = {
   id: "1",

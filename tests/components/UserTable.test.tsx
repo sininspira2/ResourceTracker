@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import { UserTable } from "./UserTable";
+import { UserTable } from "@/app/components/UserTable";
 import { useSession } from "next-auth/react";
 
 jest.mock("next-auth/react");

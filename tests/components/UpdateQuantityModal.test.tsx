@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { UpdateQuantityModal } from "./UpdateQuantityModal";
+import { UpdateQuantityModal } from "@/app/components/UpdateQuantityModal";
 import { useSession } from "next-auth/react";
 
 jest.mock("next-auth/react");
