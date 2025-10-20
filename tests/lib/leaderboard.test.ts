@@ -5,10 +5,11 @@ import {
   getUserContributions,
   getUserRank,
 } from "@/lib/leaderboard";
-import { db, mockDbExecution } from "@/lib/db";
+import { db, leaderboard } from "@/lib/db";
+import { mockDbExecution } from "@/tests/__mocks__/db";
 
-// Tell Jest to use the manual mock in `lib/__mocks__/db.ts`
-jest.mock("@/lib/db");
+// Mock the db module
+jest.mock("@/lib/db", () => jest.requireActual("@/tests/__mocks__/db"));
 
 // Mock other external dependencies
 jest.mock("nanoid", () => ({
@@ -113,7 +114,7 @@ describe("lib/leaderboard.ts", () => {
       mockDbExecution.mockResolvedValueOnce(undefined);
       await awardPoints("user-1", "resource-1", "ADD", 100, resourceData, db);
 
-      expect(db.insert).toHaveBeenCalledWith("leaderboard");
+      expect(db.insert).toHaveBeenCalledWith(leaderboard);
       expect(db.values).toHaveBeenCalledWith(
         expect.objectContaining({ userId: "user-1" }),
       );

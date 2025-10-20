@@ -14,8 +14,17 @@ import {
   LEADERBOARD_API_PATH,
 } from "@/lib/constants";
 
-// Mock the useSession hook
-jest.mock("next-auth/react");
+jest.mock("next-auth/react", () => ({
+  useSession: jest.fn(),
+}));
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+  })),
+  usePathname: jest.fn(() => "/"),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
+}));
 
 const mockResources = [
   {
