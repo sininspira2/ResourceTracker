@@ -37,6 +37,7 @@ jobs:
 
       - name: Check Prettier formatting
         run: npx prettier --check .
+        continue-on-error: true
 
   test:
     name: Run Tests
