@@ -21,8 +21,11 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
+      - name: Delete package-lock.json
+        run: rm -f package-lock.json
+
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run ESLint
         run: npm run lint
@@ -47,8 +50,11 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
+      - name: Delete package-lock.json
+        run: rm -f package-lock.json
+
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run tests
         run: npm run test -- --coverage
@@ -74,8 +80,11 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
+      - name: Delete package-lock.json
+        run: rm -f package-lock.json
+
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Generate migration hashes
         run: npm run db:generate-hashes
