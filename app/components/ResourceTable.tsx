@@ -1447,7 +1447,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
             {/* Category Filter */}
             <div className="flex items-center gap-2">
-              <label htmlFor="category-filter" className="text-sm font-medium text-text-secondary">
+              <label
+                htmlFor="category-filter"
+                className="text-sm font-medium text-text-secondary"
+              >
                 Category:
               </label>
               <select

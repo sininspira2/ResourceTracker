@@ -57,7 +57,7 @@ describe("CongratulationsPopup", () => {
       jest.advanceTimersByTime(5000);
     });
     act(() => {
-        jest.advanceTimersByTime(300);
+      jest.advanceTimersByTime(300);
     });
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
@@ -65,17 +65,27 @@ describe("CongratulationsPopup", () => {
   it("should call router.push when 'View My Contributions' is clicked", () => {
     render(<CongratulationsPopup {...defaultProps} />);
     fireEvent.click(screen.getByText("View My Contributions"));
-    expect(mockRouter.push).toHaveBeenCalledWith("/dashboard/contributions/user1");
+    expect(mockRouter.push).toHaveBeenCalledWith(
+      "/dashboard/contributions/user1",
+    );
   });
 
   it.each([
     ["ADD", "Added 50"],
     ["SET", "Set quantity"],
     ["REMOVE", "Removed 50"],
-  ])("should display correct action text for %s", (actionType, expectedText) => {
-    render(<CongratulationsPopup {...defaultProps} actionType={actionType as any} />);
-    expect(screen.getByText(new RegExp(expectedText))).toBeInTheDocument();
-  });
+  ])(
+    "should display correct action text for %s",
+    (actionType, expectedText) => {
+      render(
+        <CongratulationsPopup
+          {...defaultProps}
+          actionType={actionType as any}
+        />,
+      );
+      expect(screen.getByText(new RegExp(expectedText))).toBeInTheDocument();
+    },
+  );
 
   it("should show points breakdown when pointsCalculation is provided", () => {
     const pointsCalculation = {
@@ -84,7 +94,12 @@ describe("CongratulationsPopup", () => {
       statusBonus: 0.1,
       finalPoints: 100,
     };
-    render(<CongratulationsPopup {...defaultProps} pointsCalculation={pointsCalculation} />);
+    render(
+      <CongratulationsPopup
+        {...defaultProps}
+        pointsCalculation={pointsCalculation}
+      />,
+    );
     expect(screen.getByText("Base points:")).toBeInTheDocument();
     expect(screen.getByText("50.0")).toBeInTheDocument();
     expect(screen.getByText("Multiplier:")).toBeInTheDocument();
@@ -95,6 +110,8 @@ describe("CongratulationsPopup", () => {
 
   it("should display no points earned message when pointsEarned is 0", () => {
     render(<CongratulationsPopup {...defaultProps} pointsEarned={0} />);
-    expect(screen.getByText("No points earned for this action")).toBeInTheDocument();
+    expect(
+      screen.getByText("No points earned for this action"),
+    ).toBeInTheDocument();
   });
 });

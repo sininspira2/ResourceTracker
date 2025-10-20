@@ -25,27 +25,27 @@ const mockUsers = [
 ];
 
 describe("UserTable", () => {
-    beforeEach(() => {
-        (useSession as jest.Mock).mockReturnValue({
-          data: {
-            user: {
-              name: "Test User",
-              permissions: {
-                hasUserManagementAccess: true,
-              },
-            },
+  beforeEach(() => {
+    (useSession as jest.Mock).mockReturnValue({
+      data: {
+        user: {
+          name: "Test User",
+          permissions: {
+            hasUserManagementAccess: true,
           },
-          status: "authenticated",
-        });
+        },
+      },
+      status: "authenticated",
+    });
 
-        // Mock fetch
-        global.fetch = jest.fn(() =>
-          Promise.resolve({
-            ok: true,
-            json: () => Promise.resolve(mockUsers),
-          })
-        ) as jest.Mock;
-      });
+    // Mock fetch
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockUsers),
+      }),
+    ) as jest.Mock;
+  });
 
   it("renders correctly with a list of users", async () => {
     render(<UserTable />);
@@ -55,7 +55,7 @@ describe("UserTable", () => {
 
     // Wait for the users to be fetched and rendered
     await waitFor(() => {
-        expect(screen.getByRole("table")).toBeInTheDocument();
+      expect(screen.getByRole("table")).toBeInTheDocument();
     });
 
     // Check for user data
@@ -69,14 +69,14 @@ describe("UserTable", () => {
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve([]),
-      })
+      }),
     ) as jest.Mock;
 
     render(<UserTable />);
 
     // Wait for the users to be fetched and rendered
     await waitFor(() => {
-        expect(screen.getByText("No users found.")).toBeInTheDocument();
+      expect(screen.getByText("No users found.")).toBeInTheDocument();
     });
   });
 });

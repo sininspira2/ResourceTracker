@@ -145,7 +145,10 @@ export function EditResourceModal({
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="name-input" className="mb-1 block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="name-input"
+              className="mb-1 block text-sm font-medium text-text-secondary"
+            >
               Name *
             </label>
             <input
@@ -161,7 +164,10 @@ export function EditResourceModal({
           </div>
 
           <div>
-            <label htmlFor="category-select" className="mb-1 block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="category-select"
+              className="mb-1 block text-sm font-medium text-text-secondary"
+            >
               Category
             </label>
             <select
@@ -181,7 +187,10 @@ export function EditResourceModal({
           </div>
 
           <div>
-            <label htmlFor="description-textarea" className="mb-1 block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="description-textarea"
+              className="mb-1 block text-sm font-medium text-text-secondary"
+            >
               Description
             </label>
             <textarea
@@ -196,7 +205,10 @@ export function EditResourceModal({
           </div>
 
           <div>
-            <label htmlFor="image-url-input" className="mb-1 block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="image-url-input"
+              className="mb-1 block text-sm font-medium text-text-secondary"
+            >
               Image URL
             </label>
             <input
@@ -212,7 +224,10 @@ export function EditResourceModal({
           </div>
 
           <div>
-            <label htmlFor="multiplier-input" className="mb-1 block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="multiplier-input"
+              className="mb-1 block text-sm font-medium text-text-secondary"
+            >
               Points Multiplier
             </label>
             <input

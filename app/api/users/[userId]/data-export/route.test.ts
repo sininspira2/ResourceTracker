@@ -16,7 +16,10 @@ jest.mock("next/server", () => ({
       this.headers = new Headers(init?.headers);
     }
     static json(body, init) {
-      return new this(JSON.stringify(body), { ...init, headers: { 'Content-Type': 'application/json' } });
+      return new this(JSON.stringify(body), {
+        ...init,
+        headers: { "Content-Type": "application/json" },
+      });
     }
     json() {
       return Promise.resolve(JSON.parse(this.body));
@@ -32,7 +35,10 @@ jest.mock("@/lib/db", () => {
   const orderByMock = jest.fn();
   const whereMock = jest.fn(() => ({ limit: limitMock, orderBy: orderByMock }));
   const innerJoinMock = jest.fn(() => ({ where: whereMock }));
-  const fromMock = jest.fn(() => ({ where: whereMock, innerJoin: innerJoinMock }));
+  const fromMock = jest.fn(() => ({
+    where: whereMock,
+    innerJoin: innerJoinMock,
+  }));
   const selectMock = jest.fn(() => ({ from: fromMock }));
 
   // Expose the mocks for use in tests
@@ -49,7 +55,6 @@ jest.mock("@/lib/db", () => {
   };
 });
 
-
 describe("GET /api/users/[userId]/data-export", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -58,7 +63,7 @@ describe("GET /api/users/[userId]/data-export", () => {
     });
   });
 
-  const createRequest = () => ({} as NextRequest);
+  const createRequest = () => ({}) as NextRequest;
 
   it("should return 401 if user lacks permissions", async () => {
     mockGetServerSession.mockResolvedValue({

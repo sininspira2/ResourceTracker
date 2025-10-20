@@ -19,17 +19,19 @@ Removed from fork network due to original author repository being deleted, and d
 ### ✨ New Features
 
 #### Comprehensive Theming System Implementation
+
 A robust theming system has been implemented across the application using **Tailwind CSS custom properties (CSS variables)**, transitioning away from hardcoded color values.
 
-* **Light/Dark Mode Management:** The system allows for easy and centralized management of light and dark modes across the application.
-* **Refactored UI Components:** All major UI components, including modals, navigation, tables, and dashboards, have been refactored to utilize the new theme variables, ensuring a **consistent visual experience** and **improved scalability**.
-* **Centralized Definitions:** Color definitions are now centralized in `app/globals.css` and mapped in `tailwind.config.ts`, simplifying future color adjustments and maintenance.
+- **Light/Dark Mode Management:** The system allows for easy and centralized management of light and dark modes across the application.
+- **Refactored UI Components:** All major UI components, including modals, navigation, tables, and dashboards, have been refactored to utilize the new theme variables, ensuring a **consistent visual experience** and **improved scalability**.
+- **Centralized Definitions:** Color definitions are now centralized in `app/globals.css` and mapped in `tailwind.config.ts`, simplifying future color adjustments and maintenance.
 
 ### 🚀 Improvements
 
-* **Smoother Theme Switching:** The theme switching logic was enhanced with a **pre-hydration script** to prevent visual flickering during initial page loads, providing a smoother user experience.
-* **Semantic Color Naming:** CSS color variables in `tailwind.config.ts` and `app/globals.css` were refactored for **improved modularity and semantic naming**. Generic variables like `--color-background-modal-content` have been replaced with more descriptive names such as `--color-tile-background`.
-* **Consistent Code Style:** **Prettier** and the **Tailwind CSS plugin** were added to the project to enforce a consistent code style. The entire codebase was formatted with the new setup, specifically **reordering Tailwind CSS classes for uniformity**.
+- **Smoother Theme Switching:** The theme switching logic was enhanced with a **pre-hydration script** to prevent visual flickering during initial page loads, providing a smoother user experience.
+- **Semantic Color Naming:** CSS color variables in `tailwind.config.ts` and `app/globals.css` were refactored for **improved modularity and semantic naming**. Generic variables like `--color-background-modal-content` have been replaced with more descriptive names such as `--color-tile-background`.
+- **Consistent Code Style:** **Prettier** and the **Tailwind CSS plugin** were added to the project to enforce a consistent code style. The entire codebase was formatted with the new setup, specifically **reordering Tailwind CSS classes for uniformity**.
+
 ---
 
 ## 🚀 Release Notes - Version 4.1.0: Vercel Data Cache, Improved Migrations, and API Stability

@@ -32,7 +32,7 @@ describe("GET /api/users", () => {
     jest.clearAllMocks();
   });
 
-  const createRequest = () => ({} as NextRequest);
+  const createRequest = () => ({}) as NextRequest;
 
   it("should return 403 if user is not authenticated", async () => {
     mockGetServerSession.mockResolvedValue(null);

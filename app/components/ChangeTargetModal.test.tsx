@@ -20,7 +20,7 @@ describe("ChangeTargetModal", () => {
         resource={mockResource}
         onClose={mockOnClose}
         onSave={mockOnSavePromise}
-      />
+      />,
     );
 
     // Check that the modal is rendered
@@ -46,7 +46,7 @@ describe("ChangeTargetModal", () => {
         resource={mockResource}
         onClose={mockOnClose}
         onSave={mockOnSave}
-      />
+      />,
     );
 
     // Click the cancel button

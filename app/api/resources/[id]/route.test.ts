@@ -32,7 +32,8 @@ describe("API Routes: /api/resources/[id]", () => {
   describe("PUT /api/resources/[id]", () => {
     const mockSession = { user: { roles: ["Contributor"] } };
     const mockAdminSession = { user: { roles: ["Admin"] } };
-    const mockRequest = (body: any) => ({ json: async () => body } as NextRequest);
+    const mockRequest = (body: any) =>
+      ({ json: async () => body }) as NextRequest;
     const mockParams = { params: Promise.resolve({ id: "resource-1" }) };
 
     beforeEach(() => {
@@ -44,15 +45,22 @@ describe("API Routes: /api/resources/[id]", () => {
     });
 
     it("should update a resource with an absolute value", async () => {
-      const initialResource = { id: "resource-1", quantityHagga: 100, quantityDeepDesert: 50 };
+      const initialResource = {
+        id: "resource-1",
+        quantityHagga: 100,
+        quantityDeepDesert: 50,
+      };
       const updatedResource = { ...initialResource, quantityHagga: 150 };
       mockDbExecution
         .mockResolvedValueOnce([initialResource]) // First select in transaction
-        .mockResolvedValueOnce(undefined)        // update
-        .mockResolvedValueOnce(undefined)        // insert history
+        .mockResolvedValueOnce(undefined) // update
+        .mockResolvedValueOnce(undefined) // insert history
         .mockResolvedValueOnce([updatedResource]); // Final select in transaction
 
-      const request = mockRequest({ quantity: 150, quantityField: "quantityHagga" });
+      const request = mockRequest({
+        quantity: 150,
+        quantityField: "quantityHagga",
+      });
       const response = await PUT(request, mockParams);
       const body = await response.json();
 
@@ -63,7 +71,11 @@ describe("API Routes: /api/resources/[id]", () => {
     });
 
     it("should update a resource with a relative value", async () => {
-      const initialResource = { id: "resource-1", quantityHagga: 100, quantityDeepDesert: 50 };
+      const initialResource = {
+        id: "resource-1",
+        quantityHagga: 100,
+        quantityDeepDesert: 50,
+      };
       const updatedResource = { ...initialResource, quantityDeepDesert: 30 };
       mockDbExecution
         .mockResolvedValueOnce([initialResource])
@@ -71,7 +83,11 @@ describe("API Routes: /api/resources/[id]", () => {
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce([updatedResource]);
 
-      const request = mockRequest({ updateType: "relative", changeValue: -20, quantityField: "quantityDeepDesert" });
+      const request = mockRequest({
+        updateType: "relative",
+        changeValue: -20,
+        quantityField: "quantityDeepDesert",
+      });
       const response = await PUT(request, mockParams);
       const body = await response.json();
 
@@ -81,20 +97,28 @@ describe("API Routes: /api/resources/[id]", () => {
 
     it("should allow an admin to act on behalf of another user", async () => {
       (getServerSession as jest.Mock).mockResolvedValue(mockAdminSession);
-      const initialResource = { id: "resource-1", quantityHagga: 100, quantityDeepDesert: 50 };
+      const initialResource = {
+        id: "resource-1",
+        quantityHagga: 100,
+        quantityDeepDesert: 50,
+      };
       const updatedResource = { ...initialResource, quantityHagga: 120 };
       mockDbExecution
-        .mockResolvedValueOnce([{ username: "testuser", customNickname: "TestUser" }]) // User lookup
+        .mockResolvedValueOnce([
+          { username: "testuser", customNickname: "TestUser" },
+        ]) // User lookup
         .mockResolvedValueOnce([initialResource]) // First select in transaction
-        .mockResolvedValueOnce(undefined)        // update
-        .mockResolvedValueOnce(undefined)        // insert history
+        .mockResolvedValueOnce(undefined) // update
+        .mockResolvedValueOnce(undefined) // insert history
         .mockResolvedValueOnce([updatedResource]); // Final select in transaction
 
       const request = mockRequest({ quantity: 120, onBehalfOf: "user-2" });
       await PUT(request, mockParams);
 
       expect(db.insert).toHaveBeenCalled();
-      expect(db.values).toHaveBeenCalledWith(expect.objectContaining({ updatedBy: "TestUser" }));
+      expect(db.values).toHaveBeenCalledWith(
+        expect.objectContaining({ updatedBy: "TestUser" }),
+      );
     });
 
     it("should return 404 if resource is not found", async () => {

@@ -63,12 +63,16 @@ describe("PUT /api/resources/[id]/transfer", () => {
   it("should return 400 for invalid request body", async () => {
     // Missing direction
     let request = createRequest({ transferAmount: 10 });
-    let response = await PUT(request, { params: Promise.resolve({ id: "test-id" }) });
+    let response = await PUT(request, {
+      params: Promise.resolve({ id: "test-id" }),
+    });
     expect(response.status).toBe(400);
 
     // Missing amount
     request = createRequest({ transferDirection: "to_hagga" });
-    response = await PUT(request, { params: Promise.resolve({ id: "test-id" }) });
+    response = await PUT(request, {
+      params: Promise.resolve({ id: "test-id" }),
+    });
     expect(response.status).toBe(400);
 
     // Invalid direction
@@ -76,7 +80,9 @@ describe("PUT /api/resources/[id]/transfer", () => {
       transferAmount: 10,
       transferDirection: "to_the_moon",
     });
-    response = await PUT(request, { params: Promise.resolve({ id: "test-id" }) });
+    response = await PUT(request, {
+      params: Promise.resolve({ id: "test-id" }),
+    });
     expect(response.status).toBe(400);
   });
 
@@ -104,7 +110,11 @@ describe("PUT /api/resources/[id]/transfer", () => {
   });
 
   it("should return 400 for insufficient quantity", async () => {
-    const resource = { id: "test-id", quantityHagga: 5, quantityDeepDesert: 10 };
+    const resource = {
+      id: "test-id",
+      quantityHagga: 5,
+      quantityDeepDesert: 10,
+    };
     mockDb.transaction.mockImplementation(async (callback) => {
       const tx = {
         select: jest.fn().mockReturnThis(),
@@ -118,7 +128,9 @@ describe("PUT /api/resources/[id]/transfer", () => {
       transferAmount: 10,
       transferDirection: "to_deep_desert",
     });
-    const response = await PUT(request, { params: Promise.resolve({ id: "test-id" }) });
+    const response = await PUT(request, {
+      params: Promise.resolve({ id: "test-id" }),
+    });
 
     expect(response.status).toBe(400);
     const body = await response.json();
@@ -126,18 +138,35 @@ describe("PUT /api/resources/[id]/transfer", () => {
   });
 
   it("should successfully transfer resources", async () => {
-    const resource = { id: "test-id", quantityHagga: 50, quantityDeepDesert: 10 };
-    const updatedResource = { ...resource, quantityHagga: 40, quantityDeepDesert: 20 };
+    const resource = {
+      id: "test-id",
+      quantityHagga: 50,
+      quantityDeepDesert: 10,
+    };
+    const updatedResource = {
+      ...resource,
+      quantityHagga: 40,
+      quantityDeepDesert: 20,
+    };
 
     mockDb.transaction.mockImplementation(async (callback) => {
-      const whereMock = jest.fn()
+      const whereMock = jest
+        .fn()
         .mockResolvedValueOnce([resource])
         .mockResolvedValueOnce([updatedResource]);
 
       const txMock = {
-        select: jest.fn(() => ({ from: jest.fn(() => ({ where: whereMock })) })),
-        update: jest.fn(() => ({ set: jest.fn(() => ({ where: jest.fn().mockResolvedValue(undefined) })) })),
-        insert: jest.fn(() => ({ values: jest.fn().mockResolvedValue(undefined) })),
+        select: jest.fn(() => ({
+          from: jest.fn(() => ({ where: whereMock })),
+        })),
+        update: jest.fn(() => ({
+          set: jest.fn(() => ({
+            where: jest.fn().mockResolvedValue(undefined),
+          })),
+        })),
+        insert: jest.fn(() => ({
+          values: jest.fn().mockResolvedValue(undefined),
+        })),
       };
       return callback(txMock);
     });
@@ -146,7 +175,9 @@ describe("PUT /api/resources/[id]/transfer", () => {
       transferAmount: 10,
       transferDirection: "to_deep_desert",
     });
-    const response = await PUT(request, { params: Promise.resolve({ id: "test-id" }) });
+    const response = await PUT(request, {
+      params: Promise.resolve({ id: "test-id" }),
+    });
 
     expect(response.status).toBe(200);
     const body = await response.json();
@@ -160,7 +191,9 @@ describe("PUT /api/resources/[id]/transfer", () => {
       transferAmount: 10,
       transferDirection: "to_deep_desert",
     });
-    const response = await PUT(request, { params: Promise.resolve({ id: "test-id" }) });
+    const response = await PUT(request, {
+      params: Promise.resolve({ id: "test-id" }),
+    });
 
     expect(response.status).toBe(500);
     const body = await response.json();

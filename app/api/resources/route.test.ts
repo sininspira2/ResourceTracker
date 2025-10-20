@@ -31,7 +31,7 @@ describe("API Routes: /api/resources", () => {
     const mockRequest = (body: any) =>
       ({
         json: async () => body,
-      } as NextRequest);
+      }) as NextRequest;
 
     beforeEach(() => {
       (getServerSession as jest.Mock).mockResolvedValue(mockSession);
@@ -46,7 +46,9 @@ describe("API Routes: /api/resources", () => {
         quantityHagga: 100,
       };
       // Mock the .returning() call to provide the created resource
-      mockDbExecution.mockResolvedValue([{ ...newResourceData, id: "new-resource-id" }]);
+      mockDbExecution.mockResolvedValue([
+        { ...newResourceData, id: "new-resource-id" },
+      ]);
 
       const request = mockRequest(newResourceData);
       const response = await POST(request);
@@ -84,7 +86,7 @@ describe("API Routes: /api/resources", () => {
     const mockRequest = (body: any) =>
       ({
         json: async () => body,
-      } as NextRequest);
+      }) as NextRequest;
 
     beforeEach(() => {
       (getServerSession as jest.Mock).mockResolvedValue(mockSession);
@@ -111,7 +113,9 @@ describe("API Routes: /api/resources", () => {
 
     it("should return 403 if user is not an admin", async () => {
       (hasResourceAdminAccess as jest.Mock).mockReturnValue(false);
-      const request = mockRequest({ resourceMetadata: { id: "1", name: "Test", category: "Test" } });
+      const request = mockRequest({
+        resourceMetadata: { id: "1", name: "Test", category: "Test" },
+      });
       const response = await PUT(request);
       const body = await response.json();
 
@@ -120,7 +124,9 @@ describe("API Routes: /api/resources", () => {
     });
 
     it("should return 400 if id, name, or category are missing", async () => {
-      const request = mockRequest({ resourceMetadata: { id: "1", name: "Test" } }); // Missing category
+      const request = mockRequest({
+        resourceMetadata: { id: "1", name: "Test" },
+      }); // Missing category
       const response = await PUT(request);
       const body = await response.json();
 
@@ -134,7 +140,7 @@ describe("API Routes: /api/resources", () => {
     const mockRequest = (body: any) =>
       ({
         json: async () => body,
-      } as NextRequest);
+      }) as NextRequest;
 
     beforeEach(() => {
       (getServerSession as jest.Mock).mockResolvedValue(mockSession);
@@ -143,8 +149,14 @@ describe("API Routes: /api/resources", () => {
     });
 
     it("should update quantities and return updated resources", async () => {
-      const updates = [{ id: "resource-1", quantity: 200, updateType: "absolute" }];
-      const mockResource = { id: "resource-1", quantityHagga: 100, quantityDeepDesert: 50 };
+      const updates = [
+        { id: "resource-1", quantity: 200, updateType: "absolute" },
+      ];
+      const mockResource = {
+        id: "resource-1",
+        quantityHagga: 100,
+        quantityDeepDesert: 50,
+      };
       mockDbExecution
         .mockResolvedValueOnce([mockResource]) // select current
         .mockResolvedValueOnce(undefined) // update

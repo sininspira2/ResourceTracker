@@ -10,7 +10,7 @@ jobs:
   lint-and-type-check:
     name: Lint and Type Check
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,8 +18,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Delete package-lock.json
         run: rm -f package-lock.json
@@ -38,11 +38,11 @@ jobs:
       - name: Check Prettier formatting
         run: npx prettier --check .
         continue-on-error: true
-          
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -50,8 +50,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Delete package-lock.json
         run: rm -f package-lock.json
@@ -72,7 +72,7 @@ jobs:
   build:
     name: Build Check
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -80,8 +80,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Delete package-lock.json
         run: rm -f package-lock.json

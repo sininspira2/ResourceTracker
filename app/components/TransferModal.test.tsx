@@ -27,7 +27,7 @@ describe("TransferModal", () => {
         resource={mockResource}
         onClose={mockOnClose}
         onTransfer={mockOnTransferPromise}
-      />
+      />,
     );
 
     // Check that the modal is rendered
@@ -43,7 +43,11 @@ describe("TransferModal", () => {
 
     // Check that the onTransfer function was called with the correct arguments
     await screen.findByText("Transfer"); // wait for state update
-    expect(mockOnTransferPromise).toHaveBeenCalledWith("1", 20, "to_deep_desert");
+    expect(mockOnTransferPromise).toHaveBeenCalledWith(
+      "1",
+      20,
+      "to_deep_desert",
+    );
   });
 
   it("calls onClose when the cancel button is clicked", () => {
@@ -53,7 +57,7 @@ describe("TransferModal", () => {
         resource={mockResource}
         onClose={mockOnClose}
         onTransfer={mockOnTransfer}
-      />
+      />,
     );
 
     // Click the cancel button

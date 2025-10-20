@@ -1,8 +1,18 @@
 import React from "react";
-import { render, screen, waitFor, fireEvent, within } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitFor,
+  fireEvent,
+  within,
+} from "@testing-library/react";
 import { ResourceTable } from "./ResourceTable";
 import { useSession } from "next-auth/react";
-import { RESOURCES_API_PATH, USER_ACTIVITY_API_PATH, LEADERBOARD_API_PATH } from "@/lib/constants";
+import {
+  RESOURCES_API_PATH,
+  USER_ACTIVITY_API_PATH,
+  LEADERBOARD_API_PATH,
+} from "@/lib/constants";
 
 // Mock the useSession hook
 jest.mock("next-auth/react");
@@ -43,11 +53,21 @@ const mockResources = [
     createdAt: new Date().toISOString(),
     lastUpdatedBy: "user1",
     isPriority: false,
-  }
+  },
 ];
 
-const mockActivity = [{ id: "1", resourceName: "Iron Ore", changeAmount: 10, createdAt: new Date().toISOString(), updatedBy: 'user1' }];
-const mockLeaderboard = { leaderboard: [{ userId: 'user1', totalPoints: 100, totalActions: 5 }] };
+const mockActivity = [
+  {
+    id: "1",
+    resourceName: "Iron Ore",
+    changeAmount: 10,
+    createdAt: new Date().toISOString(),
+    updatedBy: "user1",
+  },
+];
+const mockLeaderboard = {
+  leaderboard: [{ userId: "user1", totalPoints: 100, totalActions: 5 }],
+};
 
 describe("ResourceTable", () => {
   beforeEach(() => {
@@ -67,25 +87,25 @@ describe("ResourceTable", () => {
 
     // Mock fetch
     global.fetch = jest.fn((url) => {
-        if (url.toString().startsWith(RESOURCES_API_PATH)) {
-            return Promise.resolve({
-                ok: true,
-                json: () => Promise.resolve(mockResources),
-            });
-        }
-        if (url.toString().startsWith(USER_ACTIVITY_API_PATH)) {
-            return Promise.resolve({
-                ok: true,
-                json: () => Promise.resolve(mockActivity),
-            });
-        }
-        if (url.toString().startsWith(LEADERBOARD_API_PATH)) {
-            return Promise.resolve({
-                ok: true,
-                json: () => Promise.resolve(mockLeaderboard),
-            });
-        }
-        return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
+      if (url.toString().startsWith(RESOURCES_API_PATH)) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockResources),
+        });
+      }
+      if (url.toString().startsWith(USER_ACTIVITY_API_PATH)) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockActivity),
+        });
+      }
+      if (url.toString().startsWith(LEADERBOARD_API_PATH)) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockLeaderboard),
+        });
+      }
+      return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
     }) as jest.Mock;
   });
 
@@ -107,9 +127,9 @@ describe("ResourceTable", () => {
 
     const table = await screen.findByRole("table");
     await waitFor(() => {
-        expect(within(table).getByText("Iron Ore")).toBeInTheDocument();
-        expect(within(table).getByText("Copper Wire")).toBeInTheDocument();
-        expect(within(table).getByText("Steel Bar")).toBeInTheDocument();
+      expect(within(table).getByText("Iron Ore")).toBeInTheDocument();
+      expect(within(table).getByText("Copper Wire")).toBeInTheDocument();
+      expect(within(table).getByText("Steel Bar")).toBeInTheDocument();
     });
   });
 
@@ -199,7 +219,7 @@ describe("ResourceTable", () => {
     // Switch back to grid view
     fireEvent.click(screen.getByText("Grid"));
     await waitFor(() => {
-        expect(screen.queryByRole("table")).toBeNull();
+      expect(screen.queryByRole("table")).toBeNull();
     });
   });
 });

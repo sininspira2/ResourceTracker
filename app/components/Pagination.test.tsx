@@ -17,22 +17,25 @@ describe("Pagination", () => {
         onPageChange={mockOnPageChange}
         hasNextPage={true}
         hasPrevPage={true}
-      />
+      />,
     );
 
     // Check that the pagination component is rendered
-    const pageInfo = container.querySelector('.sm\\:flex p');
-    expect(pageInfo?.textContent?.replace(/\s+/g, ' ')).toBe("Page 2 of 10");
-
+    const pageInfo = container.querySelector(".sm\\:flex p");
+    expect(pageInfo?.textContent?.replace(/\s+/g, " ")).toBe("Page 2 of 10");
 
     // Click the "Next" button (we target the one that is not aria-hidden)
     const nextButtons = screen.getAllByText("Next");
-    fireEvent.click(nextButtons.find(b => b.tagName === 'BUTTON') as HTMLElement);
+    fireEvent.click(
+      nextButtons.find((b) => b.tagName === "BUTTON") as HTMLElement,
+    );
     expect(mockOnPageChange).toHaveBeenCalledWith(3);
 
     // Click the "Previous" button
     const prevButtons = screen.getAllByText("Previous");
-    fireEvent.click(prevButtons.find(b => b.tagName === 'BUTTON') as HTMLElement);
+    fireEvent.click(
+      prevButtons.find((b) => b.tagName === "BUTTON") as HTMLElement,
+    );
     expect(mockOnPageChange).toHaveBeenCalledWith(1);
   });
 
@@ -44,12 +47,12 @@ describe("Pagination", () => {
         onPageChange={mockOnPageChange}
         hasNextPage={true}
         hasPrevPage={false}
-      />
+      />,
     );
 
     const prevButtons = screen.getAllByText("Previous");
     // The visible button on larger screens is the second one in the DOM
-    expect(prevButtons.find(b => b.tagName === 'BUTTON')).toBeDisabled();
+    expect(prevButtons.find((b) => b.tagName === "BUTTON")).toBeDisabled();
   });
 
   it("disables the 'Next' button on the last page", () => {
@@ -60,10 +63,10 @@ describe("Pagination", () => {
         onPageChange={mockOnPageChange}
         hasNextPage={false}
         hasPrevPage={true}
-      />
+      />,
     );
 
     const nextButtons = screen.getAllByText("Next");
-    expect(nextButtons.find(b => b.tagName === 'BUTTON')).toBeDisabled();
+    expect(nextButtons.find((b) => b.tagName === "BUTTON")).toBeDisabled();
   });
 });

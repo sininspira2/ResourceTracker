@@ -14,7 +14,7 @@ const mockResource = {
   lastUpdatedBy: "user1",
   isPriority: true,
   multiplier: 1.0,
-  description: "A common ore."
+  description: "A common ore.",
 };
 
 describe("EditResourceModal", () => {
@@ -29,7 +29,7 @@ describe("EditResourceModal", () => {
         resource={mockResource}
         onClose={mockOnClose}
         onSave={mockOnSavePromise}
-      />
+      />,
     );
 
     // Check that the modal is rendered
@@ -62,7 +62,7 @@ describe("EditResourceModal", () => {
         resource={mockResource}
         onClose={mockOnClose}
         onSave={mockOnSave}
-      />
+      />,
     );
 
     // Click the cancel button

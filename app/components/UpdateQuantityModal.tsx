@@ -213,7 +213,10 @@ export function UpdateQuantityModal({
         </h3>
         <div className="space-y-4">
           <div>
-            <label htmlFor="quantity-input" className="mb-1 block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="quantity-input"
+              className="mb-1 block text-sm font-medium text-text-secondary"
+            >
               {updateType === UPDATE_TYPE.ABSOLUTE ? "New Quantity" : "Amount"}
             </label>
             <input
@@ -229,7 +232,10 @@ export function UpdateQuantityModal({
             />
           </div>
           <div>
-            <label htmlFor="base-select" className="mb-1 block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="base-select"
+              className="mb-1 block text-sm font-medium text-text-secondary"
+            >
               Base
             </label>
             <select
@@ -247,7 +253,10 @@ export function UpdateQuantityModal({
 
           {session?.user.permissions?.hasResourceAdminAccess && (
             <div>
-              <label htmlFor="on-behalf-of-select" className="mb-1 block text-sm font-medium text-text-secondary">
+              <label
+                htmlFor="on-behalf-of-select"
+                className="mb-1 block text-sm font-medium text-text-secondary"
+              >
                 On Behalf Of (Admin)
               </label>
               {userFetchError ? (

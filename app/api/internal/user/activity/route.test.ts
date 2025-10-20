@@ -47,12 +47,19 @@ describe("GET /api/internal/user/activity", () => {
   // Test case for fetching global activity
   it("should return global user activity successfully", async () => {
     const mockActivity = [
-      { id: 1, resourceName: "Wood", changeAmountHagga: 10, changeAmountDeepDesert: 5 },
+      {
+        id: 1,
+        resourceName: "Wood",
+        changeAmountHagga: 10,
+        changeAmountDeepDesert: 5,
+      },
     ];
     mockLimit.mockResolvedValue(mockActivity);
     const { GET } = await import("./route");
 
-    const req = new NextRequest("http://localhost/api/internal/user/activity?global=true");
+    const req = new NextRequest(
+      "http://localhost/api/internal/user/activity?global=true",
+    );
     const res = await GET(req);
     const body = await res.json();
 
@@ -64,12 +71,19 @@ describe("GET /api/internal/user/activity", () => {
   // Test case for fetching user-specific activity
   it("should return user-specific activity successfully", async () => {
     const mockActivity = [
-      { id: 2, resourceName: "Stone", changeAmountHagga: -5, changeAmountDeepDesert: 0 },
+      {
+        id: 2,
+        resourceName: "Stone",
+        changeAmountHagga: -5,
+        changeAmountDeepDesert: 0,
+      },
     ];
     mockLimit.mockResolvedValue(mockActivity);
     const { GET } = await import("./route");
 
-    const req = new NextRequest("http://localhost/api/internal/user/activity?userId=user2");
+    const req = new NextRequest(
+      "http://localhost/api/internal/user/activity?userId=user2",
+    );
     const res = await GET(req);
     const body = await res.json();
 
@@ -83,7 +97,9 @@ describe("GET /api/internal/user/activity", () => {
     mockLimit.mockResolvedValue([]);
     const { GET } = await import("./route");
 
-    const req = new NextRequest("http://localhost/api/internal/user/activity?userId=user3&oldUserIds=oldUser1,oldUser2");
+    const req = new NextRequest(
+      "http://localhost/api/internal/user/activity?userId=user3&oldUserIds=oldUser1,oldUser2",
+    );
     await GET(req);
 
     expect(db.db.where).toHaveBeenCalled();
@@ -105,7 +121,9 @@ describe("GET /api/internal/user/activity", () => {
     mockLimit.mockRejectedValue(new Error("DB Error"));
     const { GET } = await import("./route");
 
-    const req = new NextRequest("http://localhost/api/internal/user/activity?global=true");
+    const req = new NextRequest(
+      "http://localhost/api/internal/user/activity?global=true",
+    );
     const res = await GET(req);
     const body = await res.json();
 

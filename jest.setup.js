@@ -19,7 +19,9 @@ jest.mock("next/server", () => {
   return {
     NextResponse: {
       json: (body, init) => {
-        const headers = init?.headers ? new Map(Object.entries(init.headers)) : new Map();
+        const headers = init?.headers
+          ? new Map(Object.entries(init.headers))
+          : new Map();
         return {
           status: init?.status || 200,
           headers: headers,

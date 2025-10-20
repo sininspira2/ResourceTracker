@@ -47,7 +47,7 @@ describe("UpdateQuantityModal", () => {
         onUpdate={mockOnUpdatePromise}
         updateType="absolute"
         session={null}
-      />
+      />,
     );
 
     // Check that the modal is rendered
@@ -69,7 +69,7 @@ describe("UpdateQuantityModal", () => {
       "quantityHagga",
       "absolute",
       "",
-      ""
+      "",
     );
   });
 
@@ -82,7 +82,7 @@ describe("UpdateQuantityModal", () => {
         onUpdate={mockOnUpdate}
         updateType="absolute"
         session={null}
-      />
+      />,
     );
 
     // Click the cancel button

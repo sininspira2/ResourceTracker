@@ -20,13 +20,10 @@ export function LogoutButton({
   return (
     <AuthButton
       onClick={handleSignOut}
-      className={cn(
-        "bg-button-danger-bg hover:bg-button-danger-bg-hover",
-        {
-          "px-6 py-3 font-semibold": variant === "prominent",
-          "w-full": fullWidth,
-        },
-      )}
+      className={cn("bg-button-danger-bg hover:bg-button-danger-bg-hover", {
+        "px-6 py-3 font-semibold": variant === "prominent",
+        "w-full": fullWidth,
+      })}
     >
       {variant === "prominent"
         ? "Sign Out & Try Different Account"

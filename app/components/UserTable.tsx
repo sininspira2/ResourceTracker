@@ -126,7 +126,9 @@ export function UserTable() {
             ) : (
               <tr>
                 <td
-                  colSpan={session?.user.permissions?.hasUserManagementAccess ? 5 : 4}
+                  colSpan={
+                    session?.user.permissions?.hasUserManagementAccess ? 5 : 4
+                  }
                   className="py-12 text-center text-text-tertiary"
                 >
                   No users found.

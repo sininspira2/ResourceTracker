@@ -7,15 +7,18 @@ const config = {
     "^@/lib/(.*)$": "<rootDir>/lib/$1",
   },
   transform: {
-    "^.+\\.(t|j)sx?$": ["@swc/jest", {
-      jsc: {
-        transform: {
-          react: {
-            runtime: "automatic",
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
           },
         },
       },
-    }],
+    ],
   },
   transformIgnorePatterns: [
     "/node_modules/(?!nanoid/.*|node-fetch/.*|data-uri-to-buffer/.*|fetch-blob/.*|formdata-polyfill/.*)",
