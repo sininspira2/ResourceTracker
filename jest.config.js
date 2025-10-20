@@ -8,6 +8,7 @@ const config = {
     "^@/components/(.*)$": "<rootDir>/app/components/$1",
     "^@/lib/(.*)$": "<rootDir>/lib/$1",
     "^@/scripts/(.*)$": "<rootDir>/scripts/$1",
+    "^@/tests/(.*)$": "<rootDir>/tests/$1",
   },
   transform: {
     "^.+\\.(t|j)sx?$": [

@@ -13,7 +13,7 @@ import { awardPoints } from "@/lib/leaderboard";
 jest.mock("next-auth");
 jest.mock("@/lib/auth");
 jest.mock("@/lib/db", () => ({
-  ...jest.requireActual("@/lib/__mocks__/db"),
+  ...jest.requireActual("@/tests/__mocks__/db"),
   resources: { id: "id" },
 }));
 jest.mock("@/lib/discord-roles");

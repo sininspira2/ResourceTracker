@@ -1,11 +1,5 @@
 import "@testing-library/jest-dom";
 
-// Mock `next-auth/react`
-jest.mock("next-auth/react", () => require("./lib/__mocks__/next-auth-react"));
-
-// Mock `next/navigation`
-jest.mock("next/navigation", () => require("./lib/__mocks__/next-navigation"));
-
 // Mock global fetch and related classes
 const fetch = require("node-fetch");
 global.fetch = fetch;
