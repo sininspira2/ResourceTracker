@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
-import { CongratulationsPopup } from "./CongratulationsPopup";
+import { CongratulationsPopup } from "@/app/components/CongratulationsPopup";
 import { useRouter } from "next/navigation";
 
 // Mock next/navigation

@@ -1,10 +1,14 @@
 /** @type {import('jest').Config} */
 const config = {
+  roots: ["<rootDir>/tests"],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {
+    "^@/app/(.*)$": "<rootDir>/app/$1",
     "^@/components/(.*)$": "<rootDir>/app/components/$1",
     "^@/lib/(.*)$": "<rootDir>/lib/$1",
+    "^@/scripts/(.*)$": "<rootDir>/scripts/$1",
+    "^@/tests/(.*)$": "<rootDir>/tests/$1",
   },
   transform: {
     "^.+\\.(t|j)sx?$": [

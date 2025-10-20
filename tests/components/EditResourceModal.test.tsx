@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { EditResourceModal } from "./EditResourceModal";
+import { EditResourceModal } from "@/app/components/EditResourceModal";
 
 const mockResource = {
   id: "1",

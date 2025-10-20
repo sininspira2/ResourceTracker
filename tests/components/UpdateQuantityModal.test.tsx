@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { UpdateQuantityModal } from "./UpdateQuantityModal";
+import { UpdateQuantityModal } from "@/app/components/UpdateQuantityModal";
 import { useSession } from "next-auth/react";
 
 jest.mock("next-auth/react");
@@ -73,6 +73,42 @@ describe("UpdateQuantityModal", () => {
     );
   });
 
+  it('handles "Remove" functionality', async () => {
+    const mockOnUpdatePromise = jest.fn().mockResolvedValue(undefined);
+    render(
+      <UpdateQuantityModal
+        isOpen={true}
+        resource={mockResource}
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdatePromise}
+        updateType="relative"
+        session={null}
+      />,
+    );
+
+    // Check that the modal is rendered
+    expect(screen.getByText("Add/Remove Iron Ore")).toBeInTheDocument();
+
+    // Fill out the form
+    const amountInput = screen.getByLabelText("Amount");
+    fireEvent.change(amountInput, { target: { value: "50" } });
+
+    // Click the "Remove" button
+    const removeButton = screen.getByText("Remove");
+    fireEvent.click(removeButton);
+
+    // Check that the onUpdate function was called with the correct arguments
+    await screen.findByText("Remove"); // wait for state update
+    expect(mockOnUpdatePromise).toHaveBeenCalledWith(
+      "1",
+      -50,
+      "quantityHagga",
+      "relative",
+      "",
+      "",
+    );
+  });
+
   it("calls onClose when the cancel button is clicked", () => {
     render(
       <UpdateQuantityModal
@@ -91,5 +127,41 @@ describe("UpdateQuantityModal", () => {
 
     // Check that the onClose function was called
     expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it('handles "Add" functionality', async () => {
+    const mockOnUpdatePromise = jest.fn().mockResolvedValue(undefined);
+    render(
+      <UpdateQuantityModal
+        isOpen={true}
+        resource={mockResource}
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdatePromise}
+        updateType="relative"
+        session={null}
+      />,
+    );
+
+    // Check that the modal is rendered
+    expect(screen.getByText("Add/Remove Iron Ore")).toBeInTheDocument();
+
+    // Fill out the form
+    const amountInput = screen.getByLabelText("Amount");
+    fireEvent.change(amountInput, { target: { value: "50" } });
+
+    // Click the "Add" button
+    const addButton = screen.getByText("Add");
+    fireEvent.click(addButton);
+
+    // Check that the onUpdate function was called with the correct arguments
+    await screen.findByText("Add"); // wait for state update
+    expect(mockOnUpdatePromise).toHaveBeenCalledWith(
+      "1",
+      50,
+      "quantityHagga",
+      "relative",
+      "",
+      "",
+    );
   });
 });

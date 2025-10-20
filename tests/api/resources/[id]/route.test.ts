@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { PUT, DELETE } from "./route";
+import { PUT, DELETE } from "@/app/api/resources/[id]/route";
 import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { db, mockDbExecution } from "@/lib/db";
@@ -13,7 +13,7 @@ import { awardPoints } from "@/lib/leaderboard";
 jest.mock("next-auth");
 jest.mock("@/lib/auth");
 jest.mock("@/lib/db", () => ({
-  ...jest.requireActual("@/lib/__mocks__/db"),
+  ...jest.requireActual("@/tests/__mocks__/db"),
   resources: { id: "id" },
   resourceHistory: { resourceId: "resourceId" },
   leaderboard: { resourceId: "resourceId" },

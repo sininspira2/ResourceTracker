@@ -40,7 +40,7 @@ describe("Discord Role-Based Access Control", () => {
       DISCORD_ROLES_CONFIG: JSON.stringify(mockRoles),
     };
     // Require the module inside the test setup to get a fresh copy
-    discordRoles = require("./discord-roles");
+    discordRoles = require("@/lib/discord-roles");
   });
 
   afterEach(() => {
@@ -69,7 +69,7 @@ describe("Discord Role-Based Access Control", () => {
       it("should return an empty array and warn if DISCORD_ROLES_CONFIG is not set", () => {
         delete process.env.DISCORD_ROLES_CONFIG;
         jest.resetModules();
-        const discordRoles = require("./discord-roles");
+        const discordRoles = require("@/lib/discord-roles");
         const hierarchy = discordRoles.getRoleHierarchy();
         expect(hierarchy).toEqual([]);
         expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -80,7 +80,7 @@ describe("Discord Role-Based Access Control", () => {
       it("should return an empty array and error if config is invalid JSON", () => {
         process.env.DISCORD_ROLES_CONFIG = "invalid-json";
         jest.resetModules();
-        const discordRoles = require("./discord-roles");
+        const discordRoles = require("@/lib/discord-roles");
         const hierarchy = discordRoles.getRoleHierarchy();
         expect(hierarchy).toEqual([]);
         expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -92,7 +92,7 @@ describe("Discord Role-Based Access Control", () => {
       it("should return an empty array and error if config is not an array", () => {
         process.env.DISCORD_ROLES_CONFIG = JSON.stringify({ not: "an array" });
         jest.resetModules();
-        const discordRoles = require("./discord-roles");
+        const discordRoles = require("@/lib/discord-roles");
         const hierarchy = discordRoles.getRoleHierarchy();
         expect(hierarchy).toEqual([]);
         expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -109,7 +109,7 @@ describe("Discord Role-Based Access Control", () => {
           { id: "missing-name" },
         ]);
         jest.resetModules();
-        const discordRoles = require("./discord-roles");
+        const discordRoles = require("@/lib/discord-roles");
         const hierarchy = discordRoles.getRoleHierarchy();
         expect(hierarchy).toHaveLength(1);
         expect(hierarchy[0].id).toBe("valid");
@@ -121,7 +121,7 @@ describe("Discord Role-Based Access Control", () => {
           { name: "missing-id" },
         ]);
         jest.resetModules();
-        const discordRoles = require("./discord-roles");
+        const discordRoles = require("@/lib/discord-roles");
         discordRoles.getRoleHierarchy();
         expect(consoleWarnSpy).toHaveBeenCalledWith(
           expect.stringContaining("No valid roles found"),

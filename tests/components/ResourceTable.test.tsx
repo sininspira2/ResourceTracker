@@ -6,7 +6,7 @@ import {
   fireEvent,
   within,
 } from "@testing-library/react";
-import { ResourceTable } from "./ResourceTable";
+import { ResourceTable } from "@/app/components/ResourceTable";
 import { useSession } from "next-auth/react";
 import {
   RESOURCES_API_PATH,
@@ -14,8 +14,17 @@ import {
   LEADERBOARD_API_PATH,
 } from "@/lib/constants";
 
-// Mock the useSession hook
-jest.mock("next-auth/react");
+jest.mock("next-auth/react", () => ({
+  useSession: jest.fn(),
+}));
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+  })),
+  usePathname: jest.fn(() => "/"),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
+}));
 
 const mockResources = [
   {
@@ -221,5 +230,31 @@ describe("ResourceTable", () => {
     await waitFor(() => {
       expect(screen.queryByRole("table")).toBeNull();
     });
+  });
+
+  it("clears all filters when the 'Clear filters' button is clicked", async () => {
+    render(<ResourceTable userId="test-user" />);
+    await screen.findByText("Recent Updates");
+
+    // Set some filters
+    fireEvent.change(screen.getByPlaceholderText("Search resources..."), {
+      target: { value: "test" },
+    });
+    fireEvent.change(screen.getByLabelText("Category:"), {
+      target: { value: "Raw" },
+    });
+    fireEvent.click(screen.getByLabelText(/Needs updating/));
+    fireEvent.click(screen.getByLabelText("Priority"));
+
+    // Verify the clear button is visible and click it
+    const clearButton = screen.getByText("Clear filters");
+    expect(clearButton).toBeInTheDocument();
+    fireEvent.click(clearButton);
+
+    // Verify the filters are cleared
+    expect(screen.getByPlaceholderText("Search resources...")).toHaveValue("");
+    expect(screen.getByLabelText("Category:")).toHaveValue("all");
+    expect(screen.getByLabelText(/Needs updating/)).not.toBeChecked();
+    expect(screen.getByLabelText("Priority")).not.toBeChecked();
   });
 });
