@@ -30,8 +30,10 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-      - name: Run TypeScript type check
-        run: npx tsc --noEmit
+      - name: Run TypeScript type check (Next.js aware)
+        run: npx next build --no-lint
+        env:
+          SKIP_ENV_VALIDATION: true
 
       - name: Check Prettier formatting
         run: npx prettier --check .
