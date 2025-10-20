@@ -79,6 +79,34 @@ describe("API Routes: /api/resources", () => {
       expect(response.status).toBe(400);
       expect(body.error).toBe("Name and category are required");
     });
+
+    it("should return 403 if user is not logged in", async () => {
+      (getServerSession as jest.Mock).mockResolvedValue(null);
+      const request = mockRequest({ name: "Test", category: "Test" });
+      const response = await POST(request);
+      const body = await response.json();
+
+      expect(response.status).toBe(403);
+      expect(body.error).toBe("Admin access required");
+    });
+
+    it("should return 500 if database operation fails", async () => {
+      const newResourceData = {
+        name: "Test Resource",
+        category: "Test Category",
+        quantityHagga: 100,
+      };
+      (db.transaction as jest.Mock).mockRejectedValue(
+        new Error("Database error"),
+      );
+
+      const request = mockRequest(newResourceData);
+      const response = await POST(request);
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body.error).toBe("Failed to create resource");
+    });
   });
 
   describe("PUT /api/resources (Metadata)", () => {
