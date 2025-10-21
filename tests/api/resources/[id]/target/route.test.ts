@@ -28,6 +28,8 @@ const mockHasTargetEditAccess = hasTargetEditAccess as jest.Mock;
 const mockDb = db as jest.Mocked<typeof db>;
 
 describe("PUT /api/resources/[id]/target", () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.resetAllMocks();
 
@@ -59,6 +61,14 @@ describe("PUT /api/resources/[id]/target", () => {
     (mockDb.from as jest.Mock).mockReturnThis();
     (mockDb.update as jest.Mock).mockReturnThis();
     (mockDb.set as jest.Mock).mockReturnThis();
+
+    consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   const createRequest = (body: any) => {

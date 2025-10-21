@@ -5,9 +5,18 @@ import { NextRequest } from "next/server";
 import { jest } from "@jest/globals";
 
 describe("GET /api/internal/leaderboard", () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.resetModules();
     jest.clearAllMocks();
+    consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it("should call getLeaderboard with default parameters", async () => {

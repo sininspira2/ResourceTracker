@@ -30,11 +30,19 @@ const mockedDb = db as jest.Mocked<typeof db>;
 
 describe("POST /api/user/data-deletion", () => {
   let request: NextRequest;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest.resetAllMocks();
     const url = "http://localhost/api/user/data-deletion";
     request = new NextRequest(url, { method: "POST" });
+    consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it("should return 401 Unauthorized if there is no session", async () => {

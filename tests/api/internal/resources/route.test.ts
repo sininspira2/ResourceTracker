@@ -9,8 +9,17 @@ import { db, mockDbExecution } from "@/tests/__mocks__/db";
 jest.mock("@/lib/db", () => require("@/tests/__mocks__/db"));
 
 describe("GET /api/internal/resources", () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it("should return a list of resources on success", async () => {

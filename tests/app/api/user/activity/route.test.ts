@@ -23,6 +23,7 @@ const mockedHasResourceAccess = hasResourceAccess as jest.Mock;
 describe("GET /api/user/activity", () => {
   let request: NextRequest;
   const baseUrl = "http://localhost";
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -35,6 +36,13 @@ describe("GET /api/user/activity", () => {
     });
 
     global.fetch = jest.fn();
+    consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it("should return 401 Unauthorized if there is no session", async () => {

@@ -41,12 +41,22 @@ const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
 describe("GET /api/leaderboard", () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.resetAllMocks();
 
     mockGetServerSession.mockResolvedValue({
       user: { id: "test-user" },
     });
+
+    consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   const createRequest = (searchParams: string = "", headers = {}) => {
