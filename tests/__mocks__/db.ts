@@ -24,3 +24,14 @@ export const leaderboard = {
   userId: "leaderboard.userId",
   createdAt: "leaderboard.createdAt",
 };
+
+export const resources = {
+  id: "resources.id",
+  name: "resources.name",
+};
+
+export const resourceHistory = {
+  id: "resourceHistory.id",
+  resourceId: "resourceHistory.resourceId",
+  createdAt: "resourceHistory.createdAt",
+};
