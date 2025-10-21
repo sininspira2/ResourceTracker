@@ -103,10 +103,11 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, account, trigger, user }) {
+      token.rolesFetched = token.rolesFetched || false;
       // Store access token and global_name from initial login
       if (account && user) {
         token.accessToken = account.access_token;
-        if (user.global_name) token.global_name = user.global_name;
+        token.global_name = user.global_name ?? undefined;
         token.rolesFetched = false; // Mark that we need to fetch roles on the next session call
         return token; // Return early on initial sign-in
       }
@@ -270,6 +271,6 @@ export function getUserIdentifier(session: Session): string {
     session.user?.name ??
     session.user?.email ??
     session.user?.id ??
-    "unknown"
+    ""
   );
 }

@@ -10,7 +10,7 @@ export async function GET(
 ) {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user || !hasResourceAccess(session.user.roles)) {
+  if (!session?.user?.roles || !hasResourceAccess(session.user.roles)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

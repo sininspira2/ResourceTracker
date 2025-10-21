@@ -4,6 +4,7 @@ export const useSession = jest.fn().mockReturnValue({
       name: "Test User",
       email: "test@example.com",
       image: "https://example.com/avatar.png",
+      roles: [],
       permissions: {
         hasResourceAccess: true,
         hasTargetEditAccess: true,
