@@ -5,9 +5,16 @@ import { NextRequest } from "next/server";
 import { UserSession } from "@/lib/auth";
 
 describe("GET /api/resources/[id]/history", () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.resetModules();
     global.fetch = jest.fn();
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it("should return 401 if user is not authenticated", async () => {

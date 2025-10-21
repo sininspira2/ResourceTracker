@@ -30,6 +30,16 @@ export const resources = {
   name: "resources.name",
 };
 
+export const users = {
+  id: "users.id",
+  discordId: "users.discordId",
+  username: "users.username",
+  avatar: "users.avatar",
+  customNickname: "users.customNickname",
+  createdAt: "users.createdAt",
+  lastLogin: "users.lastLogin",
+};
+
 export const resourceHistory = {
   id: "resourceHistory.id",
   resourceId: "resourceHistory.resourceId",

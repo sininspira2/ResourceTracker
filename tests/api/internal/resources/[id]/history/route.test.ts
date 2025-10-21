@@ -8,8 +8,15 @@ import { db } from "@/tests/__mocks__/db";
 jest.mock("@/lib/db", () => require("@/tests/__mocks__/db"));
 
 describe("GET /api/internal/resources/[id]/history", () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it("should return resource history for the specified number of days", async () => {

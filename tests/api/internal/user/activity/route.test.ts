@@ -21,6 +21,8 @@ const mockLimit = jest.fn();
 let db: any;
 
 describe("GET /api/internal/user/activity", () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(async () => {
     jest.resetModules();
     // Mock the database to isolate tests from the DB layer
@@ -43,10 +45,13 @@ describe("GET /api/internal/user/activity", () => {
     }));
     // Dynamically import db to get the mocked instance
     db = await import("@/lib/db");
+
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+    consoleErrorSpy.mockRestore();
   });
 
   // Test case for fetching global activity

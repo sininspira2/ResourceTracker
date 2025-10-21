@@ -117,6 +117,10 @@ describe("GET /api/user/data-export", () => {
   });
 
   it("should return a 500 error if the database query fails", async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
     const mockSession = {
       user: { id: "user-789", roles: ["contributor"] },
     };
@@ -135,5 +139,7 @@ describe("GET /api/user/data-export", () => {
 
     expect(response.status).toBe(500);
     expect(body.error).toBe("Failed to export user data");
+
+    consoleErrorSpy.mockRestore();
   });
 });

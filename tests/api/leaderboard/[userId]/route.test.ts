@@ -10,6 +10,17 @@ jest.mock("next-auth");
 jest.mock("@/lib/leaderboard");
 
 describe("GET /api/leaderboard/[userId]", () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
+  });
+
   it("should call getUserContributions and getUserRank with default parameters", async () => {
     (getServerSession as jest.Mock).mockResolvedValue({
       user: { id: "test-user" },

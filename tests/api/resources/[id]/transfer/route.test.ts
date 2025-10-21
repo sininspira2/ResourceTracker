@@ -185,6 +185,10 @@ describe("PUT /api/resources/[id]/transfer", () => {
   });
 
   it("should return 500 on generic database error", async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
     mockDb.transaction.mockRejectedValue(new Error("DB connection lost"));
 
     const request = createRequest({
@@ -198,5 +202,7 @@ describe("PUT /api/resources/[id]/transfer", () => {
     expect(response.status).toBe(500);
     const body = await response.json();
     expect(body.error).toBe("Failed to transfer resource quantity");
+
+    consoleErrorSpy.mockRestore();
   });
 });

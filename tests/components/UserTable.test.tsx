@@ -25,6 +25,8 @@ const mockUsers = [
 ];
 
 describe("UserTable", () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(() => {
     (useSession as jest.Mock).mockReturnValue({
       data: {
@@ -45,6 +47,12 @@ describe("UserTable", () => {
         json: () => Promise.resolve(mockUsers),
       }),
     ) as jest.Mock;
+
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it("renders correctly with a list of users", async () => {
