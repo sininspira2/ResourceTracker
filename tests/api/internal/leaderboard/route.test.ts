@@ -11,14 +11,18 @@ describe("GET /api/internal/leaderboard", () => {
   });
 
   it("should call getLeaderboard with default parameters", async () => {
-    const mockGetLeaderboard = jest.fn().mockResolvedValue({ rankings: [], total: 0 });
+    const mockGetLeaderboard = jest
+      .fn()
+      .mockResolvedValue({ rankings: [], total: 0 });
     jest.doMock("@/lib/leaderboard", () => ({
       ...jest.requireActual("@/lib/leaderboard"),
       getLeaderboard: mockGetLeaderboard,
     }));
 
     const { GET } = await import("@/app/api/internal/leaderboard/route");
-    const request = new NextRequest("http://localhost/api/internal/leaderboard");
+    const request = new NextRequest(
+      "http://localhost/api/internal/leaderboard",
+    );
     const response = await GET(request);
     const body = await response.json();
 
@@ -68,14 +72,18 @@ describe("GET /api/internal/leaderboard", () => {
   });
 
   it("should return a 500 error if getLeaderboard throws an error", async () => {
-    const mockGetLeaderboard = jest.fn().mockRejectedValue(new Error("Database error"));
+    const mockGetLeaderboard = jest
+      .fn()
+      .mockRejectedValue(new Error("Database error"));
     jest.doMock("@/lib/leaderboard", () => ({
       ...jest.requireActual("@/lib/leaderboard"),
       getLeaderboard: mockGetLeaderboard,
     }));
 
     const { GET } = await import("@/app/api/internal/leaderboard/route");
-    const request = new NextRequest("http://localhost/api/internal/leaderboard");
+    const request = new NextRequest(
+      "http://localhost/api/internal/leaderboard",
+    );
     const response = await GET(request);
     const body = await response.json();
 

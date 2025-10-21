@@ -48,7 +48,12 @@ describe("awardPoints", () => {
       "test-resource",
       "ADD",
       1000,
-      { name: "Test Resource", category: "Raw", status: "at_target", multiplier: 1 },
+      {
+        name: "Test Resource",
+        category: "Raw",
+        status: "at_target",
+        multiplier: 1,
+      },
       mockDb,
     );
 
@@ -78,7 +83,12 @@ describe("getLeaderboard", () => {
     // The first query for total count is awaited on `where`
     (mockDb.where as jest.Mock).mockResolvedValueOnce(countResult);
 
-    jest.doMock("@/lib/db", () => ({ db: mockDb, leaderboard: {}, sql: jest.fn(), gte: jest.fn() }));
+    jest.doMock("@/lib/db", () => ({
+      db: mockDb,
+      leaderboard: {},
+      sql: jest.fn(),
+      gte: jest.fn(),
+    }));
 
     const { getLeaderboard } = await import("@/lib/leaderboard");
     const result = await getLeaderboard("all", 50, 0);
@@ -113,7 +123,15 @@ describe("getUserContributions", () => {
       .mockImplementationOnce(() => mockDb) // for the main query, to be chained
       .mockResolvedValueOnce(summaryResult);
 
-    jest.doMock("@/lib/db", () => ({ db: mockDb, leaderboard: {}, sql: jest.fn(), gte: jest.fn(), and: jest.fn(), eq: jest.fn(), desc: jest.fn() }));
+    jest.doMock("@/lib/db", () => ({
+      db: mockDb,
+      leaderboard: {},
+      sql: jest.fn(),
+      gte: jest.fn(),
+      and: jest.fn(),
+      eq: jest.fn(),
+      desc: jest.fn(),
+    }));
 
     const { getUserContributions } = await import("@/lib/leaderboard");
     const result = await getUserContributions("test-user", "all", 100, 0);
@@ -149,7 +167,13 @@ describe("getUserRank", () => {
       return this;
     });
 
-    jest.doMock("@/lib/db", () => ({ db: mockDb, leaderboard: {}, sql: jest.fn(), gte: jest.fn(), eq: jest.fn() }));
+    jest.doMock("@/lib/db", () => ({
+      db: mockDb,
+      leaderboard: {},
+      sql: jest.fn(),
+      gte: jest.fn(),
+      eq: jest.fn(),
+    }));
 
     const { getUserRank } = await import("@/lib/leaderboard");
     const result = await getUserRank("test-user", "all");

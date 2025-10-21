@@ -17,6 +17,8 @@ describe("LoginButton", () => {
   it('calls signIn with "discord" when clicked', () => {
     render(<LoginButton />);
     fireEvent.click(screen.getByText("Sign in with Discord"));
-    expect(signIn).toHaveBeenCalledWith("discord", { callbackUrl: "/dashboard" });
+    expect(signIn).toHaveBeenCalledWith("discord", {
+      callbackUrl: "/dashboard",
+    });
   });
 });

@@ -31,7 +31,11 @@ describe("POST /api/resources", () => {
         return callback(tx);
       }),
     };
-    jest.doMock("@/lib/db", () => ({ db: mockDb, resources: {}, resourceHistory: {} }));
+    jest.doMock("@/lib/db", () => ({
+      db: mockDb,
+      resources: {},
+      resourceHistory: {},
+    }));
     jest.doMock("@/lib/discord-roles", () => ({
       hasResourceAccess: () => true,
       hasResourceAdminAccess: () => true,
@@ -134,7 +138,11 @@ describe("PUT /api/resources", () => {
       insert: jest.fn().mockReturnThis(),
       values: jest.fn().mockResolvedValue(undefined),
     };
-    jest.doMock("@/lib/db", () => ({ db: mockDb, resources: {}, resourceHistory: {} }));
+    jest.doMock("@/lib/db", () => ({
+      db: mockDb,
+      resources: {},
+      resourceHistory: {},
+    }));
     jest.doMock("@/lib/discord-roles", () => ({
       hasResourceAccess: () => true,
       hasResourceAdminAccess: () => true,

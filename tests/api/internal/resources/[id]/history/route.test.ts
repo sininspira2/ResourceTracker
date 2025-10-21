@@ -13,9 +13,7 @@ describe("GET /api/internal/resources/[id]/history", () => {
   });
 
   it("should return resource history for the specified number of days", async () => {
-    const mockHistory = [
-      { id: "1", resourceId: "123", changedAt: new Date() },
-    ];
+    const mockHistory = [{ id: "1", resourceId: "123", changedAt: new Date() }];
     (db.select as jest.Mock).mockReturnValue({
       from: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
@@ -26,7 +24,9 @@ describe("GET /api/internal/resources/[id]/history", () => {
     const request = new NextRequest(
       "http://localhost/api/internal/resources/123/history?days=7",
     );
-    const response = await GET(request, { params: Promise.resolve({ id: "123" }) });
+    const response = await GET(request, {
+      params: Promise.resolve({ id: "123" }),
+    });
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -35,9 +35,7 @@ describe("GET /api/internal/resources/[id]/history", () => {
   });
 
   it("should default to 7 days if days parameter is not provided", async () => {
-    const mockHistory = [
-      { id: "1", resourceId: "123", changedAt: new Date() },
-    ];
+    const mockHistory = [{ id: "1", resourceId: "123", changedAt: new Date() }];
     (db.select as jest.Mock).mockReturnValue({
       from: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
@@ -48,7 +46,9 @@ describe("GET /api/internal/resources/[id]/history", () => {
     const request = new NextRequest(
       "http://localhost/api/internal/resources/123/history",
     );
-    const response = await GET(request, { params: Promise.resolve({ id: "123" }) });
+    const response = await GET(request, {
+      params: Promise.resolve({ id: "123" }),
+    });
 
     expect(response.status).toBe(200);
   });
@@ -64,7 +64,9 @@ describe("GET /api/internal/resources/[id]/history", () => {
     const request = new NextRequest(
       "http://localhost/api/internal/resources/123/history?days=7",
     );
-    const response = await GET(request, { params: Promise.resolve({ id: "123" }) });
+    const response = await GET(request, {
+      params: Promise.resolve({ id: "123" }),
+    });
     const body = await response.json();
 
     expect(response.status).toBe(500);
