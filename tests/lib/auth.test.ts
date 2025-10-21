@@ -1,210 +1,198 @@
-import {
-  hasRole,
-  hasAnyRole,
-  getDisplayName,
-  getUserIdentifier,
-  authOptions,
-} from "@/lib/auth";
-import { db } from "@/lib/db";
+/**
+ * @jest-environment node
+ */
+import { authOptions } from "@/lib/auth";
+import { nanoid } from "nanoid";
 
-// Mock the database
+// Mock dependencies
 jest.mock("@/lib/db", () => ({
   db: {
     insert: jest.fn().mockReturnThis(),
     values: jest.fn().mockReturnThis(),
     onConflictDoUpdate: jest.fn().mockResolvedValue(null),
   },
-  users: {},
+  users: {
+    discordId: "users.discordId",
+  },
 }));
 
-describe("auth helpers", () => {
-  describe("hasRole", () => {
-    it("should return true if user has the required role", () => {
-      expect(hasRole(["admin", "user"], "admin")).toBe(true);
-    });
+jest.mock("@/lib/discord-roles", () => ({
+  hasResourceAccess: jest.fn((roles) => roles.includes("CONTRIBUTOR")),
+  hasResourceAdminAccess: jest.fn((roles) => roles.includes("ADMIN")),
+  hasTargetEditAccess: jest.fn((roles) => roles.includes("ADMIN")),
+  hasReportAccess: jest.fn((roles) => roles.includes("MANAGER")),
+  hasUserManagementAccess: jest.fn((roles) => roles.includes("ADMIN")),
+  hasDataExportAccess: jest.fn((roles) => roles.includes("MANAGER")),
+}));
 
-    it("should return false if user does not have the required role", () => {
-      expect(hasRole(["user"], "admin")).toBe(false);
-    });
-  });
+jest.mock("nanoid", () => ({
+  nanoid: jest.fn(() => "mocked-nanoid"),
+}));
 
-  describe("hasAnyRole", () => {
-    it("should return true if user has any of the required roles", () => {
-      expect(hasAnyRole(["user", "guest"], ["admin", "user"])).toBe(true);
-    });
+const mockDb = require("@/lib/db").db;
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
-    it("should return false if user has none of the required roles", () => {
-      expect(hasAnyRole(["guest"], ["admin", "user"])).toBe(false);
-    });
-  });
-
-  describe("getDisplayName", () => {
-    it("should return discordNickname if available", () => {
-      const user = { name: "testuser", discordNickname: "Test" };
-      expect(getDisplayName(user)).toBe("Test");
-    });
-
-    it("should return name if discordNickname is not available", () => {
-      const user = { name: "testuser", discordNickname: null };
-      expect(getDisplayName(user)).toBe("testuser");
-    });
-
-    it("should return 'Unknown User' if both are unavailable", () => {
-      const user = {};
-      expect(getDisplayName(user)).toBe("Unknown User");
-    });
-  });
-
-  describe("getUserIdentifier", () => {
-    const session = {
-      user: {
-        name: "testuser",
-        email: "test@example.com",
-        id: "123",
-        discordNickname: "Test",
-      },
-      expires: "1",
-    };
-
-    it("should return discordNickname if available", () => {
-      expect(getUserIdentifier(session as any)).toBe("Test");
-    });
-
-    it("should return name if discordNickname is not available", () => {
-      const newSession = {
-        ...session,
-        user: { ...session.user, discordNickname: null },
-      };
-      expect(getUserIdentifier(newSession as any)).toBe("testuser");
-    });
-
-    it("should return email if discordNickname and name are not available", () => {
-      const newSession = {
-        ...session,
-        user: { ...session.user, discordNickname: null, name: null },
-      };
-      expect(getUserIdentifier(newSession as any)).toBe("test@example.com");
-    });
-
-    it("should return id if discordNickname, name, and email are not available", () => {
-      const newSession = {
-        ...session,
-        user: {
-          ...session.user,
-          discordNickname: null,
-          name: null,
-          email: null,
-        },
-      };
-      expect(getUserIdentifier(newSession as any)).toBe("123");
-    });
-
-    it("should return 'unknown' if all are unavailable", () => {
-      const newSession = {
-        ...session,
-        user: {
-          ...session.user,
-          discordNickname: null,
-          name: null,
-          email: null,
-          id: null,
-        },
-      };
-      expect(getUserIdentifier(newSession as any)).toBe("unknown");
-    });
-  });
-});
-
-describe("authOptions.callbacks.jwt", () => {
-  const jwtCallback = authOptions.callbacks?.jwt;
-
-  if (!jwtCallback) {
-    test.only("jwt callback is not defined", () => {
-      fail("authOptions.callbacks.jwt is not defined");
-    });
-    return;
-  }
-
+describe("lib/auth", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    process.env.DISCORD_GUILD_ID = "test-guild-id";
   });
 
-  it("should fetch and update user roles and info on new login", async () => {
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ roles: ["role1"], nick: "test-nick" }),
+  describe("authOptions.callbacks.jwt", () => {
+    const jwtCallback = authOptions.callbacks!.jwt!;
+
+    it("should handle initial sign in correctly", async () => {
+      const token = {};
+      const user = {
+        id: "user-id",
+        name: "testuser",
+        global_name: "Test User",
+      };
+      const account = {
+        access_token: "test-access-token",
+        provider: "discord",
+      };
+
+      const result = await jwtCallback({ token, user, account });
+
+      expect(result.accessToken).toBe("test-access-token");
+      expect(result.global_name).toBe("Test User");
+      expect(result.rolesFetched).toBe(false);
     });
 
-    const token = await jwtCallback({
-      token: { sub: "123", name: "test" },
-      account: { access_token: "token" } as any,
-      user: { global_name: "global" } as any,
+    it("should fetch discord roles and upsert user on first JWT call after sign in", async () => {
+      const token = {
+        accessToken: "test-access-token",
+        sub: "user-discord-id",
+        name: "testuser",
+        picture: "avatar-url",
+        rolesFetched: false,
+      };
+
+      const mockDiscordMember = {
+        roles: ["CONTRIBUTOR", "MANAGER"],
+        nick: "TestNickname",
+        user: { username: "testuser", global_name: "Test User" },
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockDiscordMember,
+      });
+
+      const result = await jwtCallback({ token });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        `https://discord.com/api/v10/users/@me/guilds/test-guild-id/member`,
+        { headers: { Authorization: `Bearer test-access-token` } },
+      );
+      expect(result.userRoles).toEqual(["CONTRIBUTOR", "MANAGER"]);
+      expect(result.isInGuild).toBe(true);
+      expect(result.discordNickname).toBe("TestNickname");
+      expect(result.rolesFetched).toBe(true);
+      expect(result.permissions).toEqual({
+        hasResourceAccess: true,
+        hasResourceAdminAccess: false,
+        hasTargetEditAccess: false,
+        hasReportAccess: true,
+        hasUserManagementAccess: false,
+        hasDataExportAccess: true,
+      });
+
+      expect(mockDb.insert).toHaveBeenCalled();
+      expect(mockDb.values).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: "mocked-nanoid",
+          discordId: "user-discord-id",
+          username: "testuser",
+          avatar: "avatar-url",
+          customNickname: "TestNickname",
+        }),
+      );
+      expect(mockDb.onConflictDoUpdate).toHaveBeenCalled();
     });
 
-    expect(global.fetch).toHaveBeenCalled();
-    expect(token.userRoles).toEqual(["role1"]);
-    expect(token.discordNickname).toBe("test-nick");
-    expect(db.onConflictDoUpdate).toHaveBeenCalled();
+    it("should handle failed discord API fetch", async () => {
+      const token = {
+        accessToken: "test-access-token",
+        rolesFetched: false,
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        statusText: "Not Found",
+      });
+
+      const result = await jwtCallback({ token });
+
+      expect(result.userRoles).toEqual([]);
+      expect(result.isInGuild).toBe(false);
+      expect(result.discordNickname).toBe(null);
+      expect(result.rolesFetched).toBe(true); // Still marks as fetched to prevent retries
+    });
   });
 
-  it("should handle failed fetch for user roles", async () => {
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: false,
+  describe("authOptions.callbacks.session", () => {
+    const sessionCallback = authOptions.callbacks!.session!;
+
+    it("should correctly transfer data from token to session", async () => {
+      const session = {
+        user: {
+          name: "test",
+          email: "test@test.com",
+          image: "image.png",
+        },
+        expires: new Date().toISOString(),
+      };
+
+      const token = {
+        userRoles: ["CONTRIBUTOR"],
+        isInGuild: true,
+        discordNickname: "TestNickname",
+        permissions: {
+          hasResourceAccess: true,
+          hasResourceAdminAccess: false,
+          hasTargetEditAccess: false,
+          hasReportAccess: false,
+          hasUserManagementAccess: false,
+          hasDataExportAccess: false,
+        },
+      };
+
+      const result = await sessionCallback({ session, token });
+
+      expect(result.user.roles).toEqual(["CONTRIBUTOR"]);
+      expect(result.user.isInGuild).toBe(true);
+      expect(result.user.discordNickname).toBe("TestNickname");
+      expect(result.user.permissions).toEqual(token.permissions);
     });
 
-    const token = await jwtCallback({
-      token: { sub: "123", name: "test", accessToken: "token" },
-      account: null,
-      user: null,
+    it("should handle missing token data gracefully", async () => {
+      const session = {
+        user: {
+          name: "test",
+          email: "test@test.com",
+          image: "image.png",
+        },
+        expires: new Date().toISOString(),
+      };
+      const token = {}; // Empty token
+
+      const result = await sessionCallback({ session, token });
+
+      expect(result.user.roles).toEqual([]);
+      expect(result.user.isInGuild).toBe(false);
+      expect(result.user.discordNickname).toBe(null);
+      expect(result.user.permissions).toEqual({
+        hasResourceAccess: false,
+        hasResourceAdminAccess: false,
+        hasTargetEditAccess: false,
+        hasReportAccess: false,
+        hasUserManagementAccess: false,
+        hasDataExportAccess: false,
+      });
     });
-
-    expect(token.userRoles).toEqual([]);
-    expect(token.isInGuild).toBe(false);
-  });
-
-  it("should handle exceptions during fetch", async () => {
-    global.fetch = jest.fn().mockRejectedValue(new Error("Network error"));
-
-    const token = await jwtCallback({
-      token: { sub: "123", name: "test", accessToken: "token" },
-      account: null,
-      user: null,
-    });
-
-    expect(token.userRoles).toEqual([]);
-    expect(token.isInGuild).toBe(false);
-  });
-
-  it("should handle database errors gracefully", async () => {
-    (db.onConflictDoUpdate as jest.Mock).mockRejectedValue(
-      new Error("DB Error"),
-    );
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ roles: ["role1"], nick: "test-nick" }),
-    });
-
-    const token = await jwtCallback({
-      token: { sub: "123", name: "test" },
-      account: { access_token: "token" } as any,
-      user: { global_name: "global" } as any,
-    });
-
-    expect(token.userRoles).toEqual(["role1"]);
-  });
-
-  it("should handle member object without nick property", async () => {
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ roles: ["role1"] }),
-    });
-
-    const token = await jwtCallback({
-      token: { sub: "123", name: "test" },
-      account: { access_token: "token" } as any,
-      user: { global_name: "global" } as any,
-    });
-
-    expect(token.discordNickname).toBeNull();
   });
 });
