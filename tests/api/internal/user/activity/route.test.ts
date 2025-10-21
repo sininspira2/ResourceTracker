@@ -35,6 +35,11 @@ describe("GET /api/internal/user/activity", () => {
       },
       resourceHistory: {},
       resources: {},
+      eq: jest.fn(),
+      gte: jest.fn(),
+      desc: jest.fn(),
+      and: jest.fn(),
+      or: jest.fn(),
     }));
     // Dynamically import db to get the mocked instance
     db = await import("@/lib/db");
