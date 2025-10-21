@@ -11,16 +11,31 @@ jest.mock("@/lib/leaderboard");
 
 describe("GET /api/leaderboard/[userId]", () => {
   it("should call getUserContributions and getUserRank with default parameters", async () => {
-    (getServerSession as jest.Mock).mockResolvedValue({ user: { id: "test-user" } });
-    (getUserContributions as jest.Mock).mockResolvedValue({ contributions: [], total: 0, summary: {} });
+    (getServerSession as jest.Mock).mockResolvedValue({
+      user: { id: "test-user" },
+    });
+    (getUserContributions as jest.Mock).mockResolvedValue({
+      contributions: [],
+      total: 0,
+      summary: {},
+    });
     (getUserRank as jest.Mock).mockResolvedValue(1);
 
-    const request = new NextRequest("http://localhost/api/leaderboard/test-user");
-    const response = await GET(request, { params: Promise.resolve({ userId: "test-user" }) });
+    const request = new NextRequest(
+      "http://localhost/api/leaderboard/test-user",
+    );
+    const response = await GET(request, {
+      params: Promise.resolve({ userId: "test-user" }),
+    });
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(getUserContributions).toHaveBeenCalledWith("test-user", "all", 20, 0);
+    expect(getUserContributions).toHaveBeenCalledWith(
+      "test-user",
+      "all",
+      20,
+      0,
+    );
     expect(getUserRank).toHaveBeenCalledWith("test-user", "all");
     expect(body).toEqual({
       userId: "test-user",
@@ -38,7 +53,9 @@ describe("GET /api/leaderboard/[userId]", () => {
   });
 
   it("should call getUserContributions and getUserRank with provided parameters", async () => {
-    (getServerSession as jest.Mock).mockResolvedValue({ user: { id: "test-user" } });
+    (getServerSession as jest.Mock).mockResolvedValue({
+      user: { id: "test-user" },
+    });
     (getUserContributions as jest.Mock).mockResolvedValue({
       contributions: [{ id: "1" }],
       total: 1,
@@ -49,7 +66,9 @@ describe("GET /api/leaderboard/[userId]", () => {
     const request = new NextRequest(
       "http://localhost/api/leaderboard/test-user?timeFilter=7d&limit=10&page=2&pageSize=5",
     );
-    const response = await GET(request, { params: Promise.resolve({ userId: "test-user" }) });
+    const response = await GET(request, {
+      params: Promise.resolve({ userId: "test-user" }),
+    });
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -71,12 +90,20 @@ describe("GET /api/leaderboard/[userId]", () => {
   });
 
   it("should return a 500 error if getUserContributions throws an error", async () => {
-    (getServerSession as jest.Mock).mockResolvedValue({ user: { id: "test-user" } });
-    (getUserContributions as jest.Mock).mockRejectedValue(new Error("Database error"));
+    (getServerSession as jest.Mock).mockResolvedValue({
+      user: { id: "test-user" },
+    });
+    (getUserContributions as jest.Mock).mockRejectedValue(
+      new Error("Database error"),
+    );
     (getUserRank as jest.Mock).mockResolvedValue(1);
 
-    const request = new NextRequest("http://localhost/api/leaderboard/test-user");
-    const response = await GET(request, { params: Promise.resolve({ userId: "test-user" }) });
+    const request = new NextRequest(
+      "http://localhost/api/leaderboard/test-user",
+    );
+    const response = await GET(request, {
+      params: Promise.resolve({ userId: "test-user" }),
+    });
     const body = await response.json();
 
     expect(response.status).toBe(500);

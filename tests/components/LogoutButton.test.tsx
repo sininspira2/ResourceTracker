@@ -8,7 +8,7 @@ jest.mock("next-auth/react", () => ({
 }));
 
 describe("LogoutButton", () => {
-  it('renders with default text and calls signOut with the correct callbackUrl', () => {
+  it("renders with default text and calls signOut with the correct callbackUrl", () => {
     render(<LogoutButton />);
     const button = screen.getByText("Sign Out");
     expect(button).toBeInTheDocument();
@@ -16,12 +16,14 @@ describe("LogoutButton", () => {
     expect(signOut).toHaveBeenCalledWith({ callbackUrl: "/" });
   });
 
-  it('renders with prominent variant text', () => {
+  it("renders with prominent variant text", () => {
     render(<LogoutButton variant="prominent" />);
-    expect(screen.getByText("Sign Out & Try Different Account")).toBeInTheDocument();
+    expect(
+      screen.getByText("Sign Out & Try Different Account"),
+    ).toBeInTheDocument();
   });
 
-  it('applies fullWidth class', () => {
+  it("applies fullWidth class", () => {
     render(<LogoutButton fullWidth />);
     expect(screen.getByText("Sign Out")).toHaveClass("w-full");
   });

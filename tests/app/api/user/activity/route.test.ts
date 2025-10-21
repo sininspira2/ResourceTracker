@@ -64,7 +64,9 @@ describe("GET /api/user/activity", () => {
 
     expect(response.status).toBe(401);
     expect(body.error).toBe("Unauthorized");
-    expect(mockedHasResourceAccess).toHaveBeenCalledWith(mockSession.user.roles);
+    expect(mockedHasResourceAccess).toHaveBeenCalledWith(
+      mockSession.user.roles,
+    );
   });
 
   it("should forward the request to the internal API and return data on success", async () => {

@@ -30,7 +30,13 @@ describe("DELETE /api/resources/[id]/history/[entryId]", () => {
 
   it("should return 403 if user does not have admin access", async () => {
     const mockSession: UserSession = {
-      user: { id: "1", name: "test", email: "", image: "", roles: ["Contributor"] },
+      user: {
+        id: "1",
+        name: "test",
+        email: "",
+        image: "",
+        roles: ["Contributor"],
+      },
       expires: "",
     };
     jest.doMock("next-auth", () => ({
