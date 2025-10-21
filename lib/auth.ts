@@ -106,13 +106,12 @@ export const authOptions: NextAuthOptions = {
       // Store access token and global_name from initial login
       if (account && user) {
         token.accessToken = account.access_token;
-
         if (user.global_name) token.global_name = user.global_name;
-        // Mark that we need to fetch roles on the next session call
-        token.rolesFetched = false;
+        token.rolesFetched = false; // Mark that we need to fetch roles on the next session call
+        return token; // Return early on initial sign-in
       }
 
-      // Fetch Discord roles and nickname on login or when explicitly triggered
+      // Fetch Discord roles and nickname on subsequent session checks or when explicitly triggered
       if (token.accessToken && (!token.rolesFetched || trigger === "update")) {
         try {
           const guildId = process.env.DISCORD_GUILD_ID!;
@@ -218,7 +217,7 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         roles: (token.userRoles || []) as string[],
         isInGuild: Boolean(token.isInGuild),
-        discordNickname: token.discordNickname as string | null,
+        discordNickname: (token.discordNickname as string | null) ?? null,
         // Include pre-computed permissions to avoid client-side env var issues
         permissions: (token.permissions as UserPermissions) || {
           hasResourceAccess: false,
