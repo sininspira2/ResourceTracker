@@ -149,6 +149,7 @@ export async function getLeaderboard(
   timeFilter?: "24h" | "7d" | "30d" | "all",
   limit = 50,
   offset = 0,
+  dbInstance: any = db,
 ): Promise<{ rankings: any[]; total: number }> {
   try {
     let timeCondition = sql`1 = 1`; // Default to no time filter
@@ -177,7 +178,7 @@ export async function getLeaderboard(
     );
 
     // Get total count for pagination
-    const totalResult = await db
+    const totalResult = await dbInstance
       .select({
         count: sql<number>`COUNT(DISTINCT ${leaderboard.userId})`.as("count"),
       })
@@ -186,7 +187,7 @@ export async function getLeaderboard(
 
     const total = totalResult[0]?.count || 0;
 
-    const rankings = await db
+    const rankings = await dbInstance
       .select({
         userId: leaderboard.userId,
         totalPoints: sql<number>`SUM(${leaderboard.finalPoints})`.as(
@@ -219,6 +220,7 @@ export async function getUserContributions(
   timeFilter?: "24h" | "7d" | "30d" | "all",
   limit = 100,
   offset = 0,
+  dbInstance: any = db,
 ): Promise<{ contributions: any[]; summary: any; total: number }> {
   let timeCondition = sql`1 = 1`;
 
@@ -242,7 +244,7 @@ export async function getUserContributions(
   }
 
   // Get total count for pagination
-  const totalResult = await db
+  const totalResult = await dbInstance
     .select({
       count: sql<number>`COUNT(*)`.as("count"),
     })
@@ -251,7 +253,7 @@ export async function getUserContributions(
 
   const total = totalResult[0]?.count || 0;
 
-  const contributions = await db
+  const contributions = await dbInstance
     .select()
     .from(leaderboard)
     .where(and(eq(leaderboard.userId, userId), timeCondition))
@@ -259,7 +261,7 @@ export async function getUserContributions(
     .limit(limit)
     .offset(offset);
 
-  const summaryResult = await db
+  const summaryResult = await dbInstance
     .select({
       totalPoints: sql<number>`COALESCE(SUM(${leaderboard.finalPoints}), 0)`.as(
         "totalPoints",
@@ -282,6 +284,7 @@ export async function getUserContributions(
 export async function getUserRank(
   userId: string,
   timeFilter?: "24h" | "7d" | "30d" | "all",
+  dbInstance: any = db,
 ) {
   let timeCondition = sql`1 = 1`;
   if (timeFilter && timeFilter !== "all") {
@@ -305,7 +308,7 @@ export async function getUserRank(
     timeCondition = gte(leaderboard.createdAt, cutoffDate);
   }
 
-  const rankedUsers = db
+  const rankedUsers = dbInstance
     .select({
       userId: leaderboard.userId,
       rank: sql<number>`RANK() OVER (ORDER BY SUM(${leaderboard.finalPoints}) DESC)`.as(
@@ -317,7 +320,7 @@ export async function getUserRank(
     .groupBy(leaderboard.userId)
     .as("ranked_users");
 
-  const userRankResult = await db
+  const userRankResult = await dbInstance
     .select({ rank: rankedUsers.rank })
     .from(rankedUsers)
     .where(eq(rankedUsers.userId, userId));

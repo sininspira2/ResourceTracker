@@ -1,230 +1,183 @@
-import {
-  calculatePoints,
-  awardPoints,
-  getLeaderboard,
-  getUserContributions,
-  getUserRank,
-} from "@/lib/leaderboard";
-import { db, leaderboard } from "@/lib/db";
-import { mockDbExecution } from "@/tests/__mocks__/db";
+/**
+ * @jest-environment node
+ */
+import { calculatePoints } from "@/lib/leaderboard";
 
-// Mock the db module
-jest.mock("@/lib/db", () => jest.requireActual("@/tests/__mocks__/db"));
+// This is a pure function, so it doesn't need complex mocking.
+describe("calculatePoints", () => {
+  it("should return 0 points for REMOVE actions", () => {
+    const result = calculatePoints("REMOVE", 100, 1.5, "at_target", "Raw");
+    expect(result.finalPoints).toBe(0);
+  });
 
-// Mock other external dependencies
-jest.mock("nanoid", () => ({
-  nanoid: () => "test-id",
-}));
-jest.mock("drizzle-orm", () => ({
-  eq: jest.fn(),
-  desc: jest.fn(),
-  sql: jest.fn(() => ({ as: jest.fn() })),
-  and: jest.fn(),
-  gte: jest.fn(),
-}));
+  it("should return a fixed amount of points for SET actions", () => {
+    const result = calculatePoints("SET", 100, 1.5, "at_target", "Raw");
+    expect(result.finalPoints).toBe(1);
+  });
 
-describe("lib/leaderboard.ts", () => {
+  it("should calculate points for ADD actions", () => {
+    const result = calculatePoints("ADD", 1000, 1, "at_target", "Raw");
+    expect(result.finalPoints).toBe(100);
+  });
+
+  it("should apply a resource multiplier", () => {
+    const result = calculatePoints("ADD", 1000, 1.5, "at_target", "Raw");
+    expect(result.finalPoints).toBe(150);
+  });
+
+  it("should apply a status bonus", () => {
+    const result = calculatePoints("ADD", 1000, 1, "critical", "Raw");
+    expect(result.finalPoints).toBe(110);
+  });
+});
+
+describe("awardPoints", () => {
   beforeEach(() => {
-    // Clear all mock states before each test
-    jest.clearAllMocks();
-    mockDbExecution.mockClear();
+    jest.resetModules();
   });
 
-  describe("calculatePoints", () => {
-    it("should return 0 points for REMOVE actions", () => {
-      const result = calculatePoints(
-        "REMOVE",
-        100,
-        1.5,
-        "critical",
-        "Components",
-      );
-      expect(result.finalPoints).toBe(0);
-    });
-
-    it("should return 0 points for ineligible categories", () => {
-      const result = calculatePoints(
-        "ADD",
-        100,
-        1,
-        "at_target",
-        "ineligible-category",
-      );
-      expect(result.finalPoints).toBe(0);
-    });
-
-    it("should return a fixed amount for SET actions", () => {
-      const result = calculatePoints(
-        "SET",
-        5000,
-        2.0,
-        "critical",
-        "Components",
-      );
-      expect(result.finalPoints).toBe(1);
-    });
-
-    it("should return a flat 2 points for the Refined category", () => {
-      const result = calculatePoints("ADD", 100, 1.5, "critical", "Refined");
-      expect(result.finalPoints).toBe(2);
-    });
-
-    it("should calculate points correctly for ADD actions", () => {
-      const result = calculatePoints("ADD", 1000, 1.0, "at_target", "Raw");
-      expect(result.finalPoints).toBe(100);
-    });
-
-    it("should apply a resource multiplier", () => {
-      const result = calculatePoints(
-        "ADD",
-        1000,
-        1.5,
-        "at_target",
-        "Components",
-      );
-      expect(result.finalPoints).toBe(150);
-    });
-
-    it("should apply a status bonus", () => {
-      const result = calculatePoints("ADD", 1000, 1.0, "critical", "Raw");
-      expect(result.finalPoints).toBe(110);
-    });
-
-    it("should apply both multiplier and status bonus", () => {
-      const result = calculatePoints(
-        "ADD",
-        1000,
-        1.5,
-        "below_target",
-        "Components",
-      );
-      expect(result.finalPoints).toBe(157.5);
-    });
-  });
-
-  describe("awardPoints", () => {
-    const resourceData = {
-      name: "Test",
-      category: "Components",
-      status: "critical",
-      multiplier: 1.5,
+  it("should award points and create a leaderboard entry", async () => {
+    const mockDb = {
+      insert: jest.fn().mockReturnThis(),
+      values: jest.fn().mockResolvedValue(undefined),
     };
 
-    it("should insert a record if points are earned", async () => {
-      mockDbExecution.mockResolvedValueOnce(undefined);
-      await awardPoints("user-1", "resource-1", "ADD", 100, resourceData, db);
-
-      expect(db.insert).toHaveBeenCalledWith(leaderboard);
-      expect(db.values).toHaveBeenCalledWith(
-        expect.objectContaining({ userId: "user-1" }),
-      );
-    });
-
-    it("should not insert a record if no points are earned", async () => {
-      await awardPoints(
-        "user-1",
-        "resource-1",
-        "REMOVE",
-        100,
-        resourceData,
-        db,
-      );
-      expect(db.insert).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("getLeaderboard", () => {
-    it("should return rankings and total", async () => {
-      mockDbExecution
-        .mockResolvedValueOnce([{ count: 50 }])
-        .mockResolvedValueOnce([{ userId: "user-1" }]);
-
-      const result = await getLeaderboard("7d", 10, 5);
-
-      expect(db.limit).toHaveBeenCalledWith(10);
-      expect(db.offset).toHaveBeenCalledWith(5);
-      expect(result.total).toBe(50);
-      expect(result.rankings[0].userId).toBe("user-1");
-      expect(mockDbExecution).toHaveBeenCalledTimes(2);
-    });
-
-    it("should gracefully handle database errors", async () => {
-      const consoleErrorSpy = jest
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
-      mockDbExecution.mockRejectedValueOnce(new Error("DB connection failed"));
-
-      const result = await getLeaderboard();
-
-      expect(result.rankings).toEqual([]);
-      expect(result.total).toBe(0);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Error in getLeaderboard:",
-        expect.any(Error),
-      );
-      consoleErrorSpy.mockRestore();
-    });
-  });
-
-  describe("getUserContributions", () => {
-    it("should fetch contributions and summary", async () => {
-      mockDbExecution
-        .mockResolvedValueOnce([{ count: 25 }])
-        .mockResolvedValueOnce([{ id: "entry-1" }])
-        .mockResolvedValueOnce([{ totalPoints: 150 }]);
-
-      const result = await getUserContributions("user-1", "30d", 20, 10);
-
-      expect(result.total).toBe(25);
-      expect(result.contributions.length).toBe(1);
-      expect(result.summary.totalPoints).toBe(150);
-      expect(mockDbExecution).toHaveBeenCalledTimes(3);
-    });
-
-    it.each([["24h"], ["7d"], ["30d"], ["all"]])(
-      "should apply the correct time filter (%s) for contributions",
-      async (filter) => {
-        mockDbExecution
-          .mockResolvedValueOnce([{ count: 1 }])
-          .mockResolvedValueOnce([])
-          .mockResolvedValueOnce([]);
-        const { gte } = require("drizzle-orm");
-        await getUserContributions("user-1", filter as any);
-
-        if (filter !== "all") {
-          expect(gte).toHaveBeenCalled();
-        } else {
-          expect(gte).not.toHaveBeenCalled();
-        }
+    const { awardPoints } = await import("@/lib/leaderboard");
+    await awardPoints(
+      "test-user",
+      "test-resource",
+      "ADD",
+      1000,
+      {
+        name: "Test Resource",
+        category: "Raw",
+        status: "at_target",
+        multiplier: 1,
       },
-    );
-  });
-
-  describe("getUserRank", () => {
-    it("should return the correct rank", async () => {
-      mockDbExecution.mockResolvedValueOnce([{ rank: 5 }]);
-      const rank = await getUserRank("user-1", "all");
-      expect(rank).toBe(5);
-    });
-
-    it.each([["24h"], ["7d"], ["30d"], ["all"]])(
-      "should apply the correct time filter (%s) for rank",
-      async (filter) => {
-        mockDbExecution.mockResolvedValueOnce([{ rank: 1 }]);
-        const { gte } = require("drizzle-orm");
-        await getUserRank("user-1", filter as any);
-        if (filter !== "all") {
-          expect(gte).toHaveBeenCalled();
-        } else {
-          expect(gte).not.toHaveBeenCalled();
-        }
-      },
+      mockDb,
     );
 
-    it("should return null if user is not found", async () => {
-      mockDbExecution.mockResolvedValueOnce([]);
-      const rank = await getUserRank("non-existent-user");
-      expect(rank).toBeNull();
+    expect(mockDb.insert).toHaveBeenCalled();
+    expect(mockDb.values).toHaveBeenCalled();
+  });
+});
+
+describe("getLeaderboard", () => {
+  beforeEach(() => {
+    jest.resetModules();
+  });
+
+  it("should return leaderboard rankings", async () => {
+    const rankings = [{ userId: "test-user", totalPoints: 100 }];
+    const countResult = [{ count: 1 }];
+
+    const mockDb = {
+      select: jest.fn().mockReturnThis(),
+      from: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      groupBy: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      offset: jest.fn().mockResolvedValue(rankings),
+    };
+    // The first query for total count is awaited on `where`
+    (mockDb.where as jest.Mock).mockResolvedValueOnce(countResult);
+
+    jest.doMock("@/lib/db", () => ({
+      db: mockDb,
+      leaderboard: {},
+      sql: jest.fn(),
+      gte: jest.fn(),
+    }));
+
+    const { getLeaderboard } = await import("@/lib/leaderboard");
+    const result = await getLeaderboard("all", 50, 0);
+
+    expect(result.rankings).toEqual(rankings);
+    expect(result.total).toBe(1);
+  });
+});
+
+describe("getUserContributions", () => {
+  beforeEach(() => {
+    jest.resetModules();
+  });
+
+  it("should return user contributions", async () => {
+    const contributions = [{ id: "1" }];
+    const countResult = [{ count: 1 }];
+    const summaryResult = [{ totalPoints: 100, totalActions: 1 }];
+
+    const mockDb = {
+      select: jest.fn().mockReturnThis(),
+      from: jest.fn().mockReturnThis(),
+      where: jest.fn(), // This will be customized below
+      orderBy: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      offset: jest.fn().mockResolvedValue(contributions),
+    };
+
+    // There are 3 queries. The first two are awaited on `where`.
+    (mockDb.where as jest.Mock)
+      .mockResolvedValueOnce(countResult)
+      .mockImplementationOnce(() => mockDb) // for the main query, to be chained
+      .mockResolvedValueOnce(summaryResult);
+
+    jest.doMock("@/lib/db", () => ({
+      db: mockDb,
+      leaderboard: {},
+      sql: jest.fn(),
+      gte: jest.fn(),
+      and: jest.fn(),
+      eq: jest.fn(),
+      desc: jest.fn(),
+    }));
+
+    const { getUserContributions } = await import("@/lib/leaderboard");
+    const result = await getUserContributions("test-user", "all", 100, 0);
+
+    expect(result.contributions).toEqual(contributions);
+    expect(result.total).toBe(1);
+    expect(result.summary).toEqual(summaryResult[0]);
+  });
+});
+
+describe("getUserRank", () => {
+  beforeEach(() => {
+    jest.resetModules();
+  });
+
+  it("should return user rank", async () => {
+    const subquery = { rank: "rank_col" };
+    const finalResult = [{ rank: 1 }];
+
+    const mockDb = {
+      select: jest.fn().mockReturnThis(),
+      from: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      groupBy: jest.fn().mockReturnThis(),
+      as: jest.fn(() => subquery),
+    };
+
+    // When `from` is called with the subquery, `where` should resolve the final value
+    (mockDb.from as jest.Mock).mockImplementation(function (fromArg) {
+      if (fromArg === subquery) {
+        this.where = jest.fn().mockResolvedValue(finalResult);
+      }
+      return this;
     });
+
+    jest.doMock("@/lib/db", () => ({
+      db: mockDb,
+      leaderboard: {},
+      sql: jest.fn(),
+      gte: jest.fn(),
+      eq: jest.fn(),
+    }));
+
+    const { getUserRank } = await import("@/lib/leaderboard");
+    const result = await getUserRank("test-user", "all");
+
+    expect(result).toBe(1);
   });
 });

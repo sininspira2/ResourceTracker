@@ -24,3 +24,24 @@ export const leaderboard = {
   userId: "leaderboard.userId",
   createdAt: "leaderboard.createdAt",
 };
+
+export const resources = {
+  id: "resources.id",
+  name: "resources.name",
+};
+
+export const users = {
+  id: "users.id",
+  discordId: "users.discordId",
+  username: "users.username",
+  avatar: "users.avatar",
+  customNickname: "users.customNickname",
+  createdAt: "users.createdAt",
+  lastLogin: "users.lastLogin",
+};
+
+export const resourceHistory = {
+  id: "resourceHistory.id",
+  resourceId: "resourceHistory.resourceId",
+  createdAt: "resourceHistory.createdAt",
+};

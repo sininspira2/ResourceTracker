@@ -19,7 +19,7 @@ describe("AuthButton", () => {
     render(
       <AuthButton onClick={() => {}} className="custom-class">
         Test Button
-      </AuthButton>
+      </AuthButton>,
     );
     expect(screen.getByText("Test Button")).toHaveClass("custom-class");
   });
