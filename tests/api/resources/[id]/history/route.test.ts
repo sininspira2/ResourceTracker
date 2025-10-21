@@ -10,9 +10,7 @@ describe("GET /api/resources/[id]/history", () => {
   beforeEach(() => {
     jest.resetModules();
     global.fetch = jest.fn();
-    consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {

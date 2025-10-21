@@ -130,12 +130,8 @@ describe("authOptions.callbacks.jwt", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-    consoleWarnSpy = jest
-      .spyOn(console, "warn")
-      .mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
   });
 
   afterEach(() => {

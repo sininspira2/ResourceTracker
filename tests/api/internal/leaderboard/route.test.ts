@@ -10,9 +10,7 @@ describe("GET /api/internal/leaderboard", () => {
   beforeEach(() => {
     jest.resetModules();
     jest.clearAllMocks();
-    consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {

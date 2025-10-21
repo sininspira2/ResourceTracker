@@ -36,9 +36,7 @@ describe("POST /api/user/data-deletion", () => {
     jest.resetAllMocks();
     const url = "http://localhost/api/user/data-deletion";
     request = new NextRequest(url, { method: "POST" });
-    consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {

@@ -62,9 +62,7 @@ describe("PUT /api/resources/[id]/target", () => {
     (mockDb.update as jest.Mock).mockReturnThis();
     (mockDb.set as jest.Mock).mockReturnThis();
 
-    consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {

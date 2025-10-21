@@ -46,9 +46,7 @@ describe("GET /api/internal/user/activity", () => {
     // Dynamically import db to get the mocked instance
     db = await import("@/lib/db");
 
-    consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {

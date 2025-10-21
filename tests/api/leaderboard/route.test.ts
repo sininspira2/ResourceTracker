@@ -50,9 +50,7 @@ describe("GET /api/leaderboard", () => {
       user: { id: "test-user" },
     });
 
-    consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
