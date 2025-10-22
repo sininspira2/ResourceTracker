@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { LogoutButton } from "@/components/LogoutButton";
+import LogoutButton from "@/app/components/LogoutButton";
 import { signOut } from "next-auth/react";
 
 jest.mock("next-auth/react", () => ({
@@ -25,6 +25,6 @@ describe("LogoutButton", () => {
 
   it("applies fullWidth class", () => {
     render(<LogoutButton fullWidth />);
-    expect(screen.getByText("Sign Out")).toHaveClass("w-full");
+    expect(screen.getByRole("button")).toHaveClass("w-full");
   });
 });

@@ -1,5 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { Session } from "next-auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db";
@@ -26,34 +27,68 @@ interface UserPermissions {
 // Discord API scopes needed for role checking
 const scopes = ["identify", "guilds.members.read"].join(" ");
 
-export const authOptions: NextAuthOptions = {
-  providers: [
-    DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID!,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-      authorization: { params: { scope: scopes } },
-      profile(profile) {
-        let image_url: string;
-        if (profile.avatar === null) {
-          // Discord's new default avatar is based on user ID.
-          // https://discord.com/developers/docs/reference#image-formatting
-          const defaultAvatarNumber =
-            (BigInt(profile.id) >> BigInt(22)) % BigInt(6);
-          image_url = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`;
-        } else {
-          const format = profile.avatar.startsWith("a_") ? "gif" : "png";
-          image_url = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.${format}`;
+// Define a type for the providers array to satisfy TypeScript
+type Provider =
+  | ReturnType<typeof DiscordProvider>
+  | ReturnType<typeof CredentialsProvider>;
+
+const providers: Provider[] = [
+  DiscordProvider({
+    clientId: process.env.DISCORD_CLIENT_ID!,
+    clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+    authorization: { params: { scope: scopes } },
+    profile(profile) {
+      let image_url: string;
+      if (profile.avatar === null) {
+        const defaultAvatarNumber =
+          (BigInt(profile.id) >> BigInt(22)) % BigInt(6);
+        image_url = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`;
+      } else {
+        const format = profile.avatar.startsWith("a_") ? "gif" : "png";
+        image_url = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.${format}`;
+      }
+      return {
+        id: profile.id,
+        name: profile.username,
+        email: profile.email,
+        image: image_url,
+        global_name: profile.global_name,
+      };
+    },
+  }),
+];
+
+// Add the Credentials provider only in development
+if (process.env.NODE_ENV === "development") {
+  providers.push(
+    CredentialsProvider({
+      name: "Agent Login",
+      credentials: {
+        permissionLevel: {
+          label: "Permission Level",
+          type: "number",
+          placeholder: "1-4",
+        },
+      },
+      async authorize(credentials) {
+        if (!credentials) return null;
+        const level = parseInt(credentials.permissionLevel, 10);
+        if (level >= 1 && level <= 4) {
+          // Return a mock user object
+          return {
+            id: `agent-${level}`,
+            name: `Agent (Level ${level})`,
+            email: `agent${level}@example.com`,
+          };
         }
-        return {
-          id: profile.id,
-          name: profile.username,
-          email: profile.email,
-          image: image_url,
-          global_name: profile.global_name,
-        };
+        return null;
       },
     }),
-  ],
+  );
+}
+
+export const authOptions: NextAuthOptions = {
+  providers,
   session: {
     strategy: "jwt",
     maxAge: 4 * 60 * 60, // 4 hours in seconds
@@ -103,25 +138,43 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, account, trigger, user }) {
+      // Handle Agent Login for development
+      if (account?.provider === "credentials" && user) {
+        const level = Number(user.id.split("-")[1]);
+        const permissions: UserPermissions = {
+          hasResourceAccess: level >= 1,
+          hasTargetEditAccess: level >= 2,
+          hasUserManagementAccess: level >= 3,
+          hasDataExportAccess: level >= 3,
+          hasReportAccess: level >= 3,
+          hasResourceAdminAccess: level >= 4,
+        };
+
+        token.sub = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.permissions = permissions;
+        token.isInGuild = true; // Assume agent is in guild
+        token.rolesFetched = true; // Prevent Discord role fetch
+        token.discordNickname = user.name; // Use agent name as nickname
+        return token;
+      }
+
       // Store access token and global_name from initial login
       if (account && user) {
         token.accessToken = account.access_token;
-
         if (user.global_name) token.global_name = user.global_name;
-        // Mark that we need to fetch roles on the next session call
         token.rolesFetched = false;
       }
 
-      // Fetch Discord roles and nickname on login or when explicitly triggered
+      // Fetch Discord roles and nickname
       if (token.accessToken && (!token.rolesFetched || trigger === "update")) {
         try {
           const guildId = process.env.DISCORD_GUILD_ID!;
           const response = await fetch(
             `https://discord.com/api/v10/users/@me/guilds/${guildId}/member`,
             {
-              headers: {
-                Authorization: `Bearer ${token.accessToken}`,
-              },
+              headers: { Authorization: `Bearer ${token.accessToken}` },
             },
           );
 
@@ -129,37 +182,22 @@ export const authOptions: NextAuthOptions = {
             const member = await response.json();
             token.userRoles = member.roles || [];
             token.isInGuild = true;
-            // Prioritize nickname over username
             token.discordNickname = member.nick || null;
 
-            // Log member data in development only
-            if (process.env.NODE_ENV === "development") {
-              console.log("Discord member data:", {
-                nick: member.nick,
-                username: member.user?.username,
-                global_name: member.user?.global_name,
-              });
-            }
-
-            // Upsert user data in the database
             if (token.sub) {
-              // token.sub is the user's Discord ID
               const discordId = token.sub;
               const username = token.name || "unknown";
               const avatar = token.picture || null;
-              // Use server nickname if available, otherwise fall back to global name
               const displayName = member.nick || token.global_name || username;
-
               const now = new Date();
-
               try {
                 await db
                   .insert(users)
                   .values({
                     id: nanoid(),
                     discordId: discordId,
-                    username: username,
-                    avatar: avatar,
+                    username,
+                    avatar,
                     customNickname: displayName,
                     createdAt: now,
                     lastLogin: now,
@@ -167,8 +205,8 @@ export const authOptions: NextAuthOptions = {
                   .onConflictDoUpdate({
                     target: users.discordId,
                     set: {
-                      username: username,
-                      avatar: avatar,
+                      username,
+                      avatar,
                       customNickname: displayName,
                       lastLogin: now,
                     },
@@ -178,11 +216,6 @@ export const authOptions: NextAuthOptions = {
               }
             }
           } else {
-            console.warn(
-              "Failed to fetch Discord member data:",
-              response.status,
-              response.statusText,
-            );
             token.userRoles = [];
             token.isInGuild = false;
             token.discordNickname = null;
@@ -194,16 +227,12 @@ export const authOptions: NextAuthOptions = {
           token.discordNickname = null;
         }
 
-        // Mark roles as fetched to prevent future API calls (unless explicitly triggered)
         token.rolesFetched = true;
-
-        // Compute permissions server-side to avoid client-side environment variable issues
         const userRoles = (token.userRoles || []) as string[];
         token.permissions = {
           hasResourceAccess: hasResourceAccess(userRoles),
           hasResourceAdminAccess: hasResourceAdminAccess(userRoles),
           hasTargetEditAccess: hasTargetEditAccess(userRoles),
-          // 🆕 Add new permission computations:
           hasReportAccess: hasReportAccess(userRoles),
           hasUserManagementAccess: hasUserManagementAccess(userRoles),
           hasDataExportAccess: hasDataExportAccess(userRoles),
@@ -213,13 +242,11 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      // Simply use the cached data from JWT token
       session.user = {
         ...session.user,
         roles: (token.userRoles || []) as string[],
         isInGuild: Boolean(token.isInGuild),
         discordNickname: token.discordNickname as string | null,
-        // Include pre-computed permissions to avoid client-side env var issues
         permissions: (token.permissions as UserPermissions) || {
           hasResourceAccess: false,
           hasResourceAdminAccess: false,
@@ -229,14 +256,12 @@ export const authOptions: NextAuthOptions = {
           hasDataExportAccess: false,
         },
       };
-
       return session;
     },
   },
-  // Remove custom sign-in page for now to avoid conflicts
-  // pages: {
-  //   signIn: '/auth/signin',
-  // },
+  pages: {
+    signIn: "/auth/signin",
+  },
 };
 
 // Helper function to check if user has specific role

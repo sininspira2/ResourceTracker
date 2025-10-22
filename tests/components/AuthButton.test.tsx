@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { AuthButton } from "@/components/AuthButton";
+import AuthButton from "@/app/components/AuthButton";
 
 describe("AuthButton", () => {
   it("renders the button with the correct text", () => {
@@ -21,6 +21,6 @@ describe("AuthButton", () => {
         Test Button
       </AuthButton>,
     );
-    expect(screen.getByText("Test Button")).toHaveClass("custom-class");
+    expect(screen.getByRole("button")).toHaveClass("custom-class");
   });
 });

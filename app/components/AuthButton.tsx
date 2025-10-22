@@ -1,26 +1,30 @@
-import React from "react";
+"use client";
+
 import { cn } from "@/lib/utils";
+import React from "react";
 
-interface AuthButtonProps {
-  onClick: () => void;
-  children: React.ReactNode;
-  className?: string;
-}
+type AuthButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  icon?: React.ReactNode;
+};
 
-export function AuthButton({
-  onClick,
+const AuthButton = ({
+  className,
+  icon,
   children,
-  className = "",
-}: AuthButtonProps) {
+  ...props
+}: AuthButtonProps) => {
   return (
     <button
-      onClick={onClick}
       className={cn(
-        "flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-text-white transition-colors",
+        "flex w-full items-center justify-center rounded-md bg-gray-700 px-4 py-3 font-semibold text-white transition-colors hover:bg-gray-600",
         className,
       )}
+      {...props}
     >
-      {children}
+      {icon}
+      <span>{children}</span>
     </button>
   );
-}
+};
+
+export default AuthButton;

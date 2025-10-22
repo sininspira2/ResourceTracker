@@ -1,17 +1,22 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { AuthButton } from "./AuthButton";
 import { FaDiscord } from "react-icons/fa";
+import AuthButton from "./AuthButton";
 
-export function LoginButton() {
+const LoginButton = () => {
   return (
     <AuthButton
-      onClick={() => signIn("discord", { callbackUrl: "/dashboard" })}
-      className="mx-auto gap-2 bg-button-login-bg font-semibold hover:bg-button-login-bg-hover"
+      onClick={() =>
+        signIn("discord", {
+          callbackUrl: "/dashboard",
+        })
+      }
+      icon={<FaDiscord className="mr-3 h-6 w-6" />}
     >
-      <FaDiscord className="h-5 w-5" />
       Sign in with Discord
     </AuthButton>
   );
-}
+};
+
+export default LoginButton;
