@@ -22,20 +22,38 @@ export async function POST(request: NextRequest) {
 
   try {
     await db.transaction(async (tx) => {
-      for (const update of updates) {
-        if (update.status !== "changed") continue;
+      const changedUpdates = updates.filter((update) => update.status === "changed");
+      const resourceIds = changedUpdates.map((update) => update.id);
 
-        const currentResource = await tx.select().from(resources).where(eq(resources.id, update.id)).limit(1);
-        if(currentResource.length === 0) continue;
-        const current = currentResource[0];
+      if (resourceIds.length === 0) {
+        return;
+      }
 
-        await tx.update(resources).set({
-          quantityHagga: update.new.quantityHagga,
-          quantityDeepDesert: update.new.quantityDeepDesert,
-          targetQuantity: update.new.targetQuantity,
-          lastUpdatedBy: userId,
-          updatedAt: new Date(),
-        }).where(eq(resources.id, update.id));
+      const currentResources = await tx
+        .select()
+        .from(resources)
+        .where(inArray(resources.id, resourceIds));
+
+      const currentResourcesMap = new Map(
+        currentResources.map((r) => [r.id, r]),
+      );
+
+      for (const update of changedUpdates) {
+        const current = currentResourcesMap.get(update.id);
+        if (!current) {
+          continue;
+        }
+
+        await tx
+          .update(resources)
+          .set({
+            quantityHagga: update.new.quantityHagga,
+            quantityDeepDesert: update.new.quantityDeepDesert,
+            targetQuantity: update.new.targetQuantity,
+            lastUpdatedBy: userId,
+            updatedAt: new Date(),
+          })
+          .where(eq(resources.id, update.id));
 
         await tx.insert(resourceHistory).values({
           id: nanoid(),
@@ -45,7 +63,8 @@ export async function POST(request: NextRequest) {
           changeAmountHagga: update.new.quantityHagga - current.quantityHagga,
           previousQuantityDeepDesert: current.quantityDeepDesert,
           newQuantityDeepDesert: update.new.quantityDeepDesert,
-          changeAmountDeepDesert: update.new.quantityDeepDesert - current.quantityDeepDesert,
+          changeAmountDeepDesert:
+            update.new.quantityDeepDesert - current.quantityDeepDesert,
           changeType: "absolute",
           updatedBy: userId,
           reason: "Bulk CSV import",
