@@ -153,10 +153,12 @@ export const authOptions: NextAuthOptions = {
         token.sub = user.id;
         token.name = user.name;
         token.email = user.email;
+        token.image = "/agent-avatar.png"; // Add a default agent avatar
         token.permissions = permissions;
         token.isInGuild = true; // Assume agent is in guild
         token.rolesFetched = true; // Prevent Discord role fetch
         token.discordNickname = user.name; // Use agent name as nickname
+        token.userRoles = []; // Add an empty array for roles
         return token;
       }
 
