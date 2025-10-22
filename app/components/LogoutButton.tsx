@@ -1,33 +1,28 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { AuthButton } from "./AuthButton";
-import { cn } from "@/lib/utils";
+import AuthButton from "./AuthButton";
 
-interface LogoutButtonProps {
+type LogoutButtonProps = {
   variant?: "default" | "prominent";
   fullWidth?: boolean;
-}
+};
 
-export function LogoutButton({
+const LogoutButton = ({
   variant = "default",
   fullWidth = false,
-}: LogoutButtonProps) {
-  const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
-  };
+}: LogoutButtonProps) => {
+  const text =
+    variant === "prominent" ? "Sign Out & Try Different Account" : "Sign Out";
 
   return (
     <AuthButton
-      onClick={handleSignOut}
-      className={cn("bg-button-danger-bg hover:bg-button-danger-bg-hover", {
-        "px-6 py-3 font-semibold": variant === "prominent",
-        "w-full": fullWidth,
-      })}
+      onClick={() => signOut({ callbackUrl: "/" })}
+      className={fullWidth ? "w-full" : ""}
     >
-      {variant === "prominent"
-        ? "Sign Out & Try Different Account"
-        : "Sign Out"}
+      {text}
     </AuthButton>
   );
-}
+};
+
+export default LogoutButton;

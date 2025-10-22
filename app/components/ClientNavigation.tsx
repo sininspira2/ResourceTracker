@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { LoginButton } from "./LoginButton";
-import { LogoutButton } from "./LogoutButton";
+import LoginButton from "./LoginButton";
+import LogoutButton from "./LogoutButton";
 import { ThemeToggle } from "./ThemeToggle";
 import { VersionDisplay } from "./VersionDisplay";
 import { WhatsNewModal } from "./WhatsNewModal";
@@ -63,7 +63,7 @@ export function ClientNavigation({
                 </Link>
               )}
 
-              {isMounted && <ThemeToggle />}
+              {isMounted && <ThemeToggle className="flex-shrink-0" />}
 
               {session ? <LogoutButton /> : <LoginButton />}
             </div>

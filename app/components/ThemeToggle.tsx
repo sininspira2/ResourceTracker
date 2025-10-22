@@ -3,8 +3,13 @@
 import { useTheme } from "./ThemeProvider";
 import { useEffect, useState } from "react";
 import { Moon, Sun, SunMoon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function ThemeToggle() {
+type ThemeToggleProps = {
+  className?: string;
+};
+
+export function ThemeToggle({ className }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
   const [isClient, setIsClient] = useState(false);
 
@@ -27,7 +32,10 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="group relative inline-flex h-10 w-10 items-center justify-center rounded-lg bg-background-tertiary transition-all duration-200 hover:bg-background-secondary"
+      className={cn(
+        "group relative inline-flex h-10 w-10 items-center justify-center rounded-lg bg-background-tertiary transition-all duration-200 hover:bg-background-secondary",
+        className,
+      )}
       aria-label="Toggle theme"
       title={`Switch to ${getNextTheme()} mode`}
     >
