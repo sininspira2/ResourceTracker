@@ -7,6 +7,7 @@ import AuthButton from "./AuthButton";
 const LoginButton = () => {
   return (
     <AuthButton
+      className="mx-auto"
       onClick={() =>
         signIn("discord", {
           callbackUrl: "/dashboard",
@@ -14,7 +15,7 @@ const LoginButton = () => {
       }
       icon={<FaDiscord className="mr-3 h-6 w-6" />}
     >
-      Sign in with Discord
+      <span className="whitespace-nowrap">Sign in with Discord</span>
     </AuthButton>
   );
 };

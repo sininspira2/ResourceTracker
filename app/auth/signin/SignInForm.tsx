@@ -22,7 +22,7 @@ export default function SignInForm({ isDevelopment }: SignInFormProps) {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white">
-      <div className="w-full max-w-md rounded-lg bg-gray-800 p-8 shadow-2xl">
+      <div className="flex w-full max-w-md flex-col items-center rounded-lg bg-gray-800 p-8 shadow-2xl">
         <h1 className="mb-6 text-center text-3xl font-bold">Sign In</h1>
         <p className="mb-8 text-center text-gray-400">
           Sign in with your Discord account to continue.
@@ -30,6 +30,7 @@ export default function SignInForm({ isDevelopment }: SignInFormProps) {
 
         {/* Standard Discord Sign-In */}
         <AuthButton
+          className="mx-auto"
           onClick={() =>
             signIn("discord", {
               callbackUrl: "/dashboard",
@@ -37,7 +38,7 @@ export default function SignInForm({ isDevelopment }: SignInFormProps) {
           }
           icon={<FaDiscord className="mr-3 h-6 w-6" />}
         >
-          Sign in with Discord
+          <span className="whitespace-nowrap">Sign in with Discord</span>
         </AuthButton>
 
         {/* Development-Only Agent Sign-In */}

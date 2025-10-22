@@ -16,13 +16,14 @@ const AuthButton = ({
   return (
     <button
       className={cn(
-        "flex w-full items-center justify-center rounded-md bg-background-tertiary px-4 py-3 font-semibold text-text-primary transition-colors hover:bg-background-secondary",
+        "flex shrink-0 items-center justify-center rounded-md bg-background-tertiary px-3 py-2 font-semibold whitespace-nowrap text-text-primary transition-colors hover:bg-background-secondary sm:px-4",
+
         className,
       )}
       {...props}
     >
       {icon}
-      <span>{children}</span>
+      <span className="whitespace-nowrap">{children}</span>
     </button>
   );
 };
