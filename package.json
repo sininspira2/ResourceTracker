@@ -46,7 +46,7 @@
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.5",
     "eslint": "^9.37.0",
-    "eslint-config-next": "^15.5.4",
+    "eslint-config-next": "^16.0.0",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
     "node-fetch": "^3.3.2",
