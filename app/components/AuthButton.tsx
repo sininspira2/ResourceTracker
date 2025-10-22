@@ -16,7 +16,7 @@ const AuthButton = ({
   return (
     <button
       className={cn(
-        "flex w-full items-center justify-center rounded-md bg-gray-700 px-4 py-3 font-semibold text-white transition-colors hover:bg-gray-600",
+        "flex w-full items-center justify-center rounded-md bg-background-tertiary px-4 py-3 font-semibold text-text-primary transition-colors hover:bg-background-secondary",
         className,
       )}
       {...props}

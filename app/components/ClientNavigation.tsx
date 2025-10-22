@@ -63,7 +63,7 @@ export function ClientNavigation({
                 </Link>
               )}
 
-              {isMounted && <ThemeToggle />}
+              {isMounted && <ThemeToggle className="flex-shrink-0" />}
 
               {session ? <LogoutButton /> : <LoginButton />}
             </div>

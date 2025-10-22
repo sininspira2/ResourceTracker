@@ -147,3 +147,6 @@ ehthumbs.db
 Icon?
 Thumbs.db
 *.DS_Store
+
+# Ignore test screenshots
+tests/screenshots/

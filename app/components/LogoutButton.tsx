@@ -13,7 +13,9 @@ const LogoutButton = ({
   fullWidth = false,
 }: LogoutButtonProps) => {
   const text =
-    variant === "prominent" ? "Sign Out & Try Different Account" : "Sign Out";
+    variant === "prominent"
+      ? "Sign Out & Try Different Account"
+      : "Sign Out";
 
   return (
     <AuthButton
