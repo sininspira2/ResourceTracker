@@ -9,6 +9,7 @@ import { UpdateQuantityModal } from "./UpdateQuantityModal";
 import { EditResourceModal } from "./EditResourceModal";
 import { ChangeTargetModal } from "./ChangeTargetModal";
 import { AlertTriangle, Trash2 } from "lucide-react";
+import { BulkActions } from "./BulkActions";
 import { getUserIdentifier } from "@/lib/auth";
 import {
   CATEGORY_OPTIONS,
@@ -1423,6 +1424,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 Grid
               </button>
             </div>
+            <BulkActions
+              filters={{
+                status: statusFilter,
+                category: categoryFilter,
+                needsUpdate: needsUpdateFilter,
+                priority: priorityFilter,
+              }}
+            />
           </div>
 
           {/* Filters Row */}
