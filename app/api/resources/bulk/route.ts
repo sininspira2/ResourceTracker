@@ -1,0 +1,173 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { db, resources } from "@/lib/db";
+import { canEditTargets } from "@/lib/discord-roles";
+import { sql, and, inArray } from "drizzle-orm";
+import Papa from "papaparse";
+import {
+  UPDATE_THRESHOLD_NON_PRIORITY_MS,
+  UPDATE_THRESHOLD_PRIORITY_MS,
+} from "@/lib/constants";
+
+export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !canEditTargets(session.user.roles)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const statusFilter = searchParams.get("status");
+  const categoryFilter = searchParams.get("category");
+  const needsUpdateFilter = searchParams.get("needsUpdate") === "true";
+  const priorityFilter = searchParams.get("priority") === "true";
+
+  let whereConditions = [];
+
+  if (categoryFilter && categoryFilter !== "all") {
+    whereConditions.push(sql`${resources.category} = ${categoryFilter}`);
+  }
+
+  if (priorityFilter) {
+    whereConditions.push(sql`${resources.isPriority} = true`);
+  }
+
+  if (statusFilter && statusFilter !== "all") {
+    const percentage = sql`(${resources.quantityHagga} + ${resources.quantityDeepDesert}) * 100.0 / ${resources.targetQuantity}`;
+    switch (statusFilter) {
+      case "critical":
+        whereConditions.push(
+          sql`${resources.targetQuantity} > 0 AND ${percentage} < 50`,
+        );
+        break;
+      case "below_target":
+        whereConditions.push(
+          sql`${resources.targetQuantity} > 0 AND ${percentage} >= 50 AND ${percentage} < 100`,
+        );
+        break;
+      case "at_target":
+        whereConditions.push(
+          sql`(${resources.targetQuantity} IS NULL OR ${resources.targetQuantity} <= 0) OR (${percentage} >= 100 AND ${percentage} < 150)`,
+        );
+        break;
+      case "above_target":
+        whereConditions.push(
+          sql`${resources.targetQuantity} > 0 AND ${percentage} >= 150`,
+        );
+        break;
+    }
+  }
+
+  if (needsUpdateFilter) {
+    const now = new Date();
+    const priorityThreshold = new Date(
+      now.getTime() - UPDATE_THRESHOLD_PRIORITY_MS,
+    );
+    const nonPriorityThreshold = new Date(
+      now.getTime() - UPDATE_THRESHOLD_NON_PRIORITY_MS,
+    );
+
+    whereConditions.push(
+      sql`(${resources.isPriority} = true AND ${resources.updatedAt} < ${priorityThreshold}) OR (${resources.isPriority} = false AND ${resources.updatedAt} < ${nonPriorityThreshold})`,
+    );
+  }
+
+  const query = db
+    .select()
+    .from(resources)
+    .where(and(...whereConditions));
+  const filteredResources = await query;
+
+  const dataForCsv = filteredResources.map((r) => ({
+    id: r.id,
+    name: r.name,
+    quantityHagga: r.quantityHagga,
+    quantityDeepDesert: r.quantityDeepDesert,
+    targetQuantity: r.targetQuantity,
+  }));
+
+  const csv = Papa.unparse(dataForCsv);
+
+  return new NextResponse(csv, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/csv",
+      "Content-Disposition": `attachment; filename="resources.csv"`,
+    },
+  });
+}
+
+export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !canEditTargets(session.user.roles)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const formData = await request.formData();
+  const file = formData.get("file") as File;
+
+  if (!file) {
+    return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+  }
+
+  const csvData = await file.text();
+  const parsed = Papa.parse(csvData, { header: true, skipEmptyLines: true });
+
+  const ids = parsed.data.map((row: any) => row.id).filter(Boolean);
+  if (ids.length === 0) {
+    return NextResponse.json(
+      { error: "No valid data found in CSV" },
+      { status: 400 },
+    );
+  }
+
+  const currentResources = await db
+    .select()
+    .from(resources)
+    .where(inArray(resources.id, ids));
+  const currentResourcesMap = new Map(currentResources.map((r) => [r.id, r]));
+
+  const diff = parsed.data.map((row: any) => {
+    const current = currentResourcesMap.get(row.id);
+    if (!current) {
+      return { id: row.id, name: row.name, status: "not_found" };
+    }
+
+    const newTargetRaw = row.targetQuantity;
+    const newTarget =
+      newTargetRaw === null || newTargetRaw === "" || newTargetRaw === undefined
+        ? null
+        : Number(newTargetRaw);
+
+    const changes = {
+      quantityHagga: Number(row.quantityHagga) !== current.quantityHagga,
+      quantityDeepDesert:
+        Number(row.quantityDeepDesert) !== current.quantityDeepDesert,
+      targetQuantity: newTarget !== current.targetQuantity,
+    };
+
+    if (Object.values(changes).some((c) => c)) {
+      return {
+        id: row.id,
+        name: current.name,
+        status: "changed",
+        old: {
+          quantityHagga: current.quantityHagga,
+          quantityDeepDesert: current.quantityDeepDesert,
+          targetQuantity: current.targetQuantity,
+        },
+        new: {
+          quantityHagga: Number(row.quantityHagga),
+          quantityDeepDesert: Number(row.quantityDeepDesert),
+          targetQuantity: newTarget,
+        },
+      };
+    } else {
+      return { id: row.id, name: current.name, status: "unchanged" };
+    }
+  });
+
+  return NextResponse.json(diff);
+}
