@@ -57,7 +57,7 @@ export default function SignInPage() {
                   id="permissionLevel"
                   value={level}
                   onChange={(e) => setLevel(e.target.value)}
-                  className="w-full rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                  className="w-full rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
                 >
                   <option value="1">Level 1: Contributor</option>
                   <option value="2">Level 2: Logistics</option>
