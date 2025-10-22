@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db, resources } from "@/lib/db";
-import { canEditTargets } from "@/lib/discord-roles";
+import { hasTargetEditAccess } from "@/lib/discord-roles";
 import { sql, and, inArray } from "drizzle-orm";
 import Papa from "papaparse";
 import {
@@ -13,7 +13,7 @@ import {
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session || !canEditTargets(session.user.roles)) {
+  if (!session || !hasTargetEditAccess(session.user.roles)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session || !canEditTargets(session.user.roles)) {
+  if (!session || !hasTargetEditAccess(session.user.roles)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

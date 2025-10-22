@@ -88,7 +88,7 @@ export function ImportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
         {!diff ? (
           <div>
             <p className="mb-4 text-text-secondary">
-              Upload a CSV file to update resource quantities and targets. The CSV must contain 'id', 'quantityHagga', 'quantityDeepDesert', and 'targetQuantity' columns.
+              Upload a CSV file to update resource quantities and targets. The CSV must contain &apos;id&apos;, &apos;quantityHagga&apos;, &apos;quantityDeepDesert&apos;, and &apos;targetQuantity&apos; columns.
             </p>
             <input type="file" accept=".csv" onChange={handleFileChange} className="mb-4 w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary" />
             <button onClick={handlePreview} disabled={!file || loading} className="w-full rounded-lg bg-button-primary-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-primary-bg-hover disabled:opacity-50">

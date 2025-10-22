@@ -2,18 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, getUserIdentifier } from "@/lib/auth";
 import { db, resources, resourceHistory } from "@/lib/db";
-import { canEditTargets } from "@/lib/discord-roles";
+import { hasTargetEditAccess } from "@/lib/discord-roles";
 import { inArray, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  const userId = getUserIdentifier(session);
 
-  if (!session || !canEditTargets(session.user.roles)) {
+  if (!session || !hasTargetEditAccess(session.user.roles)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  const userId = getUserIdentifier(session);
   const updates = await request.json();
 
   if (!Array.isArray(updates) || updates.length === 0) {
