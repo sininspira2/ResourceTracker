@@ -22,8 +22,18 @@ export async function GET(request: NextRequest) {
   const categoryFilter = searchParams.get("category");
   const needsUpdateFilter = searchParams.get("needsUpdate") === "true";
   const priorityFilter = searchParams.get("priority") === "true";
+  const searchTerm = searchParams.get("searchTerm");
 
   let whereConditions = [];
+
+  if (searchTerm) {
+    const searchLower = searchTerm.toLowerCase();
+    whereConditions.push(
+      sql`lower(${resources.name}) LIKE ${`%${searchLower}%`} OR
+       lower(${resources.description}) LIKE ${`%${searchLower}%`} OR
+       lower(${resources.category}) LIKE ${`%${searchLower}%`}`,
+    );
+  }
 
   if (categoryFilter && categoryFilter !== "all") {
     whereConditions.push(sql`${resources.category} = ${categoryFilter}`);
@@ -63,10 +73,10 @@ export async function GET(request: NextRequest) {
     const now = new Date();
     const priorityThreshold = new Date(
       now.getTime() - UPDATE_THRESHOLD_PRIORITY_MS,
-    );
+    ).toISOString();
     const nonPriorityThreshold = new Date(
       now.getTime() - UPDATE_THRESHOLD_NON_PRIORITY_MS,
-    );
+    ).toISOString();
 
     whereConditions.push(
       sql`(${resources.isPriority} = true AND ${resources.updatedAt} < ${priorityThreshold}) OR (${resources.isPriority} = false AND ${resources.updatedAt} < ${nonPriorityThreshold})`,

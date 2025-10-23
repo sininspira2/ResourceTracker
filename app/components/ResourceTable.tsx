@@ -1540,6 +1540,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               needsUpdate: needsUpdateFilter,
               priority: priorityFilter,
             }}
+            searchTerm={searchTerm}
+            filteredCount={filteredResources.length}
           />
         </div>
       </div>
