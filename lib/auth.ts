@@ -158,7 +158,7 @@ export const authOptions: NextAuthOptions = {
         token.isInGuild = true; // Assume agent is in guild
         token.rolesFetched = true; // Prevent Discord role fetch
         token.discordNickname = user.name; // Use agent name as nickname
-        token.userRoles = []; // Add an empty array for roles
+        token.userRoles = []; // Ensure userRoles is always present
         return token;
       }
 

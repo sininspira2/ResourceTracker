@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { ImportModal } from "./ImportModal";
+import { HardDriveDownload, FileInput } from "lucide-react";
 
 export function BulkActions({ filters }: { filters: any }) {
   const { data: session } = useSession();
@@ -29,14 +30,16 @@ export function BulkActions({ filters }: { filters: any }) {
     <div className="flex items-center gap-4">
       <button
         onClick={handleExport}
-        className="rounded-lg bg-button-secondary-bg px-4 py-2 text-sm font-medium text-button-secondary-text transition-colors hover:bg-button-secondary-bg-hover"
+        className="flex items-center gap-2 rounded-lg bg-button-secondary-bg px-4 py-2 text-sm font-medium text-button-secondary-text transition-colors hover:bg-button-secondary-bg-hover"
       >
+        <HardDriveDownload className="h-4 w-4" />
         Export CSV
       </button>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="rounded-lg bg-button-primary-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-primary-bg-hover"
+        className="flex items-center gap-2 rounded-lg bg-button-primary-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-primary-bg-hover"
       >
+        <FileInput className="h-4 w-4" />
         Import CSV
       </button>
       <ImportModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
