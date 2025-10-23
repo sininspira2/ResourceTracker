@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db, resources } from "@/lib/db";
 import { hasTargetEditAccess } from "@/lib/discord-roles";
-import { sql, and, inArray } from "drizzle-orm";
+import { sql, and, inArray, or, eq, lt } from "drizzle-orm";
 import Papa from "papaparse";
 import {
   UPDATE_THRESHOLD_NON_PRIORITY_MS,
@@ -71,16 +71,24 @@ export async function GET(request: NextRequest) {
 
   if (needsUpdateFilter) {
     const now = new Date();
-    const priorityThreshold = Math.floor(
-      (now.getTime() - UPDATE_THRESHOLD_PRIORITY_MS) / 1000,
+    const priorityThreshold = new Date(
+      now.getTime() - UPDATE_THRESHOLD_PRIORITY_MS,
     );
-    const nonPriorityThreshold = Math.floor(
-      (now.getTime() - UPDATE_THRESHOLD_NON_PRIORITY_MS) / 1000,
+    const nonPriorityThreshold = new Date(
+      now.getTime() - UPDATE_THRESHOLD_NON_PRIORITY_MS,
     );
 
-    whereConditions.push(
-      sql`(${resources.isPriority} = true AND ${resources.updatedAt} < ${priorityThreshold}) OR (${resources.isPriority} = false AND ${resources.updatedAt} < ${nonPriorityThreshold})`,
+    const needsUpdateCondition = or(
+      and(
+        eq(resources.isPriority, true),
+        lt(resources.updatedAt, priorityThreshold),
+      ),
+      and(
+        eq(resources.isPriority, false),
+        lt(resources.updatedAt, nonPriorityThreshold),
+      ),
     );
+    whereConditions.push(needsUpdateCondition);
   }
 
   const query = db
