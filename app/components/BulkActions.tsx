@@ -6,12 +6,16 @@ import { ImportModal } from "./ImportModal";
 import { ExportConfirmationModal } from "./ExportConfirmationModal";
 import { HardDriveDownload, FileInput } from "lucide-react";
 
+interface Filters {
+  [key: string]: string | number | boolean | Array<string | number | boolean>;
+}
+
 export function BulkActions({
   filters,
   searchTerm,
   filteredCount,
 }: {
-  filters: any;
+  filters: Filters;
   searchTerm: string;
   filteredCount: number;
 }) {
@@ -24,7 +28,17 @@ export function BulkActions({
   }
 
   const handleExport = async () => {
-    const params = new URLSearchParams(filters);
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(filters)) {
+      if (value != null) {
+        if (Array.isArray(value)) {
+          value.forEach((item) => params.append(key, String(item)));
+        } else {
+          params.append(key, String(value));
+        }
+      }
+    }
+
     if (searchTerm) {
       params.append("searchTerm", searchTerm);
     }

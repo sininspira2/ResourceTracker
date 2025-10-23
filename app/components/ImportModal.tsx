@@ -2,6 +2,33 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+interface DiffItem {
+  id: string;
+  name: string;
+  status: "changed" | "invalid" | "unchanged" | "not_found";
+  old?: {
+    quantityHagga: number;
+    quantityDeepDesert: number;
+    targetQuantity: number | null;
+    [key: string]: number | null;
+  };
+  new?: {
+    quantityHagga: number | string;
+    quantityDeepDesert: number | string;
+    targetQuantity: number | null | string;
+    [key: string]: number | null | string;
+  };
+  errors?: {
+    quantityHagga?: string;
+    quantityDeepDesert?: string;
+    targetQuantity?: string;
+    [key: string]: string | undefined;
+  };
+  field?: string;
+  error?: string;
+}
 
 export function ImportModal({
   isOpen,
@@ -10,8 +37,9 @@ export function ImportModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
-  const [diff, setDiff] = useState<any[] | null>(null);
+  const [diff, setDiff] = useState<DiffItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -85,7 +113,7 @@ export function ImportModal({
 
       if (response.ok) {
         onClose();
-        window.location.reload();
+        router.refresh();
       } else {
         const err = await response.json();
         setError(err.error || "Failed to import data.");
@@ -172,23 +200,25 @@ export function ImportModal({
                 </thead>
                 <tbody className="divide-y divide-border-primary bg-background-panel">
                   {diff
-                    .flatMap((d) =>
-                      d.status === "changed"
-                        ? Object.keys(d.new).map((key) => ({
-                            ...d,
-                            field: key,
-                          }))
-                        : d.status === "invalid"
-                          ? Object.keys(d.errors).map((key) => ({
-                              ...d,
-                              field: key,
-                              error: d.errors[key],
-                            }))
-                          : [],
-                    )
-                    .map((item, index) => (
+                    .flatMap((d): DiffItem[] => {
+                      if (d.status === "changed" && d.new) {
+                        return Object.keys(d.new).map((key) => ({
+                          ...d,
+                          field: key,
+                        }));
+                      }
+                      if (d.status === "invalid" && d.errors) {
+                        return Object.keys(d.errors).map((key) => ({
+                          ...d,
+                          field: key,
+                          error: d.errors![key],
+                        }));
+                      }
+                      return [];
+                    })
+                    .map((item) => (
                       <tr
-                        key={index}
+                        key={`${item.id}-${item.field}`}
                         className={
                           item.status === "invalid"
                             ? "bg-background-warning-subtle hover:bg-background-warning-subtle-hover"
@@ -202,12 +232,12 @@ export function ImportModal({
                           {item.field}
                         </td>
                         <td className="px-4 py-2 text-text-secondary">
-                          {item.old[item.field]}
+                          {item.old?.[item.field!] ?? "N/A"}
                         </td>
                         <td
                           className={`px-4 py-2 font-semibold ${item.status === "invalid" ? "text-text-danger" : "text-text-success"}`}
                         >
-                          {item.new[item.field]}
+                          {item.new?.[item.field!] ?? "N/A"}
                           {item.error && (
                             <p className="text-xs font-normal text-text-danger">
                               {item.error}
