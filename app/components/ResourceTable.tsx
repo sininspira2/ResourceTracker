@@ -1424,6 +1424,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 Grid
               </button>
             </div>
+            <BulkActions
+              filters={{
+                status: statusFilter,
+                category: categoryFilter,
+                needsUpdate: needsUpdateFilter,
+                priority: priorityFilter,
+              }}
+            />
           </div>
 
           {/* Filters Row */}
