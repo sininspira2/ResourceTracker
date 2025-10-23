@@ -135,17 +135,57 @@ export async function POST(request: NextRequest) {
       return { id: row.id, name: row.name, status: "not_found" };
     }
 
+    const newValues: any = {};
+    const validationErrors: any = {};
+
+    // Validate quantityHagga
+    const quantityHagga = Number(row.quantityHagga);
+    if (isNaN(quantityHagga) || quantityHagga < 0 || !Number.isInteger(quantityHagga)) {
+      validationErrors.quantityHagga = "Must be a positive integer";
+    } else {
+      newValues.quantityHagga = quantityHagga;
+    }
+
+    // Validate quantityDeepDesert
+    const quantityDeepDesert = Number(row.quantityDeepDesert);
+    if (isNaN(quantityDeepDesert) || quantityDeepDesert < 0 || !Number.isInteger(quantityDeepDesert)) {
+      validationErrors.quantityDeepDesert = "Must be a positive integer";
+    } else {
+      newValues.quantityDeepDesert = quantityDeepDesert;
+    }
+
+    // Validate targetQuantity
     const newTargetRaw = row.targetQuantity;
-    const newTarget =
-      newTargetRaw === null || newTargetRaw === "" || newTargetRaw === undefined
-        ? null
-        : Number(newTargetRaw);
+    const newTarget = newTargetRaw === null || newTargetRaw === "" || newTargetRaw === undefined ? null : Number(newTargetRaw);
+    if (newTarget !== null && (isNaN(newTarget) || newTarget < 0 || !Number.isInteger(newTarget))) {
+      validationErrors.targetQuantity = "Must be a positive integer or empty";
+    } else {
+      newValues.targetQuantity = newTarget;
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      return {
+        id: row.id,
+        name: current.name,
+        status: "invalid",
+        errors: validationErrors,
+        old: {
+          quantityHagga: current.quantityHagga,
+          quantityDeepDesert: current.quantityDeepDesert,
+          targetQuantity: current.targetQuantity,
+        },
+        new: {
+          quantityHagga: row.quantityHagga,
+          quantityDeepDesert: row.quantityDeepDesert,
+          targetQuantity: row.targetQuantity,
+        }
+      }
+    }
 
     const changes = {
-      quantityHagga: Number(row.quantityHagga) !== current.quantityHagga,
-      quantityDeepDesert:
-        Number(row.quantityDeepDesert) !== current.quantityDeepDesert,
-      targetQuantity: newTarget !== current.targetQuantity,
+      quantityHagga: newValues.quantityHagga !== current.quantityHagga,
+      quantityDeepDesert: newValues.quantityDeepDesert !== current.quantityDeepDesert,
+      targetQuantity: newValues.targetQuantity !== current.targetQuantity,
     };
 
     if (Object.values(changes).some((c) => c)) {
@@ -158,11 +198,7 @@ export async function POST(request: NextRequest) {
           quantityDeepDesert: current.quantityDeepDesert,
           targetQuantity: current.targetQuantity,
         },
-        new: {
-          quantityHagga: Number(row.quantityHagga),
-          quantityDeepDesert: Number(row.quantityDeepDesert),
-          targetQuantity: newTarget,
-        },
+        new: newValues,
       };
     } else {
       return { id: row.id, name: current.name, status: "unchanged" };
