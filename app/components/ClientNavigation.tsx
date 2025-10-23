@@ -44,14 +44,24 @@ export function ClientNavigation({
                   <ArrowLeft size={24} />
                 </Link>
               )}
-              <Link
-                href="/"
-                className="truncate text-xl font-bold text-text-primary transition-colors hover:text-text-link"
-                title={title}
-              >
-                {title}
-              </Link>
-              <div className={pathname === "/resources" ? "hidden sm:flex" : ""}>
+              <div className="relative">
+                <Link
+                  href="/"
+                  className="truncate text-xl font-bold text-text-primary transition-colors hover:text-text-link"
+                  title={title}
+                >
+                  {title}
+                </Link>
+                {/* Mobile Version Button - Appears below title */}
+                <div className="absolute -bottom-5 right-0 sm:hidden">
+                  <VersionDisplay
+                    onClick={() => setShowChangelog(true)}
+                    className="scale-90"
+                  />
+                </div>
+              </div>
+              {/* Desktop Version Button - Appears next to title */}
+              <div className="hidden sm:flex">
                 <VersionDisplay onClick={() => setShowChangelog(true)} />
               </div>
             </div>
