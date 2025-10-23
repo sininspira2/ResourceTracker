@@ -53,7 +53,7 @@ export function ClientNavigation({
                   {title}
                 </Link>
                 {/* Mobile Version Button - Appears below title */}
-                <div className="absolute -bottom-5 right-0 sm:hidden">
+                <div className="absolute right-0 -bottom-5 sm:hidden">
                   <VersionDisplay
                     onClick={() => setShowChangelog(true)}
                     className="scale-90"

@@ -22,7 +22,9 @@ export async function POST(request: NextRequest) {
 
   try {
     await db.transaction(async (tx) => {
-      const changedUpdates = updates.filter((update) => update.status === "changed");
+      const changedUpdates = updates.filter(
+        (update) => update.status === "changed",
+      );
       const resourceIds = changedUpdates.map((update) => update.id);
 
       if (resourceIds.length === 0) {
@@ -76,6 +78,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Import successful" });
   } catch (error) {
     console.error("Error during bulk import:", error);
-    return NextResponse.json({ error: "Failed to import data" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to import data" },
+      { status: 500 },
+    );
   }
 }

@@ -174,7 +174,11 @@ export async function POST(request: NextRequest) {
 
     // Validate quantityHagga
     const quantityHagga = Number(row.quantityHagga);
-    if (isNaN(quantityHagga) || quantityHagga < 0 || !Number.isInteger(quantityHagga)) {
+    if (
+      isNaN(quantityHagga) ||
+      quantityHagga < 0 ||
+      !Number.isInteger(quantityHagga)
+    ) {
       validationErrors.quantityHagga = "Must be a positive integer";
     } else {
       newValues.quantityHagga = quantityHagga;
@@ -182,7 +186,11 @@ export async function POST(request: NextRequest) {
 
     // Validate quantityDeepDesert
     const quantityDeepDesert = Number(row.quantityDeepDesert);
-    if (isNaN(quantityDeepDesert) || quantityDeepDesert < 0 || !Number.isInteger(quantityDeepDesert)) {
+    if (
+      isNaN(quantityDeepDesert) ||
+      quantityDeepDesert < 0 ||
+      !Number.isInteger(quantityDeepDesert)
+    ) {
       validationErrors.quantityDeepDesert = "Must be a positive integer";
     } else {
       newValues.quantityDeepDesert = quantityDeepDesert;
@@ -190,8 +198,14 @@ export async function POST(request: NextRequest) {
 
     // Validate targetQuantity
     const newTargetRaw = row.targetQuantity;
-    const newTarget = newTargetRaw === null || newTargetRaw === "" || newTargetRaw === undefined ? null : Number(newTargetRaw);
-    if (newTarget !== null && (isNaN(newTarget) || newTarget < 0 || !Number.isInteger(newTarget))) {
+    const newTarget =
+      newTargetRaw === null || newTargetRaw === "" || newTargetRaw === undefined
+        ? null
+        : Number(newTargetRaw);
+    if (
+      newTarget !== null &&
+      (isNaN(newTarget) || newTarget < 0 || !Number.isInteger(newTarget))
+    ) {
       validationErrors.targetQuantity = "Must be a positive integer or empty";
     } else {
       newValues.targetQuantity = newTarget;
@@ -212,13 +226,14 @@ export async function POST(request: NextRequest) {
           quantityHagga: row.quantityHagga,
           quantityDeepDesert: row.quantityDeepDesert,
           targetQuantity: row.targetQuantity,
-        }
-      }
+        },
+      };
     }
 
     const changes = {
       quantityHagga: newValues.quantityHagga !== current.quantityHagga,
-      quantityDeepDesert: newValues.quantityDeepDesert !== current.quantityDeepDesert,
+      quantityDeepDesert:
+        newValues.quantityDeepDesert !== current.quantityDeepDesert,
       targetQuantity: newValues.targetQuantity !== current.targetQuantity,
     };
 

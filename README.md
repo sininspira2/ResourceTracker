@@ -22,10 +22,10 @@ Removed from fork network due to original author repository being deleted, and d
 
 A powerful new bulk data management feature has been added to the Resources page, available for users with `canEditTargets` permissions.
 
--   **Export:** A new **"Export CSV"** button allows users to download the currently filtered list of resources. A confirmation modal displays the total resource count before downloading. The export includes key data: `id`, `name`, `quantityHagga`, `quantityDeepDesert`, and `targetQuantity`.
--   **Import:** An **"Import CSV"** button opens a modal to upload a CSV file. The system provides a detailed **preview of all pending changes**, showing the old and new values for each resource to ensure accuracy before confirmation.
--   **Transactional Updates:** To ensure data integrity, all changes from an import are processed in a **single database transaction** after the user confirms the preview.
--   **API:** This feature is supported by new secure API endpoints at `/api/resources/bulk` and `/api/resources/bulk/confirm`, which are protected by the same permission checks.
+- **Export:** A new **"Export CSV"** button allows users to download the currently filtered list of resources. A confirmation modal displays the total resource count before downloading. The export includes key data: `id`, `name`, `quantityHagga`, `quantityDeepDesert`, and `targetQuantity`.
+- **Import:** An **"Import CSV"** button opens a modal to upload a CSV file. The system provides a detailed **preview of all pending changes**, showing the old and new values for each resource to ensure accuracy before confirmation.
+- **Transactional Updates:** To ensure data integrity, all changes from an import are processed in a **single database transaction** after the user confirms the preview.
+- **API:** This feature is supported by new secure API endpoints at `/api/resources/bulk` and `/api/resources/bulk/confirm`, which are protected by the same permission checks.
 
 ### 🚀 Improvements
 
@@ -33,27 +33,27 @@ A powerful new bulk data management feature has been added to the Resources page
 
 The CSV import feature includes multi-layered validation to ensure data quality and security.
 
--   **Client-Side Checks:** The import modal provides immediate user feedback by validating the file for the correct `.csv` extension and a maximum file size of 256KB.
--   **Server-Side Checks:** The same validation rules are enforced on the API to prevent circumvention of client-side checks. Invalid files are rejected with a `400 Bad Request` status, with new API tests confirming this behavior.
--   **Accessibility:** The import modal's file input is now correctly associated with a `label` for improved screen reader support.
+- **Client-Side Checks:** The import modal provides immediate user feedback by validating the file for the correct `.csv` extension and a maximum file size of 256KB.
+- **Server-Side Checks:** The same validation rules are enforced on the API to prevent circumvention of client-side checks. Invalid files are rejected with a `400 Bad Request` status, with new API tests confirming this behavior.
+- **Accessibility:** The import modal's file input is now correctly associated with a `label` for improved screen reader support.
 
 #### Responsive Navigation UI
 
 The main `ClientNavigation` component has been refactored for better usability on different screen sizes.
 
--   **Mobile View:** The version button is now positioned **below** the page title, preventing layout crowding on smaller screens.
--   **Desktop View:** The button remains in its original position **next to** the page title.
+- **Mobile View:** The version button is now positioned **below** the page title, preventing layout crowding on smaller screens.
+- **Desktop View:** The button remains in its original position **next to** the page title.
 
 ### 🐛 Bug Fixes
 
--   **Testing Stability:** Resolved a compatibility issue between Jest and `node-fetch v3` to stabilize the testing environment.
+- **Testing Stability:** Resolved a compatibility issue between Jest and `node-fetch v3` to stabilize the testing environment.
 
 ### 🔧 Other Changes
 
--   **Test Coverage:** Added test coverage for API routes and core components.
--   **CI/CD Pipeline:** Updated the `ci.yml` workflow to include Vercel notifications and ensure `npm install` is used.
--   **Dependencies:** Bumped development dependencies, including `@types/node` to `22.18.12`.
--   **Code Style:** Ran `prettier` across the codebase to ensure consistent formatting.
+- **Test Coverage:** Added test coverage for API routes and core components.
+- **CI/CD Pipeline:** Updated the `ci.yml` workflow to include Vercel notifications and ensure `npm install` is used.
+- **Dependencies:** Bumped development dependencies, including `@types/node` to `22.18.12`.
+- **Code Style:** Ran `prettier` across the codebase to ensure consistent formatting.
 
 _See `lib/changelog.json` for previous update history._
 

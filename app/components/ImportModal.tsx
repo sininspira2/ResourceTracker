@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
-export function ImportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+export function ImportModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
   const [file, setFile] = useState<File | null>(null);
   const [diff, setDiff] = useState<any[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -74,7 +80,7 @@ export function ImportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
       const response = await fetch("/api/resources/bulk/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(diff.filter(d => d.status === "changed")),
+        body: JSON.stringify(diff.filter((d) => d.status === "changed")),
       });
 
       if (response.ok) {
@@ -97,58 +103,81 @@ export function ImportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-overlay">
-      <div className="w-full max-w-4xl mx-4 p-6 rounded-lg border border-border-primary bg-background-panel">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-text-primary">Import CSV</h3>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-background-secondary">
-            <X className="w-5 h-5 text-text-secondary" />
+      <div className="mx-4 w-full max-w-4xl rounded-lg border border-border-primary bg-background-panel p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-text-primary">
+            Import CSV
+          </h3>
+          <button
+            onClick={onClose}
+            className="rounded-full p-1 hover:bg-background-secondary"
+          >
+            <X className="h-5 w-5 text-text-secondary" />
           </button>
         </div>
 
         {!diff ? (
           <div>
             <label htmlFor="csv-upload" className="mb-4 text-text-secondary">
-              Upload a CSV file to update resource quantities and targets. The CSV must contain &apos;id&apos;, &apos;quantityHagga&apos;, &apos;quantityDeepDesert&apos;, and &apos;targetQuantity&apos; columns.
+              Upload a CSV file to update resource quantities and targets. The
+              CSV must contain &apos;id&apos;, &apos;quantityHagga&apos;,
+              &apos;quantityDeepDesert&apos;, and &apos;targetQuantity&apos;
+              columns.
             </label>
-            <input id="csv-upload" type="file" accept=".csv" onChange={handleFileChange} className="w-full px-3 py-2 mb-4 rounded-lg border border-border-secondary bg-background-panel-inset text-text-primary" />
-            <button onClick={handlePreview} disabled={!file || loading} className="w-full px-4 py-2 text-sm font-medium text-text-white rounded-lg bg-button-primary-bg hover:bg-button-primary-bg-hover disabled:opacity-50 transition-colors">
+            <input
+              id="csv-upload"
+              type="file"
+              accept=".csv"
+              onChange={handleFileChange}
+              className="mb-4 w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
+            />
+            <button
+              onClick={handlePreview}
+              disabled={!file || loading}
+              className="w-full rounded-lg bg-button-primary-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-primary-bg-hover disabled:opacity-50"
+            >
               {loading ? "Previewing..." : "Preview Changes"}
             </button>
           </div>
         ) : (
           <div>
-            <h4 className="mb-2 font-semibold text-text-primary">Previewing Changes</h4>
+            <h4 className="mb-2 font-semibold text-text-primary">
+              Previewing Changes
+            </h4>
             {hasInvalidEntries && (
-              <div className="p-3 mb-4 rounded-lg bg-background-warning-subtle">
+              <div className="mb-4 rounded-lg bg-background-warning-subtle p-3">
                 <p className="font-bold text-text-warning-strong">
                   Your import has invalid entries that must be fixed before you
                   can proceed.
                 </p>
               </div>
             )}
-            <div className="overflow-y-auto border rounded-lg max-h-96 border-border-secondary">
+            <div className="max-h-96 overflow-y-auto rounded-lg border border-border-secondary">
               <table className="min-w-full divide-y divide-border-primary">
                 <thead className="bg-background-secondary">
                   <tr>
-                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">
+                    <th className="px-4 py-2 text-left text-xs font-medium tracking-wider text-text-secondary uppercase">
                       Resource
                     </th>
-                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">
+                    <th className="px-4 py-2 text-left text-xs font-medium tracking-wider text-text-secondary uppercase">
                       Field
                     </th>
-                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">
+                    <th className="px-4 py-2 text-left text-xs font-medium tracking-wider text-text-secondary uppercase">
                       Old Value
                     </th>
-                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">
+                    <th className="px-4 py-2 text-left text-xs font-medium tracking-wider text-text-secondary uppercase">
                       New Value
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y bg-background-panel divide-border-primary">
+                <tbody className="divide-y divide-border-primary bg-background-panel">
                   {diff
                     .flatMap((d) =>
                       d.status === "changed"
-                        ? Object.keys(d.new).map((key) => ({ ...d, field: key }))
+                        ? Object.keys(d.new).map((key) => ({
+                            ...d,
+                            field: key,
+                          }))
                         : d.status === "invalid"
                           ? Object.keys(d.errors).map((key) => ({
                               ...d,
@@ -172,19 +201,36 @@ export function ImportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                         <td className="px-4 py-2 text-text-secondary">
                           {item.field}
                         </td>
-                      <td className="px-4 py-2 text-text-secondary">{item.old[item.field]}</td>
-                      <td className={`px-4 py-2 font-semibold ${item.status === 'invalid' ? 'text-text-danger' : 'text-text-success'}`}>
-                        {item.new[item.field]}
-                        {item.error && <p className="text-xs font-normal text-text-danger">{item.error}</p>}
-                      </td>
-                    </tr>
-                  ))}
+                        <td className="px-4 py-2 text-text-secondary">
+                          {item.old[item.field]}
+                        </td>
+                        <td
+                          className={`px-4 py-2 font-semibold ${item.status === "invalid" ? "text-text-danger" : "text-text-success"}`}
+                        >
+                          {item.new[item.field]}
+                          {item.error && (
+                            <p className="text-xs font-normal text-text-danger">
+                              {item.error}
+                            </p>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
-            <div className="flex justify-end gap-3 mt-4">
-              <button onClick={() => setDiff(null)} className="px-4 py-2 text-sm font-medium rounded-lg bg-button-secondary-bg text-button-secondary-text hover:bg-button-secondary-bg-hover transition-colors">Back</button>
-              <button onClick={handleConfirm} disabled={loading || hasInvalidEntries} className="px-4 py-2 text-sm font-medium text-text-white rounded-lg bg-button-success-bg hover:bg-button-success-bg-hover disabled:opacity-50 transition-colors">
+            <div className="mt-4 flex justify-end gap-3">
+              <button
+                onClick={() => setDiff(null)}
+                className="rounded-lg bg-button-secondary-bg px-4 py-2 text-sm font-medium text-button-secondary-text transition-colors hover:bg-button-secondary-bg-hover"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleConfirm}
+                disabled={loading || hasInvalidEntries}
+                className="rounded-lg bg-button-success-bg px-4 py-2 text-sm font-medium text-text-white transition-colors hover:bg-button-success-bg-hover disabled:opacity-50"
+              >
                 {loading ? "Importing..." : "Confirm Import"}
               </button>
             </div>

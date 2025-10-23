@@ -21,7 +21,10 @@ describe("POST /api/resources/bulk", () => {
 
   it("should return 400 for invalid file type", async () => {
     const formData = new FormData();
-    formData.append("file", new File(["content"], "test.txt", { type: "text/plain" }));
+    formData.append(
+      "file",
+      new File(["content"], "test.txt", { type: "text/plain" }),
+    );
 
     const request = new NextRequest("http://localhost/api/resources/bulk", {
       method: "POST",
@@ -38,7 +41,10 @@ describe("POST /api/resources/bulk", () => {
   it("should return 400 for file size exceeding the limit", async () => {
     const largeContent = "a".repeat(257 * 1024);
     const formData = new FormData();
-    formData.append("file", new File([largeContent], "large.csv", { type: "text/csv" }));
+    formData.append(
+      "file",
+      new File([largeContent], "large.csv", { type: "text/csv" }),
+    );
 
     const request = new NextRequest("http://localhost/api/resources/bulk", {
       method: "POST",
