@@ -10,60 +10,50 @@ Removed from fork network due to original author repository being deleted, and d
 
 ---
 
-## 🚀 Release Notes - Version 4.1.1: Comprehensive Theming System and UI Refactoring
+## 🚀 Release Notes - Version 4.1.2: CSV Data Import/Export and UI Enhancements
 
-**Release Date:** October 16, 2025
+**Release Date:** October 23, 2025
 
 ---
 
 ### ✨ New Features
 
-#### Comprehensive Theming System Implementation
+#### Bulk Resource Management via CSV Import/Export
 
-A robust theming system has been implemented across the application using **Tailwind CSS custom properties (CSS variables)**, transitioning away from hardcoded color values.
+A powerful new bulk data management feature has been added to the Resources page, available for users with `canEditTargets` permissions.
 
-- **Light/Dark Mode Management:** The system allows for easy and centralized management of light and dark modes across the application.
-- **Refactored UI Components:** All major UI components, including modals, navigation, tables, and dashboards, have been refactored to utilize the new theme variables, ensuring a **consistent visual experience** and **improved scalability**.
-- **Centralized Definitions:** Color definitions are now centralized in `app/globals.css` and mapped in `tailwind.config.ts`, simplifying future color adjustments and maintenance.
+-   **Export:** A new **"Export CSV"** button allows users to download the currently filtered list of resources. A confirmation modal displays the total resource count before downloading. The export includes key data: `id`, `name`, `quantityHagga`, `quantityDeepDesert`, and `targetQuantity`.
+-   **Import:** An **"Import CSV"** button opens a modal to upload a CSV file. The system provides a detailed **preview of all pending changes**, showing the old and new values for each resource to ensure accuracy before confirmation.
+-   **Transactional Updates:** To ensure data integrity, all changes from an import are processed in a **single database transaction** after the user confirms the preview.
+-   **API:** This feature is supported by new secure API endpoints at `/api/resources/bulk` and `/api/resources/bulk/confirm`, which are protected by the same permission checks.
 
 ### 🚀 Improvements
 
-- **Smoother Theme Switching:** The theme switching logic was enhanced with a **pre-hydration script** to prevent visual flickering during initial page loads, providing a smoother user experience.
-- **Semantic Color Naming:** CSS color variables in `tailwind.config.ts` and `app/globals.css` were refactored for **improved modularity and semantic naming**. Generic variables like `--color-background-modal-content` have been replaced with more descriptive names such as `--color-tile-background`.
-- **Consistent Code Style:** **Prettier** and the **Tailwind CSS plugin** were added to the project to enforce a consistent code style. The entire codebase was formatted with the new setup, specifically **reordering Tailwind CSS classes for uniformity**.
+#### Robust File Validation
 
----
+The CSV import feature includes multi-layered validation to ensure data quality and security.
 
-## 🚀 Release Notes - Version 4.1.0: Vercel Data Cache, Improved Migrations, and API Stability
+-   **Client-Side Checks:** The import modal provides immediate user feedback by validating the file for the correct `.csv` extension and a maximum file size of 256KB.
+-   **Server-Side Checks:** The same validation rules are enforced on the API to prevent circumvention of client-side checks. Invalid files are rejected with a `400 Bad Request` status, with new API tests confirming this behavior.
+-   **Accessibility:** The import modal's file input is now correctly associated with a `label` for improved screen reader support.
 
-**Release Date:** October 10, 2025
+#### Responsive Navigation UI
 
----
+The main `ClientNavigation` component has been refactored for better usability on different screen sizes.
 
-### ✨ Architectural Features
+-   **Mobile View:** The version button is now positioned **below** the page title, preventing layout crowding on smaller screens.
+-   **Desktop View:** The button remains in its original position **next to** the page title.
 
-#### Improved Database Migration System
+### 🐛 Bug Fixes
 
-The database migration tracking system has been completely overhauled from a manual, tag-based approach to an **improved, hash-based system**.
+-   **Testing Stability:** Resolved a compatibility issue between Jest and `node-fetch v3` to stabilize the testing environment.
 
-- **Simplified Workflow:** The new system simplifies the database workflow for users, who can now handle all subsequent migrations using a single command: `npm run db:migrate`.
-- **Integrity and Consistency:** The system now automatically calculates the SHA256 hash of each migration file, ensuring cross-platform consistency.
-- **Schema Update:** The database schema now includes a new `global_settings` table and new `tier`/`subcategory` columns in the `resources` table. **These columns are included to support future features** but allow for more granular classification.
+### 🔧 Other Changes
 
-#### Vercel Data Cache Implementation
-
-All API routes have been refactored to utilize **Vercel's fetch-based Data Cache**, resulting in significant performance gains and reduced load times.
-
-- **Caching Strategy:** `GET` API routes have been refactored to use a public/internal pattern to leverage this new caching strategy with appropriate revalidation times.
-- **Security and Authentication:**
-  - Application protection logic was simplified by replacing the old middleware with a lightweight 'include list'.
-  - **Fixed a critical 401 error** by ensuring 'cookie' and 'authorization' headers are correctly forwarded in internal API calls when using Vercel Authentication.
-
-### 🐛 Critical Bug Fixes & Stability
-
-- **Next.js 15 Compatibility:** Resolved persistent build errors by updating all dynamic API route handlers to correctly use the **asynchronous `params` object signature** required by Next.js 15.
-- **Data Integrity on Deletion:** Ensured database integrity during resource deletion by updating the `DELETE` handler to also delete associated records from the `resource_history` and `leaderboard` tables. This logic is now safely wrapped in a **database transaction**.
-- **Leaderboard Validation:** Added robust input validation to the leaderboard API route, including an allowlist for the `timeFilter` parameter and fallbacks for other parameters to prevent `NaN` errors from invalid input.
+-   **Test Coverage:** Added test coverage for API routes and core components.
+-   **CI/CD Pipeline:** Updated the `ci.yml` workflow to include Vercel notifications and ensure `npm install` is used.
+-   **Dependencies:** Bumped development dependencies, including `@types/node` to `22.18.12`.
+-   **Code Style:** Ran `prettier` across the codebase to ensure consistent formatting.
 
 _See `lib/changelog.json` for previous update history._
 
