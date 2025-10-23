@@ -3,12 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db, resources } from "@/lib/db";
 import { hasTargetEditAccess } from "@/lib/discord-roles";
-import { sql, and, inArray, or, eq, lt } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import Papa from "papaparse";
-import {
-  UPDATE_THRESHOLD_NON_PRIORITY_MS,
-  UPDATE_THRESHOLD_PRIORITY_MS,
-} from "@/lib/constants";
+import { getResources } from "@/lib/resource-queries";
 
 interface CsvRow {
   id: string;
@@ -18,6 +15,19 @@ interface CsvRow {
   targetQuantity: string;
 }
 
+// Define more specific types to replace 'any'
+type NewValues = {
+  quantityHagga?: number;
+  quantityDeepDesert?: number;
+  targetQuantity?: number | null;
+};
+
+type ValidationErrors = {
+  quantityHagga?: string;
+  quantityDeepDesert?: string;
+  targetQuantity?: string;
+};
+
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
@@ -26,84 +36,13 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const statusFilter = searchParams.get("status");
-  const categoryFilter = searchParams.get("category");
-  const needsUpdateFilter = searchParams.get("needsUpdate") === "true";
-  const priorityFilter = searchParams.get("priority") === "true";
-  const searchTerm = searchParams.get("searchTerm");
-
-  let whereConditions = [];
-
-  if (searchTerm) {
-    const searchLower = searchTerm.toLowerCase();
-    whereConditions.push(
-      sql`lower(${resources.name}) LIKE ${`%${searchLower}%`} OR
-       lower(${resources.description}) LIKE ${`%${searchLower}%`} OR
-       lower(${resources.category}) LIKE ${`%${searchLower}%`}`,
-    );
-  }
-
-  if (categoryFilter && categoryFilter !== "all") {
-    whereConditions.push(sql`${resources.category} = ${categoryFilter}`);
-  }
-
-  if (priorityFilter) {
-    whereConditions.push(sql`${resources.isPriority} = true`);
-  }
-
-  if (statusFilter && statusFilter !== "all") {
-    const percentage = sql`(${resources.quantityHagga} + ${resources.quantityDeepDesert}) * 100.0 / ${resources.targetQuantity}`;
-    switch (statusFilter) {
-      case "critical":
-        whereConditions.push(
-          sql`${resources.targetQuantity} > 0 AND ${percentage} < 50`,
-        );
-        break;
-      case "below_target":
-        whereConditions.push(
-          sql`${resources.targetQuantity} > 0 AND ${percentage} >= 50 AND ${percentage} < 100`,
-        );
-        break;
-      case "at_target":
-        whereConditions.push(
-          sql`(${resources.targetQuantity} IS NULL OR ${resources.targetQuantity} <= 0) OR (${percentage} >= 100 AND ${percentage} < 150)`,
-        );
-        break;
-      case "above_target":
-        whereConditions.push(
-          sql`${resources.targetQuantity} > 0 AND ${percentage} >= 150`,
-        );
-        break;
-    }
-  }
-
-  if (needsUpdateFilter) {
-    const now = new Date();
-    const priorityThreshold = new Date(
-      now.getTime() - UPDATE_THRESHOLD_PRIORITY_MS,
-    );
-    const nonPriorityThreshold = new Date(
-      now.getTime() - UPDATE_THRESHOLD_NON_PRIORITY_MS,
-    );
-
-    const needsUpdateCondition = or(
-      and(
-        eq(resources.isPriority, true),
-        lt(resources.updatedAt, priorityThreshold),
-      ),
-      and(
-        eq(resources.isPriority, false),
-        lt(resources.updatedAt, nonPriorityThreshold),
-      ),
-    );
-    whereConditions.push(needsUpdateCondition);
-  }
-
-  const query = db
-    .select()
-    .from(resources)
-    .where(and(...whereConditions));
-  const filteredResources = await query;
+  const filteredResources = await getResources({
+    status: searchParams.get("status"),
+    category: searchParams.get("category"),
+    needsUpdate: searchParams.get("needsUpdate") === "true",
+    priority: searchParams.get("priority") === "true",
+    searchTerm: searchParams.get("searchTerm"),
+  });
 
   const dataForCsv = filteredResources.map((r) => ({
     id: r.id,
@@ -180,11 +119,11 @@ export async function POST(request: NextRequest) {
       return { id: row.id, name: row.name, status: "not_found" };
     }
 
-    const newValues: any = {};
-    const validationErrors: any = {};
+    const newValues: NewValues = {};
+    const validationErrors: ValidationErrors = {};
 
     const validateAndSet = (
-      value: any,
+      value: string,
       fieldName: "quantityHagga" | "quantityDeepDesert",
     ) => {
       const num = Number(value);

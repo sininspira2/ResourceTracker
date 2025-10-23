@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { hasResourceAccess, hasResourceAdminAccess } from "@/lib/discord-roles";
 import { nanoid } from "nanoid";
 import { awardPoints } from "@/lib/leaderboard";
+import { getResources } from "@/lib/resource-queries";
 
 // Calculate status based on quantity vs target
 const calculateResourceStatus = (
@@ -23,40 +24,18 @@ const calculateResourceStatus = (
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const internalUrl = new URL(
-    `/api/internal/resources?${searchParams.toString()}`,
-    request.nextUrl.origin,
-  );
+
   try {
-    const response = await fetch(internalUrl, {
-      next: { revalidate: 1 },
-      headers: {
-        cookie: request.headers.get("cookie") || "",
-        authorization: request.headers.get("authorization") || "",
-      },
+    const resources = await getResources({
+      status: searchParams.get("status"),
+      category: searchParams.get("category"),
+      needsUpdate: searchParams.get("needsUpdate") === "true",
+      priority: searchParams.get("priority") === "true",
+      searchTerm: searchParams.get("searchTerm"),
     });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error(
-        `Internal API call failed with status ${response.status}:`,
-        errorBody,
-      );
-      return new NextResponse(errorBody, {
-        status: response.status,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    const data = await response.json();
-    return new NextResponse(JSON.stringify(data), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    return NextResponse.json(resources);
   } catch (error) {
-    console.error("Error fetching from internal resources route:", error);
+    console.error("Error fetching filtered resources:", error);
     return new NextResponse(
       JSON.stringify({ error: "Failed to fetch resources" }),
       {
@@ -66,7 +45,6 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
 // POST /api/resources - Create new resource (admin only)
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);

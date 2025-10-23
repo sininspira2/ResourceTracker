@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
+// The original DiffItem is kept for the API response,
+// but the component will use the much simpler DiffRowItem
 interface DiffItem {
   id: string;
   name: string;
@@ -15,10 +18,10 @@ interface DiffItem {
     [key: string]: number | null;
   };
   new?: {
-    quantityHagga: number | string;
-    quantityDeepDesert: number | string;
-    targetQuantity: number | null | string;
-    [key: string]: number | null | string;
+    quantityHagga?: number | string;
+    quantityDeepDesert?: number | string;
+    targetQuantity?: number | null | string;
+    [key: string]: number | null | string | undefined;
   };
   errors?: {
     quantityHagga?: string;
@@ -26,7 +29,16 @@ interface DiffItem {
     targetQuantity?: string;
     [key: string]: string | undefined;
   };
-  field?: string;
+}
+
+// A flatter, more explicit type for rendering the preview table
+interface DiffRowItem {
+  id: string;
+  name: string;
+  status: "changed" | "invalid";
+  field: "quantityHagga" | "quantityDeepDesert" | "targetQuantity";
+  oldValue: number | null;
+  newValue: number | string | null;
   error?: string;
 }
 
@@ -47,16 +59,13 @@ export function ImportModal({
     const selectedFile = e.target.files?.[0];
 
     if (selectedFile) {
-      const { name, size } = selectedFile;
-      const fileSizeKiloBytes = size / 1024;
-
-      if (!name.toLowerCase().endsWith(".csv")) {
+      if (!selectedFile.name.toLowerCase().endsWith(".csv")) {
         setError("Invalid file type. Please upload a .csv file.");
         setFile(null);
         return;
       }
 
-      if (fileSizeKiloBytes > 256) {
+      if (selectedFile.size / 1024 > 256) {
         setError("File size exceeds the 256KB limit.");
         setFile(null);
         return;
@@ -125,9 +134,47 @@ export function ImportModal({
     }
   };
 
-  if (!isOpen) return null;
+  const hasInvalidEntries = useMemo(
+    () => diff?.some((d) => d.status === "invalid"),
+    [diff],
+  );
 
-  const hasInvalidEntries = diff?.some((d) => d.status === "invalid");
+  const diffTableRows = useMemo((): DiffRowItem[] => {
+    if (!diff) return [];
+    return diff.flatMap((d) => {
+      const rows: DiffRowItem[] = [];
+      if (d.status === "changed" && d.old && d.new) {
+        Object.keys(d.new).forEach((key) => {
+          const field = key as DiffRowItem["field"];
+          rows.push({
+            id: d.id,
+            name: d.name,
+            status: "changed",
+            field,
+            oldValue: d.old?.[field] ?? null,
+            newValue: d.new?.[field] ?? null,
+          });
+        });
+      }
+      if (d.status === "invalid" && d.errors && d.old && d.new) {
+        Object.keys(d.errors).forEach((key) => {
+          const field = key as DiffRowItem["field"];
+          rows.push({
+            id: d.id,
+            name: d.name,
+            status: "invalid",
+            field,
+            oldValue: d.old?.[field] ?? null,
+            newValue: d.new?.[field] ?? null,
+            error: d.errors?.[field],
+          });
+        });
+      }
+      return rows;
+    });
+  }, [diff]);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-overlay">
@@ -199,53 +246,36 @@ export function ImportModal({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-primary bg-background-panel">
-                  {diff
-                    .flatMap((d): DiffItem[] => {
-                      if (d.status === "changed" && d.new) {
-                        return Object.keys(d.new).map((key) => ({
-                          ...d,
-                          field: key,
-                        }));
-                      }
-                      if (d.status === "invalid" && d.errors) {
-                        return Object.keys(d.errors).map((key) => ({
-                          ...d,
-                          field: key,
-                          error: d.errors![key],
-                        }));
-                      }
-                      return [];
-                    })
-                    .map((item) => (
-                      <tr
-                        key={`${item.id}-${item.field}`}
-                        className={
-                          item.status === "invalid"
-                            ? "bg-background-warning-subtle hover:bg-background-warning-subtle-hover"
-                            : "hover:bg-background-secondary dark:hover:bg-gray-700"
-                        }
+                  {diffTableRows.map((item) => (
+                    <tr
+                      key={`${item.id}-${item.field}`}
+                      className={cn(
+                        "hover:bg-background-secondary",
+                        item.status === "invalid" &&
+                          "bg-background-warning-subtle hover:bg-background-warning-subtle-hover",
+                      )}
+                    >
+                      <td className="px-4 py-2 text-text-secondary">
+                        {item.name}
+                      </td>
+                      <td className="px-4 py-2 text-text-secondary">
+                        {item.field}
+                      </td>
+                      <td className="px-4 py-2 text-text-secondary">
+                        {item.oldValue ?? "N/A"}
+                      </td>
+                      <td
+                        className={`px-4 py-2 font-semibold ${item.status === "invalid" ? "text-text-danger" : "text-text-success"}`}
                       >
-                        <td className="px-4 py-2 text-text-secondary">
-                          {item.name}
-                        </td>
-                        <td className="px-4 py-2 text-text-secondary">
-                          {item.field}
-                        </td>
-                        <td className="px-4 py-2 text-text-secondary">
-                          {item.old?.[item.field!] ?? "N/A"}
-                        </td>
-                        <td
-                          className={`px-4 py-2 font-semibold ${item.status === "invalid" ? "text-text-danger" : "text-text-success"}`}
-                        >
-                          {item.new?.[item.field!] ?? "N/A"}
-                          {item.error && (
-                            <p className="text-xs font-normal text-text-danger">
-                              {item.error}
-                            </p>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                        {item.newValue ?? "N/A"}
+                        {item.error && (
+                          <p className="text-xs font-normal text-text-danger">
+                            {item.error}
+                          </p>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

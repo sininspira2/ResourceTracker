@@ -463,8 +463,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const fetchResources = useCallback(async () => {
     try {
       setLoading(true);
-      const timestamp = Date.now();
-      const response = await fetch(`${RESOURCES_API_PATH}?t=${timestamp}`);
+      const params = new URLSearchParams({
+        status: statusFilter,
+        category: categoryFilter,
+        needsUpdate: String(needsUpdateFilter),
+        priority: String(priorityFilter),
+        searchTerm: searchTerm,
+      });
+      const response = await fetch(`/api/resources?${params.toString()}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -481,7 +487,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [statusFilter, categoryFilter, needsUpdateFilter, priorityFilter, searchTerm]);
 
   const handleSaveTargetChange = async (
     resourceId: string,
@@ -774,107 +780,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     fetchLeaderboard();
   }, [fetchLeaderboard]);
 
-  // Filter resources based on search term and filters
-  const filteredResources = resources
-    .filter((resource) => {
-      const searchLower = searchTerm.toLowerCase();
-      const resourceNameLower = resource.name.toLowerCase();
-
-      // Text search filter
-      let matchesSearch = true;
-      if (searchTerm) {
-        // Exact name match (highest priority)
-        if (resourceNameLower === searchLower) {
-          matchesSearch = true;
-        }
-        // Partial name match (high priority)
-        else if (resourceNameLower.includes(searchLower)) {
-          matchesSearch = true;
-        }
-        // Extended search: only for longer search terms (6+ characters) to avoid broad matches
-        else if (searchLower.length >= 6) {
-          matchesSearch =
-            (resource.description?.toLowerCase().includes(searchLower) ??
-              false) ||
-            (resource.category?.toLowerCase().includes(searchLower) ?? false);
-        } else {
-          matchesSearch = false;
-        }
-      }
-
-      // Status filter
-      let matchesStatus = true;
-      if (statusFilter !== LEADERBOARD_TIME_FILTERS.ALL) {
-        const resourceStatus = calculateResourceStatus(
-          resource.quantityHagga + resource.quantityDeepDesert,
-          resource.targetQuantity ?? null,
-        );
-        matchesStatus = resourceStatus === statusFilter;
-      }
-
-      // Needs updating filter
-      let matchesNeedsUpdate = true;
-      if (needsUpdateFilter) {
-        matchesNeedsUpdate = needsUpdating(
-          resource.updatedAt,
-          !!resource.isPriority,
-        );
-      }
-
-      // Category filter
-      let matchesCategory = true;
-      if (categoryFilter !== "all") {
-        matchesCategory =
-          (resource.category || UNCATEGORIZED) === categoryFilter;
-      }
-
-      // Priority filter
-      let matchesPriority = true;
-      if (priorityFilter) {
-        matchesPriority = resource.isPriority === true;
-      }
-
-      return (
-        matchesSearch &&
-        matchesStatus &&
-        matchesNeedsUpdate &&
-        matchesCategory &&
-        matchesPriority
-      );
-    })
-    .sort((a, b) => {
-      // If there's a search term, sort by search relevance
-      if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase();
-        const aNameLower = a.name.toLowerCase();
-        const bNameLower = b.name.toLowerCase();
-
-        // Exact name matches first
-        const aExact = aNameLower === searchLower;
-        const bExact = bNameLower === searchLower;
-        if (aExact && !bExact) return -1;
-        if (!aExact && bExact) return 1;
-
-        // Then partial name matches (by position in name)
-        const aNameMatch = aNameLower.includes(searchLower);
-        const bNameMatch = bNameLower.includes(searchLower);
-        if (aNameMatch && !bNameMatch) return -1;
-        if (!aNameMatch && bNameMatch) return 1;
-
-        // If both are name matches, sort by position of match
-        if (aNameMatch && bNameMatch) {
-          const aIndex = aNameLower.indexOf(searchLower);
-          const bIndex = bNameLower.indexOf(searchLower);
-          if (aIndex !== bIndex) return aIndex - bIndex;
-        }
-      }
-
-      // Default sort by name
-      return a.name.localeCompare(b.name);
-    });
+  // The filtering is now done on the server side, so we just use the resources directly.
+  const filteredResources = resources;
 
   // Group resources by category for grid view
-  const groupedResources = filteredResources.reduce(
+  const groupedResources = resources.reduce(
     (acc, resource) => {
       const category = resource.category || UNCATEGORIZED;
       if (!acc[category]) {
