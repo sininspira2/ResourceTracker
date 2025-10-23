@@ -71,12 +71,12 @@ export async function GET(request: NextRequest) {
 
   if (needsUpdateFilter) {
     const now = new Date();
-    const priorityThreshold = new Date(
-      now.getTime() - UPDATE_THRESHOLD_PRIORITY_MS,
-    ).toISOString();
-    const nonPriorityThreshold = new Date(
-      now.getTime() - UPDATE_THRESHOLD_NON_PRIORITY_MS,
-    ).toISOString();
+    const priorityThreshold = Math.floor(
+      (now.getTime() - UPDATE_THRESHOLD_PRIORITY_MS) / 1000,
+    );
+    const nonPriorityThreshold = Math.floor(
+      (now.getTime() - UPDATE_THRESHOLD_NON_PRIORITY_MS) / 1000,
+    );
 
     whereConditions.push(
       sql`(${resources.isPriority} = true AND ${resources.updatedAt} < ${priorityThreshold}) OR (${resources.isPriority} = false AND ${resources.updatedAt} < ${nonPriorityThreshold})`,
