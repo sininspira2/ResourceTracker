@@ -51,6 +51,7 @@ export function BulkActions({
     document.body.appendChild(a);
     a.click();
     a.remove();
+    window.URL.revokeObjectURL(url);
     setIsExportModalOpen(false);
   };
 
