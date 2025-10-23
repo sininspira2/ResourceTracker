@@ -101,31 +101,59 @@ export function ImportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
           <div>
             <h4 className="mb-2 font-semibold text-text-primary">Previewing Changes</h4>
             {hasInvalidEntries && (
-              <div className="p-3 mb-4 rounded-lg bg-background-warning text-text-warning">
-                <p className="font-semibold">Your import has invalid entries that must be fixed before you can proceed.</p>
+              <div className="p-3 mb-4 rounded-lg bg-background-warning-subtle">
+                <p className="font-bold text-text-warning-strong">
+                  Your import has invalid entries that must be fixed before you
+                  can proceed.
+                </p>
               </div>
             )}
             <div className="overflow-y-auto border rounded-lg max-h-96 border-border-secondary">
               <table className="min-w-full divide-y divide-border-primary">
                 <thead className="bg-background-secondary">
                   <tr>
-                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">Resource</th>
-                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">Field</th>
-                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">Old Value</th>
-                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">New Value</th>
+                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">
+                      Resource
+                    </th>
+                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">
+                      Field
+                    </th>
+                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">
+                      Old Value
+                    </th>
+                    <th className="px-4 py-2 text-xs font-medium tracking-wider text-left uppercase text-text-secondary">
+                      New Value
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y bg-background-panel divide-border-primary">
-                  {diff.flatMap((d) =>
-                    d.status === 'changed'
-                      ? Object.keys(d.new).map(key => ({ ...d, field: key }))
-                      : d.status === 'invalid'
-                        ? Object.keys(d.errors).map(key => ({ ...d, field: key, error: d.errors[key] }))
-                        : []
-                  ).map((item, index) => (
-                    <tr key={index} className={`hover:bg-background-secondary ${item.status === 'invalid' ? 'bg-background-warning' : ''}`}>
-                      <td className="px-4 py-2 text-text-secondary">{item.name}</td>
-                      <td className="px-4 py-2 text-text-secondary">{item.field}</td>
+                  {diff
+                    .flatMap((d) =>
+                      d.status === "changed"
+                        ? Object.keys(d.new).map((key) => ({ ...d, field: key }))
+                        : d.status === "invalid"
+                          ? Object.keys(d.errors).map((key) => ({
+                              ...d,
+                              field: key,
+                              error: d.errors[key],
+                            }))
+                          : [],
+                    )
+                    .map((item, index) => (
+                      <tr
+                        key={index}
+                        className={
+                          item.status === "invalid"
+                            ? "bg-background-warning-subtle hover:bg-background-warning-subtle-hover"
+                            : "hover:bg-background-secondary dark:hover:bg-gray-700"
+                        }
+                      >
+                        <td className="px-4 py-2 text-text-secondary">
+                          {item.name}
+                        </td>
+                        <td className="px-4 py-2 text-text-secondary">
+                          {item.field}
+                        </td>
                       <td className="px-4 py-2 text-text-secondary">{item.old[item.field]}</td>
                       <td className={`px-4 py-2 font-semibold ${item.status === 'invalid' ? 'text-text-danger' : 'text-text-success'}`}>
                         {item.new[item.field]}
