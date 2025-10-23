@@ -8,6 +8,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { VersionDisplay } from "./VersionDisplay";
 import { WhatsNewModal } from "./WhatsNewModal";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 interface ClientNavigationProps {
@@ -20,6 +21,7 @@ export function ClientNavigation({
   showDashboardLink = true,
 }: ClientNavigationProps) {
   const { data: session } = useSession();
+  const pathname = usePathname();
   const [showChangelog, setShowChangelog] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -49,7 +51,9 @@ export function ClientNavigation({
               >
                 {title}
               </Link>
-              <VersionDisplay onClick={() => setShowChangelog(true)} />
+              <div className={pathname === "/resources" ? "hidden sm:flex" : ""}>
+                <VersionDisplay onClick={() => setShowChangelog(true)} />
+              </div>
             </div>
 
             {/* Right side - Navigation and Auth */}

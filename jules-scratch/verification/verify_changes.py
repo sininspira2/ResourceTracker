@@ -11,15 +11,15 @@ def run(playwright):
     page.select_option("#permissionLevel", "4")
     page.wait_for_url("http://localhost:3000/dashboard")
 
-    # Go to resources page and take screenshot of buttons
+    # Go to resources page and take screenshot
     page.goto("http://localhost:3000/resources")
     page.wait_for_selector("h1:has-text('Resource Management')")
-    page.screenshot(path="jules-scratch/verification/buttons.png")
+    page.screenshot(path="jules-scratch/verification/resources_page.png")
 
-    # Click import button and take screenshot of modal
-    page.click("button:has-text('Import CSV')")
-    page.wait_for_selector("h3:has-text('Import CSV')")
-    page.screenshot(path="jules-scratch/verification/modal.png")
+    # Go to dashboard page and take screenshot
+    page.goto("http://localhost:3000/dashboard")
+    page.wait_for_selector("h1:has-text('Dashboard')")
+    page.screenshot(path="jules-scratch/verification/dashboard_page.png")
 
     context.close()
     browser.close()
