@@ -10,8 +10,26 @@ export function ImportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
   const [loading, setLoading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
+    const selectedFile = e.target.files?.[0];
+
+    if (selectedFile) {
+      const { name, size } = selectedFile;
+      const fileSizeKiloBytes = size / 1024;
+
+      if (!name.toLowerCase().endsWith(".csv")) {
+        setError("Invalid file type. Please upload a .csv file.");
+        setFile(null);
+        return;
+      }
+
+      if (fileSizeKiloBytes > 256) {
+        setError("File size exceeds the 256KB limit.");
+        setFile(null);
+        return;
+      }
+
+      setFile(selectedFile);
+      setError(null);
     }
   };
 
@@ -89,10 +107,10 @@ export function ImportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
 
         {!diff ? (
           <div>
-            <p className="mb-4 text-text-secondary">
+            <label htmlFor="csv-upload" className="mb-4 text-text-secondary">
               Upload a CSV file to update resource quantities and targets. The CSV must contain &apos;id&apos;, &apos;quantityHagga&apos;, &apos;quantityDeepDesert&apos;, and &apos;targetQuantity&apos; columns.
-            </p>
-            <input type="file" accept=".csv" onChange={handleFileChange} className="w-full px-3 py-2 mb-4 rounded-lg border border-border-secondary bg-background-panel-inset text-text-primary" />
+            </label>
+            <input id="csv-upload" type="file" accept=".csv" onChange={handleFileChange} className="w-full px-3 py-2 mb-4 rounded-lg border border-border-secondary bg-background-panel-inset text-text-primary" />
             <button onClick={handlePreview} disabled={!file || loading} className="w-full px-4 py-2 text-sm font-medium text-text-white rounded-lg bg-button-primary-bg hover:bg-button-primary-bg-hover disabled:opacity-50 transition-colors">
               {loading ? "Previewing..." : "Preview Changes"}
             </button>

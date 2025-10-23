@@ -130,6 +130,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
   }
 
+  // Server-side validation
+  if (!file.name.toLowerCase().endsWith(".csv")) {
+    return NextResponse.json(
+      { error: "Invalid file type. Please upload a .csv file." },
+      { status: 400 },
+    );
+  }
+
+  const fileSizeKiloBytes = file.size / 1024;
+  if (fileSizeKiloBytes > 256) {
+    return NextResponse.json(
+      { error: "File size exceeds the 256KB limit." },
+      { status: 400 },
+    );
+  }
+
   const csvData = await file.text();
   const parsed = Papa.parse(csvData, { header: true, skipEmptyLines: true });
 
