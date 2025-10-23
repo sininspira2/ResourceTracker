@@ -8,6 +8,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { VersionDisplay } from "./VersionDisplay";
 import { WhatsNewModal } from "./WhatsNewModal";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 interface ClientNavigationProps {
@@ -20,6 +21,7 @@ export function ClientNavigation({
   showDashboardLink = true,
 }: ClientNavigationProps) {
   const { data: session } = useSession();
+  const pathname = usePathname();
   const [showChangelog, setShowChangelog] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -42,14 +44,26 @@ export function ClientNavigation({
                   <ArrowLeft size={24} />
                 </Link>
               )}
-              <Link
-                href="/"
-                className="truncate text-xl font-bold text-text-primary transition-colors hover:text-text-link"
-                title={title}
-              >
-                {title}
-              </Link>
-              <VersionDisplay onClick={() => setShowChangelog(true)} />
+              <div className="relative">
+                <Link
+                  href="/"
+                  className="truncate text-xl font-bold text-text-primary transition-colors hover:text-text-link"
+                  title={title}
+                >
+                  {title}
+                </Link>
+                {/* Mobile Version Button - Appears below title */}
+                <div className="absolute right-0 -bottom-5 sm:hidden">
+                  <VersionDisplay
+                    onClick={() => setShowChangelog(true)}
+                    className="scale-90"
+                  />
+                </div>
+              </div>
+              {/* Desktop Version Button - Appears next to title */}
+              <div className="hidden sm:flex">
+                <VersionDisplay onClick={() => setShowChangelog(true)} />
+              </div>
             </div>
 
             {/* Right side - Navigation and Auth */}

@@ -1,6 +1,38 @@
 {
-  "currentVersion": "4.1.1",
+  "currentVersion": "4.1.2",
   "releases": [
+    {
+      "version": "4.1.2",
+      "date": "2025-10-23",
+      "title": "CSV Data Import/Export and UI/Validation Enhancements",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added CSV Import/Export feature for resource data (name, quantities, targets) on the Resources page, available to users with 'canEditTargets' permissions."
+        },
+        {
+          "type": "feature",
+          "description": "The import workflow includes a confirmation modal, a preview of changes, and robust file validation (file type and size) on both the client and server."
+        },
+        {
+          "type": "improvement",
+          "description": "Adjusted the 'ClientNavigation' component to responsively move the version button below the page title on mobile viewports for a cleaner layout."
+        },
+        {
+          "type": "improvement",
+          "description": "Improved accessibility in the import modal by associating the file input with a 'label' for better screen reader support."
+        },
+        {
+          "type": "bugfix",
+          "description": "Fixed Jest compatibility issues related to 'node-fetch v3' to stabilize the testing environment."
+        },
+        {
+          "type": "other",
+          "description": "Enhanced CI/CD pipeline, added API test coverage, and bumped minor dependencies including '@types/node'."
+        }
+      ]
+    },
     {
       "version": "4.1.1",
       "date": "2025-10-16",

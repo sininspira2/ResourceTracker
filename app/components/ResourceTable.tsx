@@ -9,6 +9,7 @@ import { UpdateQuantityModal } from "./UpdateQuantityModal";
 import { EditResourceModal } from "./EditResourceModal";
 import { ChangeTargetModal } from "./ChangeTargetModal";
 import { AlertTriangle, Trash2 } from "lucide-react";
+import { BulkActions } from "./BulkActions";
 import { getUserIdentifier } from "@/lib/auth";
 import {
   CATEGORY_OPTIONS,
@@ -1527,10 +1528,22 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           </div>
         </div>
 
-        {/* Helper text */}
-        <p className="mt-3 text-sm text-text-quaternary">
-          💡 Click any resource to view detailed history and analytics
-        </p>
+        {/* Helper text & Bulk Actions */}
+        <div className="mt-3 flex items-center justify-between">
+          <p className="text-sm text-text-quaternary">
+            💡 Click any resource to view detailed history and analytics
+          </p>
+          <BulkActions
+            filters={{
+              status: statusFilter,
+              category: categoryFilter,
+              needsUpdate: needsUpdateFilter,
+              priority: priorityFilter,
+            }}
+            searchTerm={searchTerm}
+            filteredCount={filteredResources.length}
+          />
+        </div>
       </div>
 
       {/* Grid View */}
