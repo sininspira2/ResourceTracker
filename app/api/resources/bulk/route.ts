@@ -10,6 +10,14 @@ import {
   UPDATE_THRESHOLD_PRIORITY_MS,
 } from "@/lib/constants";
 
+interface CsvRow {
+  id: string;
+  name: string;
+  quantityHagga: string;
+  quantityDeepDesert: string;
+  targetQuantity: string;
+}
+
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
@@ -147,9 +155,12 @@ export async function POST(request: NextRequest) {
   }
 
   const csvData = await file.text();
-  const parsed = Papa.parse(csvData, { header: true, skipEmptyLines: true });
+  const parsed = Papa.parse<CsvRow>(csvData, {
+    header: true,
+    skipEmptyLines: true,
+  });
 
-  const ids = parsed.data.map((row: any) => row.id).filter(Boolean);
+  const ids = parsed.data.map((row) => row.id).filter(Boolean);
   if (ids.length === 0) {
     return NextResponse.json(
       { error: "No valid data found in CSV" },
@@ -163,7 +174,7 @@ export async function POST(request: NextRequest) {
     .where(inArray(resources.id, ids));
   const currentResourcesMap = new Map(currentResources.map((r) => [r.id, r]));
 
-  const diff = parsed.data.map((row: any) => {
+  const diff = parsed.data.map((row) => {
     const current = currentResourcesMap.get(row.id);
     if (!current) {
       return { id: row.id, name: row.name, status: "not_found" };
@@ -172,29 +183,20 @@ export async function POST(request: NextRequest) {
     const newValues: any = {};
     const validationErrors: any = {};
 
-    // Validate quantityHagga
-    const quantityHagga = Number(row.quantityHagga);
-    if (
-      isNaN(quantityHagga) ||
-      quantityHagga < 0 ||
-      !Number.isInteger(quantityHagga)
-    ) {
-      validationErrors.quantityHagga = "Must be a positive integer";
-    } else {
-      newValues.quantityHagga = quantityHagga;
-    }
+    const validateAndSet = (
+      value: any,
+      fieldName: "quantityHagga" | "quantityDeepDesert",
+    ) => {
+      const num = Number(value);
+      if (isNaN(num) || num < 0 || !Number.isInteger(num)) {
+        validationErrors[fieldName] = "Must be a positive integer";
+      } else {
+        newValues[fieldName] = num;
+      }
+    };
 
-    // Validate quantityDeepDesert
-    const quantityDeepDesert = Number(row.quantityDeepDesert);
-    if (
-      isNaN(quantityDeepDesert) ||
-      quantityDeepDesert < 0 ||
-      !Number.isInteger(quantityDeepDesert)
-    ) {
-      validationErrors.quantityDeepDesert = "Must be a positive integer";
-    } else {
-      newValues.quantityDeepDesert = quantityDeepDesert;
-    }
+    validateAndSet(row.quantityHagga, "quantityHagga");
+    validateAndSet(row.quantityDeepDesert, "quantityDeepDesert");
 
     // Validate targetQuantity
     const newTargetRaw = row.targetQuantity;

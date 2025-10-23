@@ -6,6 +6,16 @@ import { hasTargetEditAccess } from "@/lib/discord-roles";
 import { inArray, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
+interface UpdateItem {
+  id: string;
+  status: "changed";
+  new: {
+    quantityHagga: number;
+    quantityDeepDesert: number;
+    targetQuantity: number | null;
+  };
+}
+
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
@@ -14,7 +24,7 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = getUserIdentifier(session);
-  const updates = await request.json();
+  const updates: UpdateItem[] = await request.json();
 
   if (!Array.isArray(updates) || updates.length === 0) {
     return NextResponse.json({ error: "Invalid update data" }, { status: 400 });
@@ -25,7 +35,18 @@ export async function POST(request: NextRequest) {
       const changedUpdates = updates.filter(
         (update) => update.status === "changed",
       );
-      const resourceIds = changedUpdates.map((update) => update.id);
+
+      // De-duplicate updates to ensure only the last entry for each resource ID is processed
+      const uniqueChangedUpdates = Array.from(
+        changedUpdates
+          .reduce((map, update) => {
+            map.set(update.id, update);
+            return map;
+          }, new Map<string, UpdateItem>())
+          .values(),
+      );
+
+      const resourceIds = uniqueChangedUpdates.map((update) => update.id);
 
       if (resourceIds.length === 0) {
         return;
@@ -40,7 +61,7 @@ export async function POST(request: NextRequest) {
         currentResources.map((r) => [r.id, r]),
       );
 
-      for (const update of changedUpdates) {
+      for (const update of uniqueChangedUpdates) {
         const current = currentResourcesMap.get(update.id);
         if (!current) {
           continue;

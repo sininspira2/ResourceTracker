@@ -6,6 +6,12 @@ jest.mock("lucide-react", () => ({
   X: () => <svg />,
 }));
 
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    refresh: jest.fn(),
+  }),
+}));
+
 describe("ImportModal", () => {
   const mockOnClose = jest.fn();
 
