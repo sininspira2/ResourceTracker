@@ -11,7 +11,7 @@ import { UpdateQuantityModal } from "@/app/components/UpdateQuantityModal";
 import { ChangeTargetModal } from "@/app/components/ChangeTargetModal";
 import { TransferModal } from "@/app/components/TransferModal";
 import { EditResourceModal } from "@/app/components/EditResourceModal";
-import { UPDATE_TYPE } from "@/lib/constants";
+import { TIER_OPTIONS, UPDATE_TYPE } from "@/lib/constants";
 import {
   Plus,
   Baseline,
@@ -21,16 +21,6 @@ import {
   Trash2,
   AlertTriangle,
 } from "lucide-react";
-
-const TIER_OPTIONS = [
-  { value: "0", label: "Tier 0 (Scrap)" },
-  { value: "1", label: "Tier 1 (Copper)" },
-  { value: "2", label: "Tier 2 (Iron)" },
-  { value: "3", label: "Tier 3 (Steel)" },
-  { value: "4", label: "Tier 4 (Aluminum)" },
-  { value: "5", label: "Tier 5 (Duraluminum)" },
-  { value: "6", label: "Tier 6 (Plastanium)" },
-];
 
 const getTierClassName = (tier: number | null | undefined): string => {
   if (tier === null || tier === undefined) return "bg-gray-200 text-gray-800";

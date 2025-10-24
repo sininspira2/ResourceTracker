@@ -49,12 +49,21 @@ export async function GET(request: NextRequest) {
   }
 
   if (tierFilter.length > 0) {
-    whereConditions.push(
-      inArray(
-        resources.tier,
-        tierFilter.map((t) => parseInt(t, 10)),
-      ),
-    );
+    const numericTiers = tierFilter
+      .map((t) => parseInt(t, 10))
+      .filter((t) => !isNaN(t));
+
+    const tierConditions = [];
+    if (numericTiers.length > 0) {
+      tierConditions.push(inArray(resources.tier, numericTiers));
+    }
+    if (tierFilter.includes("none")) {
+      tierConditions.push(sql`${resources.tier} IS NULL`);
+    }
+
+    if (tierConditions.length > 0) {
+      whereConditions.push(or(...tierConditions));
+    }
   }
 
   if (priorityFilter) {
