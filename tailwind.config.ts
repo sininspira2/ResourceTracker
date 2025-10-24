@@ -1,7 +1,12 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    // The following are included to ensure Tailwind generates the correct classes for dynamic tier colors
+    "./app/resources/[id]/page.tsx",
+  ],
   theme: {
     extend: {
       colors: {
@@ -250,6 +255,21 @@ export default {
 
         "tag-discord-role-bg": "var(--color-tag-discord-role-bg)",
         "tag-discord-role-text": "var(--color-tag-discord-role-text)",
+
+        "tier-0-bg": "var(--color-tier-0-bg)",
+        "tier-0-text": "var(--color-tier-0-text)",
+        "tier-1-bg": "var(--color-tier-1-bg)",
+        "tier-1-text": "var(--color-tier-1-text)",
+        "tier-2-bg": "var(--color-tier-2-bg)",
+        "tier-2-text": "var(--color-tier-2-text)",
+        "tier-3-bg": "var(--color-tier-3-bg)",
+        "tier-3-text": "var(--color-tier-3-text)",
+        "tier-4-bg": "var(--color-tier-4-bg)",
+        "tier-4-text": "var(--color-tier-4-text)",
+        "tier-5-bg": "var(--color-tier-5-bg)",
+        "tier-5-text": "var(--color-tier-5-text)",
+        "tier-6-bg": "var(--color-tier-6-bg)",
+        "tier-6-text": "var(--color-tier-6-text)",
       },
       backgroundImage: {
         "gradient-success":

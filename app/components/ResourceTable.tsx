@@ -8,6 +8,7 @@ import { TransferModal } from "./TransferModal";
 import { UpdateQuantityModal } from "./UpdateQuantityModal";
 import { EditResourceModal } from "./EditResourceModal";
 import { ChangeTargetModal } from "./ChangeTargetModal";
+import { MultiSelectDropdown } from "./MultiSelectDropdown";
 import { AlertTriangle, Trash2 } from "lucide-react";
 import { BulkActions } from "./BulkActions";
 import { getUserIdentifier } from "@/lib/auth";
@@ -33,6 +34,7 @@ import {
   USER_ACTIVITY_API_PATH,
   WATER_RESOURCE_ID,
   VIEW_MODE,
+  TIER_OPTIONS,
 } from "@/lib/constants";
 
 // Utility function to format numbers with commas
@@ -156,6 +158,7 @@ interface Resource {
   targetQuantity?: number;
   multiplier?: number; // Points multiplier for this resource
   isPriority?: boolean;
+  tier?: number;
   lastUpdatedBy: string;
   updatedAt: string;
 }
@@ -245,11 +248,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     });
 
   // Filter states
-  const [statusFilter, setStatusFilter] = useState<string>(
-    LEADERBOARD_TIME_FILTERS.ALL,
-  );
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [needsUpdateFilter, setNeedsUpdateFilter] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+  const [tierFilter, setTierFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState(false);
 
   // Add state for update modal
@@ -313,7 +315,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   // Status options for filter dropdown
   const statusOptions = [
-    { value: "all", label: "All Status", count: 0 },
     { value: RESOURCE_STATUS.CRITICAL, label: "Critical", count: 0 },
     { value: RESOURCE_STATUS.BELOW_TARGET, label: "Below Target", count: 0 },
     { value: RESOURCE_STATUS.AT_TARGET, label: "At Target", count: 0 },
@@ -340,10 +341,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   });
 
   // Create category options for filter dropdown
-  const categoryOptions = [
-    { value: "all", label: "All Categories", count: 0 },
-    ...CATEGORY_OPTIONS.map((cat) => ({ value: cat, label: cat, count: 0 })),
-  ];
+  const categoryOptions = CATEGORY_OPTIONS.map((cat) => ({
+    value: cat,
+    label: cat,
+    count: 0,
+  }));
 
   // Calculate category counts
   const categoryCounts = resources.reduce(
@@ -359,6 +361,28 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   // Update category options with counts
   categoryOptions.forEach((option) => {
     option.count = categoryCounts[option.value] || 0;
+  });
+
+  const tierOptionsWithCounts = TIER_OPTIONS.map((tier) => ({
+    ...tier,
+    count: 0,
+  }));
+
+  const tierCounts = resources.reduce(
+    (acc, resource) => {
+      if (resource.tier !== null && resource.tier !== undefined) {
+        const tierStr = resource.tier.toString();
+        acc[tierStr] = (acc[tierStr] || 0) + 1;
+      } else {
+        acc["none"] = (acc["none"] || 0) + 1;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  tierOptionsWithCounts.forEach((option) => {
+    option.count = tierCounts[option.value] || 0;
   });
 
   // Calculate needs updating count
@@ -804,12 +828,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       // Status filter
       let matchesStatus = true;
-      if (statusFilter !== LEADERBOARD_TIME_FILTERS.ALL) {
+      if (statusFilter.length > 0) {
         const resourceStatus = calculateResourceStatus(
           resource.quantityHagga + resource.quantityDeepDesert,
           resource.targetQuantity ?? null,
         );
-        matchesStatus = resourceStatus === statusFilter;
+        matchesStatus = statusFilter.includes(resourceStatus);
       }
 
       // Needs updating filter
@@ -823,9 +847,21 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       // Category filter
       let matchesCategory = true;
-      if (categoryFilter !== "all") {
-        matchesCategory =
-          (resource.category || UNCATEGORIZED) === categoryFilter;
+      if (categoryFilter.length > 0) {
+        matchesCategory = categoryFilter.includes(
+          resource.category || UNCATEGORIZED,
+        );
+      }
+
+      // Tier filter
+      let matchesTier = true;
+      if (tierFilter.length > 0) {
+        const hasNoTier = resource.tier === null || resource.tier === undefined;
+        if (tierFilter.includes("none") && hasNoTier) {
+          matchesTier = true;
+        } else {
+          matchesTier = tierFilter.includes(resource.tier?.toString() ?? "");
+        }
       }
 
       // Priority filter
@@ -839,6 +875,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         matchesStatus &&
         matchesNeedsUpdate &&
         matchesCategory &&
+        matchesTier &&
         matchesPriority
       );
     })
@@ -1428,45 +1465,33 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
           {/* Filters Row */}
           <div className="flex flex-col flex-wrap items-start gap-4 sm:flex-row sm:items-center">
-            {/* Status Filter */}
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-text-secondary">
-                Status:
-              </label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-1.5 text-sm text-text-primary focus:border-transparent focus:ring-2 focus:ring-blue-500"
-              >
-                {statusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label} ({option.count})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Category Filter */}
-            <div className="flex items-center gap-2">
-              <label
-                htmlFor="category-filter"
-                className="text-sm font-medium text-text-secondary"
-              >
-                Category:
-              </label>
-              <select
-                id="category-filter"
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-1.5 text-sm text-text-primary focus:border-transparent focus:ring-2 focus:ring-blue-500"
-              >
-                {categoryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label} ({option.count})
-                  </option>
-                ))}
-              </select>
-            </div>
+            <MultiSelectDropdown
+              options={statusOptions}
+              selected={statusFilter}
+              onChange={setStatusFilter}
+              placeholder="Filter by Status"
+              className="w-full sm:w-48"
+              ariaLabel="status filter"
+              testId="status-filter"
+            />
+            <MultiSelectDropdown
+              options={categoryOptions}
+              selected={categoryFilter}
+              onChange={setCategoryFilter}
+              placeholder="Filter by Category"
+              className="w-full sm:w-48"
+              ariaLabel="category filter"
+              testId="category-filter"
+            />
+            <MultiSelectDropdown
+              options={tierOptionsWithCounts}
+              selected={tierFilter}
+              onChange={setTierFilter}
+              placeholder="Filter by Tier"
+              className="w-full sm:w-56"
+              ariaLabel="tier filter"
+              testId="tier-filter"
+            />
 
             {/* Needs Updating Filter */}
             <div className="flex items-center gap-2">
@@ -1501,10 +1526,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             </div>
 
             {/* Active Filters Indicator */}
-            {(statusFilter !== "all" ||
+            {(statusFilter.length > 0 ||
               needsUpdateFilter ||
               searchTerm ||
-              categoryFilter !== "all" ||
+              categoryFilter.length > 0 ||
+              tierFilter.length > 0 ||
               priorityFilter) && (
               <div className="flex items-center gap-2 text-sm text-text-tertiary">
                 <span>
@@ -1513,10 +1539,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 </span>
                 <button
                   onClick={() => {
-                    setStatusFilter("all");
+                    setStatusFilter([]);
                     setNeedsUpdateFilter(false);
                     setSearchTerm("");
-                    setCategoryFilter("all");
+                    setCategoryFilter([]);
+                    setTierFilter([]);
                     setPriorityFilter(false);
                   }}
                   className="text-text-link hover:underline"
@@ -1537,6 +1564,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             filters={{
               status: statusFilter,
               category: categoryFilter,
+              tier: tierFilter,
               needsUpdate: needsUpdateFilter,
               priority: priorityFilter,
             }}

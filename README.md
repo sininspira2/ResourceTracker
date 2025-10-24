@@ -10,11 +10,39 @@ Removed from fork network due to original author repository being deleted, and d
 
 ---
 
+## 🚀 Release Notes - Version 4.1.3: Resource Tier System and Multi-Select Filtering
+
+**Release Date:** October 24, 2025
+
+### ✨ New Features
+
+#### Resource Tier System
+
+This release introduces a new **'tier' attribute** for resources, allowing for a more granular classification based on importance or progression level.
+
+- **Tier Management:** The 'Edit Resource' modal has been updated to allow users to assign a tier to any resource.
+- **Enhanced UI:** Resource detail pages now display the assigned tier with distinct styling, making it easy to identify a resource's classification at a glance.
+
+#### Advanced Multi-Select Filtering
+
+The filtering system on the resource table has been significantly upgraded to provide more powerful and flexible data organization.
+
+- **Multi-Select:** Users can now select multiple options simultaneously for the **Status**, **Category**, and new **Tier** filters.
+- **New Component:** This feature is powered by a new `MultiSelectDropdown` component for a clean and intuitive user experience.
+
+### ❗ Important Notes
+
+#### Database Migration
+
+This update utilizes the `tier` column in the database, which was added in **version 4.1.0**.
+
+A database migration is **not required** for this update _unless_ you are updating from a version prior to 4.1.0 **and** you see a yellow warning banner displayed above the navigation bar. If you do not see this banner, your database is already up to date.
+
+---
+
 ## 🚀 Release Notes - Version 4.1.2: CSV Data Import/Export and UI Enhancements
 
 **Release Date:** October 23, 2025
-
----
 
 ### ✨ New Features
 

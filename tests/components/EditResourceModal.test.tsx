@@ -52,6 +52,7 @@ describe("EditResourceModal", () => {
       imageUrl: "",
       isPriority: true,
       multiplier: 1,
+      tier: null,
     });
   });
 

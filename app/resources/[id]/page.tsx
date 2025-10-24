@@ -11,7 +11,7 @@ import { UpdateQuantityModal } from "@/app/components/UpdateQuantityModal";
 import { ChangeTargetModal } from "@/app/components/ChangeTargetModal";
 import { TransferModal } from "@/app/components/TransferModal";
 import { EditResourceModal } from "@/app/components/EditResourceModal";
-import { UPDATE_TYPE } from "@/lib/constants";
+import { TIER_OPTIONS, UPDATE_TYPE } from "@/lib/constants";
 import {
   Plus,
   Baseline,
@@ -21,6 +21,20 @@ import {
   Trash2,
   AlertTriangle,
 } from "lucide-react";
+
+const getTierClassName = (tier: number | null | undefined): string => {
+  if (tier === null || tier === undefined) return "bg-gray-200 text-gray-800";
+  const tierClasses: { [key: number]: string } = {
+    0: "bg-tier-0-bg text-tier-0-text",
+    1: "bg-tier-1-bg text-tier-1-text",
+    2: "bg-tier-2-bg text-tier-2-text",
+    3: "bg-tier-3-bg text-tier-3-text",
+    4: "bg-tier-4-bg text-tier-4-text",
+    5: "bg-tier-5-bg text-tier-5-text",
+    6: "bg-tier-6-bg text-tier-6-text",
+  };
+  return tierClasses[tier] || "bg-gray-200 text-gray-800";
+};
 
 const CHART_COLORS = {
   total: "#3b82f6",
@@ -96,6 +110,7 @@ interface Resource {
   imageUrl?: string;
   targetQuantity?: number;
   multiplier?: number;
+  tier?: number;
   lastUpdatedBy: string;
   createdAt: string;
   updatedAt: string;
@@ -883,6 +898,20 @@ export default function ResourceDetailPage() {
                         >
                           {formatStatusForDisplay(status)}
                         </span>
+                        {resource.tier !== null &&
+                          resource.tier !== undefined && (
+                            <span
+                              className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getTierClassName(
+                                resource.tier,
+                              )}`}
+                            >
+                              {
+                                TIER_OPTIONS.find(
+                                  (t) => t.value === resource.tier?.toString(),
+                                )?.label
+                              }
+                            </span>
+                          )}
                       </div>
 
                       {/* Description */}
