@@ -37,6 +37,7 @@ import {
 } from "@/lib/constants";
 
 const TIER_OPTIONS = [
+  { value: "none", label: "No Tier" },
   { value: "0", label: "Tier 0 (Scrap)" },
   { value: "1", label: "Tier 1 (Copper)" },
   { value: "2", label: "Tier 2 (Iron)" },
@@ -863,7 +864,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       // Tier filter
       let matchesTier = true;
       if (tierFilter.length > 0) {
-        matchesTier = tierFilter.includes(resource.tier?.toString() ?? "");
+        const hasNoTier = resource.tier === null || resource.tier === undefined;
+        if (tierFilter.includes("none") && hasNoTier) {
+          matchesTier = true;
+        } else {
+          matchesTier = tierFilter.includes(resource.tier?.toString() ?? "");
+        }
       }
 
       // Priority filter

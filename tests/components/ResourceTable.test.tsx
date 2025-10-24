@@ -67,6 +67,18 @@ const mockResources = [
     lastUpdatedBy: "user1",
     isPriority: false,
   },
+  {
+    id: "4",
+    name: "Water",
+    quantityHagga: 1000,
+    quantityDeepDesert: 500,
+    targetQuantity: 2000,
+    category: "Raw",
+    updatedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    lastUpdatedBy: "user1",
+    isPriority: false,
+  },
 ];
 
 const mockActivity = [
@@ -143,6 +155,26 @@ describe("ResourceTable", () => {
       expect(within(table).getByText("Iron Ore")).toBeInTheDocument();
       expect(within(table).getByText("Copper Wire")).toBeInTheDocument();
       expect(within(table).getByText("Steel Bar")).toBeInTheDocument();
+    });
+  });
+
+  it("filters resources by 'No Tier'", async () => {
+    render(<ResourceTable userId="test-user" />);
+    await waitFor(() => {
+      expect(screen.getByText("Recent Updates")).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText("Table"));
+    const table = await screen.findByRole("table");
+
+    await userEvent.click(screen.getByTestId("tier-filter"));
+    const listbox = await screen.findByRole("listbox");
+    await userEvent.click(await within(listbox).findByText(/No Tier/));
+
+    await waitFor(() => {
+      expect(within(table).getByText("Water")).toBeInTheDocument();
+      expect(within(table).queryByText("Iron Ore")).not.toBeInTheDocument();
+      expect(within(table).queryByText("Copper Wire")).not.toBeInTheDocument();
+      expect(within(table).queryByText("Steel Bar")).not.toBeInTheDocument();
     });
   });
 

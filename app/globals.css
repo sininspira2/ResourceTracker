@@ -237,20 +237,20 @@
   --color-tag-discord-role-bg: theme(colors.blue.100);
   --color-tag-discord-role-text: theme(colors.blue.800);
 
-  --tier-0: #d1d5db;
-  --tier-0-text: #1f2937;
-  --tier-1: #facc15;
-  --tier-1-text: #713f12;
-  --tier-2: #818cf8;
-  --tier-2-text: #312e81;
-  --tier-3: #f9a8d4;
-  --tier-3-text: #831843;
-  --tier-4: #6ee7b7;
-  --tier-4-text: #064e3b;
-  --tier-5: #fbbf24;
-  --tier-5-text: #78350f;
-  --tier-6: #93c5fd;
-  --tier-6-text: #1e3a8a;
+  --tier-0: theme(colors.gray.300);
+  --tier-0-text: theme(colors.gray.800);
+  --tier-1: theme(colors.yellow.400);
+  --tier-1-text: theme(colors.yellow.800);
+  --tier-2: theme(colors.indigo.400);
+  --tier-2-text: theme(colors.indigo.800);
+  --tier-3: theme(colors.pink.300);
+  --tier-3-text: theme(colors.pink.800);
+  --tier-4: theme(colors.green.300);
+  --tier-4-text: theme(colors.green.800);
+  --tier-5: theme(colors.amber.400);
+  --tier-5-text: theme(colors.amber.800);
+  --tier-6: theme(colors.blue.300);
+  --tier-6-text: theme(colors.blue.800);
 }
 
 .dark {
@@ -427,18 +427,18 @@
   --color-tag-discord-role-bg: theme(colors.blue.900);
   --color-tag-discord-role-text: theme(colors.blue.200);
 
-  --tier-0: #4b5563;
-  --tier-0-text: #f9fafb;
-  --tier-1: #a16207;
-  --tier-1-text: #fefce8;
-  --tier-2: #4338ca;
-  --tier-2-text: #eef2ff;
-  --tier-3: #be185d;
-  --tier-3-text: #fdf2f8;
-  --tier-4: #065f46;
-  --tier-4-text: #ecfdf5;
-  --tier-5: #b45309;
-  --tier-5-text: #fffbeb;
-  --tier-6: #1e40af;
-  --tier-6-text: #dbeafe;
+  --tier-0: theme(colors.gray.600);
+  --tier-0-text: theme(colors.gray.100);
+  --tier-1: theme(colors.yellow.800);
+  --tier-1-text: theme(colors.yellow.200);
+  --tier-2: theme(colors.indigo.800);
+  --tier-2-text: theme(colors.indigo.200);
+  --tier-3: theme(colors.pink.800);
+  --tier-3-text: theme(colors.pink.200);
+  --tier-4: theme(colors.green.800);
+  --tier-4-text: theme(colors.green.200);
+  --tier-5: theme(colors.amber.800);
+  --tier-5-text: theme(colors.amber.200);
+  --tier-6: theme(colors.blue.800);
+  --tier-6-text: theme(colors.blue.200);
 }
