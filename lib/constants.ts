@@ -86,3 +86,14 @@ export const UNCATEGORIZED = "Uncategorized";
 export const RAW_CATEGORY = "Raw";
 export const COMPONENTS_CATEGORY = "Components";
 export const BP_CATEGORY = "Blueprints";
+
+export const TIER_OPTIONS = [
+  { value: "none", label: "No Tier" },
+  { value: "0", label: "Tier 0 (Scrap)" },
+  { value: "1", label: "Tier 1 (Copper)" },
+  { value: "2", label: "Tier 2 (Iron)" },
+  { value: "3", label: "Tier 3 (Steel)" },
+  { value: "4", label: "Tier 4 (Aluminum)" },
+  { value: "5", label: "Tier 5 (Duraluminum)" },
+  { value: "6", label: "Tier 6 (Plastanium)" },
+];

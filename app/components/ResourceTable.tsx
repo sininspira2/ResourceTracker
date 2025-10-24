@@ -34,18 +34,8 @@ import {
   USER_ACTIVITY_API_PATH,
   WATER_RESOURCE_ID,
   VIEW_MODE,
+  TIER_OPTIONS,
 } from "@/lib/constants";
-
-const TIER_OPTIONS = [
-  { value: "none", label: "No Tier" },
-  { value: "0", label: "Tier 0 (Scrap)" },
-  { value: "1", label: "Tier 1 (Copper)" },
-  { value: "2", label: "Tier 2 (Iron)" },
-  { value: "3", label: "Tier 3 (Steel)" },
-  { value: "4", label: "Tier 4 (Aluminum)" },
-  { value: "5", label: "Tier 5 (Duraluminum)" },
-  { value: "6", label: "Tier 6 (Plastanium)" },
-];
 
 // Utility function to format numbers with commas
 const formatNumber = (num: number): string => {
@@ -1496,7 +1486,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               selected={tierFilter}
               onChange={setTierFilter}
               placeholder="Filter by Tier"
-              className="w-full sm:w-48"
+              className="w-full sm:w-56"
               ariaLabel="tier filter"
               testId="tier-filter"
             />
