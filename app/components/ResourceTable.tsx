@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Fragment } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Listbox, Transition } from "@headlessui/react";
 import { CongratulationsPopup } from "./CongratulationsPopup";
 import { TransferModal } from "./TransferModal";
 import { UpdateQuantityModal } from "./UpdateQuantityModal";
 import { EditResourceModal } from "./EditResourceModal";
 import { ChangeTargetModal } from "./ChangeTargetModal";
-import { AlertTriangle, Trash2 } from "lucide-react";
+import { AlertTriangle, Trash2, Check, ChevronsUpDown } from "lucide-react";
 import { BulkActions } from "./BulkActions";
 import { getUserIdentifier } from "@/lib/auth";
 import {
@@ -161,6 +162,16 @@ interface Resource {
   tier?: number;
 }
 
+const tierOptions = [
+  { value: 0, label: "0 (Scrap)" },
+  { value: 1, label: "1 (Copper)" },
+  { value: 2, label: "2 (Iron)" },
+  { value: 3, label: "3 (Steel)" },
+  { value: 4, label: "4 (Aluminum)" },
+  { value: 5, label: "5 (Duraluminum)" },
+  { value: 6, label: "6 (Plastanium)" },
+];
+
 interface ResourceUpdate {
   id: string;
   updateType: (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE];
@@ -246,11 +257,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     });
 
   // Filter states
-  const [statusFilter, setStatusFilter] = useState<string>(
-    LEADERBOARD_TIME_FILTERS.ALL,
-  );
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [needsUpdateFilter, setNeedsUpdateFilter] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState(false);
   const [tierFilter, setTierFilter] = useState<number[]>([]);
 
@@ -315,7 +324,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   // Status options for filter dropdown
   const statusOptions = [
-    { value: "all", label: "All Status", count: 0 },
     { value: RESOURCE_STATUS.CRITICAL, label: "Critical", count: 0 },
     { value: RESOURCE_STATUS.BELOW_TARGET, label: "Below Target", count: 0 },
     { value: RESOURCE_STATUS.AT_TARGET, label: "At Target", count: 0 },
@@ -343,7 +351,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   // Create category options for filter dropdown
   const categoryOptions = [
-    { value: "all", label: "All Categories", count: 0 },
     ...CATEGORY_OPTIONS.map((cat) => ({ value: cat, label: cat, count: 0 })),
   ];
 
@@ -806,12 +813,12 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       // Status filter
       let matchesStatus = true;
-      if (statusFilter !== LEADERBOARD_TIME_FILTERS.ALL) {
+      if (statusFilter.length > 0) {
         const resourceStatus = calculateResourceStatus(
           resource.quantityHagga + resource.quantityDeepDesert,
           resource.targetQuantity ?? null,
         );
-        matchesStatus = resourceStatus === statusFilter;
+        matchesStatus = statusFilter.includes(resourceStatus);
       }
 
       // Needs updating filter
@@ -825,9 +832,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
       // Category filter
       let matchesCategory = true;
-      if (categoryFilter !== "all") {
-        matchesCategory =
-          (resource.category || UNCATEGORIZED) === categoryFilter;
+      if (categoryFilter.length > 0) {
+        matchesCategory = categoryFilter.includes(
+          resource.category || UNCATEGORIZED,
+        );
       }
 
       // Priority filter
@@ -1439,73 +1447,194 @@ export function ResourceTable({ userId }: ResourceTableProps) {
           <div className="flex flex-col flex-wrap items-start gap-4 sm:flex-row sm:items-center">
             {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-text-secondary">
-                Status:
-              </label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-1.5 text-sm text-text-primary focus:border-transparent focus:ring-2 focus:ring-blue-500"
-              >
-                {statusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label} ({option.count})
-                  </option>
-                ))}
-              </select>
+              <Listbox value={statusFilter} onChange={setStatusFilter} multiple>
+                <div className="relative mt-1">
+                  <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                    <span className="block truncate">
+                      {statusFilter.length > 0
+                        ? `${statusFilter.length} statuses selected`
+                        : "Select Status"}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronsUpDown
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                      {statusOptions.map((option) => (
+                        <Listbox.Option
+                          key={option.value}
+                          value={option.value}
+                          className={({ active }) =>
+                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                              active
+                                ? "bg-amber-100 text-amber-900"
+                                : "text-gray-900"
+                            }`
+                          }
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? "font-medium" : "font-normal"
+                                }`}
+                              >
+                                {option.label}
+                              </span>
+                              {selected ? (
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                  <Check
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
             </div>
 
             {/* Category Filter */}
             <div className="flex items-center gap-2">
-              <label
-                htmlFor="category-filter"
-                className="text-sm font-medium text-text-secondary"
-              >
-                Category:
-              </label>
-              <select
-                id="category-filter"
+              <Listbox
                 value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-1.5 text-sm text-text-primary focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                onChange={setCategoryFilter}
+                multiple
               >
-                {categoryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label} ({option.count})
-                  </option>
-                ))}
-              </select>
+                <div className="relative mt-1">
+                  <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                    <span className="block truncate">
+                      {categoryFilter.length > 0
+                        ? `${categoryFilter.length} categories selected`
+                        : "Select Category"}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronsUpDown
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                      {categoryOptions.map((option) => (
+                        <Listbox.Option
+                          key={option.value}
+                          value={option.value}
+                          className={({ active }) =>
+                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                              active
+                                ? "bg-amber-100 text-amber-900"
+                                : "text-gray-900"
+                            }`
+                          }
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? "font-medium" : "font-normal"
+                                }`}
+                              >
+                                {option.label}
+                              </span>
+                              {selected ? (
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                  <Check
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
             </div>
-
             {/* Tier Filter */}
             <div className="flex items-center gap-2">
-              <label
-                htmlFor="tier-filter"
-                className="text-sm font-medium text-text-secondary"
-              >
-                Tier:
-              </label>
-              <select
-                id="tier-filter"
-                multiple
-                value={tierFilter.map(String)}
-                onChange={(e) => {
-                  const selectedOptions = Array.from(
-                    e.target.selectedOptions,
-                    (option) => Number(option.value),
-                  );
-                  setTierFilter(selectedOptions);
-                }}
-                className="rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-1.5 text-sm text-text-primary focus:border-transparent focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="0">0 (Scrap)</option>
-                <option value="1">1 (Copper)</option>
-                <option value="2">2 (Iron)</option>
-                <option value="3">3 (Steel)</option>
-                <option value="4">4 (Aluminum)</option>
-                <option value="5">5 (Duraluminum)</option>
-                <option value="6">6 (Plastanium)</option>
-              </select>
+              <Listbox value={tierFilter} onChange={setTierFilter} multiple>
+                <div className="relative mt-1">
+                  <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                    <span className="block truncate">
+                      {tierFilter.length > 0
+                        ? `${tierFilter.length} tiers selected`
+                        : "Select Tier"}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronsUpDown
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                      {tierOptions.map((option) => (
+                        <Listbox.Option
+                          key={option.value}
+                          value={option.value}
+                          className={({ active }) =>
+                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                              active
+                                ? "bg-amber-100 text-amber-900"
+                                : "text-gray-900"
+                            }`
+                          }
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? "font-medium" : "font-normal"
+                                }`}
+                              >
+                                {option.label}
+                              </span>
+                              {selected ? (
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                  <Check
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
             </div>
 
             {/* Needs Updating Filter */}
@@ -1541,10 +1670,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             </div>
 
             {/* Active Filters Indicator */}
-            {(statusFilter !== "all" ||
+            {(statusFilter.length > 0 ||
               needsUpdateFilter ||
               searchTerm ||
-              categoryFilter !== "all" ||
+              categoryFilter.length > 0 ||
               priorityFilter ||
               tierFilter.length > 0) && (
               <div className="flex items-center gap-2 text-sm text-text-tertiary">
@@ -1554,10 +1683,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 </span>
                 <button
                   onClick={() => {
-                    setStatusFilter("all");
+                    setStatusFilter([]);
                     setNeedsUpdateFilter(false);
                     setSearchTerm("");
-                    setCategoryFilter("all");
+                    setCategoryFilter([]);
                     setPriorityFilter(false);
                     setTierFilter([]);
                   }}
@@ -1579,6 +1708,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             filters={{
               status: statusFilter,
               category: categoryFilter,
+              tier: tierFilter,
               needsUpdate: needsUpdateFilter,
               priority: priorityFilter,
             }}

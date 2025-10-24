@@ -15,7 +15,6 @@ const mockResource = {
   isPriority: true,
   multiplier: 1.0,
   description: "A common ore.",
-  tier: 2,
 };
 
 describe("EditResourceModal", () => {
@@ -53,7 +52,6 @@ describe("EditResourceModal", () => {
       imageUrl: "",
       isPriority: true,
       multiplier: 1,
-      tier: 2,
     });
   });
 

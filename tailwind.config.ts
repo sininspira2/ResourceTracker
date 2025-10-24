@@ -250,14 +250,6 @@ export default {
 
         "tag-discord-role-bg": "var(--color-tag-discord-role-bg)",
         "tag-discord-role-text": "var(--color-tag-discord-role-text)",
-
-        "tier-0": "var(--color-bg-tier-0)",
-        "tier-1": "var(--color-bg-tier-1)",
-        "tier-2": "var(--color-bg-tier-2)",
-        "tier-3": "var(--color-bg-tier-3)",
-        "tier-4": "var(--color-bg-tier-4)",
-        "tier-5": "var(--color-bg-tier-5)",
-        "tier-6": "var(--color-bg-tier-6)",
       },
       backgroundImage: {
         "gradient-success":

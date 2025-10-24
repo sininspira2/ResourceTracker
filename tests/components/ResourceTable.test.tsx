@@ -172,8 +172,8 @@ describe("ResourceTable", () => {
     fireEvent.click(screen.getByText("Table"));
     const table = await screen.findByRole("table");
 
-    const categorySelect = screen.getByLabelText("Category:");
-    fireEvent.change(categorySelect, { target: { value: "Raw" } });
+    await userEvent.click(screen.getByRole("button", { name: /Select Category/i }));
+    await userEvent.click(screen.getByRole("option", { name: "Raw" }));
 
     await waitFor(() => {
       expect(within(table).getByText("Iron Ore")).toBeInTheDocument();
@@ -226,11 +226,12 @@ describe("ResourceTable", () => {
     fireEvent.click(screen.getByText("Table"));
     const table = await screen.findByRole("table");
 
-    await userEvent.selectOptions(screen.getByLabelText("Tier:"), "2");
+    await userEvent.click(screen.getByRole("button", { name: /Select Tier/i }));
+    await userEvent.click(screen.getByRole("option", { name: "1 (Copper)" }));
 
     await waitFor(() => {
-      expect(within(table).queryByText("Iron Ore")).not.toBeInTheDocument();
-      expect(within(table).getByText("Copper Wire")).toBeInTheDocument();
+      expect(within(table).getByText("Iron Ore")).toBeInTheDocument();
+      expect(within(table).queryByText("Copper Wire")).not.toBeInTheDocument();
       expect(within(table).queryByText("Steel Bar")).not.toBeInTheDocument();
     });
   });
@@ -261,9 +262,8 @@ describe("ResourceTable", () => {
     fireEvent.change(screen.getByPlaceholderText("Search resources..."), {
       target: { value: "test" },
     });
-    fireEvent.change(screen.getByLabelText("Category:"), {
-      target: { value: "Raw" },
-    });
+    await userEvent.click(screen.getByRole("button", { name: /Select Category/i }));
+    await userEvent.click(screen.getByRole("option", { name: "Raw" }));
     fireEvent.click(screen.getByLabelText(/Needs updating/));
     fireEvent.click(screen.getByLabelText("Priority"));
 
@@ -274,7 +274,7 @@ describe("ResourceTable", () => {
 
     // Verify the filters are cleared
     expect(screen.getByPlaceholderText("Search resources...")).toHaveValue("");
-    expect(screen.getByLabelText("Category:")).toHaveValue("all");
+    expect(screen.getByRole("button", { name: /Select Category/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/Needs updating/)).not.toBeChecked();
     expect(screen.getByLabelText("Priority")).not.toBeChecked();
   });

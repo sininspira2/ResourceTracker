@@ -188,7 +188,6 @@ export async function PUT(request: NextRequest) {
         imageUrl,
         multiplier,
         isPriority,
-        tier,
       } = body.resourceMetadata;
 
       if (!id || !name || !category) {
@@ -207,7 +206,6 @@ export async function PUT(request: NextRequest) {
           imageUrl: imageUrl || null,
           multiplier: multiplier || 1.0,
           isPriority: isPriority || false,
-          tier: tier,
           lastUpdatedBy: userId,
           updatedAt: new Date(),
         })
