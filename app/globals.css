@@ -237,20 +237,20 @@
   --color-tag-discord-role-bg: theme(colors.blue.100);
   --color-tag-discord-role-text: theme(colors.blue.800);
 
-  --tier-0: theme(colors.gray.300);
-  --tier-0-text: theme(colors.gray.800);
-  --tier-1: theme(colors.yellow.400);
-  --tier-1-text: theme(colors.yellow.800);
-  --tier-2: theme(colors.indigo.400);
-  --tier-2-text: theme(colors.indigo.800);
-  --tier-3: theme(colors.pink.300);
-  --tier-3-text: theme(colors.pink.800);
-  --tier-4: theme(colors.green.300);
-  --tier-4-text: theme(colors.green.800);
-  --tier-5: theme(colors.amber.400);
-  --tier-5-text: theme(colors.amber.800);
-  --tier-6: theme(colors.blue.300);
-  --tier-6-text: theme(colors.blue.800);
+  --color-tier-0-bg: theme(colors.gray.300);
+  --color-tier-0-text: theme(colors.gray.800);
+  --color-tier-1-bg: theme(colors.yellow.400);
+  --color-tier-1-text: theme(colors.yellow.800);
+  --color-tier-2-bg: theme(colors.indigo.400);
+  --color-tier-2-text: theme(colors.indigo.800);
+  --color-tier-3-bg: theme(colors.pink.300);
+  --color-tier-3-text: theme(colors.pink.800);
+  --color-tier-4-bg: theme(colors.green.300);
+  --color-tier-4-text: theme(colors.green.800);
+  --color-tier-5-bg: theme(colors.amber.400);
+  --color-tier-5-text: theme(colors.amber.800);
+  --color-tier-6-bg: theme(colors.blue.300);
+  --color-tier-6-text: theme(colors.blue.800);
 }
 
 .dark {
@@ -427,18 +427,18 @@
   --color-tag-discord-role-bg: theme(colors.blue.900);
   --color-tag-discord-role-text: theme(colors.blue.200);
 
-  --tier-0: theme(colors.gray.600);
-  --tier-0-text: theme(colors.gray.100);
-  --tier-1: theme(colors.yellow.800);
-  --tier-1-text: theme(colors.yellow.200);
-  --tier-2: theme(colors.indigo.800);
-  --tier-2-text: theme(colors.indigo.200);
-  --tier-3: theme(colors.pink.800);
-  --tier-3-text: theme(colors.pink.200);
-  --tier-4: theme(colors.green.800);
-  --tier-4-text: theme(colors.green.200);
-  --tier-5: theme(colors.amber.800);
-  --tier-5-text: theme(colors.amber.200);
-  --tier-6: theme(colors.blue.800);
-  --tier-6-text: theme(colors.blue.200);
+  --color-tier-0-bg: theme(colors.gray.600);
+  --color-tier-0-text: theme(colors.gray.100);
+  --color-tier-1-bg: theme(colors.yellow.800);
+  --color-tier-1-text: theme(colors.yellow.200);
+  --color-tier-2-bg: theme(colors.indigo.800);
+  --color-tier-2-text: theme(colors.indigo.200);
+  --color-tier-3-bg: theme(colors.pink.800);
+  --color-tier-3-text: theme(colors.pink.200);
+  --color-tier-4-bg: theme(colors.green.800);
+  --color-tier-4-text: theme(colors.green.200);
+  --color-tier-5-bg: theme(colors.amber.800);
+  --color-tier-5-text: theme(colors.amber.200);
+  --color-tier-6-bg: theme(colors.blue.800);
+  --color-tier-6-text: theme(colors.blue.200);
 }

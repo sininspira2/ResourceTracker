@@ -35,13 +35,13 @@ const TIER_OPTIONS = [
 const getTierClassName = (tier: number | null | undefined): string => {
   if (tier === null || tier === undefined) return "bg-gray-200 text-gray-800";
   const tierClasses: { [key: number]: string } = {
-    0: "bg-tier-0 text-tier-0-text",
-    1: "bg-tier-1 text-tier-1-text",
-    2: "bg-tier-2 text-tier-2-text",
-    3: "bg-tier-3 text-tier-3-text",
-    4: "bg-tier-4 text-tier-4-text",
-    5: "bg-tier-5 text-tier-5-text",
-    6: "bg-tier-6 text-tier-6-text",
+    0: "bg-tier-0-bg text-tier-0-text",
+    1: "bg-tier-1-bg text-tier-1-text",
+    2: "bg-tier-2-bg text-tier-2-text",
+    3: "bg-tier-3-bg text-tier-3-text",
+    4: "bg-tier-4-bg text-tier-4-text",
+    5: "bg-tier-5-bg text-tier-5-text",
+    6: "bg-tier-6-bg text-tier-6-text",
   };
   return tierClasses[tier] || "bg-gray-200 text-gray-800";
 };
