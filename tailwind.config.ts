@@ -1,7 +1,12 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    // The following are included to ensure Tailwind generates the correct classes for dynamic tier colors
+    "./app/resources/[id]/page.tsx",
+  ],
   theme: {
     extend: {
       colors: {
