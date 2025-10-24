@@ -236,6 +236,14 @@
 
   --color-tag-discord-role-bg: theme(colors.blue.100);
   --color-tag-discord-role-text: theme(colors.blue.800);
+
+  --color-bg-tier-0: theme(colors.gray.100);
+  --color-bg-tier-1: theme(colors.orange.100);
+  --color-bg-tier-2: theme(colors.gray.300);
+  --color-bg-tier-3: theme(colors.sky.200);
+  --color-bg-tier-4: theme(colors.blue.200);
+  --color-bg-tier-5: theme(colors.violet.200);
+  --color-bg-tier-6: theme(colors.fuchsia.200);
 }
 
 .dark {
