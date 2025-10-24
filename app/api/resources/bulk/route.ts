@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
   const needsUpdateFilter = searchParams.get("needsUpdate") === "true";
   const priorityFilter = searchParams.get("priority") === "true";
   const searchTerm = searchParams.get("searchTerm");
+  const tierFilter = searchParams.getAll("tier");
 
   let whereConditions = [];
 
@@ -49,6 +50,15 @@ export async function GET(request: NextRequest) {
 
   if (priorityFilter) {
     whereConditions.push(sql`${resources.isPriority} = true`);
+  }
+
+  if (tierFilter.length > 0) {
+    whereConditions.push(
+      inArray(
+        resources.tier,
+        tierFilter.map((t) => Number(t)),
+      ),
+    );
   }
 
   if (statusFilter && statusFilter !== "all") {

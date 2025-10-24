@@ -38,6 +38,7 @@ const mockResources = [
     createdAt: new Date().toISOString(),
     lastUpdatedBy: "user1",
     isPriority: true,
+    tier: 1,
   },
   {
     id: "2",
@@ -50,6 +51,7 @@ const mockResources = [
     createdAt: new Date().toISOString(),
     lastUpdatedBy: "user2",
     isPriority: false,
+    tier: 2,
   },
   {
     id: "3",
@@ -62,6 +64,7 @@ const mockResources = [
     createdAt: new Date().toISOString(),
     lastUpdatedBy: "user1",
     isPriority: false,
+    tier: 3,
   },
 ];
 
@@ -210,6 +213,24 @@ describe("ResourceTable", () => {
     await waitFor(() => {
       expect(within(table).getByText("Iron Ore")).toBeInTheDocument();
       expect(within(table).queryByText("Copper Wire")).not.toBeInTheDocument();
+      expect(within(table).queryByText("Steel Bar")).not.toBeInTheDocument();
+    });
+  });
+
+  it("filters resources by tier", async () => {
+    render(<ResourceTable userId="test-user" />);
+    await waitFor(() => {
+      expect(screen.getByText("Recent Updates")).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText("Table"));
+    const table = await screen.findByRole("table");
+
+    const tierSelect = screen.getByLabelText("Tier:");
+    fireEvent.change(tierSelect, { target: { value: "2" } });
+
+    await waitFor(() => {
+      expect(within(table).queryByText("Iron Ore")).not.toBeInTheDocument();
+      expect(within(table).getByText("Copper Wire")).toBeInTheDocument();
       expect(within(table).queryByText("Steel Bar")).not.toBeInTheDocument();
     });
   });

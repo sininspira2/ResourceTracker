@@ -158,6 +158,7 @@ interface Resource {
   isPriority?: boolean;
   lastUpdatedBy: string;
   updatedAt: string;
+  tier?: number;
 }
 
 interface ResourceUpdate {
@@ -251,6 +252,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const [needsUpdateFilter, setNeedsUpdateFilter] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState(false);
+  const [tierFilter, setTierFilter] = useState<number[]>([]);
 
   // Add state for update modal
   const [updateModalState, setUpdateModalState] = useState<{
@@ -834,12 +836,19 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         matchesPriority = resource.isPriority === true;
       }
 
+      // Tier filter
+      let matchesTier = true;
+      if (tierFilter.length > 0) {
+        matchesTier = tierFilter.includes(resource.tier ?? -1);
+      }
+
       return (
         matchesSearch &&
         matchesStatus &&
         matchesNeedsUpdate &&
         matchesCategory &&
-        matchesPriority
+        matchesPriority &&
+        matchesTier
       );
     })
     .sort((a, b) => {
@@ -1468,6 +1477,37 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               </select>
             </div>
 
+            {/* Tier Filter */}
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="tier-filter"
+                className="text-sm font-medium text-text-secondary"
+              >
+                Tier:
+              </label>
+              <select
+                id="tier-filter"
+                multiple
+                value={tierFilter.map(String)}
+                onChange={(e) => {
+                  const selectedOptions = Array.from(
+                    e.target.selectedOptions,
+                    (option) => Number(option.value),
+                  );
+                  setTierFilter(selectedOptions);
+                }}
+                className="rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-1.5 text-sm text-text-primary focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="0">0 (Scrap)</option>
+                <option value="1">1 (Copper)</option>
+                <option value="2">2 (Iron)</option>
+                <option value="3">3 (Steel)</option>
+                <option value="4">4 (Aluminum)</option>
+                <option value="5">5 (Duraluminum)</option>
+                <option value="6">6 (Plastanium)</option>
+              </select>
+            </div>
+
             {/* Needs Updating Filter */}
             <div className="flex items-center gap-2">
               <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-text-secondary">
@@ -1505,7 +1545,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               needsUpdateFilter ||
               searchTerm ||
               categoryFilter !== "all" ||
-              priorityFilter) && (
+              priorityFilter ||
+              tierFilter.length > 0) && (
               <div className="flex items-center gap-2 text-sm text-text-tertiary">
                 <span>
                   Showing {filteredResources.length} of {resources.length}{" "}
@@ -1518,6 +1559,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     setSearchTerm("");
                     setCategoryFilter("all");
                     setPriorityFilter(false);
+                    setTierFilter([]);
                   }}
                   className="text-text-link hover:underline"
                 >

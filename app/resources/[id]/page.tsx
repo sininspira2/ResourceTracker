@@ -99,6 +99,7 @@ interface Resource {
   lastUpdatedBy: string;
   createdAt: string;
   updatedAt: string;
+  tier?: number;
 }
 
 export default function ResourceDetailPage() {
@@ -883,6 +884,13 @@ export default function ResourceDetailPage() {
                         >
                           {formatStatusForDisplay(status)}
                         </span>
+                        {resource.tier !== null && resource.tier !== undefined && (
+                          <span
+                            className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold bg-tier-${resource.tier}`}
+                          >
+                            Tier {resource.tier}
+                          </span>
+                        )}
                       </div>
 
                       {/* Description */}

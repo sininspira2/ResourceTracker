@@ -11,6 +11,7 @@ interface Resource {
   imageUrl?: string;
   multiplier?: number;
   isPriority?: boolean;
+  tier?: number;
 }
 
 interface EditResourceModalProps {
@@ -26,13 +27,22 @@ export function EditResourceModal({
   onSave,
   resource,
 }: EditResourceModalProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    category: string;
+    description: string;
+    imageUrl: string;
+    multiplier: number;
+    isPriority: boolean;
+    tier: number | null;
+  }>({
     name: "",
     category: "Raw",
     description: "",
     imageUrl: "",
     multiplier: 1.0,
     isPriority: false,
+    tier: null,
   });
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -60,6 +70,7 @@ export function EditResourceModal({
         imageUrl: resource.imageUrl || "",
         multiplier: resource.multiplier || 1.0,
         isPriority: resource.isPriority || false,
+        tier: resource.tier === undefined ? null : resource.tier,
       });
       setError(null);
       setSaving(false);
@@ -183,6 +194,35 @@ export function EditResourceModal({
                   {cat}
                 </option>
               ))}
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="tier-select"
+              className="mb-1 block text-sm font-medium text-text-secondary"
+            >
+              Tier
+            </label>
+            <select
+              id="tier-select"
+              value={formData.tier === null ? "" : formData.tier}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  tier: e.target.value === "" ? null : parseInt(e.target.value),
+                })
+              }
+              className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
+            >
+              <option value="">N/A</option>
+              <option value="0">0 (Scrap)</option>
+              <option value="1">1 (Copper)</option>
+              <option value="2">2 (Iron)</option>
+              <option value="3">3 (Steel)</option>
+              <option value="4">4 (Aluminum)</option>
+              <option value="5">5 (Duraluminum)</option>
+              <option value="6">6 (Plastanium)</option>
             </select>
           </div>
 
