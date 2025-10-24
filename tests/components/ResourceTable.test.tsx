@@ -6,6 +6,7 @@ import {
   fireEvent,
   within,
 } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { ResourceTable } from "@/app/components/ResourceTable";
 import { useSession } from "next-auth/react";
 import {
@@ -34,6 +35,7 @@ const mockResources = [
     quantityDeepDesert: 50,
     targetQuantity: 200,
     category: "Raw",
+    tier: 2,
     updatedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
     lastUpdatedBy: "user1",
@@ -46,6 +48,7 @@ const mockResources = [
     quantityDeepDesert: 25,
     targetQuantity: 100,
     category: "Components",
+    tier: 1,
     updatedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(), // 8 days ago
     createdAt: new Date().toISOString(),
     lastUpdatedBy: "user2",
@@ -58,6 +61,7 @@ const mockResources = [
     quantityDeepDesert: 150,
     targetQuantity: 200,
     category: "Refined",
+    tier: 3,
     updatedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
     lastUpdatedBy: "user1",
@@ -168,12 +172,34 @@ describe("ResourceTable", () => {
     fireEvent.click(screen.getByText("Table"));
     const table = await screen.findByRole("table");
 
-    const categorySelect = screen.getByLabelText("Category:");
-    fireEvent.change(categorySelect, { target: { value: "Raw" } });
+    await userEvent.click(screen.getByTestId("category-filter"));
+    const listbox = await screen.findByRole("listbox");
+    await userEvent.click(await within(listbox).findByText(/Raw/));
 
     await waitFor(() => {
       expect(within(table).getByText("Iron Ore")).toBeInTheDocument();
       expect(within(table).queryByText("Copper Wire")).not.toBeInTheDocument();
+      expect(within(table).queryByText("Steel Bar")).not.toBeInTheDocument();
+    });
+  });
+
+  it("filters resources by tier", async () => {
+    render(<ResourceTable userId="test-user" />);
+    await waitFor(() => {
+      expect(screen.getByText("Recent Updates")).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText("Table"));
+    const table = await screen.findByRole("table");
+
+    await userEvent.click(screen.getByTestId("tier-filter"));
+    const listbox = await screen.findByRole("listbox");
+    await userEvent.click(
+      await within(listbox).findByText(/Tier 1 \(Copper\)/),
+    );
+
+    await waitFor(() => {
+      expect(within(table).queryByText("Iron Ore")).not.toBeInTheDocument();
+      expect(within(table).getByText("Copper Wire")).toBeInTheDocument();
       expect(within(table).queryByText("Steel Bar")).not.toBeInTheDocument();
     });
   });
@@ -237,23 +263,24 @@ describe("ResourceTable", () => {
     await screen.findByText("Recent Updates");
 
     // Set some filters
-    fireEvent.change(screen.getByPlaceholderText("Search resources..."), {
-      target: { value: "test" },
-    });
-    fireEvent.change(screen.getByLabelText("Category:"), {
-      target: { value: "Raw" },
-    });
-    fireEvent.click(screen.getByLabelText(/Needs updating/));
-    fireEvent.click(screen.getByLabelText("Priority"));
+    await userEvent.type(
+      screen.getByPlaceholderText("Search resources..."),
+      "test",
+    );
+    await userEvent.click(screen.getByTestId("category-filter"));
+    const listbox = await screen.findByRole("listbox");
+    await userEvent.click(await within(listbox).findByText(/Raw/));
+    await userEvent.click(screen.getByLabelText(/Needs updating/));
+    await userEvent.click(screen.getByLabelText("Priority"));
 
     // Verify the clear button is visible and click it
     const clearButton = screen.getByText("Clear filters");
     expect(clearButton).toBeInTheDocument();
-    fireEvent.click(clearButton);
+    await userEvent.click(clearButton);
 
     // Verify the filters are cleared
     expect(screen.getByPlaceholderText("Search resources...")).toHaveValue("");
-    expect(screen.getByLabelText("Category:")).toHaveValue("all");
+    expect(screen.getByText("Filter by Category")).toBeInTheDocument();
     expect(screen.getByLabelText(/Needs updating/)).not.toBeChecked();
     expect(screen.getByLabelText("Priority")).not.toBeChecked();
   });

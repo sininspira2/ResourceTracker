@@ -236,6 +236,21 @@
 
   --color-tag-discord-role-bg: theme(colors.blue.100);
   --color-tag-discord-role-text: theme(colors.blue.800);
+
+  --tier-0: #d1d5db;
+  --tier-0-text: #1f2937;
+  --tier-1: #facc15;
+  --tier-1-text: #713f12;
+  --tier-2: #818cf8;
+  --tier-2-text: #312e81;
+  --tier-3: #f9a8d4;
+  --tier-3-text: #831843;
+  --tier-4: #6ee7b7;
+  --tier-4-text: #064e3b;
+  --tier-5: #fbbf24;
+  --tier-5-text: #78350f;
+  --tier-6: #93c5fd;
+  --tier-6-text: #1e3a8a;
 }
 
 .dark {
@@ -411,4 +426,19 @@
   --color-text-danger-subtle: theme(colors.red.300);
   --color-tag-discord-role-bg: theme(colors.blue.900);
   --color-tag-discord-role-text: theme(colors.blue.200);
+
+  --tier-0: #4b5563;
+  --tier-0-text: #f9fafb;
+  --tier-1: #a16207;
+  --tier-1-text: #fefce8;
+  --tier-2: #4338ca;
+  --tier-2-text: #eef2ff;
+  --tier-3: #be185d;
+  --tier-3-text: #fdf2f8;
+  --tier-4: #065f46;
+  --tier-4-text: #ecfdf5;
+  --tier-5: #b45309;
+  --tier-5-text: #fffbeb;
+  --tier-6: #1e40af;
+  --tier-6-text: #dbeafe;
 }

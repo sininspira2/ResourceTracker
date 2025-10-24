@@ -26,8 +26,9 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const statusFilter = searchParams.get("status");
-  const categoryFilter = searchParams.get("category");
+  const statusFilter = searchParams.getAll("status");
+  const categoryFilter = searchParams.getAll("category");
+  const tierFilter = searchParams.getAll("tier");
   const needsUpdateFilter = searchParams.get("needsUpdate") === "true";
   const priorityFilter = searchParams.get("priority") === "true";
   const searchTerm = searchParams.get("searchTerm");
@@ -43,38 +44,40 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (categoryFilter && categoryFilter !== "all") {
-    whereConditions.push(sql`${resources.category} = ${categoryFilter}`);
+  if (categoryFilter.length > 0) {
+    whereConditions.push(inArray(resources.category, categoryFilter));
+  }
+
+  if (tierFilter.length > 0) {
+    whereConditions.push(
+      inArray(
+        resources.tier,
+        tierFilter.map((t) => parseInt(t, 10)),
+      ),
+    );
   }
 
   if (priorityFilter) {
     whereConditions.push(sql`${resources.isPriority} = true`);
   }
 
-  if (statusFilter && statusFilter !== "all") {
+  if (statusFilter.length > 0) {
     const percentage = sql`(${resources.quantityHagga} + ${resources.quantityDeepDesert}) * 100.0 / ${resources.targetQuantity}`;
-    switch (statusFilter) {
-      case "critical":
-        whereConditions.push(
-          sql`${resources.targetQuantity} > 0 AND ${percentage} < 50`,
-        );
-        break;
-      case "below_target":
-        whereConditions.push(
-          sql`${resources.targetQuantity} > 0 AND ${percentage} >= 50 AND ${percentage} < 100`,
-        );
-        break;
-      case "at_target":
-        whereConditions.push(
-          sql`(${resources.targetQuantity} IS NULL OR ${resources.targetQuantity} <= 0) OR (${percentage} >= 100 AND ${percentage} < 150)`,
-        );
-        break;
-      case "above_target":
-        whereConditions.push(
-          sql`${resources.targetQuantity} > 0 AND ${percentage} >= 150`,
-        );
-        break;
-    }
+    const statusConditions = statusFilter.map((status) => {
+      switch (status) {
+        case "critical":
+          return sql`${resources.targetQuantity} > 0 AND ${percentage} < 50`;
+        case "below_target":
+          return sql`${resources.targetQuantity} > 0 AND ${percentage} >= 50 AND ${percentage} < 100`;
+        case "at_target":
+          return sql`(${resources.targetQuantity} IS NULL OR ${resources.targetQuantity} <= 0) OR (${percentage} >= 100 AND ${percentage} < 150)`;
+        case "above_target":
+          return sql`${resources.targetQuantity} > 0 AND ${percentage} >= 150`;
+        default:
+          return null;
+      }
+    });
+    whereConditions.push(or(...statusConditions.filter((c) => c !== null)));
   }
 
   if (needsUpdateFilter) {

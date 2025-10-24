@@ -22,6 +22,30 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
+const TIER_OPTIONS = [
+  { value: "0", label: "Tier 0 (Scrap)" },
+  { value: "1", label: "Tier 1 (Copper)" },
+  { value: "2", label: "Tier 2 (Iron)" },
+  { value: "3", label: "Tier 3 (Steel)" },
+  { value: "4", label: "Tier 4 (Aluminum)" },
+  { value: "5", label: "Tier 5 (Duraluminum)" },
+  { value: "6", label: "Tier 6 (Plastanium)" },
+];
+
+const getTierClassName = (tier: number | null | undefined): string => {
+  if (tier === null || tier === undefined) return "bg-gray-200 text-gray-800";
+  const tierClasses: { [key: number]: string } = {
+    0: "bg-tier-0 text-tier-0-text",
+    1: "bg-tier-1 text-tier-1-text",
+    2: "bg-tier-2 text-tier-2-text",
+    3: "bg-tier-3 text-tier-3-text",
+    4: "bg-tier-4 text-tier-4-text",
+    5: "bg-tier-5 text-tier-5-text",
+    6: "bg-tier-6 text-tier-6-text",
+  };
+  return tierClasses[tier] || "bg-gray-200 text-gray-800";
+};
+
 const CHART_COLORS = {
   total: "#3b82f6",
   hagga: "#10b981",
@@ -96,6 +120,7 @@ interface Resource {
   imageUrl?: string;
   targetQuantity?: number;
   multiplier?: number;
+  tier?: number;
   lastUpdatedBy: string;
   createdAt: string;
   updatedAt: string;
@@ -883,6 +908,20 @@ export default function ResourceDetailPage() {
                         >
                           {formatStatusForDisplay(status)}
                         </span>
+                        {resource.tier !== null &&
+                          resource.tier !== undefined && (
+                            <span
+                              className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getTierClassName(
+                                resource.tier,
+                              )}`}
+                            >
+                              {
+                                TIER_OPTIONS.find(
+                                  (t) => t.value === resource.tier?.toString(),
+                                )?.label
+                              }
+                            </span>
+                          )}
                       </div>
 
                       {/* Description */}
