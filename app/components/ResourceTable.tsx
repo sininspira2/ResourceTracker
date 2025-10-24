@@ -373,6 +373,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       if (resource.tier !== null && resource.tier !== undefined) {
         const tierStr = resource.tier.toString();
         acc[tierStr] = (acc[tierStr] || 0) + 1;
+      } else {
+        acc["none"] = (acc["none"] || 0) + 1;
       }
       return acc;
     },
