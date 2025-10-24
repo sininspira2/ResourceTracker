@@ -1,6 +1,30 @@
 {
-  "currentVersion": "4.1.2",
+  "currentVersion": "4.1.3",
   "releases": [
+    {
+      "version": "4.1.3",
+      "date": "2025-10-24",
+      "title": "Resource Tier System and Multi-Select Filtering",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Introduced a 'tier' attribute for resources, allowing for granular classification. Tiers can be managed via the edit modal and include distinct styling on resource detail pages."
+        },
+        {
+          "type": "feature",
+          "description": "Upgraded the resource table filtering system to support simultaneous multi-selection for status, category, and the new 'tier' attribute."
+        },
+        {
+          "type": "improvement",
+          "description": "Integrated a new 'MultiSelectDropdown' component to enhance the UI and power the new filtering capabilities."
+        },
+        {
+          "type": "info",
+          "description": "Database Migration: A migration is *not* necessary for this update unless you see a yellow warning banner above the navigation bar. The required schema changes were included in a previous release (v4.1.0)."
+        }
+      ]
+    },    
     {
       "version": "4.1.2",
       "date": "2025-10-23",
