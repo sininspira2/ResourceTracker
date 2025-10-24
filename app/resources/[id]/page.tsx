@@ -102,6 +102,22 @@ interface Resource {
   tier?: number;
 }
 
+const getTierClassName = (tier: number | null | undefined): string => {
+  if (tier === null || tier === undefined) {
+    return "";
+  }
+  const tierClasses: { [key: number]: string } = {
+    0: "bg-tier-0 text-gray-800",
+    1: "bg-tier-1 text-orange-800",
+    2: "bg-tier-2 text-gray-800",
+    3: "bg-tier-3 text-sky-800",
+    4: "bg-tier-4 text-blue-800",
+    5: "bg-tier-5 text-violet-800",
+    6: "bg-tier-6 text-fuchsia-800",
+  };
+  return tierClasses[tier] || "";
+};
+
 export default function ResourceDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -886,7 +902,9 @@ export default function ResourceDetailPage() {
                         </span>
                         {resource.tier !== null && resource.tier !== undefined && (
                           <span
-                            className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold bg-tier-${resource.tier}`}
+                            className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getTierClassName(
+                              resource.tier,
+                            )}`}
                           >
                             Tier {resource.tier}
                           </span>

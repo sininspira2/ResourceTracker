@@ -6,6 +6,7 @@ import {
   fireEvent,
   within,
 } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { ResourceTable } from "@/app/components/ResourceTable";
 import { useSession } from "next-auth/react";
 import {
@@ -225,8 +226,7 @@ describe("ResourceTable", () => {
     fireEvent.click(screen.getByText("Table"));
     const table = await screen.findByRole("table");
 
-    const tierSelect = screen.getByLabelText("Tier:");
-    fireEvent.change(tierSelect, { target: { value: "2" } });
+    await userEvent.selectOptions(screen.getByLabelText("Tier:"), "2");
 
     await waitFor(() => {
       expect(within(table).queryByText("Iron Ore")).not.toBeInTheDocument();

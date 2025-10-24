@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.15.15",
+    "@testing-library/user-event": "^14.6.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.44.6",
     "lucide-react": "^0.546.0",
