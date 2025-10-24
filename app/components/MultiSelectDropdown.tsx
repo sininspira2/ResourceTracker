@@ -38,7 +38,7 @@ export function MultiSelectDropdown({
     <Listbox value={selected} onChange={onChange} multiple>
       <div className={cn("relative", className)}>
         <Listbox.Button
-          className="relative w-full cursor-default rounded-lg border border-border-secondary bg-background-panel-inset py-1.5 pl-3 pr-10 text-left text-sm text-text-primary focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300"
+          className="relative w-full cursor-default rounded-lg border border-border-secondary bg-background-panel-inset py-1.5 pr-10 pl-3 text-left text-sm text-text-primary focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300"
           aria-label={ariaLabel}
           data-testid={testId}
         >
@@ -48,10 +48,7 @@ export function MultiSelectDropdown({
               : placeholder}
           </span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <ChevronDown
-              className="h-5 w-5 text-gray-400"
-              aria-hidden="true"
-            />
+            <ChevronDown className="h-5 w-5 text-gray-400" aria-hidden="true" />
           </span>
         </Listbox.Button>
         <Transition
@@ -65,7 +62,7 @@ export function MultiSelectDropdown({
               <Listbox.Option
                 key={option.value}
                 className={({ active }) =>
-                  `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                  `relative cursor-default py-2 pr-4 pl-10 select-none ${
                     active
                       ? "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100"
                       : "text-text-primary"
