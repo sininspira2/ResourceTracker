@@ -250,16 +250,17 @@ export default function Dashboard() {
                       : "Not in Community"}
                   </span>
                 </div>
-                {session.user.roles && session.user.roles.length > 0 && (
-                  <div>
-                    <span className="text-sm font-medium text-text-primary">
-                      Roles:
-                    </span>
-                    <span className="ml-1 text-sm text-text-link">
-                      {session.user.roles.length} role(s)
-                    </span>
-                  </div>
-                )}
+                {session.user.enrichedRoles &&
+                  session.user.enrichedRoles.length > 0 && (
+                    <div>
+                      <span className="text-sm font-medium text-text-primary">
+                        Roles:
+                      </span>
+                      <span className="ml-1 text-sm text-text-link">
+                        {session.user.enrichedRoles.length} role(s)
+                      </span>
+                    </div>
+                  )}
               </div>
             </div>
 
@@ -309,7 +310,9 @@ export default function Dashboard() {
                     </tbody>
                   </table>
                 ) : (
-                  <p className="text-sm text-text-tertiary">No roles found</p>
+                  <p className="text-sm text-text-tertiary">
+                    No application-specific roles found.
+                  </p>
                 )}
               </div>
             </div>
