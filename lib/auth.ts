@@ -7,42 +7,13 @@ import { users } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import {
-  getRoleHierarchy,
-  hasDataExportAccess,
-  hasReportAccess,
   hasResourceAccess,
   hasResourceAdminAccess,
   hasTargetEditAccess,
+  hasReportAccess,
   hasUserManagementAccess,
+  hasDataExportAccess,
 } from "./discord-roles";
-
-// Function to get a friendly name for a permission key
-function getPermissionName(key: string): string {
-  switch (key) {
-    case "canAccessResources":
-      return "View Resources";
-    case "canEditTargets":
-      return "Edit Targets";
-    case "canManageUsers":
-      return "Manage Users";
-    case "canExportData":
-      return "Export Data";
-    case "isAdmin":
-      return "Administrator";
-    case "canViewReports":
-      return "View Reports";
-    default:
-      return key;
-  }
-}
-
-// Define the structure of the enriched role object we'll store in the session
-export type EnrichedRole = {
-  id: string;
-  name: string;
-  color: number;
-  permissions: string[];
-};
 
 interface UserPermissions {
   hasResourceAccess: boolean;
@@ -54,7 +25,7 @@ interface UserPermissions {
 }
 
 // Discord API scopes needed for role checking
-const scopes = ["identify", "guilds.members.read", "guilds"].join(" ");
+const scopes = ["identify", "guilds.members.read"].join(" ");
 
 // Define a type for the providers array to satisfy TypeScript
 type Provider =
@@ -82,20 +53,6 @@ const providers: Provider[] = [
         email: profile.email,
         image: image_url,
         global_name: profile.global_name,
-        // The following are placeholders to satisfy the extended User type.
-        // The actual values are populated in the jwt callback.
-        roles: [],
-        enrichedRoles: [],
-        isInGuild: false,
-        discordNickname: null,
-        permissions: {
-          hasResourceAccess: false,
-          hasResourceAdminAccess: false,
-          hasTargetEditAccess: false,
-          hasReportAccess: false,
-          hasUserManagementAccess: false,
-          hasDataExportAccess: false,
-        },
       };
     },
   }),
@@ -122,19 +79,6 @@ if (process.env.NODE_ENV === "development") {
             id: `agent-${level}`,
             name: `Agent (Level ${level})`,
             email: `agent${level}@example.com`,
-            // The following are placeholders to satisfy the extended User type.
-            roles: [],
-            enrichedRoles: [],
-            isInGuild: true, // Mock agent is always in the guild
-            discordNickname: `Agent (Level ${level})`,
-            permissions: {
-              hasResourceAccess: level >= 1,
-              hasTargetEditAccess: level >= 2,
-              hasUserManagementAccess: level >= 3,
-              hasDataExportAccess: level >= 3,
-              hasReportAccess: level >= 3,
-              hasResourceAdminAccess: level >= 4,
-            },
           };
         }
         return null;
@@ -227,111 +171,60 @@ export const authOptions: NextAuthOptions = {
 
       // Fetch Discord roles and nickname
       if (token.accessToken && (!token.rolesFetched || trigger === "update")) {
-        const guildId = process.env.DISCORD_GUILD_ID!;
         try {
-          // Step 1: Fetch user's member info (including their role IDs)
-          const memberResponse = await fetch(
+          const guildId = process.env.DISCORD_GUILD_ID!;
+          const response = await fetch(
             `https://discord.com/api/v10/users/@me/guilds/${guildId}/member`,
             {
               headers: { Authorization: `Bearer ${token.accessToken}` },
             },
           );
 
-          if (!memberResponse.ok) {
-            throw new Error(
-              `Failed to fetch guild member info: ${memberResponse.status}`,
-            );
-          }
+          if (response.ok) {
+            const member = await response.json();
+            token.userRoles = member.roles || [];
+            token.isInGuild = true;
+            token.discordNickname = member.nick || null;
 
-          const member = await memberResponse.json();
-          const userRoleIds = new Set(member.roles || []);
-          token.isInGuild = true;
-          token.discordNickname = member.nick || null;
-
-          // Step 2: Fetch all roles for the entire guild
-          const rolesResponse = await fetch(
-            `https://discord.com/api/v10/guilds/${guildId}/roles`,
-            {
-              headers: { Authorization: `Bearer ${token.accessToken}` },
-            },
-          );
-
-          if (!rolesResponse.ok) {
-            throw new Error(
-              `Failed to fetch guild roles: ${rolesResponse.status}`,
-            );
-          }
-          const allGuildRoles = await rolesResponse.json();
-          const appRoles = getRoleHierarchy();
-          const appRolesMap = new Map(appRoles.map((role) => [role.id, role]));
-
-          // Step 3: Enrich the user's roles
-          const enrichedRoles: EnrichedRole[] = allGuildRoles
-            .filter((role: any) => userRoleIds.has(role.id))
-            .map((discordRole: any) => {
-              const appRole = appRolesMap.get(discordRole.id);
-              if (!appRole) return null;
-
-              const permissions: string[] = [];
-              for (const [key, value] of Object.entries(appRole)) {
-                if (typeof value === "boolean" && value) {
-                  permissions.push(getPermissionName(key));
-                }
-              }
-
-              if (permissions.length > 0) {
-                return {
-                  id: discordRole.id,
-                  name: discordRole.name,
-                  color: discordRole.color,
-                  permissions: permissions.sort(),
-                };
-              }
-              return null;
-            })
-            .filter((role: EnrichedRole | null): role is EnrichedRole =>
-              Boolean(role),
-            );
-
-          token.enrichedRoles = enrichedRoles;
-          token.userRoles = member.roles || [];
-
-          // Database upsert logic remains the same
-          if (token.sub) {
-            const discordId = token.sub;
-            const username = token.name || "unknown";
-            const avatar = token.picture || null;
-            const displayName = member.nick || token.global_name || username;
-            const now = new Date();
-            try {
-              await db
-                .insert(users)
-                .values({
-                  id: nanoid(),
-                  discordId: discordId,
-                  username,
-                  avatar,
-                  customNickname: displayName,
-                  createdAt: now,
-                  lastLogin: now,
-                })
-                .onConflictDoUpdate({
-                  target: users.discordId,
-                  set: {
+            if (token.sub) {
+              const discordId = token.sub;
+              const username = token.name || "unknown";
+              const avatar = token.picture || null;
+              const displayName = member.nick || token.global_name || username;
+              const now = new Date();
+              try {
+                await db
+                  .insert(users)
+                  .values({
+                    id: nanoid(),
+                    discordId: discordId,
                     username,
                     avatar,
                     customNickname: displayName,
+                    createdAt: now,
                     lastLogin: now,
-                  },
-                });
-            } catch (dbError) {
-              console.error("Database user upsert failed:", dbError);
+                  })
+                  .onConflictDoUpdate({
+                    target: users.discordId,
+                    set: {
+                      username,
+                      avatar,
+                      customNickname: displayName,
+                      lastLogin: now,
+                    },
+                  });
+              } catch (dbError) {
+                console.error("Database user upsert failed:", dbError);
+              }
             }
+          } else {
+            token.userRoles = [];
+            token.isInGuild = false;
+            token.discordNickname = null;
           }
         } catch (error) {
-          console.error("Error fetching Discord data:", error);
+          console.error("Error fetching Discord roles and nickname:", error);
           token.userRoles = [];
-          token.enrichedRoles = [];
           token.isInGuild = false;
           token.discordNickname = null;
         }
@@ -354,7 +247,6 @@ export const authOptions: NextAuthOptions = {
       session.user = {
         ...session.user,
         roles: (token.userRoles || []) as string[],
-        enrichedRoles: (token.enrichedRoles || []) as EnrichedRole[],
         isInGuild: Boolean(token.isInGuild),
         discordNickname: token.discordNickname as string | null,
         permissions: (token.permissions as UserPermissions) || {
