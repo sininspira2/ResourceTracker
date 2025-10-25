@@ -77,10 +77,17 @@ export function UserRoles({ userRoleIds }: UserRolesProps) {
   if (error) {
     return (
       <div>
-        <div className="mb-2 rounded-md border border-border-negative-strong bg-background-negative-strong p-2 text-sm text-text-negative">
-          <strong>Note:</strong> Could not retrieve role names from Discord.
-          Please ensure the <code>DISCORD_BOT_TOKEN</code> is set in your{" "}
-          <code>.env.local</code> file for a full experience.
+        <div className="mb-2 rounded-lg bg-background-panel-inset p-3 text-xs text-text-tertiary">
+          <strong>Note:</strong> Could not retrieve role names from Discord. To
+          see full role details, ensure the{" "}
+          <code className="rounded bg-background-modifier-accent px-1 py-0.5 text-xs">
+            DISCORD_BOT_TOKEN
+          </code>{" "}
+          is set in your environment variables (e.g., in{" "}
+          <code className="rounded bg-background-modifier-accent px-1 py-0.5 text-xs">
+            .env.local
+          </code>{" "}
+          or your deployment service).
         </div>
         <div className="space-y-2">
           {userRoleIds.map((roleId) => (
