@@ -6,6 +6,7 @@ import {
   authOptions,
 } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getRoleHierarchy } from "@/lib/discord-roles";
 
 // Mock the database
 jest.mock("@/lib/db", () => ({
@@ -15,6 +16,11 @@ jest.mock("@/lib/db", () => ({
     onConflictDoUpdate: jest.fn().mockResolvedValue(null),
   },
   users: {},
+}));
+
+jest.mock("@/lib/discord-roles", () => ({
+  ...jest.requireActual("@/lib/discord-roles"),
+  getRoleHierarchy: jest.fn(),
 }));
 
 describe("auth helpers", () => {
@@ -140,10 +146,31 @@ describe("authOptions.callbacks.jwt", () => {
   });
 
   it("should fetch and update user roles and info on new login", async () => {
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ roles: ["role1"], nick: "test-nick" }),
-    });
+    const mockMemberPayload = { roles: ["role1"], nick: "test-nick" };
+    const mockRolesPayload = [{ id: "role1", name: "Test Role", color: 0 }];
+    (getRoleHierarchy as jest.Mock).mockReturnValue([
+      {
+        id: "role1",
+        name: "Test Role",
+        level: 1,
+        canAccessResources: true,
+      },
+    ]);
+
+    global.fetch = jest
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockMemberPayload),
+        }),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockRolesPayload),
+        }),
+      );
 
     const token = await jwtCallback({
       token: { sub: "123", name: "test" },
@@ -151,10 +178,13 @@ describe("authOptions.callbacks.jwt", () => {
       user: { global_name: "global" } as any,
     });
 
-    expect(global.fetch).toHaveBeenCalled();
+    expect(global.fetch).toHaveBeenCalledTimes(2);
     expect(token.userRoles).toEqual(["role1"]);
     expect(token.discordNickname).toBe("test-nick");
     expect(db.onConflictDoUpdate).toHaveBeenCalled();
+    expect(token.enrichedRoles).toBeDefined();
+    expect(token.enrichedRoles).toHaveLength(1);
+    expect(token.enrichedRoles[0].name).toBe("Test Role");
   });
 
   it("should handle failed fetch for user roles", async () => {
@@ -189,10 +219,24 @@ describe("authOptions.callbacks.jwt", () => {
     (db.onConflictDoUpdate as jest.Mock).mockRejectedValue(
       new Error("DB Error"),
     );
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ roles: ["role1"], nick: "test-nick" }),
-    });
+    const mockMemberPayload = { roles: ["role1"], nick: "test-nick" };
+    const mockRolesPayload = [{ id: "role1", name: "Test Role", color: 0 }];
+    (getRoleHierarchy as jest.Mock).mockReturnValue([]);
+
+    global.fetch = jest
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockMemberPayload),
+        }),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockRolesPayload),
+        }),
+      );
 
     const token = await jwtCallback({
       token: { sub: "123", name: "test" },
@@ -201,6 +245,8 @@ describe("authOptions.callbacks.jwt", () => {
     });
 
     expect(token.userRoles).toEqual(["role1"]);
+    expect(token.enrichedRoles).toBeDefined();
+    expect(token.enrichedRoles).toHaveLength(0);
   });
 
   it("should handle member object without nick property", async () => {

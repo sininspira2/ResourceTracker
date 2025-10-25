@@ -5,7 +5,6 @@ import Link from "next/link";
 import { RefreshRolesButton } from "../components/RefreshRolesButton";
 import { ClientNavigation } from "../components/ClientNavigation";
 import { NicknameSettings } from "../components/NicknameSettings";
-import { UserRoles } from "../components/UserRoles";
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions);
@@ -183,16 +182,17 @@ export default async function Dashboard() {
                       : "Not in Community"}
                   </span>
                 </div>
-                {session.user.roles && session.user.roles.length > 0 && (
-                  <div>
-                    <span className="text-sm font-medium text-text-primary">
-                      Roles:
-                    </span>
-                    <span className="ml-1 text-sm text-text-link">
-                      {session.user.roles.length} role(s)
-                    </span>
-                  </div>
-                )}
+                {session.user.enrichedRoles &&
+                  session.user.enrichedRoles.length > 0 && (
+                    <div>
+                      <span className="text-sm font-medium text-text-primary">
+                        Roles:
+                      </span>
+                      <span className="ml-1 text-sm text-text-link">
+                        {session.user.enrichedRoles.length} role(s)
+                      </span>
+                    </div>
+                  )}
               </div>
             </div>
 
@@ -204,11 +204,48 @@ export default async function Dashboard() {
                 </h2>
                 <RefreshRolesButton />
               </div>
-              <div className="space-y-2">
-                {session.user.roles && session.user.roles.length > 0 ? (
-                  <UserRoles userRoleIds={session.user.roles} />
+              <div className="space-y-3">
+                {session.user.enrichedRoles &&
+                session.user.enrichedRoles.length > 0 ? (
+                  session.user.enrichedRoles.map((role) => (
+                    <div
+                      key={role.id}
+                      className="rounded-md border border-border-primary bg-background-panel p-3 transition-colors"
+                    >
+                      <div className="flex items-center">
+                        <span
+                          className="mr-2 h-3 w-3 flex-shrink-0 rounded-full"
+                          style={{
+                            backgroundColor: role.color
+                              ? `#${role.color.toString(16).padStart(6, "0")}`
+                              : "hsl(var(--text-tertiary))",
+                          }}
+                          title={`Role Color: #${role.color
+                            .toString(16)
+                            .padStart(6, "0")}`}
+                        />
+                        <span className="truncate font-semibold text-text-primary">
+                          {role.name}
+                        </span>
+                      </div>
+                      {role.permissions.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {role.permissions.map((permission) => (
+                            <span
+                              key={permission}
+                              className="rounded-sm bg-tag-neutral-bg px-2 py-0.5 text-xs text-tag-neutral-text"
+                            >
+                              {permission}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))
                 ) : (
-                  <p className="text-sm text-text-tertiary">No roles found</p>
+                  <p className="text-sm text-text-tertiary">
+                    No application-specific roles found.
+                  </p>
                 )}
               </div>
             </div>
