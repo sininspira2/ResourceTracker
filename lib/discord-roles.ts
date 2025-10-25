@@ -1,5 +1,5 @@
 // Types for role configuration
-export type RoleConfig = {
+type RoleConfig = {
   id: string;
   name: string;
   level: number;

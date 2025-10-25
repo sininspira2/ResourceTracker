@@ -1,90 +1,22 @@
-"use client";
-import { useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions, getDisplayName } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { RefreshRolesButton } from "../components/RefreshRolesButton";
 import { ClientNavigation } from "../components/ClientNavigation";
 import { NicknameSettings } from "../components/NicknameSettings";
-import { getDisplayName } from "@/lib/auth";
-import { useEffect, useState } from "react";
-import { RoleConfig } from "@/lib/discord-roles";
 
-interface DiscordRole {
-  id: string;
-  name: string;
-}
-
-interface RolesApiResponse {
-  discordRoles: DiscordRole[];
-  roleHierarchy: RoleConfig[];
-}
-
-export default function Dashboard() {
-  const { data: session, status } = useSession();
-  const [discordRoles, setDiscordRoles] = useState<Map<string, string>>(
-    new Map(),
-  );
-  const [roleHierarchy, setRoleHierarchy] = useState<RoleConfig[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchRolesData() {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/internal/discord-roles");
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(
-            errorData.error || "Failed to fetch Discord roles data",
-          );
-        }
-        const { discordRoles, roleHierarchy }: RolesApiResponse =
-          await response.json();
-
-        const roleMap = new Map(
-          discordRoles.map((role) => [role.id, role.name]),
-        );
-        setDiscordRoles(roleMap);
-        setRoleHierarchy(roleHierarchy);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred",
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    if (status === "authenticated") {
-      fetchRolesData();
-    }
-  }, [status]);
-
-  if (status === "loading") {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background-primary text-text-primary">
-        <p>Loading session...</p>
-      </div>
-    );
-  }
+export default async function Dashboard() {
+  const session = await getServerSession(authOptions);
 
   if (!session) {
     redirect("/");
   }
 
+  // Check if user has any required roles for site access
   if (!session.user.permissions?.hasResourceAccess) {
     redirect("/");
   }
-
-  const getPermissionLevelForRole = (roleId: string): string => {
-    const role = roleHierarchy.find((r) => r.id === roleId);
-    if (!role) return "N/A";
-    if (role.isAdmin) return "Administrator";
-    if (role.canEditTargets) return "Logistics Manager";
-    if (role.canAccessResources) return "Contributor";
-    return "No Permissions";
-  };
 
   const displayName = getDisplayName(session.user);
 
@@ -264,7 +196,7 @@ export default function Dashboard() {
             </div>
 
             {/* Roles Card */}
-            <div className="rounded-lg border border-border-primary bg-background-panel p-6 shadow-sm md:col-span-2 lg:col-span-1">
+            <div className="rounded-lg border border-border-primary bg-background-panel p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-text-primary">
                   Your Roles
@@ -272,42 +204,20 @@ export default function Dashboard() {
                 <RefreshRolesButton />
               </div>
               <div className="space-y-2">
-                {isLoading ? (
-                  <p className="text-sm text-text-tertiary">
-                    Loading roles...
-                  </p>
-                ) : error ? (
-                  <p className="text-sm text-text-danger">{error}</p>
-                ) : session.user.roles && session.user.roles.length > 0 ? (
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr>
-                        <th className="py-2 font-semibold text-text-primary">
-                          Discord Role
-                        </th>
-                        <th className="py-2 font-semibold text-text-primary">
-                          Permission Level
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {session.user.roles.map((roleId: string) => (
-                        <tr
-                          key={roleId}
-                          className="border-t border-border-primary"
-                        >
-                          <td className="py-2 text-text-primary">
-                            {discordRoles.get(roleId) || `ID: ${roleId}`}
-                          </td>
-                          <td className="py-2">
-                            <span className="rounded-sm bg-tag-discord-role-bg px-2 py-1 text-xs text-tag-discord-role-text">
-                              {getPermissionLevelForRole(roleId)}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                {session.user.roles && session.user.roles.length > 0 ? (
+                  session.user.roles.map((roleId: string) => (
+                    <div
+                      key={roleId}
+                      className="flex items-center justify-between"
+                    >
+                      <span className="text-sm text-text-primary">
+                        Role ID: {roleId}
+                      </span>
+                      <span className="rounded-sm bg-tag-discord-role-bg px-2 py-1 text-xs text-tag-discord-role-text">
+                        Discord Role
+                      </span>
+                    </div>
+                  ))
                 ) : (
                   <p className="text-sm text-text-tertiary">No roles found</p>
                 )}
