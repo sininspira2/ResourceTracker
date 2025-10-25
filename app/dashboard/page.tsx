@@ -5,6 +5,7 @@ import Link from "next/link";
 import { RefreshRolesButton } from "../components/RefreshRolesButton";
 import { ClientNavigation } from "../components/ClientNavigation";
 import { NicknameSettings } from "../components/NicknameSettings";
+import { UserRoles } from "../components/UserRoles";
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions);
@@ -205,19 +206,7 @@ export default async function Dashboard() {
               </div>
               <div className="space-y-2">
                 {session.user.roles && session.user.roles.length > 0 ? (
-                  session.user.roles.map((roleId: string) => (
-                    <div
-                      key={roleId}
-                      className="flex items-center justify-between"
-                    >
-                      <span className="text-sm text-text-primary">
-                        Role ID: {roleId}
-                      </span>
-                      <span className="rounded-sm bg-tag-discord-role-bg px-2 py-1 text-xs text-tag-discord-role-text">
-                        Discord Role
-                      </span>
-                    </div>
-                  ))
+                  <UserRoles userRoleIds={session.user.roles} />
                 ) : (
                   <p className="text-sm text-text-tertiary">No roles found</p>
                 )}
