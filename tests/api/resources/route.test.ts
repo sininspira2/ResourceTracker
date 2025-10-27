@@ -26,7 +26,15 @@ describe("POST /api/resources", () => {
         const tx = {
           insert: jest.fn().mockReturnThis(),
           values: jest.fn().mockReturnThis(),
-          returning: jest.fn().mockResolvedValue([{ id: "new-resource-id" }]),
+          returning: jest.fn().mockResolvedValue([
+            {
+              id: "new-resource-id",
+              name: "Test Resource",
+              category: "Test Category",
+              subcategory: "Test Subcategory",
+              tier: 1,
+            },
+          ]),
         };
         return callback(tx);
       }),
@@ -46,6 +54,8 @@ describe("POST /api/resources", () => {
       body: JSON.stringify({
         name: "Test Resource",
         category: "Test Category",
+        subcategory: "Test Subcategory",
+        tier: 1,
       }),
     });
 
@@ -54,7 +64,13 @@ describe("POST /api/resources", () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toEqual({ id: "new-resource-id" });
+    expect(body).toEqual({
+      id: "new-resource-id",
+      name: "Test Resource",
+      category: "Test Category",
+      subcategory: "Test Subcategory",
+      tier: 1,
+    });
   });
 
   it("should return a 403 error for non-admin users", async () => {
@@ -89,7 +105,15 @@ describe("PUT /api/resources", () => {
     const mockDb = {
       update: jest.fn().mockReturnThis(),
       set: jest.fn().mockReturnThis(),
-      where: jest.fn().mockResolvedValue([{ id: "resource-id" }]),
+      where: jest.fn().mockResolvedValue([
+        {
+          id: "resource-id",
+          name: "Updated Name",
+          category: "Updated Category",
+          subcategory: "Updated Subcategory",
+          tier: 2,
+        },
+      ]),
       select: jest.fn().mockReturnThis(),
       from: jest.fn().mockReturnThis(),
     };
@@ -106,6 +130,8 @@ describe("PUT /api/resources", () => {
           id: "resource-id",
           name: "Updated Name",
           category: "Updated Category",
+          subcategory: "Updated Subcategory",
+          tier: 2,
         },
       }),
     });
@@ -115,7 +141,13 @@ describe("PUT /api/resources", () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toEqual({ id: "resource-id" });
+    expect(body).toEqual({
+      id: "resource-id",
+      name: "Updated Name",
+      category: "Updated Category",
+      subcategory: "Updated Subcategory",
+      tier: 2,
+    });
   });
 
   it("should bulk update resource quantities", async () => {

@@ -16,6 +16,7 @@ import {
   ALL_SUBCATEGORIES,
   CATEGORY_OPTIONS,
   COMPONENTS_CATEGORY,
+  SUBCATEGORY_OPTIONS,
   LEADERBOARD_API_PATH,
   LEADERBOARD_TIME_FILTERS,
   LOCAL_STORAGE_KEYS,
@@ -280,6 +281,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const [createResourceForm, setCreateResourceForm] = useState({
     name: "",
     category: RAW_CATEGORY,
+    subcategory: null as string | null,
+    tier: null as number | null,
     description: "",
     imageUrl: "",
     quantityHagga: 0,
@@ -642,6 +645,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         setCreateResourceForm({
           name: "",
           category: RAW_CATEGORY,
+          subcategory: null,
+          tier: null,
           description: "",
           imageUrl: "",
           quantityHagga: 0,
@@ -1253,6 +1258,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       setCreateResourceForm((prev) => ({
                         ...prev,
                         category: e.target.value,
+                        subcategory: null,
                       }))
                     }
                     className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
@@ -1260,6 +1266,56 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     {CATEGORY_OPTIONS.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-text-secondary">
+                    Subcategory
+                  </label>
+                  <select
+                    value={createResourceForm.subcategory ?? ""}
+                    onChange={(e) =>
+                      setCreateResourceForm((prev) => ({
+                        ...prev,
+                        subcategory: e.target.value || null,
+                      }))
+                    }
+                    className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
+                  >
+                    <option value="">None</option>
+                    {SUBCATEGORY_OPTIONS[createResourceForm.category]?.map(
+                      (subcat) => (
+                        <option key={subcat} value={subcat}>
+                          {subcat}
+                        </option>
+                      ),
+                    )}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-text-secondary">
+                    Tier
+                  </label>
+                  <select
+                    value={createResourceForm.tier ?? ""}
+                    onChange={(e) =>
+                      setCreateResourceForm((prev) => ({
+                        ...prev,
+                        tier: e.target.value
+                          ? parseInt(e.target.value)
+                          : null,
+                      }))
+                    }
+                    className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
+                  >
+                    <option value="">None</option>
+                    {TIER_OPTIONS.map((tier) => (
+                      <option key={tier.value} value={tier.value}>
+                        {tier.label}
                       </option>
                     ))}
                   </select>
@@ -1397,6 +1453,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     setCreateResourceForm({
                       name: "",
                       category: RAW_CATEGORY,
+                      subcategory: null,
+                      tier: null,
                       description: "",
                       imageUrl: "",
                       quantityHagga: 0,

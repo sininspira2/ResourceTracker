@@ -82,6 +82,8 @@ export async function POST(request: NextRequest) {
     const {
       name,
       category,
+      subcategory,
+      tier,
       description,
       imageUrl,
       quantity,
@@ -109,6 +111,8 @@ export async function POST(request: NextRequest) {
       quantityDeepDesert: deepDesertQty,
       description: description || null,
       category,
+      subcategory: subcategory || null,
+      tier: tier || null,
       imageUrl: imageUrl || null,
       targetQuantity: targetQuantity || null,
       multiplier: multiplier || 1.0,
@@ -184,6 +188,7 @@ export async function PUT(request: NextRequest) {
         id,
         name,
         category,
+        subcategory,
         description,
         imageUrl,
         multiplier,
@@ -203,6 +208,7 @@ export async function PUT(request: NextRequest) {
         .set({
           name,
           category,
+          subcategory: subcategory || null,
           description: description || null,
           imageUrl: imageUrl || null,
           multiplier: multiplier || 1.0,
