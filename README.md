@@ -20,15 +20,15 @@ Removed from fork network due to original author repository being deleted, and d
 
 A new **'subcategory'** attribute has been added to resources, significantly improving organization and allowing for more granular filtering.
 
--   **Dynamic UI:** The 'Edit Resource' modal and the resource creation form now include a dynamic subcategory dropdown. This menu intelligently populates its options based on the selected primary category.
--   **Enhanced Filtering:** The resource table now features a new **subcategory filter**. This filter is interactive, automatically enabling or disabling itself based on the user's selection in the main category filter.
+- **Dynamic UI:** The 'Edit Resource' modal and the resource creation form now include a dynamic subcategory dropdown. This menu intelligently populates its options based on the selected primary category.
+- **Enhanced Filtering:** The resource table now features a new **subcategory filter**. This filter is interactive, automatically enabling or disabling itself based on the user's selection in the main category filter.
 
 ### 🚀 Improvements
 
 #### API and UI Enhancements
 
--   **Backend Support:** The backend API endpoints for creating, updating, and bulk-fetching resources have been updated to fully support the new `subcategory` field, including robust server-side filtering.
--   **Consistent Styling:** New constants for subcategory options and corresponding CSS variables have been defined to ensure a consistent UI presentation across all themes.
+- **Backend Support:** The backend API endpoints for creating, updating, and bulk-fetching resources have been updated to fully support the new `subcategory` field, including robust server-side filtering.
+- **Consistent Styling:** New constants for subcategory options and corresponding CSS variables have been defined to ensure a consistent UI presentation across all themes.
 
 ### ❗ Important Notes
 
@@ -36,7 +36,7 @@ A new **'subcategory'** attribute has been added to resources, significantly imp
 
 This update utilizes the `subcategory` column in the database, which was added in **version 4.1.0**.
 
-A database migration is **not required** for this update *unless* you are updating from a version prior to 4.1.0 **and** you see a yellow warning banner displayed above the navigation bar. If you do not see this banner, your database is already up to date.
+A database migration is **not required** for this update _unless_ you are updating from a version prior to 4.1.0 **and** you see a yellow warning banner displayed above the navigation bar. If you do not see this banner, your database is already up to date.
 
 ---
 

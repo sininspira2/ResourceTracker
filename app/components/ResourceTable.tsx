@@ -371,9 +371,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
   const availableSubcategories =
     categoryFilter.length > 0
-      ? categoryFilter.flatMap(
-          (cat) => SUBCATEGORY_OPTIONS[cat] || [],
-        )
+      ? categoryFilter.flatMap((cat) => SUBCATEGORY_OPTIONS[cat] || [])
       : [];
 
   const subcategoryOptions =
@@ -1320,9 +1318,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     onChange={(e) =>
                       setCreateResourceForm((prev) => ({
                         ...prev,
-                        tier: e.target.value
-                          ? parseInt(e.target.value)
-                          : null,
+                        tier: e.target.value ? parseInt(e.target.value) : null,
                       }))
                     }
                     className="w-full rounded-lg border border-border-secondary bg-background-panel-inset px-3 py-2 text-text-primary"
