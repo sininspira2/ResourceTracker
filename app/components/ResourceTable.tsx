@@ -401,10 +401,13 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     });
   }
 
-  const tierOptionsWithCounts = TIER_OPTIONS.map((tier) => ({
-    ...tier,
-    count: 0,
-  }));
+  const tierOptionsWithCounts = [
+    { value: "none", label: "None", count: 0 },
+    ...TIER_OPTIONS.map((tier) => ({
+      ...tier,
+      count: 0,
+    })),
+  ];
 
   const tierCounts = resources.reduce(
     (acc, resource) => {

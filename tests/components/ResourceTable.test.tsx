@@ -172,7 +172,7 @@ describe("ResourceTable", () => {
 
     await userEvent.click(screen.getByTestId("tier-filter"));
     const listbox = await screen.findByRole("listbox");
-    await userEvent.click(await within(listbox).findByText(/No Tier/));
+    await userEvent.click(await within(listbox).findByText(/None/));
 
     await waitFor(() => {
       expect(within(table).getByText("Water")).toBeInTheDocument();
