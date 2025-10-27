@@ -50,19 +50,37 @@ export async function GET(request: NextRequest) {
   }
 
   if (subcategoryFilter.length > 0) {
-    whereConditions.push(inArray(resources.subcategory, subcategoryFilter));
+    const hasNone = subcategoryFilter.includes("None");
+    const otherSubcategories = subcategoryFilter.filter((s) => s !== "None");
+
+    const subcategoryConditions = [];
+    if (otherSubcategories.length > 0) {
+      subcategoryConditions.push(
+        inArray(resources.subcategory, otherSubcategories),
+      );
+    }
+    if (hasNone) {
+      // The frontend treats null subcategories as "None" for filtering.
+      // So if "None" is in the filter, we should include resources where subcategory is null.
+      subcategoryConditions.push(sql`${resources.subcategory} IS NULL`);
+    }
+
+    if (subcategoryConditions.length > 0) {
+      whereConditions.push(or(...subcategoryConditions));
+    }
   }
 
   if (tierFilter.length > 0) {
+    const hasNone = tierFilter.includes("none");
     const numericTiers = tierFilter
       .map((t) => parseInt(t, 10))
-      .filter((t) => !isNaN(t));
+      .filter((t) => !isNaN(t) && t.toString() !== "none");
 
     const tierConditions = [];
     if (numericTiers.length > 0) {
       tierConditions.push(inArray(resources.tier, numericTiers));
     }
-    if (tierFilter.includes("none")) {
+    if (hasNone) {
       tierConditions.push(sql`${resources.tier} IS NULL`);
     }
 
@@ -132,7 +150,7 @@ export async function GET(request: NextRequest) {
 
   const csv = Papa.unparse(dataForCsv);
 
-  return new NextResponse(csv, {
+  return new Response(csv, {
     status: 200,
     headers: {
       "Content-Type": "text/csv",
