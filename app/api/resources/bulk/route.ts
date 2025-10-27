@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const statusFilter = searchParams.getAll("status");
   const categoryFilter = searchParams.getAll("category");
+  const subcategoryFilter = searchParams.getAll("subcategory");
   const tierFilter = searchParams.getAll("tier");
   const needsUpdateFilter = searchParams.get("needsUpdate") === "true";
   const priorityFilter = searchParams.get("priority") === "true";
@@ -48,16 +49,38 @@ export async function GET(request: NextRequest) {
     whereConditions.push(inArray(resources.category, categoryFilter));
   }
 
+  if (subcategoryFilter.length > 0) {
+    const hasNone = subcategoryFilter.includes("None");
+    const otherSubcategories = subcategoryFilter.filter((s) => s !== "None");
+
+    const subcategoryConditions = [];
+    if (otherSubcategories.length > 0) {
+      subcategoryConditions.push(
+        inArray(resources.subcategory, otherSubcategories),
+      );
+    }
+    if (hasNone) {
+      // The frontend treats null subcategories as "None" for filtering.
+      // So if "None" is in the filter, we should include resources where subcategory is null.
+      subcategoryConditions.push(sql`${resources.subcategory} IS NULL`);
+    }
+
+    if (subcategoryConditions.length > 0) {
+      whereConditions.push(or(...subcategoryConditions));
+    }
+  }
+
   if (tierFilter.length > 0) {
+    const hasNone = tierFilter.includes("none");
     const numericTiers = tierFilter
       .map((t) => parseInt(t, 10))
-      .filter((t) => !isNaN(t));
+      .filter((t) => !isNaN(t) && t.toString() !== "none");
 
     const tierConditions = [];
     if (numericTiers.length > 0) {
       tierConditions.push(inArray(resources.tier, numericTiers));
     }
-    if (tierFilter.includes("none")) {
+    if (hasNone) {
       tierConditions.push(sql`${resources.tier} IS NULL`);
     }
 
@@ -127,7 +150,7 @@ export async function GET(request: NextRequest) {
 
   const csv = Papa.unparse(dataForCsv);
 
-  return new NextResponse(csv, {
+  return new Response(csv, {
     status: 200,
     headers: {
       "Content-Type": "text/csv",

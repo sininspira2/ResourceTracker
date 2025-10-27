@@ -1,6 +1,38 @@
 {
-  "currentVersion": "4.1.3",
+  "currentVersion": "4.1.4",
   "releases": [
+    {
+      "version": "4.1.4",
+      "date": "2025-10-27",
+      "title": "Subcategory Management and Dynamic Filtering",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Added a 'subcategory' attribute to resources for enhanced organization, manageable via the 'Edit Resource' and creation modals."
+        },
+        {
+          "type": "feature",
+          "description": "Introduced a new subcategory filter in the resource table, which dynamically enables/disables based on the selected category."
+        },
+        {
+          "type": "improvement",
+          "description": "Edit/create forms now feature a dynamic subcategory dropdown that populates its options based on the chosen primary category."
+        },
+        {
+          "type": "improvement",
+          "description": "Backend API now supports subcategory data for creating, updating, and bulk-fetching resources, including server-side filtering."
+        },
+        {
+          "type": "info",
+          "description": "Database Migration: A migration is *not* necessary for this update unless you see a yellow warning banner. The required 'subcategory' column was added in v4.1.0."
+        },
+        {
+          "type": "other",
+          "description": "Added new CSS variables and constants for consistent UI presentation of subcategories across themes."
+        }
+      ]
+    },
     {
       "version": "4.1.3",
       "date": "2025-10-24",

@@ -88,7 +88,6 @@ export const COMPONENTS_CATEGORY = "Components";
 export const BP_CATEGORY = "Blueprints";
 
 export const TIER_OPTIONS = [
-  { value: "none", label: "No Tier" },
   { value: "0", label: "Tier 0 (Scrap)" },
   { value: "1", label: "Tier 1 (Copper)" },
   { value: "2", label: "Tier 2 (Iron)" },
@@ -96,4 +95,28 @@ export const TIER_OPTIONS = [
   { value: "4", label: "Tier 4 (Aluminum)" },
   { value: "5", label: "Tier 5 (Duraluminum)" },
   { value: "6", label: "Tier 6 (Plastanium)" },
+];
+
+export const SUBCATEGORY_OPTIONS: Record<string, string[]> = {
+  Raw: ["Ore", "Gathered"],
+  Refined: [
+    "Ore Refined",
+    "Chemical Refined",
+    "Survival Fabricator",
+    "Spice Refined",
+  ],
+  Components: ["Looted", "Craftable"],
+  Blueprints: [
+    "Heavy Armor",
+    "Light Armor",
+    "Stillsuits",
+    "Vehicle",
+    "Weapon",
+    "Utility",
+  ],
+  Other: ["Ammo", "Currency"],
+};
+
+export const ALL_SUBCATEGORIES = [
+  ...new Set(Object.values(SUBCATEGORY_OPTIONS).flat()),
 ];
