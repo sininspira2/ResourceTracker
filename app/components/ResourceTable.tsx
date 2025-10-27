@@ -369,25 +369,37 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     option.count = categoryCounts[option.value] || 0;
   });
 
-  const subcategoryOptions = ALL_SUBCATEGORIES.map((subcat) => ({
-    value: subcat,
-    label: subcat,
-    count: 0,
-  }));
+  const availableSubcategories =
+    categoryFilter.length > 0
+      ? categoryFilter.flatMap(
+          (cat) => SUBCATEGORY_OPTIONS[cat] || [],
+        )
+      : [];
 
-  const subcategoryCounts = resources.reduce(
-    (acc, resource) => {
-      if (resource.subcategory) {
-        acc[resource.subcategory] = (acc[resource.subcategory] || 0) + 1;
-      }
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+  const subcategoryOptions =
+    availableSubcategories.length > 0
+      ? [...new Set(availableSubcategories)].map((subcat) => ({
+          value: subcat,
+          label: subcat,
+          count: 0,
+        }))
+      : [{ value: "None", label: "None", count: 0 }];
 
-  subcategoryOptions.forEach((option) => {
-    option.count = subcategoryCounts[option.value] || 0;
-  });
+  if (availableSubcategories.length > 0) {
+    const subcategoryCounts = resources.reduce(
+      (acc, resource) => {
+        if (resource.subcategory) {
+          acc[resource.subcategory] = (acc[resource.subcategory] || 0) + 1;
+        }
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    subcategoryOptions.forEach((option) => {
+      option.count = subcategoryCounts[option.value] || 0;
+    });
+  }
 
   const tierOptionsWithCounts = TIER_OPTIONS.map((tier) => ({
     ...tier,
@@ -1585,6 +1597,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               className="w-full sm:w-48"
               ariaLabel="subcategory filter"
               testId="subcategory-filter"
+              disabled={categoryFilter.length === 0}
             />
             <MultiSelectDropdown
               options={tierOptionsWithCounts}
