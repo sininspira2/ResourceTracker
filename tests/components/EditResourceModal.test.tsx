@@ -53,6 +53,7 @@ describe("EditResourceModal", () => {
       isPriority: true,
       multiplier: 1,
       tier: null,
+      subcategory: null,
     });
   });
 

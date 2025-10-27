@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CATEGORY_OPTIONS, TIER_OPTIONS } from "@/lib/constants";
+import {
+  CATEGORY_OPTIONS,
+  TIER_OPTIONS,
+  SUBCATEGORY_OPTIONS,
+} from "@/lib/constants";
 
 interface Resource {
   id: string;
   name: string;
   category?: string;
+  subcategory?: string;
   description?: string;
   imageUrl?: string;
   multiplier?: number;
@@ -30,6 +35,7 @@ export function EditResourceModal({
   const [formData, setFormData] = useState({
     name: "",
     category: "Raw",
+    subcategory: null as string | null,
     tier: null as number | null,
     description: "",
     imageUrl: "",
@@ -58,6 +64,7 @@ export function EditResourceModal({
       setFormData({
         name: resource.name,
         category: resource.category || "Raw",
+        subcategory: resource.subcategory ?? null,
         tier: resource.tier ?? null,
         description: resource.description || "",
         imageUrl: resource.imageUrl || "",
@@ -177,13 +184,44 @@ export function EditResourceModal({
               id="category-select"
               value={formData.category}
               onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
+                setFormData({
+                  ...formData,
+                  category: e.target.value,
+                  subcategory: null,
+                })
               }
               className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
             >
               {CATEGORY_OPTIONS.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="subcategory-select"
+              className="mb-1 block text-sm font-medium text-text-secondary"
+            >
+              Subcategory
+            </label>
+            <select
+              id="subcategory-select"
+              value={formData.subcategory ?? ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  subcategory: e.target.value || null,
+                })
+              }
+              className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
+            >
+              <option value="">None</option>
+              {SUBCATEGORY_OPTIONS[formData.category]?.map((subcat) => (
+                <option key={subcat} value={subcat}>
+                  {subcat}
                 </option>
               ))}
             </select>

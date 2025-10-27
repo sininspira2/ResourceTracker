@@ -13,6 +13,7 @@ import { AlertTriangle, Trash2 } from "lucide-react";
 import { BulkActions } from "./BulkActions";
 import { getUserIdentifier } from "@/lib/auth";
 import {
+  ALL_SUBCATEGORIES,
   CATEGORY_OPTIONS,
   COMPONENTS_CATEGORY,
   LEADERBOARD_API_PATH,
@@ -152,6 +153,7 @@ interface Resource {
   quantityDeepDesert: number;
   description?: string;
   category?: string;
+  subcategory?: string;
   icon?: string;
   imageUrl?: string;
   status?: string; // Optional since we calculate this dynamically
@@ -251,6 +253,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [needsUpdateFilter, setNeedsUpdateFilter] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+  const [subcategoryFilter, setSubcategoryFilter] = useState<string[]>([]);
   const [tierFilter, setTierFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState(false);
 
@@ -361,6 +364,26 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   // Update category options with counts
   categoryOptions.forEach((option) => {
     option.count = categoryCounts[option.value] || 0;
+  });
+
+  const subcategoryOptions = ALL_SUBCATEGORIES.map((subcat) => ({
+    value: subcat,
+    label: subcat,
+    count: 0,
+  }));
+
+  const subcategoryCounts = resources.reduce(
+    (acc, resource) => {
+      if (resource.subcategory) {
+        acc[resource.subcategory] = (acc[resource.subcategory] || 0) + 1;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  subcategoryOptions.forEach((option) => {
+    option.count = subcategoryCounts[option.value] || 0;
   });
 
   const tierOptionsWithCounts = TIER_OPTIONS.map((tier) => ({
@@ -853,6 +876,14 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         );
       }
 
+      // Subcategory filter
+      let matchesSubcategory = true;
+      if (subcategoryFilter.length > 0) {
+        matchesSubcategory = subcategoryFilter.includes(
+          resource.subcategory || "None",
+        );
+      }
+
       // Tier filter
       let matchesTier = true;
       if (tierFilter.length > 0) {
@@ -875,6 +906,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
         matchesStatus &&
         matchesNeedsUpdate &&
         matchesCategory &&
+        matchesSubcategory &&
         matchesTier &&
         matchesPriority
       );
@@ -1477,11 +1509,24 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             <MultiSelectDropdown
               options={categoryOptions}
               selected={categoryFilter}
-              onChange={setCategoryFilter}
+              onChange={(selected) => {
+                setCategoryFilter(selected);
+                // When category filter changes, clear subcategory filter
+                setSubcategoryFilter([]);
+              }}
               placeholder="Filter by Category"
               className="w-full sm:w-48"
               ariaLabel="category filter"
               testId="category-filter"
+            />
+            <MultiSelectDropdown
+              options={subcategoryOptions}
+              selected={subcategoryFilter}
+              onChange={setSubcategoryFilter}
+              placeholder="Filter by Subcategory"
+              className="w-full sm:w-48"
+              ariaLabel="subcategory filter"
+              testId="subcategory-filter"
             />
             <MultiSelectDropdown
               options={tierOptionsWithCounts}
@@ -1530,6 +1575,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               needsUpdateFilter ||
               searchTerm ||
               categoryFilter.length > 0 ||
+              subcategoryFilter.length > 0 ||
               tierFilter.length > 0 ||
               priorityFilter) && (
               <div className="flex items-center gap-2 text-sm text-text-tertiary">
@@ -1543,6 +1589,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     setNeedsUpdateFilter(false);
                     setSearchTerm("");
                     setCategoryFilter([]);
+                    setSubcategoryFilter([]);
                     setTierFilter([]);
                     setPriorityFilter(false);
                   }}
@@ -1564,6 +1611,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             filters={{
               status: statusFilter,
               category: categoryFilter,
+              subcategory: subcategoryFilter,
               tier: tierFilter,
               needsUpdate: needsUpdateFilter,
               priority: priorityFilter,
