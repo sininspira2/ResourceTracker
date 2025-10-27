@@ -19,6 +19,7 @@ interface MultiSelectDropdownProps {
   className?: string;
   ariaLabel?: string;
   testId?: string;
+  disabled?: boolean;
 }
 
 export function MultiSelectDropdown({
@@ -29,16 +30,22 @@ export function MultiSelectDropdown({
   className,
   ariaLabel,
   testId,
+  disabled = false,
 }: MultiSelectDropdownProps) {
   const selectedOptions = options.filter((option) =>
     selected.includes(option.value),
   );
 
   return (
-    <Listbox value={selected} onChange={onChange} multiple>
+    <Listbox value={selected} onChange={onChange} multiple disabled={disabled}>
       <div className={cn("relative", className)}>
         <Listbox.Button
-          className="relative w-full cursor-default rounded-lg border border-border-secondary bg-background-panel-inset py-1.5 pr-10 pl-3 text-left text-sm text-text-primary focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300"
+          className={cn(
+            "relative w-full cursor-default rounded-lg border border-border-secondary bg-background-panel-inset py-1.5 pr-10 pl-3 text-left text-sm text-text-primary focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300",
+            {
+              "cursor-not-allowed opacity-50": disabled,
+            },
+          )}
           aria-label={ariaLabel}
           data-testid={testId}
         >
