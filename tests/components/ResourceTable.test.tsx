@@ -35,6 +35,7 @@ const mockResources = [
     quantityDeepDesert: 50,
     targetQuantity: 200,
     category: "Raw",
+    subcategory: "Ore",
     tier: 2,
     updatedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
@@ -48,6 +49,7 @@ const mockResources = [
     quantityDeepDesert: 25,
     targetQuantity: 100,
     category: "Components",
+    subcategory: "Craftable",
     tier: 1,
     updatedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(), // 8 days ago
     createdAt: new Date().toISOString(),
@@ -61,6 +63,7 @@ const mockResources = [
     quantityDeepDesert: 150,
     targetQuantity: 200,
     category: "Refined",
+    subcategory: "Ore Refined",
     tier: 3,
     updatedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
@@ -74,6 +77,7 @@ const mockResources = [
     quantityDeepDesert: 500,
     targetQuantity: 2000,
     category: "Raw",
+    subcategory: "Gathered",
     updatedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
     lastUpdatedBy: "user1",
@@ -315,5 +319,47 @@ describe("ResourceTable", () => {
     expect(screen.getByText("Filter by Category")).toBeInTheDocument();
     expect(screen.getByLabelText(/Needs updating/)).not.toBeChecked();
     expect(screen.getByLabelText("Priority")).not.toBeChecked();
+  });
+
+  it("dynamically filters subcategories based on the selected category", async () => {
+    render(<ResourceTable userId="test-user" />);
+    await waitFor(() => {
+      expect(screen.getByText("Recent Updates")).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText("Table"));
+    const table = await screen.findByRole("table");
+
+    const subcategoryFilter = screen.getByTestId("subcategory-filter");
+    expect(subcategoryFilter).toBeDisabled();
+
+    // Select "Raw" category
+    await userEvent.click(screen.getByTestId("category-filter"));
+    let listbox = await screen.findByRole("listbox");
+    await userEvent.click(await within(listbox).findByText(/Raw/));
+
+    // Subcategory filter should now be enabled and contain "Ore" and "Gathered"
+    expect(subcategoryFilter).not.toBeDisabled();
+    await userEvent.click(subcategoryFilter);
+    listbox = await screen.findByRole("listbox");
+    expect(within(listbox).getByText(/Ore/)).toBeInTheDocument();
+    expect(within(listbox).getByText(/Gathered/)).toBeInTheDocument();
+    expect(within(listbox).queryByText("Craftable")).not.toBeInTheDocument();
+
+    // Filter by "Ore" subcategory
+    await userEvent.click(within(listbox).getByText(/Ore/));
+
+    await waitFor(() => {
+      expect(within(table).getByText("Iron Ore")).toBeInTheDocument();
+      expect(within(table).queryByText("Water")).not.toBeInTheDocument();
+      expect(within(table).queryByText("Copper Wire")).not.toBeInTheDocument();
+    });
+
+    // Deselect "Raw" category
+    await userEvent.click(screen.getByTestId("category-filter"));
+    listbox = await screen.findByRole("listbox");
+    await userEvent.click(await within(listbox).findByText(/Raw/));
+
+    // Subcategory filter should be disabled again
+    expect(subcategoryFilter).toBeDisabled();
   });
 });

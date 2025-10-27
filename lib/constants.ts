@@ -97,3 +97,27 @@ export const TIER_OPTIONS = [
   { value: "5", label: "Tier 5 (Duraluminum)" },
   { value: "6", label: "Tier 6 (Plastanium)" },
 ];
+
+export const SUBCATEGORY_OPTIONS: Record<string, string[]> = {
+  Raw: ["Ore", "Gathered"],
+  Refined: [
+    "Ore Refined",
+    "Chemical Refined",
+    "Survival Fabricator",
+    "Spice Refined",
+  ],
+  Components: ["Looted", "Craftable"],
+  Blueprints: [
+    "Heavy Armor",
+    "Light Armor",
+    "Stillsuits",
+    "Vehicle",
+    "Weapon",
+    "Utility",
+  ],
+  Other: ["Ammo", "Currency"],
+};
+
+export const ALL_SUBCATEGORIES = [
+  ...new Set(Object.values(SUBCATEGORY_OPTIONS).flat()),
+];

@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const statusFilter = searchParams.getAll("status");
   const categoryFilter = searchParams.getAll("category");
+  const subcategoryFilter = searchParams.getAll("subcategory");
   const tierFilter = searchParams.getAll("tier");
   const needsUpdateFilter = searchParams.get("needsUpdate") === "true";
   const priorityFilter = searchParams.get("priority") === "true";
@@ -46,6 +47,10 @@ export async function GET(request: NextRequest) {
 
   if (categoryFilter.length > 0) {
     whereConditions.push(inArray(resources.category, categoryFilter));
+  }
+
+  if (subcategoryFilter.length > 0) {
+    whereConditions.push(inArray(resources.subcategory, subcategoryFilter));
   }
 
   if (tierFilter.length > 0) {

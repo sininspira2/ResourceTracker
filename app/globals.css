@@ -124,6 +124,8 @@
   --color-category-other-text: theme(colors.purple.800);
   --color-category-bp-bg: theme(colors.violet.100);
   --color-category-bp-bg-hover: theme(colors.violet.200);
+  --color-subcategory-bg: theme(colors.gray.200);
+  --color-subcategory-text: theme(colors.gray.800);
 
   --color-progress-bar-at-target-bg: theme(colors.green.500);
   --color-progress-bar-below-target-bg: theme(colors.orange.500);
@@ -388,6 +390,8 @@
 
   --color-category-bp-bg: theme(colors.violet.900 / 30%);
   --color-category-bp-bg-hover: theme(colors.violet.900 / 50%);
+  --color-subcategory-bg: theme(colors.gray.700);
+  --color-subcategory-text: theme(colors.gray.200);
 
   --color-modal-header-gradient-from: theme(colors.blue.700);
   --color-modal-header-gradient-to: theme(colors.blue.800);
