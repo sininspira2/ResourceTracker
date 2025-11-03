@@ -24,25 +24,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="view-transition" content="same-origin" />
+      </head>
       <body className={inter.className}>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                function getInitialTheme() {
-                  try {
-                    const savedTheme = localStorage.getItem('theme');
-                    if (savedTheme) return savedTheme;
-                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                  } catch (e) {
-                    return 'light';
-                  }
-                }
-                document.documentElement.setAttribute('data-theme', getInitialTheme());
-              })();
-            `,
-          }}
-        />
         <ThemeProvider>
           <SessionProvider>
             <div className="min-h-screen bg-background-primary">
