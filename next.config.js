@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove deprecated appDir option
+  experimental: {
+    viewTransitions: true,
+  },
 };
 
 module.exports = nextConfig;
