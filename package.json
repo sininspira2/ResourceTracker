@@ -51,7 +51,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.19.0",
     "@types/papaparse": "^5.5.0",
-    "@types/react": "^19.2.0",
+    "@types/react": "^19.2.6",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.5",
     "eslint": "^9.37.0",
