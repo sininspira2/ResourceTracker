@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
-    "@libsql/client": "^0.15.15",
+    "@libsql/client": "^0.17.0",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.1",
     "lucide-react": "^0.562.0",
