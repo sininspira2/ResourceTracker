@@ -110,7 +110,6 @@ export async function awardPoints(
     status: string;
     multiplier: number;
   },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dbInstance: any = db,
 ): Promise<PointsCalculation> {
   const calculation = calculatePoints(
@@ -150,7 +149,6 @@ export async function getLeaderboard(
   timeFilter?: "24h" | "7d" | "30d" | "all",
   limit = 50,
   offset = 0,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dbInstance: any = db,
 ): Promise<{ rankings: any[]; total: number }> {
   try {
@@ -222,7 +220,6 @@ export async function getUserContributions(
   timeFilter?: "24h" | "7d" | "30d" | "all",
   limit = 100,
   offset = 0,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dbInstance: any = db,
 ): Promise<{ contributions: any[]; summary: any; total: number }> {
   let timeCondition = sql`1 = 1`;
@@ -287,7 +284,6 @@ export async function getUserContributions(
 export async function getUserRank(
   userId: string,
   timeFilter?: "24h" | "7d" | "30d" | "all",
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dbInstance: any = db,
 ) {
   let timeCondition = sql`1 = 1`;
