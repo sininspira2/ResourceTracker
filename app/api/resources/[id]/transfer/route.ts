@@ -112,11 +112,12 @@ export async function PUT(
         Expires: "0",
       },
     });
-  } catch (error: any) {
-    if (error.message.startsWith("Insufficient quantity")) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.startsWith("Insufficient quantity")) {
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
-    if (error.message === "ResourceNotFound") {
+    if (errorMessage === "ResourceNotFound") {
       return NextResponse.json(
         { error: "Resource not found" },
         { status: 404 },

@@ -40,7 +40,7 @@ export function calculatePoints(
   // No points for REMOVE actions or ineligible categories
   if (
     actionType === "REMOVE" ||
-    !ELIGIBLE_CATEGORIES.includes(resourceCategory as any)
+    !ELIGIBLE_CATEGORIES.includes(resourceCategory)
   ) {
     return {
       basePoints: 0,
@@ -110,7 +110,7 @@ export async function awardPoints(
     status: string;
     multiplier: number;
   },
-  dbInstance: any = db,
+  dbInstance: typeof db = db,
 ): Promise<PointsCalculation> {
   const calculation = calculatePoints(
     actionType,
@@ -149,7 +149,7 @@ export async function getLeaderboard(
   timeFilter?: "24h" | "7d" | "30d" | "all",
   limit = 50,
   offset = 0,
-  dbInstance: any = db,
+  dbInstance: typeof db = db,
 ): Promise<{ rankings: any[]; total: number }> {
   try {
     let timeCondition = sql`1 = 1`; // Default to no time filter
@@ -220,7 +220,7 @@ export async function getUserContributions(
   timeFilter?: "24h" | "7d" | "30d" | "all",
   limit = 100,
   offset = 0,
-  dbInstance: any = db,
+  dbInstance: typeof db = db,
 ): Promise<{ contributions: any[]; summary: any; total: number }> {
   let timeCondition = sql`1 = 1`;
 
@@ -284,7 +284,7 @@ export async function getUserContributions(
 export async function getUserRank(
   userId: string,
   timeFilter?: "24h" | "7d" | "30d" | "all",
-  dbInstance: any = db,
+  dbInstance: typeof db = db,
 ) {
   let timeCondition = sql`1 = 1`;
   if (timeFilter && timeFilter !== "all") {

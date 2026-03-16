@@ -5,25 +5,9 @@ import { db } from "@/lib/db";
 import { resources, resourceHistory, users, leaderboard } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import { hasResourceAccess, hasResourceAdminAccess } from "@/lib/discord-roles";
+import { hasResourceAccess, hasResourceAdminAccess, hasTargetEditAccess } from "@/lib/discord-roles";
 import { awardPoints } from "@/lib/leaderboard";
-
-// Calculate status based on quantity vs target
-const calculateResourceStatus = (
-  quantity: number,
-  targetQuantity: number | null,
-): "above_target" | "at_target" | "below_target" | "critical" => {
-  if (!targetQuantity || targetQuantity <= 0) return "at_target";
-
-  const percentage = (quantity / targetQuantity) * 100;
-  if (percentage >= 150) return "above_target"; // Purple - well above target
-  if (percentage >= 100) return "at_target"; // Green - at or above target
-  if (percentage >= 50) return "below_target"; // Orange - below target but not critical
-  return "critical"; // Red - very much below target
-};
-
-// Import role-checking functions from discord-roles.ts
-import { hasTargetEditAccess } from "@/lib/discord-roles";
+import { calculateResourceStatus } from "@/lib/resource-utils";
 
 // PUT /api/resources/[id] - Update single resource
 export async function PUT(
@@ -47,6 +31,13 @@ export async function PUT(
       onBehalfOf,
     } = await request.json();
     const actingUserIdentifier = getUserIdentifier(session);
+
+    if (reason && reason.length > 500) {
+      return NextResponse.json(
+        { error: "Reason must be 500 characters or less" },
+        { status: 400 },
+      );
+    }
 
     let effectiveUserId = actingUserIdentifier;
 
@@ -186,8 +177,9 @@ export async function PUT(
         Expires: "0",
       },
     });
-  } catch (error: any) {
-    if (error.message === "ResourceNotFound") {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage === "ResourceNotFound") {
       return NextResponse.json(
         { error: "Resource not found" },
         { status: 404 },
@@ -243,8 +235,9 @@ export async function DELETE(
         },
       },
     );
-  } catch (error: any) {
-    if (error.message === "ResourceNotFound") {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage === "ResourceNotFound") {
       return NextResponse.json(
         { error: "Resource not found" },
         { status: 404 },
