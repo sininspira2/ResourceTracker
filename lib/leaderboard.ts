@@ -110,7 +110,8 @@ export async function awardPoints(
     status: string;
     multiplier: number;
   },
-  dbInstance: typeof db = db,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dbInstance: any = db,
 ): Promise<PointsCalculation> {
   const calculation = calculatePoints(
     actionType,
@@ -149,7 +150,8 @@ export async function getLeaderboard(
   timeFilter?: "24h" | "7d" | "30d" | "all",
   limit = 50,
   offset = 0,
-  dbInstance: typeof db = db,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dbInstance: any = db,
 ): Promise<{ rankings: any[]; total: number }> {
   try {
     let timeCondition = sql`1 = 1`; // Default to no time filter
@@ -220,7 +222,8 @@ export async function getUserContributions(
   timeFilter?: "24h" | "7d" | "30d" | "all",
   limit = 100,
   offset = 0,
-  dbInstance: typeof db = db,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dbInstance: any = db,
 ): Promise<{ contributions: any[]; summary: any; total: number }> {
   let timeCondition = sql`1 = 1`;
 
@@ -284,7 +287,8 @@ export async function getUserContributions(
 export async function getUserRank(
   userId: string,
   timeFilter?: "24h" | "7d" | "30d" | "all",
-  dbInstance: typeof db = db,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dbInstance: any = db,
 ) {
   let timeCondition = sql`1 = 1`;
   if (timeFilter && timeFilter !== "all") {

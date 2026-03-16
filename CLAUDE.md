@@ -48,6 +48,7 @@ Migration hashes are auto-generated on `build` and `db:generate`. If the build f
 - Auth: use `getServerSession(authOptions)` in API routes; pages are protected by `middleware.ts`
 - All API error responses use `{ error: "..." }` format (not `{ message: "..." }`)
 - Catch blocks should use `error instanceof Error ? error.message : String(error)` — avoid `catch (error: any)`
+- **Do not change `dbInstance: any` in `lib/leaderboard.ts`** — it intentionally accepts both `LibSQLDatabase` and Drizzle transaction objects (`SQLiteTransaction`), which are structurally incompatible types. Using `typeof db` breaks the build.
 
 ## Known Tech Debt
 
