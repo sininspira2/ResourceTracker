@@ -3,6 +3,16 @@ import { getLeaderboard } from "@/lib/leaderboard";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * GET /api/internal/leaderboard
+ *
+ * Internal endpoint that returns paginated leaderboard rankings. Validates the
+ * `timeFilter` query parameter against the allowed set (`"24h"`, `"7d"`,
+ * `"30d"`, `"all"`), defaulting to `"all"` for invalid values. Supports
+ * `limit`, `page`, and `pageSize` query parameters. Marked `force-dynamic`.
+ *
+ * Intended to be called only by the authenticated `GET /api/leaderboard` proxy.
+ */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

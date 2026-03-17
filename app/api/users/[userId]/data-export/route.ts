@@ -5,7 +5,16 @@ import { db, resourceHistory, resources, users } from "@/lib/db";
 import { eq, desc, or } from "drizzle-orm";
 import { hasResourceAccess } from "@/lib/discord-roles";
 
-// GET /api/users/{userId}/data-export - Export all user data for a specific user (GDPR compliance)
+/**
+ * GET /api/users/[userId]/data-export
+ *
+ * Admin endpoint that exports a complete GDPR-compliant data package for a
+ * specific user (identified by their internal database ID). The export
+ * includes profile details, all resource activity history, a summary, and
+ * GDPR rights information.
+ *
+ * Requires user management access. Returns a downloadable JSON file.
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> },

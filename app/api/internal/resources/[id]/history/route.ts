@@ -4,7 +4,14 @@ import { eq, gte, desc, and } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
-// GET /api/internal/resources/[id]/history?days=7 - Get resource history (internal)
+/**
+ * GET /api/internal/resources/[id]/history
+ *
+ * Internal endpoint that returns up to 100 history entries for a resource,
+ * filtered to the last `days` days (default: 7). Results are ordered
+ * newest-first. Intended to be called only by the authenticated
+ * `GET /api/resources/[id]/history` proxy. Marked `force-dynamic`.
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },

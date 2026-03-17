@@ -3,7 +3,16 @@ import { getServerSession } from "next-auth";
 import { authOptions, getUserIdentifier } from "@/lib/auth";
 import { hasResourceAccess } from "@/lib/discord-roles";
 
-// GET /api/user/activity - Get user's activity history
+/**
+ * GET /api/user/activity
+ *
+ * Returns the current user's resource activity history. Proxies to the internal
+ * activity endpoint, injecting the user's current identifier and legacy IDs
+ * (Discord ID, email, username) so that history recorded under old identifiers
+ * is still returned.
+ *
+ * Requires resource access. Supports `days`, `limit` query parameters.
+ */
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
