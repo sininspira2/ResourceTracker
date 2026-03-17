@@ -8,6 +8,13 @@ import { nanoid } from "nanoid";
 import { awardPoints } from "@/lib/leaderboard";
 import { calculateResourceStatus } from "@/lib/resource-utils";
 
+/**
+ * GET /api/resources
+ *
+ * Proxies the request to the internal cached resources endpoint
+ * (`/api/internal/resources`) and returns the result. Query parameters
+ * (filters, pagination, etc.) are forwarded as-is.
+ */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const internalUrl = new URL(
@@ -54,7 +61,16 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/resources - Create new resource (admin only)
+/**
+ * POST /api/resources
+ *
+ * Creates a new resource. Requires resource admin access.
+ * Inserts the resource and logs the initial quantity as a history entry
+ * within a single database transaction.
+ *
+ * Request body: `{ name, category, subcategory?, tier?, description?, imageUrl?,
+ * quantity?, quantityHagga?, quantityDeepDesert?, targetQuantity?, multiplier? }`
+ */
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
@@ -150,7 +166,16 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT /api/resources - Update multiple resources or single resource metadata
+/**
+ * PUT /api/resources
+ *
+ * Handles two update modes based on the request body:
+ * - **`resourceMetadata`**: Updates a single resource's metadata fields (admin only).
+ * - **`resourceUpdates`**: Bulk-updates Hagga quantities for multiple resources,
+ *   logging history entries and awarding leaderboard points for each change.
+ *
+ * Requires resource access for bulk updates; admin access for metadata updates.
+ */
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
 

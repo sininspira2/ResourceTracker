@@ -6,6 +6,14 @@ import { resourceHistory } from "@/lib/db";
 import { eq, and } from "drizzle-orm";
 import { hasResourceAdminAccess } from "@/lib/discord-roles";
 
+/**
+ * DELETE /api/resources/[id]/history/[entryId]
+ *
+ * Permanently deletes a single resource history entry. Verifies that the
+ * entry belongs to the specified resource before deletion.
+ *
+ * Requires resource admin access.
+ */
 export async function DELETE(
   request: NextRequest,
   // This is the correct signature for Next.js 15

@@ -3,6 +3,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserContributions, getUserRank } from "@/lib/leaderboard";
 
+/**
+ * GET /api/leaderboard/[userId]
+ *
+ * Returns a specific user's leaderboard contributions and rank.
+ * Supports time filtering (`timeFilter`: `"24h"`, `"7d"`, `"30d"`, `"all"`)
+ * and pagination (`page`, `pageSize`). Requires an active session.
+ *
+ * Response includes `contributions`, `summary`, `rank`, and pagination metadata.
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> },

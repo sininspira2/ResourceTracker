@@ -5,7 +5,16 @@ import { db, resources } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { hasResourceAccess, hasTargetEditAccess } from "@/lib/discord-roles";
 
-// PUT /api/resources/[id]/target - Update target quantity (admin only)
+/**
+ * PUT /api/resources/[id]/target
+ *
+ * Updates the target quantity for a resource. The target quantity is used to
+ * calculate resource status (critical / below_target / at_target / above_target)
+ * on the client side.
+ *
+ * Requires target-edit access (in addition to basic resource access).
+ * Returns the updated resource record.
+ */
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },

@@ -13,7 +13,18 @@ import {
 import { awardPoints } from "@/lib/leaderboard";
 import { calculateResourceStatus } from "@/lib/resource-utils";
 
-// PUT /api/resources/[id] - Update single resource
+/**
+ * PUT /api/resources/[id]
+ *
+ * Updates the quantity of a single resource (Hagga or Deep Desert field).
+ * Supports both `"absolute"` (set to value) and `"relative"` (add/subtract)
+ * update types. Logs the change to resource history and awards leaderboard points.
+ *
+ * Admins may supply `onBehalfOf` (a user ID) to attribute the change to another
+ * user while still recording the acting admin in the history reason.
+ *
+ * Requires resource access. Returns the updated resource and points earned.
+ */
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -204,7 +215,14 @@ export async function PUT(
   }
 }
 
-// DELETE /api/resources/[id] - Delete resource and all its history (admin only)
+/**
+ * DELETE /api/resources/[id]
+ *
+ * Permanently deletes a resource along with all associated history entries and
+ * leaderboard records. Requires resource admin access.
+ *
+ * The deletion runs inside a transaction to ensure referential consistency.
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },

@@ -3,7 +3,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { hasResourceAccess } from "@/lib/discord-roles";
 
-// GET /api/resources/[id]/history?days=7 - Get resource history
+/**
+ * GET /api/resources/[id]/history
+ *
+ * Authenticated proxy that forwards requests to the internal resource history
+ * endpoint (`/api/internal/resources/[id]/history`). Accepts a `days` query
+ * parameter to control how far back history is returned (default: 7 days).
+ *
+ * Requires resource access.
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },

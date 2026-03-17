@@ -16,6 +16,17 @@ interface UpdateItem {
   };
 }
 
+/**
+ * POST /api/resources/bulk/confirm
+ *
+ * Applies a pre-validated set of bulk resource updates produced by
+ * `POST /api/resources/bulk`. Accepts an array of `UpdateItem` objects
+ * (only those with `status: "changed"` are processed). De-duplicates entries
+ * by resource ID and applies all changes atomically in a single transaction,
+ * logging each update to resource history with the reason `"Bulk CSV import"`.
+ *
+ * Requires target-edit access.
+ */
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
