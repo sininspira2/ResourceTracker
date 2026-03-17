@@ -6,20 +6,7 @@ import { eq } from "drizzle-orm";
 import { hasResourceAccess, hasResourceAdminAccess } from "@/lib/discord-roles";
 import { nanoid } from "nanoid";
 import { awardPoints } from "@/lib/leaderboard";
-
-// Calculate status based on quantity vs target
-const calculateResourceStatus = (
-  quantity: number,
-  targetQuantity: number | null,
-): "above_target" | "at_target" | "below_target" | "critical" => {
-  if (!targetQuantity || targetQuantity <= 0) return "at_target";
-
-  const percentage = (quantity / targetQuantity) * 100;
-  if (percentage >= 150) return "above_target"; // Purple - well above target
-  if (percentage >= 100) return "at_target"; // Green - at or above target
-  if (percentage >= 50) return "below_target"; // Orange - below target but not critical
-  return "critical"; // Red - very much below target
-};
+import { calculateResourceStatus } from "@/lib/resource-utils";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -115,7 +102,8 @@ export async function POST(request: NextRequest) {
       tier: tier || null,
       imageUrl: imageUrl || null,
       targetQuantity: targetQuantity || null,
-      multiplier: multiplier || 1.0,
+      multiplier:
+        typeof multiplier === "number" && multiplier > 0 ? multiplier : 1.0,
       lastUpdatedBy: userId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -211,7 +199,8 @@ export async function PUT(request: NextRequest) {
           subcategory: subcategory || null,
           description: description || null,
           imageUrl: imageUrl || null,
-          multiplier: multiplier || 1.0,
+          multiplier:
+            typeof multiplier === "number" && multiplier > 0 ? multiplier : 1.0,
           isPriority: isPriority || false,
           tier: tier,
           lastUpdatedBy: userId,
@@ -258,6 +247,10 @@ export async function PUT(request: NextRequest) {
           value: number; // This is the change amount for relative
           reason?: string;
         }) => {
+          if (update.reason && update.reason.length > 500) {
+            throw new Error("Reason must be 500 characters or less");
+          }
+
           const currentResource = await db
             .select()
             .from(resources)
