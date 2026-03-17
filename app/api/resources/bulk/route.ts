@@ -18,6 +18,28 @@ interface CsvRow {
   targetQuantity: string;
 }
 
+// Formula injection prevention: prefix values that would be interpreted as
+// spreadsheet formulas (=, +, -, @, tab, carriage-return) with a single quote.
+// This follows the OWASP recommendation for CSV injection mitigation.
+const CSV_INJECTION_RE = /^[=+\-@\t\r]/;
+
+function sanitizeCsvField(value: string): string {
+  return CSV_INJECTION_RE.test(value) ? `'${value}` : value;
+}
+
+// Strip the leading single-quote added by sanitizeCsvField. Some CSV editors
+// (e.g. LibreOffice, plain-text editors) preserve the quote character verbatim
+// when re-saving; Excel treats it as a text-prefix marker and drops it. Stripping
+// on import keeps both round-trip paths correct.
+//
+// Accepts `unknown` because PapaParse row fields can be undefined at runtime
+// when a column is absent despite the TypeScript CsvRow type. Only strips the
+// leading quote when length > 1 so a lone "'" is not silently collapsed to "".
+function desanitizeCsvField(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return value.length > 1 && value.startsWith("'") ? value.slice(1) : value;
+}
+
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
@@ -141,8 +163,8 @@ export async function GET(request: NextRequest) {
   const filteredResources = await query;
 
   const dataForCsv = filteredResources.map((r) => ({
-    id: r.id,
-    name: r.name,
+    id: sanitizeCsvField(r.id),
+    name: sanitizeCsvField(r.name),
     quantityHagga: r.quantityHagga,
     quantityDeepDesert: r.quantityDeepDesert,
     targetQuantity: r.targetQuantity,
@@ -195,7 +217,23 @@ export async function POST(request: NextRequest) {
     skipEmptyLines: true,
   });
 
-  const ids = parsed.data.map((row) => row.id).filter(Boolean);
+  const requiredColumns = ["id", "name", "quantityHagga", "quantityDeepDesert"];
+  const presentColumns = parsed.meta.fields ?? [];
+  const missingColumns = requiredColumns.filter(
+    (col) => !presentColumns.includes(col),
+  );
+  if (missingColumns.length > 0) {
+    return NextResponse.json(
+      {
+        error: `CSV is missing required columns: ${missingColumns.join(", ")}`,
+      },
+      { status: 400 },
+    );
+  }
+
+  const ids = parsed.data
+    .map((row) => desanitizeCsvField(row.id))
+    .filter(Boolean);
   if (ids.length === 0) {
     return NextResponse.json(
       { error: "No valid data found in CSV" },
@@ -210,9 +248,11 @@ export async function POST(request: NextRequest) {
   const currentResourcesMap = new Map(currentResources.map((r) => [r.id, r]));
 
   const diff = parsed.data.map((row) => {
-    const current = currentResourcesMap.get(row.id);
+    const rowId = desanitizeCsvField(row.id);
+    const rowName = desanitizeCsvField(row.name);
+    const current = currentResourcesMap.get(rowId);
     if (!current) {
-      return { id: row.id, name: row.name, status: "not_found" };
+      return { id: rowId, name: rowName, status: "not_found" };
     }
 
     const newValues: any = {};
@@ -250,7 +290,7 @@ export async function POST(request: NextRequest) {
 
     if (Object.keys(validationErrors).length > 0) {
       return {
-        id: row.id,
+        id: rowId,
         name: current.name,
         status: "invalid",
         errors: validationErrors,
@@ -276,7 +316,7 @@ export async function POST(request: NextRequest) {
 
     if (Object.values(changes).some((c) => c)) {
       return {
-        id: row.id,
+        id: rowId,
         name: current.name,
         status: "changed",
         old: {
@@ -287,7 +327,7 @@ export async function POST(request: NextRequest) {
         new: newValues,
       };
     } else {
-      return { id: row.id, name: current.name, status: "unchanged" };
+      return { id: rowId, name: current.name, status: "unchanged" };
     }
   });
 

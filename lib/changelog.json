@@ -8,6 +8,14 @@
       "type": "minor",
       "changes": [
         {
+          "type": "bugfix",
+          "description": "Fixed CSV injection (formula injection) vulnerability in the bulk CSV export: string fields (id, name) are now prefixed with a single quote when they start with formula-trigger characters (=, +, -, @). The import endpoint strips the prefix on round-trip to remain compatible with editors that preserve it verbatim."
+        },
+        {
+          "type": "improvement",
+          "description": "Replaced N+1 queries in the bulk PUT /api/resources handler with batched inArray queries, reducing DB round-trips from N+1 to 2 regardless of update count."
+        },
+        {
           "type": "feature",
           "description": "Added a 'subcategory' attribute to resources for enhanced organization, manageable via the 'Edit Resource' and creation modals."
         },

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, getUserIdentifier } from "@/lib/auth";
 import { db, resources, resourceHistory } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { hasResourceAccess, hasResourceAdminAccess } from "@/lib/discord-roles";
 import { nanoid } from "nanoid";
 import { awardPoints } from "@/lib/leaderboard";
@@ -239,6 +239,15 @@ export async function PUT(request: NextRequest) {
         );
       }
 
+      const resourceIds = resourceUpdates.map((u: { id: string }) => u.id);
+      const currentResourcesList = await db
+        .select()
+        .from(resources)
+        .where(inArray(resources.id, resourceIds));
+      const currentResourcesMap = new Map(
+        currentResourcesList.map((r) => [r.id, r]),
+      );
+
       const updatePromises = resourceUpdates.map(
         async (update: {
           id: string;
@@ -251,13 +260,8 @@ export async function PUT(request: NextRequest) {
             throw new Error("Reason must be 500 characters or less");
           }
 
-          const currentResource = await db
-            .select()
-            .from(resources)
-            .where(eq(resources.id, update.id));
-          if (currentResource.length === 0) return null;
-
-          const resource = currentResource[0];
+          const resource = currentResourcesMap.get(update.id);
+          if (!resource) return null;
           const previousQuantityHagga = resource.quantityHagga;
           const changeAmountHagga =
             update.updateType === "relative"
@@ -321,7 +325,10 @@ export async function PUT(request: NextRequest) {
         .filter((result) => result !== null)
         .reduce((total, result) => total + (result?.finalPoints || 0), 0);
 
-      const updatedResources = await db.select().from(resources);
+      const updatedResources = await db
+        .select()
+        .from(resources)
+        .where(inArray(resources.id, resourceIds));
 
       return NextResponse.json(
         {
