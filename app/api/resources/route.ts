@@ -239,9 +239,7 @@ export async function PUT(request: NextRequest) {
         );
       }
 
-      const resourceIds = resourceUpdates.map(
-        (u: { id: string }) => u.id,
-      );
+      const resourceIds = resourceUpdates.map((u: { id: string }) => u.id);
       const currentResourcesList = await db
         .select()
         .from(resources)

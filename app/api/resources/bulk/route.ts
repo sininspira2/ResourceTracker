@@ -224,12 +224,16 @@ export async function POST(request: NextRequest) {
   );
   if (missingColumns.length > 0) {
     return NextResponse.json(
-      { error: `CSV is missing required columns: ${missingColumns.join(", ")}` },
+      {
+        error: `CSV is missing required columns: ${missingColumns.join(", ")}`,
+      },
       { status: 400 },
     );
   }
 
-  const ids = parsed.data.map((row) => desanitizeCsvField(row.id)).filter(Boolean);
+  const ids = parsed.data
+    .map((row) => desanitizeCsvField(row.id))
+    .filter(Boolean);
   if (ids.length === 0) {
     return NextResponse.json(
       { error: "No valid data found in CSV" },
