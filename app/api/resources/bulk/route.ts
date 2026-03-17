@@ -31,8 +31,13 @@ function sanitizeCsvField(value: string): string {
 // (e.g. LibreOffice, plain-text editors) preserve the quote character verbatim
 // when re-saving; Excel treats it as a text-prefix marker and drops it. Stripping
 // on import keeps both round-trip paths correct.
-function desanitizeCsvField(value: string): string {
-  return value.startsWith("'") ? value.slice(1) : value;
+//
+// Accepts `unknown` because PapaParse row fields can be undefined at runtime
+// when a column is absent despite the TypeScript CsvRow type. Only strips the
+// leading quote when length > 1 so a lone "'" is not silently collapsed to "".
+function desanitizeCsvField(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return value.length > 1 && value.startsWith("'") ? value.slice(1) : value;
 }
 
 export async function GET(request: NextRequest) {
@@ -211,6 +216,18 @@ export async function POST(request: NextRequest) {
     header: true,
     skipEmptyLines: true,
   });
+
+  const requiredColumns = ["id", "name", "quantityHagga", "quantityDeepDesert"];
+  const presentColumns = parsed.meta.fields ?? [];
+  const missingColumns = requiredColumns.filter(
+    (col) => !presentColumns.includes(col),
+  );
+  if (missingColumns.length > 0) {
+    return NextResponse.json(
+      { error: `CSV is missing required columns: ${missingColumns.join(", ")}` },
+      { status: 400 },
+    );
+  }
 
   const ids = parsed.data.map((row) => desanitizeCsvField(row.id)).filter(Boolean);
   if (ids.length === 0) {

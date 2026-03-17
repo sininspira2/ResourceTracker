@@ -207,6 +207,76 @@ describe("POST /api/resources/bulk", () => {
     expect(row.status).not.toBe("not_found");
   });
 
+  it("should return 400 when required columns are missing from the CSV", async () => {
+    const POST = await setupPostMocks();
+    // CSV that has no 'id' or 'quantityHagga' columns
+    const csvContent = "name,quantityDeepDesert\nResource 1,0";
+    const formData = new FormData();
+    formData.append(
+      "file",
+      new File([csvContent], "resources.csv", { type: "text/csv" }),
+    );
+
+    const request = new NextRequest("http://localhost/api/resources/bulk", {
+      method: "POST",
+      body: formData,
+    });
+
+    const response = await POST(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body.error).toMatch(/missing required columns/);
+    expect(body.error).toContain("id");
+    expect(body.error).toContain("quantityHagga");
+  });
+
+  it("should not strip a lone apostrophe to an empty string on import", async () => {
+    // A row whose id is exactly "'" should remain "'" (not collapse to ""),
+    // so it is treated as not_found rather than silently matching nothing.
+    const csvContent = [
+      "id,name,quantityHagga,quantityDeepDesert,targetQuantity",
+      "',Some Name,10,0,",
+    ].join("\n");
+
+    jest.doMock("next-auth", () => ({
+      getServerSession: jest.fn().mockResolvedValue({
+        user: { roles: ["Target Editor"] },
+      }),
+    }));
+    jest.doMock("@/lib/discord-roles", () => ({
+      hasTargetEditAccess: jest.fn().mockReturnValue(true),
+    }));
+    jest.doMock("@/lib/db", () => ({
+      db: {
+        select: jest.fn().mockReturnValue({
+          from: jest.fn().mockReturnThis(),
+          // inArray with an empty array → no resources found
+          where: jest.fn().mockResolvedValue([]),
+        }),
+      },
+      resources: { id: "resources.id" },
+    }));
+
+    const { POST } = await import("@/app/api/resources/bulk/route");
+    const formData = new FormData();
+    formData.append(
+      "file",
+      new File([csvContent], "resources.csv", { type: "text/csv" }),
+    );
+
+    const request = new NextRequest("http://localhost/api/resources/bulk", {
+      method: "POST",
+      body: formData,
+    });
+
+    const response = await POST(request);
+    // Should succeed (200) with the row marked not_found, not crash with a 500
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body[0].status).toBe("not_found");
+  });
+
   it("should return 400 for invalid file type", async () => {
     const POST = await setupPostMocks();
     const formData = new FormData();
