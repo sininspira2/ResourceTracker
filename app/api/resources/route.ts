@@ -102,7 +102,8 @@ export async function POST(request: NextRequest) {
       tier: tier || null,
       imageUrl: imageUrl || null,
       targetQuantity: targetQuantity || null,
-      multiplier: typeof multiplier === "number" && multiplier > 0 ? multiplier : 1.0,
+      multiplier:
+        typeof multiplier === "number" && multiplier > 0 ? multiplier : 1.0,
       lastUpdatedBy: userId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -198,7 +199,8 @@ export async function PUT(request: NextRequest) {
           subcategory: subcategory || null,
           description: description || null,
           imageUrl: imageUrl || null,
-          multiplier: typeof multiplier === "number" && multiplier > 0 ? multiplier : 1.0,
+          multiplier:
+            typeof multiplier === "number" && multiplier > 0 ? multiplier : 1.0,
           isPriority: isPriority || false,
           tier: tier,
           lastUpdatedBy: userId,
@@ -245,6 +247,10 @@ export async function PUT(request: NextRequest) {
           value: number; // This is the change amount for relative
           reason?: string;
         }) => {
+          if (update.reason && update.reason.length > 500) {
+            throw new Error("Reason must be 500 characters or less");
+          }
+
           const currentResource = await db
             .select()
             .from(resources)

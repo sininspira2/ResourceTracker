@@ -5,7 +5,11 @@ import { db } from "@/lib/db";
 import { resources, resourceHistory, users, leaderboard } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import { hasResourceAccess, hasResourceAdminAccess, hasTargetEditAccess } from "@/lib/discord-roles";
+import {
+  hasResourceAccess,
+  hasResourceAdminAccess,
+  hasTargetEditAccess,
+} from "@/lib/discord-roles";
 import { awardPoints } from "@/lib/leaderboard";
 import { calculateResourceStatus } from "@/lib/resource-utils";
 
@@ -61,9 +65,16 @@ export async function PUT(
       // Use the display name for consistency in history and leaderboards
       effectiveUserId = targetUser[0].customNickname || targetUser[0].username;
 
-      // Append an audit note to the reason
-      const auditNote = `(entered by ${actingUserIdentifier})`;
-      reason = reason ? `${reason} ${auditNote}` : auditNote;
+      // Append an audit note to the reason, staying within the 500-char limit
+      const auditNote = ` (entered by ${actingUserIdentifier})`;
+      if (reason) {
+        const maxBase = 500 - auditNote.length;
+        reason =
+          (reason.length > maxBase ? reason.slice(0, maxBase) : reason) +
+          auditNote;
+      } else {
+        reason = auditNote.trimStart();
+      }
     }
 
     const result = await db.transaction(async (tx) => {
