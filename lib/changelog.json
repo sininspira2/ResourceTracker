@@ -8,6 +8,10 @@
       "type": "minor",
       "changes": [
         {
+          "type": "improvement",
+          "description": "Replaced N+1 queries in the bulk PUT /api/resources handler with batched inArray queries, reducing DB round-trips from N+1 to 2 regardless of update count."
+        },
+        {
           "type": "feature",
           "description": "Added a 'subcategory' attribute to resources for enhanced organization, manageable via the 'Edit Resource' and creation modals."
         },

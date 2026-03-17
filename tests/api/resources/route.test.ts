@@ -151,20 +151,19 @@ describe("PUT /api/resources", () => {
   });
 
   it("should bulk update resource quantities", async () => {
+    const mockResource = {
+      id: "resource-1",
+      quantityHagga: 100,
+      quantityDeepDesert: 0,
+      name: "Resource 1",
+      category: "Category 1",
+      targetQuantity: 200,
+      multiplier: 1.5,
+    };
     const mockDb = {
       select: jest.fn().mockReturnThis(),
       from: jest.fn().mockReturnThis(),
-      where: jest.fn().mockResolvedValue([
-        {
-          id: "resource-1",
-          quantityHagga: 100,
-          quantityDeepDesert: 0,
-          name: "Resource 1",
-          category: "Category 1",
-          targetQuantity: 200,
-          multiplier: 1.5,
-        },
-      ]),
+      where: jest.fn().mockResolvedValue([mockResource]),
       update: jest.fn().mockReturnThis(),
       set: jest.fn().mockReturnThis(),
       insert: jest.fn().mockReturnThis(),
@@ -200,8 +199,15 @@ describe("PUT /api/resources", () => {
 
     expect(response.status).toBe(200);
     expect(body).toHaveProperty("resources");
+    expect(body.resources).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: "resource-1" })]),
+    );
     expect(body).toHaveProperty("totalPointsEarned");
     expect(body).toHaveProperty("pointsBreakdown");
+    // 1 batch pre-fetch + 1 update where + 1 batch post-fetch = 3 where calls for 1 resource.
+    // Old N+1 code: N individual select-where + N update-where (no final where, fetched all).
+    // New batched code: 1 pre-fetch where + N update-where + 1 post-fetch where = N+2.
+    expect(mockDb.where).toHaveBeenCalledTimes(3);
   });
 });
 
