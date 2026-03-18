@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import "@fontsource-variable/inter";
 import "./globals.css";
 import { SessionProvider } from "./components/SessionProvider";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { WhatsNewModal } from "./components/WhatsNewModal";
 import { MigrationBanner } from "./components/MigrationBanner";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker",
@@ -27,7 +25,7 @@ export default function RootLayout({
       <head>
         <meta name="view-transition" content="same-origin" />
       </head>
-      <body className={inter.className}>
+      <body className="font-sans">
         <ThemeProvider>
           <SessionProvider>
             <div className="min-h-screen bg-background-primary">

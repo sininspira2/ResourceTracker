@@ -11,6 +11,8 @@
 }
 
 @theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
   --color-background-primary: theme(colors.gray.50);
   --color-background-secondary: theme(colors.gray.300 / 40%);
   --color-background-tertiary: theme(colors.gray.100);

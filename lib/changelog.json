@@ -14,6 +14,14 @@
         {
           "type": "improvement",
           "description": "Replaced N+1 queries in the bulk PUT /api/resources handler with batched inArray queries, reducing DB round-trips from N+1 to 2 regardless of update count."
+        },
+        {
+          "type": "improvement",
+          "description": "Updated npm packages to latest minor/patch versions to address security audit vulnerabilities: Next.js 15.5.13 (HTTP request smuggling fix), esbuild override to resolve high-severity transitive vulnerability in drizzle-kit dependency chain, and all other packages updated to latest compatible versions."
+        },
+        {
+          "type": "improvement",
+          "description": "Replaced next/font/google (requires network at build time) with @fontsource-variable/inter (npm-hosted font), enabling builds in offline/restricted CI environments."
         }
       ]
     },
