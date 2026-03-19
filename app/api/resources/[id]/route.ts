@@ -47,6 +47,9 @@ export async function PUT(
     } = await request.json();
     const actingUserIdentifier = getUserIdentifier(session);
 
+    if (reason && typeof reason !== 'string') {
+      return NextResponse.json({ error: "reason must be a string" }, { status: 400 });
+    }
     if (reason && reason.length > 500) {
       return NextResponse.json(
         { error: "Reason must be 500 characters or less" },
