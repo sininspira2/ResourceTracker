@@ -22,12 +22,12 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const days = parseInt(searchParams.get("days") || "30", 10);
+    const days = Math.max(1, parseInt(searchParams.get("days") || "30", 10) || 30);
     const isGlobal = searchParams.get("global") === "true";
-    const limit = parseInt(searchParams.get("limit") || "500", 10);
+    const limit = Math.max(1, Math.min(500, parseInt(searchParams.get("limit") || "500", 10) || 500));
     const userId = searchParams.get("userId");
     const oldUserIdsString = searchParams.get("oldUserIds");
-    const oldUserIds = oldUserIdsString ? oldUserIdsString.split(",") : [];
+    const oldUserIds = oldUserIdsString ? oldUserIdsString.split(",").slice(0, 20) : [];
 
     if (!isGlobal && !userId) {
       return NextResponse.json(

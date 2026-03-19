@@ -35,7 +35,11 @@ export async function PUT(
     const { transferAmount, transferDirection } = await request.json();
     const userId = getUserIdentifier(session);
 
-    if (!transferAmount || !transferDirection) {
+    if (typeof transferAmount !== 'number' || !Number.isInteger(transferAmount) || transferAmount <= 0) {
+      return NextResponse.json({ error: "transferAmount must be a positive integer" }, { status: 400 });
+    }
+
+    if (!transferDirection) {
       return NextResponse.json(
         { error: "transferAmount and transferDirection are required" },
         { status: 400 },

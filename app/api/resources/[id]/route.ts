@@ -53,6 +53,25 @@ export async function PUT(
         { status: 400 },
       );
     }
+    if (reason) {
+      reason = reason.trim().replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
+    }
+
+    if (quantityField !== undefined && quantityField !== "quantityHagga" && quantityField !== "quantityDeepDesert") {
+      return NextResponse.json({ error: "quantityField must be 'quantityHagga' or 'quantityDeepDesert'" }, { status: 400 });
+    }
+
+    if (updateType === "absolute") {
+      if (typeof quantity !== 'number' || !Number.isInteger(quantity) || quantity < 0) {
+        return NextResponse.json({ error: "quantity must be a non-negative integer for absolute updates" }, { status: 400 });
+      }
+    }
+
+    if (updateType === "relative") {
+      if (typeof changeValue !== 'number' || !Number.isInteger(changeValue) || changeValue === 0) {
+        return NextResponse.json({ error: "changeValue must be a non-zero integer for relative updates" }, { status: 400 });
+      }
+    }
 
     let effectiveUserId = actingUserIdentifier;
 

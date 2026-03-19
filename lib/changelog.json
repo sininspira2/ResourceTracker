@@ -3,6 +3,18 @@
   "releases": [
     {
       "version": "4.1.5",
+      "date": "2026-03-19",
+      "title": "API Input Validation Hardening",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "improvement",
+          "description": "Hardened API input validation across 8 routes: transferAmount must be a positive integer; quantity/changeValue validated by updateType; targetQuantity type-checked with upper bound; multiplier capped at 100; parseInt calls use radix 10 with safe min/max bounds; bulk confirm endpoint limited to 1000 items; oldUserIds list capped at 20 entries; reason fields are trimmed and stripped of ASCII control characters."
+        }
+      ]
+    },
+    {
+      "version": "4.1.5",
       "date": "2026-03-17",
       "title": "Bugfixes",
       "type": "minor",
