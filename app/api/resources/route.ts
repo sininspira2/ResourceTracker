@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
       imageUrl: imageUrl || null,
       targetQuantity: targetQuantity || null,
       multiplier:
-        typeof multiplier === "number" && multiplier > 0 ? multiplier : 1.0,
+        typeof multiplier === "number" && multiplier > 0 && multiplier <= 100 && Number.isFinite(multiplier) ? multiplier : 1.0,
       lastUpdatedBy: userId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -225,7 +225,7 @@ export async function PUT(request: NextRequest) {
           description: description || null,
           imageUrl: imageUrl || null,
           multiplier:
-            typeof multiplier === "number" && multiplier > 0 ? multiplier : 1.0,
+            typeof multiplier === "number" && multiplier > 0 && multiplier <= 100 && Number.isFinite(multiplier) ? multiplier : 1.0,
           isPriority: isPriority || false,
           tier: tier,
           lastUpdatedBy: userId,
@@ -283,6 +283,9 @@ export async function PUT(request: NextRequest) {
         }) => {
           if (update.reason && update.reason.length > 500) {
             throw new Error("Reason must be 500 characters or less");
+          }
+          if (update.reason) {
+            update.reason = update.reason.trim().replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
           }
 
           const resource = currentResourcesMap.get(update.id);
