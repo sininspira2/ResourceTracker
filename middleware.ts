@@ -10,6 +10,16 @@ interface TokenPermissions {
   hasUserManagementAccess?: boolean;
 }
 
+/**
+ * NextAuth middleware that enforces route-level access control.
+ *
+ * Applied to all routes listed in `config.matcher`. The `authorized` callback
+ * checks the JWT token's `permissions` object (populated by the NextAuth JWT
+ * callback) for agent-based auth, falling back to Discord role-based checks for
+ * standard sessions:
+ * - `/users` and `/api/users` routes require user management access
+ * - All other matched routes require basic resource access
+ */
 export default withAuth({
   callbacks: {
     authorized: ({ token, req }) => {

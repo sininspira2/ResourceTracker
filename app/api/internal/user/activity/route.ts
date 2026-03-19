@@ -4,16 +4,30 @@ import { eq, gte, desc, and, or } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
-// GET /api/internal/user/activity - Get user's activity history
+/**
+ * GET /api/internal/user/activity
+ *
+ * Internal endpoint that returns resource history entries for a user or
+ * globally. Accepts:
+ * - `userId` — current user identifier (required unless `global=true`)
+ * - `oldUserIds` — comma-separated list of legacy identifiers for backward
+ *   compatibility (history recorded under old IDs is included)
+ * - `days` — how many days of history to return (default: 30)
+ * - `limit` — max entries to return (default: 500)
+ * - `global=true` — return activity from all users instead
+ *
+ * Marked `force-dynamic`. Intended to be called only by the authenticated
+ * `GET /api/user/activity` proxy.
+ */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const days = parseInt(searchParams.get("days") || "30", 10);
+    const days = Math.max(1, parseInt(searchParams.get("days") || "30", 10) || 30);
     const isGlobal = searchParams.get("global") === "true";
-    const limit = parseInt(searchParams.get("limit") || "500", 10);
+    const limit = Math.max(1, Math.min(500, parseInt(searchParams.get("limit") || "500", 10) || 500));
     const userId = searchParams.get("userId");
     const oldUserIdsString = searchParams.get("oldUserIds");
-    const oldUserIds = oldUserIdsString ? oldUserIdsString.split(",") : [];
+    const oldUserIds = oldUserIdsString ? oldUserIdsString.split(",").slice(0, 20) : [];
 
     if (!isGlobal && !userId) {
       return NextResponse.json(

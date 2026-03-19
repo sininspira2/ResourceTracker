@@ -102,7 +102,7 @@ describe("PUT /api/resources/[id]/target", () => {
     });
     expect(response.status).toBe(400);
     const body = await response.json();
-    expect(body.error).toBe("Target quantity cannot be negative");
+    expect(body.error).toBe("targetQuantity must be a non-negative integer");
   });
 
   it("should return 404 if the resource is not found", async () => {

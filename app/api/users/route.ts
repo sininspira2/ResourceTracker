@@ -7,6 +7,14 @@ import {
   hasResourceAdminAccess,
 } from "@/lib/discord-roles";
 
+/**
+ * GET /api/users
+ *
+ * Returns a list of all registered users with basic profile information
+ * (id, username, customNickname, createdAt, lastLogin).
+ *
+ * Requires either user management access or resource admin access.
+ */
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 

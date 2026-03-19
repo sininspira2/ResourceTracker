@@ -18,18 +18,18 @@ npm run db:check     # Verify migration hashes are in sync
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `lib/auth.ts` | NextAuth config, JWT/session callbacks, `getUserIdentifier()` |
-| `lib/db.ts` | Drizzle schema (6 tables), lazy DB connection proxy |
-| `lib/discord-roles.ts` | RBAC: `hasResourceAccess()`, `hasResourceAdminAccess()`, `hasTargetEditAccess()` |
-| `lib/constants.ts` | Categories, tiers, status values, filter enums |
-| `lib/leaderboard.ts` | Points calculation (`calculatePoints`, `awardPoints`), ranking queries |
-| `lib/resource-utils.ts` | Shared `calculateResourceStatus()` utility |
-| `middleware.ts` | NextAuth route protection for `/dashboard`, `/resources`, `/users` |
-| `app/api/resources/route.ts` | Resource list (GET→internal), create (POST), bulk update (PUT) |
-| `app/api/resources/[id]/route.ts` | Single resource update (PUT) and delete (DELETE) |
-| `app/api/resources/[id]/transfer/route.ts` | Transfer between Hagga/Deep Desert locations (PUT) |
+| File                                       | Purpose                                                                          |
+| ------------------------------------------ | -------------------------------------------------------------------------------- |
+| `lib/auth.ts`                              | NextAuth config, JWT/session callbacks, `getUserIdentifier()`                    |
+| `lib/db.ts`                                | Drizzle schema (6 tables), lazy DB connection proxy                              |
+| `lib/discord-roles.ts`                     | RBAC: `hasResourceAccess()`, `hasResourceAdminAccess()`, `hasTargetEditAccess()` |
+| `lib/constants.ts`                         | Categories, tiers, status values, filter enums                                   |
+| `lib/leaderboard.ts`                       | Points calculation (`calculatePoints`, `awardPoints`), ranking queries           |
+| `lib/resource-utils.ts`                    | Shared `calculateResourceStatus()` utility                                       |
+| `middleware.ts`                            | NextAuth route protection for `/dashboard`, `/resources`, `/users`               |
+| `app/api/resources/route.ts`               | Resource list (GET→internal), create (POST), bulk update (PUT)                   |
+| `app/api/resources/[id]/route.ts`          | Single resource update (PUT) and delete (DELETE)                                 |
+| `app/api/resources/[id]/transfer/route.ts` | Transfer between Hagga/Deep Desert locations (PUT)                               |
 
 ## Testing
 

@@ -5,7 +5,16 @@ import { db, resources } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { hasResourceAccess, hasTargetEditAccess } from "@/lib/discord-roles";
 
-// PUT /api/resources/[id]/target - Update target quantity (admin only)
+/**
+ * PUT /api/resources/[id]/target
+ *
+ * Updates the target quantity for a resource. The target quantity is used to
+ * calculate resource status (critical / below_target / at_target / above_target)
+ * on the client side.
+ *
+ * Requires target-edit access (in addition to basic resource access).
+ * Returns the updated resource record.
+ */
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -30,11 +39,8 @@ export async function PUT(
     const userId = getUserIdentifier(session);
 
     // Validate target quantity
-    if (targetQuantity < 0) {
-      return NextResponse.json(
-        { error: "Target quantity cannot be negative" },
-        { status: 400 },
-      );
+    if (typeof targetQuantity !== 'number' || !Number.isInteger(targetQuantity) || targetQuantity < 0 || targetQuantity > 999999999) {
+      return NextResponse.json({ error: "targetQuantity must be a non-negative integer" }, { status: 400 });
     }
 
     // Check if resource exists

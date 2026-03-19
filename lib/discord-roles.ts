@@ -91,18 +91,35 @@ export function getRoleHierarchy(): RoleConfig[] {
   }
 }
 
-// Helper function to get role information by ID
+/**
+ * Returns the full role configuration object for a given Discord role ID, or
+ * `undefined` if the role is not found in the hierarchy.
+ *
+ * @param roleId - The Discord role ID to look up
+ */
 export function getRoleInfo(roleId: string) {
   return getRoleHierarchy().find((role) => role.id === roleId);
 }
 
-// Helper function to get role name by ID
+/**
+ * Returns the human-readable name for a Discord role ID.
+ *
+ * Falls back to `"Unknown Role (<roleId>)"` if the role is not in the hierarchy.
+ *
+ * @param roleId - The Discord role ID to look up
+ * @returns The role's display name, or a fallback string
+ */
 export function getRoleName(roleId: string): string {
   const role = getRoleInfo(roleId);
   return role ? role.name : `Unknown Role (${roleId})`;
 }
 
-// Helper function to get the highest role a user has
+/**
+ * Returns the highest-level role (by `level` field) that the user holds, or
+ * `null` if the user has no recognized hierarchy roles.
+ *
+ * @param userRoles - Array of Discord role IDs from the user's JWT token
+ */
 export function getHighestRole(userRoles: string[]) {
   let highestRole: RoleConfig | null = null;
   let highestLevel = 0;
@@ -118,7 +135,13 @@ export function getHighestRole(userRoles: string[]) {
   return highestRole;
 }
 
-// Helper function to get all hierarchy roles a user has (sorted by level descending)
+/**
+ * Returns all hierarchy roles the user holds, sorted by `level` descending
+ * (highest privilege first). Roles not present in the hierarchy config are omitted.
+ *
+ * @param userRoles - Array of Discord role IDs from the user's JWT token
+ * @returns Filtered and sorted array of `RoleConfig` objects
+ */
 export function getHierarchyRoles(userRoles: string[]): Array<RoleConfig> {
   return userRoles
     .map((roleId) => getRoleInfo(roleId))
@@ -126,7 +149,15 @@ export function getHierarchyRoles(userRoles: string[]): Array<RoleConfig> {
     .sort((a, b) => b.level - a.level);
 }
 
-// Helper function to check if user has resource access
+/**
+ * Checks whether the user has general resource access (read/view).
+ *
+ * Returns `false` and logs a warning if no roles in the config have
+ * `canAccessResources: true`.
+ *
+ * @param userRoles - Array of Discord role IDs from the user's JWT token
+ * @returns `true` if the user holds at least one role with resource access
+ */
 export function hasResourceAccess(userRoles: string[]): boolean {
   const resourceAccessRoles = getRoleHierarchy()
     .filter((role) => role.canAccessResources)
@@ -141,7 +172,15 @@ export function hasResourceAccess(userRoles: string[]): boolean {
   return userRoles.some((role) => resourceAccessRoles.includes(role));
 }
 
-// Helper function to check if user has resource admin access (edit/delete/create)
+/**
+ * Checks whether the user has resource admin access (create, edit, delete).
+ *
+ * Returns `false` and logs a warning if no roles in the config have
+ * `isAdmin: true`.
+ *
+ * @param userRoles - Array of Discord role IDs from the user's JWT token
+ * @returns `true` if the user holds at least one admin role
+ */
 export function hasResourceAdminAccess(userRoles: string[]): boolean {
   const resourceAdminRoles = getRoleHierarchy()
     .filter((role) => role.isAdmin)
@@ -156,7 +195,15 @@ export function hasResourceAdminAccess(userRoles: string[]): boolean {
   return userRoles.some((role) => resourceAdminRoles.includes(role));
 }
 
-// Helper function to check if user has admin access for target editing
+/**
+ * Checks whether the user has permission to edit resource targets.
+ *
+ * Returns `false` and logs a warning if no roles in the config have
+ * `canEditTargets: true`.
+ *
+ * @param userRoles - Array of Discord role IDs from the user's JWT token
+ * @returns `true` if the user holds at least one role with target-edit permission
+ */
 export function hasTargetEditAccess(userRoles: string[]): boolean {
   const targetAdminRoles = getRoleHierarchy()
     .filter((role) => role.canEditTargets)
@@ -173,7 +220,12 @@ export function hasTargetEditAccess(userRoles: string[]): boolean {
 
 // 🆕 Add new permission check functions:
 
-// Helper function to check if user can view reports
+/**
+ * Checks whether the user has permission to view analytics reports.
+ *
+ * @param userRoles - Array of Discord role IDs from the user's JWT token
+ * @returns `true` if the user holds at least one role with `canViewReports: true`
+ */
 export function hasReportAccess(userRoles: string[]): boolean {
   const reportRoles = getRoleHierarchy()
     .filter((role) => role.canViewReports)
@@ -181,7 +233,12 @@ export function hasReportAccess(userRoles: string[]): boolean {
   return userRoles.some((role) => reportRoles.includes(role));
 }
 
-// Helper function to check if user can manage users
+/**
+ * Checks whether the user has permission to manage other user accounts.
+ *
+ * @param userRoles - Array of Discord role IDs from the user's JWT token
+ * @returns `true` if the user holds at least one role with `canManageUsers: true`
+ */
 export function hasUserManagementAccess(userRoles: string[]): boolean {
   const userManagementRoles = getRoleHierarchy()
     .filter((role) => role.canManageUsers)
@@ -189,7 +246,12 @@ export function hasUserManagementAccess(userRoles: string[]): boolean {
   return userRoles.some((role) => userManagementRoles.includes(role));
 }
 
-// Helper function to check if user can export data
+/**
+ * Checks whether the user has permission to export system data.
+ *
+ * @param userRoles - Array of Discord role IDs from the user's JWT token
+ * @returns `true` if the user holds at least one role with `canExportData: true`
+ */
 export function hasDataExportAccess(userRoles: string[]): boolean {
   const dataExportRoles = getRoleHierarchy()
     .filter((role) => role.canExportData)

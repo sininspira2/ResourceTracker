@@ -87,6 +87,14 @@ if (process.env.NODE_ENV === "development") {
   );
 }
 
+/**
+ * NextAuth.js configuration object.
+ *
+ * Configures Discord OAuth as the primary provider (with a dev-only Credentials
+ * provider for agent testing). JWT sessions last 4 hours and are refreshed every
+ * 30 minutes. The JWT callback fetches the user's Discord guild roles and upserts
+ * their record into the database on each login or session refresh.
+ */
 export const authOptions: NextAuthOptions = {
   providers,
   session: {
@@ -266,12 +274,24 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-// Helper function to check if user has specific role
+/**
+ * Checks whether the user holds a specific Discord role.
+ *
+ * @param userRoles - Array of Discord role IDs from the user's JWT token
+ * @param requiredRole - The Discord role ID to check for
+ * @returns `true` if the user has the role, `false` otherwise
+ */
 export function hasRole(userRoles: string[], requiredRole: string): boolean {
   return userRoles.includes(requiredRole);
 }
 
-// Helper function to check if user has any of the required roles
+/**
+ * Checks whether the user holds at least one of the specified Discord roles.
+ *
+ * @param userRoles - Array of Discord role IDs from the user's JWT token
+ * @param requiredRoles - Array of Discord role IDs; access is granted if any match
+ * @returns `true` if the user has at least one of the required roles
+ */
 export function hasAnyRole(
   userRoles: string[],
   requiredRoles: string[],
@@ -279,7 +299,14 @@ export function hasAnyRole(
   return requiredRoles.some((role) => userRoles.includes(role));
 }
 
-// Helper function to get the best display name for a user
+/**
+ * Returns the best available display name for a user.
+ *
+ * Priority order: Discord server nickname → Discord username → `"Unknown User"`.
+ *
+ * @param user - Object containing optional `name` and `discordNickname` fields
+ * @returns The most specific display name available
+ */
 export function getDisplayName(user: {
   name?: string | null;
   discordNickname?: string | null;
@@ -290,7 +317,14 @@ export function getDisplayName(user: {
   return "Unknown User";
 }
 
-// Helper function to get user identifier for database tracking
+/**
+ * Returns the best available identifier for a user, used for database tracking.
+ *
+ * Priority order: Discord nickname → Discord username → email → user ID → `"unknown"`.
+ *
+ * @param session - The NextAuth session object
+ * @returns A string identifier for the user
+ */
 export function getUserIdentifier(session: Session): string {
   // Priority: Discord nickname > Discord username > email > id > fallback
   return (

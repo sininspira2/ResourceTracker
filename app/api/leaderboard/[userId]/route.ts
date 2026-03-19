@@ -3,6 +3,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserContributions, getUserRank } from "@/lib/leaderboard";
 
+/**
+ * GET /api/leaderboard/[userId]
+ *
+ * Returns a specific user's leaderboard contributions and rank.
+ * Supports time filtering (`timeFilter`: `"24h"`, `"7d"`, `"30d"`, `"all"`)
+ * and pagination (`page`, `pageSize`). Requires an active session.
+ *
+ * Response includes `contributions`, `summary`, `rank`, and pagination metadata.
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> },
@@ -18,9 +27,9 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const timeFilter =
       (searchParams.get("timeFilter") as "24h" | "7d" | "30d" | "all") || "all";
-    const limit = parseInt(searchParams.get("limit") || "100");
-    const page = parseInt(searchParams.get("page") || "1");
-    const pageSize = parseInt(searchParams.get("pageSize") || "20");
+    const limit = Math.max(1, Math.min(500, parseInt(searchParams.get("limit") || "100", 10) || 100));
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10) || 1);
+    const pageSize = Math.max(1, Math.min(500, parseInt(searchParams.get("pageSize") || "20", 10) || 20));
 
     // Calculate offset for pagination
     const offset = (page - 1) * pageSize;

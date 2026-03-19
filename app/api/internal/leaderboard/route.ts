@@ -3,6 +3,16 @@ import { getLeaderboard } from "@/lib/leaderboard";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * GET /api/internal/leaderboard
+ *
+ * Internal endpoint that returns paginated leaderboard rankings. Validates the
+ * `timeFilter` query parameter against the allowed set (`"24h"`, `"7d"`,
+ * `"30d"`, `"all"`), defaulting to `"all"` for invalid values. Supports
+ * `limit`, `page`, and `pageSize` query parameters. Marked `force-dynamic`.
+ *
+ * Intended to be called only by the authenticated `GET /api/leaderboard` proxy.
+ */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -13,9 +23,9 @@ export async function GET(request: NextRequest) {
       ? (timeFilterInput as "24h" | "7d" | "30d" | "all")
       : "all";
 
-    const limit = parseInt(searchParams.get("limit") || "50", 10);
-    const page = parseInt(searchParams.get("page") || "1", 10);
-    const pageSize = parseInt(searchParams.get("pageSize") || "20", 10);
+    const limit = Math.max(1, Math.min(500, parseInt(searchParams.get("limit") || "50", 10) || 50));
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10) || 1);
+    const pageSize = Math.max(1, Math.min(500, parseInt(searchParams.get("pageSize") || "20", 10) || 20));
 
     // Calculate offset for pagination
     const offset = (page - 1) * pageSize;

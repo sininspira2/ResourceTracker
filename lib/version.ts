@@ -20,17 +20,32 @@ export interface Changelog {
 
 export const changelog: Changelog = changelogData as Changelog;
 
-// Get the current version
+/**
+ * Returns the current application version string from the changelog.
+ *
+ * @returns The `currentVersion` field from `changelog.json`
+ */
 export const getCurrentVersion = (): string => {
   return changelog.currentVersion;
 };
 
-// Get the latest release
+/**
+ * Returns the most recent release entry from the changelog, or `null` if the
+ * changelog has no releases.
+ */
 export const getLatestRelease = (): Release | null => {
   return changelog.releases[0] || null;
 };
 
-// Get releases since a specific version
+/**
+ * Returns all releases newer than `lastSeenVersion`, in descending order.
+ *
+ * If `lastSeenVersion` is an empty string, only the latest release is returned
+ * (useful for first-time visitors who have never seen a changelog).
+ *
+ * @param lastSeenVersion - The last version the user has already seen
+ * @returns Array of `Release` objects with versions greater than `lastSeenVersion`
+ */
 export const getReleasesSince = (lastSeenVersion: string): Release[] => {
   if (!lastSeenVersion) {
     const latest = getLatestRelease();
@@ -48,7 +63,13 @@ export const getReleasesSince = (lastSeenVersion: string): Release[] => {
   return releases;
 };
 
-// Compare two version strings (returns 1 if a > b, -1 if a < b, 0 if equal)
+/**
+ * Compares two semver-style version strings.
+ *
+ * @param a - First version string (e.g. `"1.2.3"`)
+ * @param b - Second version string (e.g. `"1.2.0"`)
+ * @returns `1` if `a > b`, `-1` if `a < b`, `0` if equal
+ */
 export const compareVersions = (a: string, b: string): number => {
   const parseVersion = (version: string) =>
     version.split(".").map((num) => parseInt(num, 10));
@@ -67,7 +88,15 @@ export const compareVersions = (a: string, b: string): number => {
   return 0;
 };
 
-// Check if user should see changelog
+/**
+ * Determines whether the changelog modal should be shown to the user.
+ *
+ * Returns `true` if the user has never seen any version (`lastSeenVersion` is
+ * `null`) or if the current version is newer than the last-seen version.
+ *
+ * @param lastSeenVersion - The last version the user acknowledged, or `null`
+ * @returns `true` if the changelog should be displayed
+ */
 export const shouldShowChangelog = (
   lastSeenVersion: string | null,
 ): boolean => {
@@ -75,7 +104,12 @@ export const shouldShowChangelog = (
   return compareVersions(getCurrentVersion(), lastSeenVersion) > 0;
 };
 
-// Get the change type icon
+/**
+ * Returns the emoji icon associated with a changelog entry type.
+ *
+ * @param type - The change type (`"feature"`, `"improvement"`, `"bugfix"`, or `"breaking"`)
+ * @returns An emoji string representing the change type
+ */
 export const getChangeTypeIcon = (type: ChangelogEntry["type"]): string => {
   switch (type) {
     case "feature":
@@ -91,7 +125,12 @@ export const getChangeTypeIcon = (type: ChangelogEntry["type"]): string => {
   }
 };
 
-// Get the change type color
+/**
+ * Returns the Tailwind CSS text-color class associated with a changelog entry type.
+ *
+ * @param type - The change type (`"feature"`, `"improvement"`, `"bugfix"`, or `"breaking"`)
+ * @returns A Tailwind CSS class string (e.g. `"text-text-link"`)
+ */
 export const getChangeTypeColor = (type: ChangelogEntry["type"]): string => {
   switch (type) {
     case "feature":

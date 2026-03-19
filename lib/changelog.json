@@ -1,10 +1,22 @@
 {
-  "currentVersion": "4.1.4",
+  "currentVersion": "4.1.5",
   "releases": [
     {
-      "version": "4.1.4",
-      "date": "2025-10-27",
-      "title": "Subcategory Management and Dynamic Filtering",
+      "version": "4.1.5",
+      "date": "2026-03-19",
+      "title": "API Input Validation Hardening",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "improvement",
+          "description": "Hardened API input validation across 8 routes: transferAmount must be a positive integer; quantity/changeValue validated by updateType; targetQuantity type-checked with upper bound; multiplier capped at 100; parseInt calls use radix 10 with safe min/max bounds; bulk confirm endpoint limited to 1000 items; oldUserIds list capped at 20 entries; reason fields are trimmed and stripped of ASCII control characters."
+        }
+      ]
+    },
+    {
+      "version": "4.1.5",
+      "date": "2026-03-17",
+      "title": "Bugfixes",
       "type": "minor",
       "changes": [
         {
@@ -15,6 +27,22 @@
           "type": "improvement",
           "description": "Replaced N+1 queries in the bulk PUT /api/resources handler with batched inArray queries, reducing DB round-trips from N+1 to 2 regardless of update count."
         },
+        {
+          "type": "improvement",
+          "description": "Updated npm packages to latest minor/patch versions to address security audit vulnerabilities: Next.js 15.5.13 (HTTP request smuggling fix), esbuild override to resolve high-severity transitive vulnerability in drizzle-kit dependency chain, and all other packages updated to latest compatible versions."
+        },
+        {
+          "type": "improvement",
+          "description": "Replaced next/font/google (requires network at build time) with @fontsource-variable/inter (npm-hosted font), enabling builds in offline/restricted CI environments."
+        }
+      ]
+    },
+    {
+      "version": "4.1.4",
+      "date": "2025-10-27",
+      "title": "Subcategory Management and Dynamic Filtering",
+      "type": "minor",
+      "changes": [
         {
           "type": "feature",
           "description": "Added a 'subcategory' attribute to resources for enhanced organization, manageable via the 'Edit Resource' and creation modals."

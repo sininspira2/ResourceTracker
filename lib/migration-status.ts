@@ -23,6 +23,18 @@ async function tableExists(tableName: string): Promise<boolean> {
   }
 }
 
+/**
+ * Checks whether the database schema is up to date with the expected migrations.
+ *
+ * Compares the latest migration hash stored in the `__drizzle_migrations` table
+ * against the last entry in `MIGRATION_HASHES`. Returns one of:
+ * - `"up-to-date"` — DB hash matches the latest expected hash
+ * - `"out-of-date"` — DB hash differs (migrations need to be applied)
+ * - `"no-table"` — The migrations table does not exist yet
+ * - `"error"` — An unexpected error occurred during the check
+ *
+ * @returns A `MigrationStatusResult` with the status and optionally the latest expected hash
+ */
 export async function getMigrationStatus(): Promise<MigrationStatusResult> {
   noStore();
   try {

@@ -8,6 +8,13 @@ import { nanoid } from "nanoid";
 import { awardPoints } from "@/lib/leaderboard";
 import { calculateResourceStatus } from "@/lib/resource-utils";
 
+/**
+ * GET /api/resources
+ *
+ * Proxies the request to the internal cached resources endpoint
+ * (`/api/internal/resources`) and returns the result. Query parameters
+ * (filters, pagination, etc.) are forwarded as-is.
+ */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const internalUrl = new URL(
@@ -54,7 +61,16 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/resources - Create new resource (admin only)
+/**
+ * POST /api/resources
+ *
+ * Creates a new resource. Requires resource admin access.
+ * Inserts the resource and logs the initial quantity as a history entry
+ * within a single database transaction.
+ *
+ * Request body: `{ name, category, subcategory?, tier?, description?, imageUrl?,
+ * quantity?, quantityHagga?, quantityDeepDesert?, targetQuantity?, multiplier? }`
+ */
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
@@ -103,7 +119,7 @@ export async function POST(request: NextRequest) {
       imageUrl: imageUrl || null,
       targetQuantity: targetQuantity || null,
       multiplier:
-        typeof multiplier === "number" && multiplier > 0 ? multiplier : 1.0,
+        typeof multiplier === "number" && multiplier > 0 && multiplier <= 100 && Number.isFinite(multiplier) ? multiplier : 1.0,
       lastUpdatedBy: userId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -150,7 +166,16 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT /api/resources - Update multiple resources or single resource metadata
+/**
+ * PUT /api/resources
+ *
+ * Handles two update modes based on the request body:
+ * - **`resourceMetadata`**: Updates a single resource's metadata fields (admin only).
+ * - **`resourceUpdates`**: Bulk-updates Hagga quantities for multiple resources,
+ *   logging history entries and awarding leaderboard points for each change.
+ *
+ * Requires resource access for bulk updates; admin access for metadata updates.
+ */
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
@@ -200,7 +225,7 @@ export async function PUT(request: NextRequest) {
           description: description || null,
           imageUrl: imageUrl || null,
           multiplier:
-            typeof multiplier === "number" && multiplier > 0 ? multiplier : 1.0,
+            typeof multiplier === "number" && multiplier > 0 && multiplier <= 100 && Number.isFinite(multiplier) ? multiplier : 1.0,
           isPriority: isPriority || false,
           tier: tier,
           lastUpdatedBy: userId,
@@ -239,9 +264,7 @@ export async function PUT(request: NextRequest) {
         );
       }
 
-      const resourceIds = resourceUpdates.map(
-        (u: { id: string }) => u.id,
-      );
+      const resourceIds = resourceUpdates.map((u: { id: string }) => u.id);
       const currentResourcesList = await db
         .select()
         .from(resources)
@@ -260,6 +283,9 @@ export async function PUT(request: NextRequest) {
         }) => {
           if (update.reason && update.reason.length > 500) {
             throw new Error("Reason must be 500 characters or less");
+          }
+          if (update.reason) {
+            update.reason = update.reason.trim().replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
           }
 
           const resource = currentResourcesMap.get(update.id);

@@ -7,6 +7,19 @@ import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { hasResourceAccess } from "@/lib/discord-roles";
 
+/**
+ * PUT /api/resources/[id]/transfer
+ *
+ * Transfers a quantity of a resource between the Hagga base and Deep Desert
+ * storage. The transfer direction is specified by `transferDirection`:
+ * - `"to_deep_desert"` — moves units from Hagga → Deep Desert
+ * - `"to_hagga"` — moves units from Deep Desert → Hagga
+ *
+ * Validates that the source location has sufficient stock, then atomically
+ * updates both quantities and logs the transfer in resource history.
+ *
+ * Requires resource access. Returns the updated resource.
+ */
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -22,7 +35,11 @@ export async function PUT(
     const { transferAmount, transferDirection } = await request.json();
     const userId = getUserIdentifier(session);
 
-    if (!transferAmount || !transferDirection) {
+    if (typeof transferAmount !== 'number' || !Number.isInteger(transferAmount) || transferAmount <= 0) {
+      return NextResponse.json({ error: "transferAmount must be a positive integer" }, { status: 400 });
+    }
+
+    if (!transferDirection) {
       return NextResponse.json(
         { error: "transferAmount and transferDirection are required" },
         { status: 400 },

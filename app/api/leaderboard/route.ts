@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+/**
+ * GET /api/leaderboard
+ *
+ * Authenticated proxy to the internal leaderboard endpoint
+ * (`/api/internal/leaderboard`). Requires an active session.
+ * Forwards query parameters (`timeFilter`, `limit`, `page`, `pageSize`) as-is.
+ */
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
