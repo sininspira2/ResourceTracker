@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     // Option 2: Anonymization (preserves statistics while protecting privacy)
     // This replaces the user identifier with an anonymized version
-    const anonymizedId = `deleted-user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const anonymizedId = `deleted-user-${crypto.randomUUID()}`;
 
     await db
       .update(resourceHistory)
