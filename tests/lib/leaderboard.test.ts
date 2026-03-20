@@ -29,6 +29,48 @@ describe("calculatePoints", () => {
     const result = calculatePoints("ADD", 1000, 1, "critical", "Raw");
     expect(result.finalPoints).toBe(110);
   });
+
+  it("should apply below_target status bonus", () => {
+    const result = calculatePoints("ADD", 1000, 1, "below_target", "Raw");
+    expect(result.finalPoints).toBe(105);
+    expect(result.statusBonus).toBe(0.05);
+  });
+
+  it("should return base points with no bonus for above_target status", () => {
+    const result = calculatePoints("ADD", 1000, 1, "above_target", "Raw");
+    expect(result.finalPoints).toBe(100);
+    expect(result.statusBonus).toBe(0);
+  });
+
+  it("should combine multiplier and status bonus correctly", () => {
+    // base=100, ×1.5 mult → 150, ×1.10 critical bonus → 165
+    const result = calculatePoints("ADD", 1000, 1.5, "critical", "Raw");
+    expect(result.finalPoints).toBe(165);
+  });
+
+  it("should handle multiplier at lower bound (0.01)", () => {
+    // base=100, ×0.01 = 1
+    const result = calculatePoints("ADD", 1000, 0.01, "at_target", "Raw");
+    expect(result.finalPoints).toBe(1);
+  });
+
+  it("should handle multiplier at upper bound (100)", () => {
+    // base=100, ×100 = 10000
+    const result = calculatePoints("ADD", 1000, 100, "at_target", "Raw");
+    expect(result.finalPoints).toBe(10000);
+  });
+
+  it("should return fixed 2 points for Refined category regardless of status or multiplier", () => {
+    const critical = calculatePoints("ADD", 5000, 3, "critical", "Refined");
+    expect(critical.finalPoints).toBe(2);
+    const at = calculatePoints("ADD", 5000, 3, "at_target", "Refined");
+    expect(at.finalPoints).toBe(2);
+  });
+
+  it("should return 0 points for ineligible category", () => {
+    const result = calculatePoints("ADD", 5000, 2, "critical", "Blueprints");
+    expect(result.finalPoints).toBe(0);
+  });
 });
 
 describe("awardPoints", () => {

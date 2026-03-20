@@ -37,6 +37,7 @@ jest.mock("next/server", () => {
 const mockGetServerSession = getServerSession as jest.Mock;
 
 // Mock the global fetch
+const originalFetch = global.fetch;
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
@@ -45,6 +46,7 @@ describe("GET /api/leaderboard", () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
+    global.fetch = mockFetch;
 
     mockGetServerSession.mockResolvedValue({
       user: { id: "test-user" },
@@ -55,6 +57,7 @@ describe("GET /api/leaderboard", () => {
 
   afterEach(() => {
     consoleErrorSpy.mockRestore();
+    global.fetch = originalFetch;
   });
 
   const createRequest = (searchParams: string = "", headers = {}) => {
