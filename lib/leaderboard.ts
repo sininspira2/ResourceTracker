@@ -155,6 +155,7 @@ export async function getLeaderboard(
   offset = 0,
   dbInstance: any = db,
 ): Promise<{ rankings: any[]; total: number }> {
+  const effectiveLimit = Math.max(1, limit);
   try {
     let timeCondition = sql`1 = 1`; // Default to no time filter
 
@@ -203,7 +204,7 @@ export async function getLeaderboard(
       .where(timeCondition)
       .groupBy(leaderboard.userId)
       .orderBy(desc(sql`SUM(${leaderboard.finalPoints})`))
-      .limit(limit)
+      .limit(effectiveLimit)
       .offset(offset);
 
     console.log(
@@ -226,6 +227,7 @@ export async function getUserContributions(
   offset = 0,
   dbInstance: any = db,
 ): Promise<{ contributions: any[]; summary: any; total: number }> {
+  const effectiveLimit = Math.max(1, limit);
   let timeCondition = sql`1 = 1`;
 
   if (timeFilter && timeFilter !== "all") {
@@ -262,7 +264,7 @@ export async function getUserContributions(
     .from(leaderboard)
     .where(and(eq(leaderboard.userId, userId), timeCondition))
     .orderBy(desc(leaderboard.createdAt))
-    .limit(limit)
+    .limit(effectiveLimit)
     .offset(offset);
 
   const summaryResult = await dbInstance

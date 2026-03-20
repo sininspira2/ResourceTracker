@@ -9,6 +9,14 @@
       "changes": [
         {
           "type": "bugfix",
+          "description": "Replaced weak Math.random()-based GDPR anonymization token in the data-deletion endpoint with crypto.randomUUID() — cryptographically secure and removes deprecated substr() usage."
+        },
+        {
+          "type": "bugfix",
+          "description": "Added Math.max(1, limit) guard in getLeaderboard and getUserContributions to prevent zero or negative values from being passed to SQL LIMIT, avoiding potential division-by-zero and unexpected query behaviour."
+        },
+        {
+          "type": "bugfix",
           "description": "Fixed CSV injection (formula injection) vulnerability in the bulk CSV export: string fields (id, name) are now prefixed with a single quote when they start with formula-trigger characters (=, +, -, @). The import endpoint strips the prefix on round-trip to remain compatible with editors that preserve it verbatim."
         },
         {
