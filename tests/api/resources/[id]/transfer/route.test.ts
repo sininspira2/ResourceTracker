@@ -4,7 +4,7 @@
 import { PUT } from "@/app/api/resources/[id]/transfer/route";
 import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
-import { db } from "@/lib/db";
+import { db, resourceHistory } from "@/lib/db";
 import { hasResourceAccess } from "@/lib/discord-roles";
 import { nanoid } from "nanoid";
 
@@ -149,13 +149,16 @@ describe("PUT /api/resources/[id]/transfer", () => {
       quantityDeepDesert: 20,
     };
 
+    let capturedTxMock: any;
     mockDb.transaction.mockImplementation(async (callback) => {
       const whereMock = jest
         .fn()
         .mockResolvedValueOnce([resource])
         .mockResolvedValueOnce([updatedResource]);
 
-      const txMock = {
+      const mockInsertValues = jest.fn().mockResolvedValue(undefined);
+
+      capturedTxMock = {
         select: jest.fn(() => ({
           from: jest.fn(() => ({ where: whereMock })),
         })),
@@ -165,10 +168,11 @@ describe("PUT /api/resources/[id]/transfer", () => {
           })),
         })),
         insert: jest.fn(() => ({
-          values: jest.fn().mockResolvedValue(undefined),
+          values: mockInsertValues,
         })),
+        mockInsertValues,
       };
-      return callback(txMock);
+      return callback(capturedTxMock);
     });
 
     const request = createRequest({
@@ -182,6 +186,22 @@ describe("PUT /api/resources/[id]/transfer", () => {
     expect(response.status).toBe(200);
     const body = await response.json();
     expect(body.resource.quantityHagga).toBe(40);
+
+    expect(capturedTxMock.insert).toHaveBeenCalledWith(resourceHistory);
+    expect(capturedTxMock.mockInsertValues).toHaveBeenCalledWith(
+      expect.objectContaining({
+        changeType: "transfer",
+        transferAmount: 10,
+        transferDirection: "to_deep_desert",
+        updatedBy: expect.any(String),
+        previousQuantityHagga: 50,
+        newQuantityHagga: 40,
+        changeAmountHagga: -10,
+        previousQuantityDeepDesert: 10,
+        newQuantityDeepDesert: 20,
+        changeAmountDeepDesert: 10,
+      }),
+    );
   });
 
   it("should return 500 on generic database error", async () => {
