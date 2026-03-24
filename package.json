@@ -27,7 +27,7 @@
     "@libsql/client": "^0.17.2",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.1",
-    "lucide-react": "^0.577.0",
+    "lucide-react": "^1.0.1",
     "nanoid": "^5.1.6",
     "next": "15.5.14",
     "next-auth": "^4.24.13",
