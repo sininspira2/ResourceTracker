@@ -2,6 +2,18 @@
   "currentVersion": "4.1.5",
   "releases": [
     {
+      "version": "4.1.6",
+      "date": "2026-04-18",
+      "title": "Dependency Updates",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "improvement",
+          "description": "Upgraded major dependencies: TypeScript 6.0, ESLint 10, lucide-react 1.x, drizzle-orm 0.45.2, and picomatch 2.3.2 security patch. Replaced the removed lucide-react Github branded icon with react-icons/fa FaGithub. Updated eslint-config-next to 16.2.4 for ESLint 10 compatibility."
+        }
+      ]
+    },
+    {
       "version": "4.1.5",
       "date": "2026-03-17",
       "title": "Bugfixes",
