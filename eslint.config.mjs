@@ -5,9 +5,12 @@ import nextConfig from "eslint-config-next/core-web-vitals";
 // Its ScopeManager lacks addGlobals, which ESLint 10 requires. Replace it
 // with the TypeScript parser (already used for .ts/.tsx by a later entry)
 // and drop the Babel-specific parserOptions.
+let babelParserReplaced = false;
 const config = [
   ...nextConfig.map((entry) => {
-    if (entry.languageOptions?.parser?.meta?.name === "eslint-config-next/parser") {
+    const name = entry.languageOptions?.parser?.meta?.name;
+    if (name && /(?:eslint-config-next|next)\/parser/.test(name)) {
+      babelParserReplaced = true;
       const { parser: _babelParser, parserOptions: _babelOpts, ...restLangOpts } =
         entry.languageOptions;
       return {
@@ -31,5 +34,13 @@ const config = [
     },
   },
 ];
+
+if (!babelParserReplaced) {
+  throw new Error(
+    "eslint.config.mjs: expected to rewrite the bundled Babel/Next parser entry " +
+      "from eslint-config-next, but none matched /(?:eslint-config-next|next)\\/parser/. " +
+      "An eslint-config-next update may have changed the parser meta name — review the workaround.",
+  );
+}
 
 export default config;
