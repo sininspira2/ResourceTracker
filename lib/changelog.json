@@ -37,7 +37,7 @@
         },
         {
           "type": "improvement",
-          "description": "Added idempotent historical data backfill script (scripts/backfill-inventory-locations.ts) that copies legacy Hagga/Deep Desert quantity and history values to the new Location 1/2 columns and translates transfer_direction values. Wired into the build pipeline after db:migrate and guarded by an 'inventory_data_backfilled' flag in global_settings so it runs exactly once across Vercel deployments."
+          "description": "Added idempotent historical data backfill script (scripts/backfill-inventory-locations.ts) that copies legacy Hagga/Deep Desert quantity and history values to the new Location 1/2 columns and translates transfer_direction values ('to_hagga'/'to_deep_desert' → 'transfer_to_location_1'/'transfer_to_location_2') to match the constants in lib/constants.ts. The three UPDATE statements and the flag write run in a single client.batch('write') transaction. Wired into the build pipeline alongside a new scripts/db-migrate-if-configured.ts wrapper that skips drizzle-kit migrate and the backfill when TURSO_DATABASE_URL is unset (CI/build check), while running them normally on Vercel. Guarded by an 'inventory_data_backfilled' flag in global_settings so it runs exactly once across deployments."
         }
       ]
     },

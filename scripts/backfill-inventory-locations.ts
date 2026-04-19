@@ -32,53 +32,51 @@ async function runBackfill() {
 
     console.log("Starting historical data backfill for inventory locations...");
 
-    const resUpdate = await client.execute(`
-      UPDATE resources
-      SET
-        quantity_location_1 = quantity_hagga,
-        quantity_location_2 = quantity_deep_desert;
-    `);
-    console.log(`Resources backfilled: ${resUpdate.rowsAffected} rows affected.`);
-
-    const historyUpdate = await client.execute(`
-      UPDATE resource_history
-      SET
-        previous_quantity_location_1 = previous_quantity_hagga,
-        new_quantity_location_1 = new_quantity_hagga,
-        change_amount_location_1 = change_amount_hagga,
-        previous_quantity_location_2 = previous_quantity_deep_desert,
-        new_quantity_location_2 = new_quantity_deep_desert,
-        change_amount_location_2 = change_amount_deep_desert;
-    `);
-    console.log(`History backfilled: ${historyUpdate.rowsAffected} rows affected.`);
-
-    const directionUpdate = await client.execute(`
-      UPDATE resource_history
-      SET transfer_direction =
-        CASE
-          WHEN transfer_direction = 'to_hagga' THEN 'to_location_1'
-          WHEN transfer_direction = 'to_deep_desert' THEN 'to_location_2'
-          ELSE transfer_direction
-        END
-      WHERE transfer_direction IN ('to_hagga', 'to_deep_desert');
-    `);
-    console.log(`Transfer directions updated: ${directionUpdate.rowsAffected} rows affected.`);
-
     const timestamp = Date.now();
-    await client.execute(`
-      INSERT INTO global_settings (setting_key, setting_value, description, created_at, last_updated_at)
-      VALUES (
-        'inventory_data_backfilled',
-        'true',
-        'Tracks if legacy Hagga/Deep Desert data was migrated to Location 1/2',
-        ${timestamp},
-        ${timestamp}
-      )
-      ON CONFLICT(setting_key) DO UPDATE SET
-        setting_value = 'true',
-        last_updated_at = ${timestamp};
-    `);
 
+    const [resUpdate, historyUpdate, directionUpdate] = await client.batch(
+      [
+        `UPDATE resources
+          SET
+            quantity_location_1 = quantity_hagga,
+            quantity_location_2 = quantity_deep_desert;`,
+        `UPDATE resource_history
+          SET
+            previous_quantity_location_1 = previous_quantity_hagga,
+            new_quantity_location_1 = new_quantity_hagga,
+            change_amount_location_1 = change_amount_hagga,
+            previous_quantity_location_2 = previous_quantity_deep_desert,
+            new_quantity_location_2 = new_quantity_deep_desert,
+            change_amount_location_2 = change_amount_deep_desert;`,
+        `UPDATE resource_history
+          SET transfer_direction =
+            CASE
+              WHEN transfer_direction = 'to_hagga' THEN 'transfer_to_location_1'
+              WHEN transfer_direction = 'to_deep_desert' THEN 'transfer_to_location_2'
+              ELSE transfer_direction
+            END
+          WHERE transfer_direction IN ('to_hagga', 'to_deep_desert');`,
+        {
+          sql: `INSERT INTO global_settings (setting_key, setting_value, description, created_at, last_updated_at)
+            VALUES (
+              'inventory_data_backfilled',
+              'true',
+              'Tracks if legacy Hagga/Deep Desert data was migrated to Location 1/2',
+              ?,
+              ?
+            )
+            ON CONFLICT(setting_key) DO UPDATE SET
+              setting_value = 'true',
+              last_updated_at = ?;`,
+          args: [timestamp, timestamp, timestamp],
+        },
+      ],
+      "write",
+    );
+
+    console.log(`Resources backfilled: ${resUpdate.rowsAffected} rows affected.`);
+    console.log(`History backfilled: ${historyUpdate.rowsAffected} rows affected.`);
+    console.log(`Transfer directions updated: ${directionUpdate.rowsAffected} rows affected.`);
     console.log("Backfill complete and flagged in global_settings.");
 
   } catch (error) {
