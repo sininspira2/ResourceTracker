@@ -186,6 +186,21 @@ export async function GET(request: NextRequest) {
 
   const { location1Name, location2Name } = await getLocationNames();
 
+  const EXPORT_RESERVED = new Set(["id", "name", "targetQuantity"]);
+  if (
+    EXPORT_RESERVED.has(location1Name) ||
+    EXPORT_RESERVED.has(location2Name) ||
+    location1Name === location2Name
+  ) {
+    return NextResponse.json(
+      {
+        error:
+          "Location names are misconfigured: they must not match reserved column names (id, name, targetQuantity) or be identical to each other.",
+      },
+      { status: 500 },
+    );
+  }
+
   const dataForCsv = filteredResources.map((r) => ({
     id: sanitizeCsvField(r.id),
     name: sanitizeCsvField(r.name),
@@ -258,17 +273,39 @@ export async function POST(request: NextRequest) {
   const { location1Name, location2Name } = await getLocationNames();
   const presentColumns = parsed.meta.fields ?? [];
 
-  // Accept either the configured location names or the legacy column names
-  const loc1Key = presentColumns.includes(location1Name)
-    ? location1Name
-    : presentColumns.includes("quantityHagga")
-      ? "quantityHagga"
-      : null;
-  const loc2Key = presentColumns.includes(location2Name)
-    ? location2Name
-    : presentColumns.includes("quantityDeepDesert")
-      ? "quantityDeepDesert"
-      : null;
+  const IMPORT_RESERVED = new Set([
+    "id",
+    "name",
+    "quantityHagga",
+    "quantityDeepDesert",
+  ]);
+  const loc1NameValid =
+    !IMPORT_RESERVED.has(location1Name) && location1Name !== location2Name;
+  const loc2NameValid =
+    !IMPORT_RESERVED.has(location2Name) && location1Name !== location2Name;
+  if (!loc1NameValid || !loc2NameValid) {
+    return NextResponse.json(
+      {
+        error:
+          "Location names are misconfigured: they must not match reserved column names (id, name, quantityHagga, quantityDeepDesert) or be identical to each other.",
+      },
+      { status: 500 },
+    );
+  }
+
+  // Accept either the validated configured name or the legacy column name
+  const loc1Key =
+    loc1NameValid && presentColumns.includes(location1Name)
+      ? location1Name
+      : presentColumns.includes("quantityHagga")
+        ? "quantityHagga"
+        : null;
+  const loc2Key =
+    loc2NameValid && presentColumns.includes(location2Name)
+      ? location2Name
+      : presentColumns.includes("quantityDeepDesert")
+        ? "quantityDeepDesert"
+        : null;
 
   const missingColumns = [
     ...(!presentColumns.includes("id") ? ["id"] : []),

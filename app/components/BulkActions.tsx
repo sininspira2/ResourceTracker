@@ -26,13 +26,23 @@ export function BulkActions({
   const [location2Name, setLocation2Name] = useState("Deep Desert");
 
   useEffect(() => {
-    fetch("/api/global-settings")
-      .then((r) => r.json())
+    const controller = new AbortController();
+    fetch("/api/global-settings", { signal: controller.signal })
+      .then((r) => {
+        if (!r.ok) return;
+        return r.json();
+      })
       .then((data) => {
+        if (!data) return;
         if (data.location1Name) setLocation1Name(data.location1Name);
         if (data.location2Name) setLocation2Name(data.location2Name);
       })
-      .catch(() => {});
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          // ignore non-abort fetch errors silently
+        }
+      });
+    return () => controller.abort();
   }, []);
 
   if (!session?.user?.permissions?.hasTargetEditAccess) {
