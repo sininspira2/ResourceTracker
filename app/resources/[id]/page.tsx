@@ -11,7 +11,12 @@ import { UpdateQuantityModal } from "@/app/components/UpdateQuantityModal";
 import { ChangeTargetModal } from "@/app/components/ChangeTargetModal";
 import { TransferModal } from "@/app/components/TransferModal";
 import { EditResourceModal } from "@/app/components/EditResourceModal";
-import { TIER_OPTIONS, UPDATE_TYPE } from "@/lib/constants";
+import {
+  TIER_OPTIONS,
+  UPDATE_TYPE,
+  type QuantityField,
+  type TransferDirection,
+} from "@/lib/constants";
 import {
   Plus,
   Baseline,
@@ -104,6 +109,8 @@ interface Resource {
   name: string;
   quantityHagga: number;
   quantityDeepDesert: number;
+  quantityLocation1: number;
+  quantityLocation2: number;
   description?: string;
   category?: string;
   subcategory?: string;
@@ -364,7 +371,7 @@ export default function ResourceDetailPage() {
   const handleUpdate = async (
     resourceId: string,
     amount: number,
-    quantityField: "quantityHagga" | "quantityDeepDesert",
+    quantityField: QuantityField,
     updateType: "absolute" | "relative",
     reason?: string,
     onBehalfOf?: string,
@@ -465,7 +472,7 @@ export default function ResourceDetailPage() {
   const handleTransfer = async (
     resourceId: string,
     amount: number,
-    direction: "to_deep_desert" | "to_hagga",
+    direction: TransferDirection,
   ) => {
     try {
       const response = await fetch(`/api/resources/${resourceId}/transfer`, {
