@@ -33,9 +33,13 @@ interface DiffItem {
 export function ImportModal({
   isOpen,
   onClose,
+  location1Name = "Hagga",
+  location2Name = "Deep Desert",
 }: {
   isOpen: boolean;
   onClose: () => void;
+  location1Name?: string;
+  location2Name?: string;
 }) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
@@ -129,6 +133,12 @@ export function ImportModal({
 
   const hasInvalidEntries = diff?.some((d) => d.status === "invalid");
 
+  const displayField = (field: string) => {
+    if (field === "quantityHagga") return location1Name;
+    if (field === "quantityDeepDesert") return location2Name;
+    return field;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-overlay">
       <div className="mx-4 w-full max-w-4xl rounded-lg border border-border-primary bg-background-panel p-6">
@@ -148,8 +158,8 @@ export function ImportModal({
           <div>
             <label htmlFor="csv-upload" className="mb-4 text-text-secondary">
               Upload a CSV file to update resource quantities and targets. The
-              CSV must contain &apos;id&apos;, &apos;quantityHagga&apos;,
-              &apos;quantityDeepDesert&apos;, and &apos;targetQuantity&apos;
+              CSV must contain &apos;id&apos;, &apos;{location1Name}&apos;,
+              &apos;{location2Name}&apos;, and &apos;targetQuantity&apos;
               columns.
             </label>
             <input
@@ -229,7 +239,7 @@ export function ImportModal({
                           {item.name}
                         </td>
                         <td className="px-4 py-2 text-text-secondary">
-                          {item.field}
+                          {displayField(item.field!)}
                         </td>
                         <td className="px-4 py-2 text-text-secondary">
                           {item.old?.[item.field!] ?? "N/A"}
