@@ -9,7 +9,7 @@
     "release:backfill": "tsx scripts/backfill-inventory-locations.ts",
     "start": "next start",
     "lint": "eslint .",
-    "test": "jest",
+    "test": "NODE_NO_WARNINGS=1 jest",
     "db:generate": "drizzle-kit generate && npm run db:generate-hashes",
     "db:generate-hashes": "tsx scripts/generate-migration-hashes.ts",
     "db:push": "drizzle-kit push",

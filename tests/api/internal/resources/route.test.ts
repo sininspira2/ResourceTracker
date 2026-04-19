@@ -2,9 +2,14 @@
  * @jest-environment node
  */
 import { NextRequest } from "next/server";
+import { getServerSession } from "next-auth";
 import { GET } from "@/app/api/internal/resources/route";
 import { db, mockDbExecution } from "@/tests/__mocks__/db";
 
+jest.mock("next-auth", () => ({ getServerSession: jest.fn() }));
+jest.mock("@/lib/discord-roles", () => ({
+  hasResourceAccess: jest.fn().mockReturnValue(true),
+}));
 // Mock the db dependency
 jest.mock("@/lib/db", () => require("@/tests/__mocks__/db"));
 
@@ -13,6 +18,7 @@ describe("GET /api/internal/resources", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (getServerSession as jest.Mock).mockResolvedValue({ user: { roles: ["Member"] } });
     consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
