@@ -110,18 +110,22 @@ export async function POST(request: NextRequest) {
     const rawLocation1 = quantityLocation1 ?? quantityHagga ?? quantity ?? 0;
     const rawLocation2 = quantityLocation2 ?? quantityDeepDesert ?? 0;
 
-    const location1Qty = Number(rawLocation1);
-    const location2Qty = Number(rawLocation2);
-
     if (
-      !Number.isInteger(location1Qty) || location1Qty < 0 ||
-      !Number.isInteger(location2Qty) || location2Qty < 0
+      typeof rawLocation1 !== "number" ||
+      typeof rawLocation2 !== "number" ||
+      !Number.isInteger(rawLocation1) ||
+      rawLocation1 < 0 ||
+      !Number.isInteger(rawLocation2) ||
+      rawLocation2 < 0
     ) {
       return NextResponse.json(
         { error: "Quantities must be non-negative integers" },
         { status: 400 },
       );
     }
+
+    const location1Qty = rawLocation1;
+    const location2Qty = rawLocation2;
 
     const newResource = {
       id: nanoid(),
@@ -314,21 +318,40 @@ export async function PUT(request: NextRequest) {
 
           const resource = currentResourcesMap.get(update.id);
           if (!resource) return null;
+
+          if (update.updateType === "absolute") {
+            if (
+              typeof update.quantity !== "number" ||
+              !Number.isInteger(update.quantity) ||
+              update.quantity < 0
+            ) {
+              throw new Error(
+                `Invalid quantity for resource ${update.id}: must be a non-negative integer`,
+              );
+            }
+          } else if (update.updateType === "relative") {
+            if (
+              typeof update.value !== "number" ||
+              !Number.isInteger(update.value)
+            ) {
+              throw new Error(
+                `Invalid value for resource ${update.id}: must be an integer`,
+              );
+            }
+          }
+
           const previousQuantityHagga = resource.quantityHagga;
-          const changeAmountHagga =
-            update.updateType === "relative"
-              ? update.value
-              : update.quantity - previousQuantityHagga;
           const newQuantityHagga =
             update.updateType === "relative"
               ? previousQuantityHagga + update.value
               : update.quantity;
+          const changeAmountHagga = newQuantityHagga - previousQuantityHagga;
 
           await db
             .update(resources)
             .set({
-              quantityHagga: update.quantity,
-              quantityLocation1: update.quantity,
+              quantityHagga: newQuantityHagga,
+              quantityLocation1: newQuantityHagga,
               lastUpdatedBy: userId,
               updatedAt: new Date(),
             })
@@ -338,13 +361,13 @@ export async function PUT(request: NextRequest) {
             id: nanoid(),
             resourceId: update.id,
             previousQuantityHagga: previousQuantityHagga,
-            newQuantityHagga: update.quantity,
+            newQuantityHagga: newQuantityHagga,
             changeAmountHagga: changeAmountHagga,
             previousQuantityDeepDesert: resource.quantityDeepDesert,
-            newQuantityDeepDesert: resource.quantityDeepDesert, // unchanged
+            newQuantityDeepDesert: resource.quantityDeepDesert,
             changeAmountDeepDesert: 0,
             previousQuantityLocation1: previousQuantityHagga,
-            newQuantityLocation1: update.quantity,
+            newQuantityLocation1: newQuantityHagga,
             changeAmountLocation1: changeAmountHagga,
             previousQuantityLocation2: resource.quantityDeepDesert,
             newQuantityLocation2: resource.quantityDeepDesert,

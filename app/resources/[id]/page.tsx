@@ -27,6 +27,13 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
+const TRANSFER_DIRECTION_LABEL: Record<string, string> = {
+  transfer_to_location_2: "to Deep Desert",
+  to_deep_desert: "to Deep Desert",
+  transfer_to_location_1: "to Hagga",
+  to_hagga: "to Hagga",
+};
+
 const getTierClassName = (tier: number | null | undefined): string => {
   if (tier === null || tier === undefined) return "bg-gray-200 text-gray-800";
   const tierClasses: { [key: number]: string } = {
@@ -1862,10 +1869,7 @@ export default function ResourceDetailPage() {
                             {entry.changeType === "transfer" ? (
                               <span>
                                 Transfer {entry.transferAmount}{" "}
-                                {entry.transferDirection === "transfer_to_location_2" ||
-                                entry.transferDirection === "to_deep_desert"
-                                  ? "to Deep Desert"
-                                  : "to Hagga"}
+                                {TRANSFER_DIRECTION_LABEL[entry.transferDirection] ?? "to Hagga"}
                               </span>
                             ) : (
                               <div className="flex flex-col">
