@@ -1862,7 +1862,8 @@ export default function ResourceDetailPage() {
                             {entry.changeType === "transfer" ? (
                               <span>
                                 Transfer {entry.transferAmount}{" "}
-                                {entry.transferDirection === "to_deep_desert"
+                                {entry.transferDirection === "transfer_to_location_2" ||
+                                entry.transferDirection === "to_deep_desert"
                                   ? "to Deep Desert"
                                   : "to Hagga"}
                               </span>

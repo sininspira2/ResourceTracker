@@ -41,11 +41,11 @@ export async function getLocationNames(
 
     const location1Name =
       typeof rawLoc1 === "string" && rawLoc1.trim().length > 0
-        ? rawLoc1
+        ? rawLoc1.trim()
         : DEFAULT_LOCATION_1_NAME;
     const location2Name =
       typeof rawLoc2 === "string" && rawLoc2.trim().length > 0
-        ? rawLoc2
+        ? rawLoc2.trim()
         : DEFAULT_LOCATION_2_NAME;
 
     return { location1Name, location2Name };

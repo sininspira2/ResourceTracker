@@ -119,8 +119,7 @@ export async function awardPoints(
 ): Promise<PointsCalculation> {
   // Normalize legacy category strings before persisting — the leaderboard
   // always stores the new location/role-agnostic category names.
-  const normalizedCategory =
-    mapCategoryForRead(resourceData.category) ?? resourceData.category;
+  const normalizedCategory = mapCategoryForRead(resourceData.category);
 
   const calculation = calculatePoints(
     actionType,

@@ -26,8 +26,12 @@ async function runBackfill() {
     try {
       await client.execute(`SELECT quantity_location_1 FROM resources LIMIT 1`);
     } catch (e) {
-      console.warn("Target columns do not exist. Schema migration likely hasn't run. Skipping backfill.");
-      return;
+      const msg = e instanceof Error ? e.message : String(e);
+      if (/column.*does not exist|no such column/i.test(msg)) {
+        console.warn("Target columns do not exist. Schema migration likely hasn't run. Skipping backfill.");
+        return;
+      }
+      throw e;
     }
 
     console.log("Starting historical data backfill for inventory locations...");
@@ -80,7 +84,8 @@ async function runBackfill() {
     console.log("Backfill complete and flagged in global_settings.");
 
   } catch (error) {
-    console.error("Critical error during backfill:", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("Critical error during backfill:", msg);
     process.exit(1);
   } finally {
     client.close();

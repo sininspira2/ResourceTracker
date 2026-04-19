@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run db:generate-hashes && tsx scripts/db-migrate-if-configured.ts && tsx scripts/backfill-inventory-locations.ts && next build",
+    "build": "npm run db:generate-hashes && next build",
+    "release:migrate": "tsx scripts/db-migrate-if-configured.ts",
+    "release:backfill": "tsx scripts/backfill-inventory-locations.ts",
     "start": "next start",
     "lint": "eslint .",
     "test": "jest",

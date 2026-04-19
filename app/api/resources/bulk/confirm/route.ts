@@ -45,6 +45,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid update data" }, { status: 400 });
   }
 
+  for (const item of updates) {
+    if (
+      !item ||
+      typeof item !== "object" ||
+      typeof item.id !== "string" ||
+      !item.id ||
+      !item.new ||
+      typeof item.new !== "object" ||
+      !Number.isFinite(item.new.quantityHagga) ||
+      !Number.isFinite(item.new.quantityDeepDesert)
+    ) {
+      return NextResponse.json(
+        { error: "Each update must have a valid id and numeric quantities" },
+        { status: 400 },
+      );
+    }
+  }
+
   try {
     await db.transaction(async (tx) => {
       const changedUpdates = updates.filter(

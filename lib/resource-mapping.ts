@@ -63,10 +63,17 @@ type ResourceRowShape = {
 export function mapResourceRowForRead<T extends ResourceRowShape>(
   row: T,
 ): T & { quantityLocation1: number; quantityLocation2: number } {
+  // The schema adds `quantity_location_1/2` with DEFAULT 0 NOT NULL, so a value of
+  // 0 may mean "not yet backfilled" rather than genuinely zero. Prefer the legacy
+  // column when it is non-zero and the new column is still at the default of 0.
   const quantityLocation1 =
-    row.quantityLocation1 ?? row.quantityHagga ?? 0;
+    row.quantityLocation1 === 0 && row.quantityHagga != null && row.quantityHagga !== 0
+      ? row.quantityHagga
+      : (row.quantityLocation1 ?? row.quantityHagga ?? 0);
   const quantityLocation2 =
-    row.quantityLocation2 ?? row.quantityDeepDesert ?? 0;
+    row.quantityLocation2 === 0 && row.quantityDeepDesert != null && row.quantityDeepDesert !== 0
+      ? row.quantityDeepDesert
+      : (row.quantityLocation2 ?? row.quantityDeepDesert ?? 0);
   const category = mapCategoryForRead(row.category ?? null);
 
   return {
