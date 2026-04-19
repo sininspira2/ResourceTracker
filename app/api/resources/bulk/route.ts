@@ -273,8 +273,8 @@ export async function POST(request: NextRequest) {
   const missingColumns = [
     ...(!presentColumns.includes("id") ? ["id"] : []),
     ...(!presentColumns.includes("name") ? ["name"] : []),
-    ...(!loc1Key ? [location1Name] : []),
-    ...(!loc2Key ? [location2Name] : []),
+    ...(!loc1Key ? [`${location1Name} or quantityHagga`] : []),
+    ...(!loc2Key ? [`${location2Name} or quantityDeepDesert`] : []),
   ];
   if (missingColumns.length > 0) {
     return NextResponse.json(
