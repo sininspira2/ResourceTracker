@@ -34,6 +34,10 @@
         {
           "type": "feature",
           "description": "Leaderboard and user activity reads translate the legacy 'Blueprints' category to 'Gear Blueprints', and awardPoints() now persists the new category explicitly. Resource history and transfers translate legacy transferDirection values ('to_hagga', 'to_deep_desert') to their 'transfer_to_location_{1,2}' equivalents; transfers accept both the legacy and new direction strings on write."
+        },
+        {
+          "type": "improvement",
+          "description": "Added idempotent historical data backfill script (scripts/backfill-inventory-locations.ts) that copies legacy Hagga/Deep Desert quantity and history values to the new Location 1/2 columns and translates transfer_direction values. Wired into the build pipeline after db:migrate and guarded by an 'inventory_data_backfilled' flag in global_settings so it runs exactly once across Vercel deployments."
         }
       ]
     },
