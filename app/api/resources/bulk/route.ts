@@ -186,7 +186,13 @@ export async function GET(request: NextRequest) {
 
   const { location1Name, location2Name } = await getLocationNames();
 
-  const EXPORT_RESERVED = new Set(["id", "name", "targetQuantity"]);
+  const EXPORT_RESERVED = new Set([
+    "id",
+    "name",
+    "targetQuantity",
+    "quantityHagga",
+    "quantityDeepDesert",
+  ]);
   if (
     EXPORT_RESERVED.has(location1Name) ||
     EXPORT_RESERVED.has(location2Name) ||
@@ -388,9 +394,9 @@ export async function POST(request: NextRequest) {
           targetQuantity: current.targetQuantity,
         },
         new: {
-          quantityHagga: row[loc1Key!],
-          quantityDeepDesert: row[loc2Key!],
-          targetQuantity: row.targetQuantity,
+          quantityHagga: desanitizeCsvField(row[loc1Key!]),
+          quantityDeepDesert: desanitizeCsvField(row[loc2Key!]),
+          targetQuantity: desanitizeCsvField(row.targetQuantity),
         },
       };
     }
