@@ -39,8 +39,16 @@ export async function PUT(
     const userId = getUserIdentifier(session);
 
     // Validate target quantity
-    if (typeof targetQuantity !== 'number' || !Number.isInteger(targetQuantity) || targetQuantity < 0 || targetQuantity > 999999999) {
-      return NextResponse.json({ error: "targetQuantity must be a non-negative integer" }, { status: 400 });
+    if (
+      typeof targetQuantity !== "number" ||
+      !Number.isInteger(targetQuantity) ||
+      targetQuantity < 0 ||
+      targetQuantity > 999999999
+    ) {
+      return NextResponse.json(
+        { error: "targetQuantity must be a non-negative integer" },
+        { status: 400 },
+      );
     }
 
     // Check if resource exists

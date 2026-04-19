@@ -26,12 +26,20 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const days = Math.max(1, parseInt(searchParams.get("days") || "30", 10) || 30);
+    const days = Math.max(
+      1,
+      parseInt(searchParams.get("days") || "30", 10) || 30,
+    );
     const isGlobal = searchParams.get("global") === "true";
-    const limit = Math.max(1, Math.min(500, parseInt(searchParams.get("limit") || "500", 10) || 500));
+    const limit = Math.max(
+      1,
+      Math.min(500, parseInt(searchParams.get("limit") || "500", 10) || 500),
+    );
     const userId = searchParams.get("userId");
     const oldUserIdsString = searchParams.get("oldUserIds");
-    const oldUserIds = oldUserIdsString ? oldUserIdsString.split(",").slice(0, 20) : [];
+    const oldUserIds = oldUserIdsString
+      ? oldUserIdsString.split(",").slice(0, 20)
+      : [];
 
     if (!isGlobal && !userId) {
       return NextResponse.json(
@@ -90,14 +98,18 @@ export async function GET(request: NextRequest) {
       .limit(limit);
 
     const processedActivity = activity.map((entry) => {
-      const loc1Amount = (entry.changeAmountLocation1 ?? entry.changeAmountHagga) ?? 0;
-      const loc2Amount = (entry.changeAmountLocation2 ?? entry.changeAmountDeepDesert) ?? 0;
+      const loc1Amount =
+        entry.changeAmountLocation1 ?? entry.changeAmountHagga ?? 0;
+      const loc2Amount =
+        entry.changeAmountLocation2 ?? entry.changeAmountDeepDesert ?? 0;
       const totalChangeAmount = loc1Amount + loc2Amount;
       return {
         ...entry,
         resourceCategory: mapCategoryForRead(entry.resourceCategory),
         previousQuantityLocation1:
-          entry.previousQuantityLocation1 ?? entry.previousQuantityHagga ?? null,
+          entry.previousQuantityLocation1 ??
+          entry.previousQuantityHagga ??
+          null,
         newQuantityLocation1:
           entry.newQuantityLocation1 ?? entry.newQuantityHagga ?? null,
         changeAmountLocation1:

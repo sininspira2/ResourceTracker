@@ -42,8 +42,15 @@ export async function PUT(
     const { transferAmount, transferDirection } = await request.json();
     const userId = getUserIdentifier(session);
 
-    if (typeof transferAmount !== 'number' || !Number.isInteger(transferAmount) || transferAmount <= 0) {
-      return NextResponse.json({ error: "transferAmount must be a positive integer" }, { status: 400 });
+    if (
+      typeof transferAmount !== "number" ||
+      !Number.isInteger(transferAmount) ||
+      transferAmount <= 0
+    ) {
+      return NextResponse.json(
+        { error: "transferAmount must be a positive integer" },
+        { status: 400 },
+      );
     }
 
     if (!transferDirection) {
@@ -111,7 +118,9 @@ export async function PUT(
         })
         .where(eq(resources.id, id));
 
-      const changeAmountHagga = isToLocation1 ? transferAmount : -transferAmount;
+      const changeAmountHagga = isToLocation1
+        ? transferAmount
+        : -transferAmount;
       const changeAmountDeepDesert = isToLocation2
         ? transferAmount
         : -transferAmount;

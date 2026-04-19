@@ -355,7 +355,10 @@ export async function POST(request: NextRequest) {
     const newValues: any = {};
     const validationErrors: any = {};
 
-    const validateAndSet = (value: unknown, internalField: "quantityHagga" | "quantityDeepDesert") => {
+    const validateAndSet = (
+      value: unknown,
+      internalField: "quantityHagga" | "quantityDeepDesert",
+    ) => {
       const num = Number(value);
       if (isNaN(num) || num < 0 || !Number.isInteger(num)) {
         validationErrors[internalField] = "Must be a positive integer";

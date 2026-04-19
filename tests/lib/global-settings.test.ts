@@ -7,7 +7,9 @@ import {
 } from "@/lib/global-settings";
 
 describe("getLocationNames", () => {
-  const makeDb = (rows: { settingKey: string; settingValue: string | null }[]) => ({
+  const makeDb = (
+    rows: { settingKey: string; settingValue: string | null }[],
+  ) => ({
     select: jest.fn().mockReturnThis(),
     from: jest.fn().mockReturnThis(),
     where: jest.fn().mockResolvedValue(rows),

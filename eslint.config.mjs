@@ -11,8 +11,11 @@ const config = [
     const name = entry.languageOptions?.parser?.meta?.name;
     if (name && /(?:eslint-config-next|next)\/parser/.test(name)) {
       babelParserReplaced = true;
-      const { parser: _babelParser, parserOptions: _babelOpts, ...restLangOpts } =
-        entry.languageOptions;
+      const {
+        parser: _babelParser,
+        parserOptions: _babelOpts,
+        ...restLangOpts
+      } = entry.languageOptions;
       return {
         ...entry,
         languageOptions: { ...restLangOpts, parser: tseslint.parser },

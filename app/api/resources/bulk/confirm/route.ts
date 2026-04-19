@@ -38,7 +38,10 @@ export async function POST(request: NextRequest) {
   const updates: UpdateItem[] = await request.json();
 
   if (!Array.isArray(updates) || updates.length > 1000) {
-    return NextResponse.json({ error: "updates must be an array of at most 1000 items" }, { status: 400 });
+    return NextResponse.json(
+      { error: "updates must be an array of at most 1000 items" },
+      { status: 400 },
+    );
   }
 
   if (updates.length === 0) {

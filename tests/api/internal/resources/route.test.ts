@@ -18,7 +18,9 @@ describe("GET /api/internal/resources", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (getServerSession as jest.Mock).mockResolvedValue({ user: { roles: ["Member"] } });
+    (getServerSession as jest.Mock).mockResolvedValue({
+      user: { roles: ["Member"] },
+    });
     consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 

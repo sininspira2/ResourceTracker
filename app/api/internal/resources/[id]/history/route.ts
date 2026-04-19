@@ -31,7 +31,10 @@ export async function GET(
 
   try {
     const { searchParams } = new URL(request.url);
-    const days = Math.max(1, Math.min(500, parseInt(searchParams.get("days") || "7", 10) || 7));
+    const days = Math.max(
+      1,
+      Math.min(500, parseInt(searchParams.get("days") || "7", 10) || 7),
+    );
     const { id: resourceId } = await params;
 
     // Calculate date threshold

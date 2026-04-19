@@ -59,7 +59,11 @@ describe("POST /api/resources/bulk/confirm", () => {
   it("should return 403 if user lacks target-edit access", async () => {
     mockHasTargetEditAccess.mockReturnValue(false);
     const request = createRequest([
-      { id: "r1", status: "changed", new: { quantityHagga: 10, quantityDeepDesert: 5, targetQuantity: 20 } },
+      {
+        id: "r1",
+        status: "changed",
+        new: { quantityHagga: 10, quantityDeepDesert: 5, targetQuantity: 20 },
+      },
     ]);
     const response = await POST(request);
     expect(response.status).toBe(403);

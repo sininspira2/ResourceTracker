@@ -33,7 +33,9 @@ export function mapCategoryForRead<T extends string | null | undefined>(
  * Maps the legacy transfer direction strings to the new location-agnostic
  * equivalents. Leaves other values (including nullish) untouched.
  */
-export function mapTransferDirectionForRead<T extends string | null | undefined>(
+export function mapTransferDirectionForRead<
+  T extends string | null | undefined,
+>(
   direction: T,
 ): T | typeof NEW_DIRECTION_TO_LOCATION_1 | typeof NEW_DIRECTION_TO_LOCATION_2 {
   if (direction === LEGACY_DIRECTION_TO_HAGGA) {
@@ -67,11 +69,15 @@ export function mapResourceRowForRead<T extends ResourceRowShape>(
   // 0 may mean "not yet backfilled" rather than genuinely zero. Prefer the legacy
   // column when it is non-zero and the new column is still at the default of 0.
   const quantityLocation1 =
-    row.quantityLocation1 === 0 && row.quantityHagga != null && row.quantityHagga !== 0
+    row.quantityLocation1 === 0 &&
+    row.quantityHagga != null &&
+    row.quantityHagga !== 0
       ? row.quantityHagga
       : (row.quantityLocation1 ?? row.quantityHagga ?? 0);
   const quantityLocation2 =
-    row.quantityLocation2 === 0 && row.quantityDeepDesert != null && row.quantityDeepDesert !== 0
+    row.quantityLocation2 === 0 &&
+    row.quantityDeepDesert != null &&
+    row.quantityDeepDesert !== 0
       ? row.quantityDeepDesert
       : (row.quantityLocation2 ?? row.quantityDeepDesert ?? 0);
   const category = mapCategoryForRead(row.category ?? null);
@@ -121,7 +127,8 @@ export function mapHistoryRowForRead<T extends HistoryRowShape>(
     ...row,
     previousQuantityLocation1:
       row.previousQuantityLocation1 ?? row.previousQuantityHagga ?? null,
-    newQuantityLocation1: row.newQuantityLocation1 ?? row.newQuantityHagga ?? null,
+    newQuantityLocation1:
+      row.newQuantityLocation1 ?? row.newQuantityHagga ?? null,
     changeAmountLocation1:
       row.changeAmountLocation1 ?? row.changeAmountHagga ?? null,
     previousQuantityLocation2:
@@ -130,6 +137,8 @@ export function mapHistoryRowForRead<T extends HistoryRowShape>(
       row.newQuantityLocation2 ?? row.newQuantityDeepDesert ?? null,
     changeAmountLocation2:
       row.changeAmountLocation2 ?? row.changeAmountDeepDesert ?? null,
-    transferDirection: mapTransferDirectionForRead(row.transferDirection ?? null),
+    transferDirection: mapTransferDirectionForRead(
+      row.transferDirection ?? null,
+    ),
   };
 }

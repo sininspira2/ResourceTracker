@@ -1869,7 +1869,9 @@ export default function ResourceDetailPage() {
                             {entry.changeType === "transfer" ? (
                               <span>
                                 Transfer {entry.transferAmount}{" "}
-                                {TRANSFER_DIRECTION_LABEL[entry.transferDirection] ?? "to Hagga"}
+                                {TRANSFER_DIRECTION_LABEL[
+                                  entry.transferDirection
+                                ] ?? "to Hagga"}
                               </span>
                             ) : (
                               <div className="flex flex-col">

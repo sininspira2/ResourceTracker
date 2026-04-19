@@ -23,7 +23,9 @@ describe("mapCategoryForRead", () => {
 
 describe("mapTransferDirectionForRead", () => {
   it("maps legacy directions to the new values", () => {
-    expect(mapTransferDirectionForRead("to_hagga")).toBe("transfer_to_location_1");
+    expect(mapTransferDirectionForRead("to_hagga")).toBe(
+      "transfer_to_location_1",
+    );
     expect(mapTransferDirectionForRead("to_deep_desert")).toBe(
       "transfer_to_location_2",
     );
