@@ -1,5 +1,6 @@
 /** @type {import('jest').Config} */
 const config = {
+  reporters: ["./jest.reporter.js"],
   roots: ["<rootDir>/tests"],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   testEnvironment: "jest-environment-jsdom",
