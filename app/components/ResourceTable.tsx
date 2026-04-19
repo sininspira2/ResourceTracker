@@ -37,6 +37,8 @@ import {
   WATER_RESOURCE_ID,
   VIEW_MODE,
   TIER_OPTIONS,
+  type TransferDirection,
+  type QuantityField,
 } from "@/lib/constants";
 
 // Utility function to format numbers with commas
@@ -152,6 +154,8 @@ interface Resource {
   name: string;
   quantityHagga: number;
   quantityDeepDesert: number;
+  quantityLocation1: number;
+  quantityLocation2: number;
   description?: string;
   category?: string;
   subcategory?: string;
@@ -681,7 +685,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const handleTransfer = async (
     resourceId: string,
     amount: number,
-    direction: "to_deep_desert" | "to_hagga",
+    direction: TransferDirection,
   ) => {
     try {
       const response = await fetch(
@@ -716,7 +720,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
   const handleUpdate = async (
     resourceId: string,
     amount: number,
-    quantityField: "quantityHagga" | "quantityDeepDesert",
+    quantityField: QuantityField,
     updateType: "absolute" | "relative",
     reason?: string,
     onBehalfOf?: string,
