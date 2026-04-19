@@ -94,6 +94,139 @@ describe("POST /api/resources", () => {
     expect(response.status).toBe(403);
     expect(body).toEqual({ error: "Admin access required" });
   });
+
+  it("dual-writes quantities to both legacy and new location columns", async () => {
+    const capturedInsertValues: any[] = [];
+    const mockDb = {
+      transaction: jest.fn().mockImplementation(async (callback) => {
+        const tx = {
+          insert: jest.fn().mockReturnThis(),
+          values: jest.fn(function (this: any, v: any) {
+            capturedInsertValues.push(v);
+            return this;
+          }),
+          returning: jest.fn().mockResolvedValue([
+            {
+              id: "new-id",
+              name: "Test",
+              category: "Raw",
+              quantityHagga: 10,
+              quantityDeepDesert: 20,
+              quantityLocation1: 10,
+              quantityLocation2: 20,
+            },
+          ]),
+        };
+        return callback(tx);
+      }),
+    };
+    jest.doMock("@/lib/db", () => ({
+      db: mockDb,
+      resources: {},
+      resourceHistory: {},
+    }));
+    jest.doMock("@/lib/discord-roles", () => ({
+      hasResourceAccess: () => true,
+      hasResourceAdminAccess: () => true,
+    }));
+
+    const request = new NextRequest("http://localhost/api/resources", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Test",
+        category: "Raw",
+        quantityHagga: 10,
+        quantityDeepDesert: 20,
+      }),
+    });
+
+    const { POST } = await import("@/app/api/resources/route");
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    // First call: resources insert; second call: resourceHistory insert
+    const resourceInsert = capturedInsertValues[0];
+    expect(resourceInsert).toEqual(
+      expect.objectContaining({
+        quantityHagga: 10,
+        quantityLocation1: 10,
+        quantityDeepDesert: 20,
+        quantityLocation2: 20,
+      }),
+    );
+    const historyInsert = capturedInsertValues[1];
+    expect(historyInsert).toEqual(
+      expect.objectContaining({
+        previousQuantityHagga: 0,
+        newQuantityHagga: 10,
+        changeAmountHagga: 10,
+        previousQuantityLocation1: 0,
+        newQuantityLocation1: 10,
+        changeAmountLocation1: 10,
+        previousQuantityDeepDesert: 0,
+        newQuantityDeepDesert: 20,
+        changeAmountDeepDesert: 20,
+        previousQuantityLocation2: 0,
+        newQuantityLocation2: 20,
+        changeAmountLocation2: 20,
+      }),
+    );
+  });
+
+  it("accepts location-agnostic quantityLocation1/2 in POST body", async () => {
+    const capturedInsertValues: any[] = [];
+    const mockDb = {
+      transaction: jest.fn().mockImplementation(async (callback) => {
+        const tx = {
+          insert: jest.fn().mockReturnThis(),
+          values: jest.fn(function (this: any, v: any) {
+            capturedInsertValues.push(v);
+            return this;
+          }),
+          returning: jest.fn().mockResolvedValue([
+            {
+              id: "new-id",
+              quantityHagga: 7,
+              quantityDeepDesert: 3,
+            },
+          ]),
+        };
+        return callback(tx);
+      }),
+    };
+    jest.doMock("@/lib/db", () => ({
+      db: mockDb,
+      resources: {},
+      resourceHistory: {},
+    }));
+    jest.doMock("@/lib/discord-roles", () => ({
+      hasResourceAccess: () => true,
+      hasResourceAdminAccess: () => true,
+    }));
+
+    const request = new NextRequest("http://localhost/api/resources", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Test",
+        category: "Raw",
+        quantityLocation1: 7,
+        quantityLocation2: 3,
+      }),
+    });
+
+    const { POST } = await import("@/app/api/resources/route");
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    expect(capturedInsertValues[0]).toEqual(
+      expect.objectContaining({
+        quantityHagga: 7,
+        quantityLocation1: 7,
+        quantityDeepDesert: 3,
+        quantityLocation2: 3,
+      }),
+    );
+  });
 });
 
 describe("PUT /api/resources", () => {

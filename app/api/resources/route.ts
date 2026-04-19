@@ -7,6 +7,7 @@ import { hasResourceAccess, hasResourceAdminAccess } from "@/lib/discord-roles";
 import { nanoid } from "nanoid";
 import { awardPoints } from "@/lib/leaderboard";
 import { calculateResourceStatus } from "@/lib/resource-utils";
+import { mapCategoryForRead } from "@/lib/resource-mapping";
 
 /**
  * GET /api/resources
@@ -92,6 +93,8 @@ export async function POST(request: NextRequest) {
       quantity,
       quantityHagga,
       quantityDeepDesert,
+      quantityLocation1,
+      quantityLocation2,
       targetQuantity,
       multiplier,
     } = await request.json();
@@ -104,14 +107,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const haggaQty = quantityHagga || quantity || 0;
-    const deepDesertQty = quantityDeepDesert || 0;
+    const location1Qty = quantityLocation1 ?? quantityHagga ?? quantity ?? 0;
+    const location2Qty = quantityLocation2 ?? quantityDeepDesert ?? 0;
 
     const newResource = {
       id: nanoid(),
       name,
-      quantityHagga: haggaQty,
-      quantityDeepDesert: deepDesertQty,
+      quantityHagga: location1Qty,
+      quantityDeepDesert: location2Qty,
+      quantityLocation1: location1Qty,
+      quantityLocation2: location2Qty,
       description: description || null,
       category,
       subcategory: subcategory || null,
@@ -131,7 +136,7 @@ export async function POST(request: NextRequest) {
         .values(newResource)
         .returning();
 
-      // Log the creation in history
+      // Log the creation in history (dual-write to legacy + location-agnostic columns)
       await tx.insert(resourceHistory).values({
         id: nanoid(),
         resourceId: inserted[0].id,
@@ -141,6 +146,12 @@ export async function POST(request: NextRequest) {
         previousQuantityDeepDesert: 0,
         newQuantityDeepDesert: inserted[0].quantityDeepDesert,
         changeAmountDeepDesert: inserted[0].quantityDeepDesert,
+        previousQuantityLocation1: 0,
+        newQuantityLocation1: inserted[0].quantityHagga,
+        changeAmountLocation1: inserted[0].quantityHagga,
+        previousQuantityLocation2: 0,
+        newQuantityLocation2: inserted[0].quantityDeepDesert,
+        changeAmountLocation2: inserted[0].quantityDeepDesert,
         changeType: "absolute",
         updatedBy: userId,
         reason: "Resource created",
@@ -300,6 +311,7 @@ export async function PUT(request: NextRequest) {
             .update(resources)
             .set({
               quantityHagga: update.quantity,
+              quantityLocation1: update.quantity,
               lastUpdatedBy: userId,
               updatedAt: new Date(),
             })
@@ -314,6 +326,12 @@ export async function PUT(request: NextRequest) {
             previousQuantityDeepDesert: resource.quantityDeepDesert,
             newQuantityDeepDesert: resource.quantityDeepDesert, // unchanged
             changeAmountDeepDesert: 0,
+            previousQuantityLocation1: previousQuantityHagga,
+            newQuantityLocation1: update.quantity,
+            changeAmountLocation1: changeAmountHagga,
+            previousQuantityLocation2: resource.quantityDeepDesert,
+            newQuantityLocation2: resource.quantityDeepDesert,
+            changeAmountLocation2: 0,
             changeType: update.updateType,
             updatedBy: userId,
             reason: update.reason,
@@ -335,7 +353,7 @@ export async function PUT(request: NextRequest) {
               Math.abs(changeAmountHagga),
               {
                 name: resource.name,
-                category: resource.category || "Other",
+                category: mapCategoryForRead(resource.category) || "Other",
                 status: calculateResourceStatus(
                   resource.quantityHagga + resource.quantityDeepDesert,
                   resource.targetQuantity,

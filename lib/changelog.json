@@ -22,6 +22,18 @@
         {
           "type": "feature",
           "description": "Added quantityLocation1 and quantityLocation2 columns to the resources table and six corresponding history columns to resource_history via a new Drizzle migration."
+        },
+        {
+          "type": "feature",
+          "description": "Added GET /api/global-settings and getLocationNames() utility to read configurable inventory location display names from the global_settings table (keys inventory_location_1_name / inventory_location_2_name), falling back to 'Hagga' / 'Deep Desert'."
+        },
+        {
+          "type": "feature",
+          "description": "Resource, history, leaderboard, and user activity APIs now dual-write to legacy Hagga/Deep Desert and new Location1/Location2 columns, and dual-read with Location* fields falling back to their Hagga/Deep Desert counterparts."
+        },
+        {
+          "type": "feature",
+          "description": "Leaderboard and user activity reads translate the legacy 'Blueprints' category to 'Gear Blueprints', and awardPoints() now persists the new category explicitly. Resource history and transfers translate legacy transferDirection values ('to_hagga', 'to_deep_desert') to their 'transfer_to_location_{1,2}' equivalents; transfers accept both the legacy and new direction strings on write."
         }
       ]
     },

@@ -102,6 +102,33 @@ describe("awardPoints", () => {
     expect(mockDb.insert).toHaveBeenCalled();
     expect(mockDb.values).toHaveBeenCalled();
   });
+
+  it("should not create a leaderboard entry for the legacy 'Blueprints' category", async () => {
+    const mockDb = {
+      insert: jest.fn().mockReturnThis(),
+      values: jest.fn().mockResolvedValue(undefined),
+    };
+
+    const { awardPoints } = await import("@/lib/leaderboard");
+    // Legacy "Blueprints" maps to "Gear Blueprints" which is an ineligible
+    // category, so no leaderboard entry should be created.
+    const result = await awardPoints(
+      "test-user",
+      "test-resource",
+      "ADD",
+      1000,
+      {
+        name: "Old BP",
+        category: "Blueprints",
+        status: "at_target",
+        multiplier: 1,
+      },
+      mockDb,
+    );
+
+    expect(result.finalPoints).toBe(0);
+    expect(mockDb.insert).not.toHaveBeenCalled();
+  });
 });
 
 describe("getLeaderboard", () => {
