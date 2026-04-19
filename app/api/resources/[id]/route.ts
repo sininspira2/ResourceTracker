@@ -12,6 +12,7 @@ import {
 } from "@/lib/discord-roles";
 import { awardPoints } from "@/lib/leaderboard";
 import { calculateResourceStatus } from "@/lib/resource-utils";
+import { mapCategoryForRead, mapResourceRowForRead } from "@/lib/resource-mapping";
 
 /**
  * PUT /api/resources/[id]
@@ -60,8 +61,20 @@ export async function PUT(
       reason = reason.trim().replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
     }
 
-    if (quantityField !== undefined && quantityField !== "quantityHagga" && quantityField !== "quantityDeepDesert") {
-      return NextResponse.json({ error: "quantityField must be 'quantityHagga' or 'quantityDeepDesert'" }, { status: 400 });
+    if (
+      quantityField !== undefined &&
+      quantityField !== "quantityHagga" &&
+      quantityField !== "quantityDeepDesert" &&
+      quantityField !== "quantityLocation1" &&
+      quantityField !== "quantityLocation2"
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "quantityField must be 'quantityHagga', 'quantityDeepDesert', 'quantityLocation1', or 'quantityLocation2'",
+        },
+        { status: 400 },
+      );
     }
 
     if (updateType === "absolute") {
@@ -128,7 +141,10 @@ export async function PUT(
       let newQuantityDeepDesert = resource.quantityDeepDesert;
       let changeAmountDeepDesert = 0;
 
-      if (quantityField === "quantityDeepDesert") {
+      if (
+        quantityField === "quantityDeepDesert" ||
+        quantityField === "quantityLocation2"
+      ) {
         changeAmountDeepDesert =
           updateType === "relative"
             ? changeValue
@@ -136,7 +152,7 @@ export async function PUT(
         newQuantityDeepDesert =
           previousQuantityDeepDesert + changeAmountDeepDesert;
       } else {
-        // default to hagga
+        // default to location 1 (legacy: hagga)
         changeAmountHagga =
           updateType === "relative"
             ? changeValue
@@ -144,18 +160,20 @@ export async function PUT(
         newQuantityHagga = previousQuantityHagga + changeAmountHagga;
       }
 
-      // Update the resource
+      // Update the resource (dual-write to legacy + location-agnostic columns)
       await tx
         .update(resources)
         .set({
           quantityHagga: newQuantityHagga,
           quantityDeepDesert: newQuantityDeepDesert,
+          quantityLocation1: newQuantityHagga,
+          quantityLocation2: newQuantityDeepDesert,
           lastUpdatedBy: actingUserIdentifier, // Always log the admin who performed the action
           updatedAt: new Date(),
         })
         .where(eq(resources.id, id));
 
-      // Log the change in history
+      // Log the change in history (dual-write to legacy + location-agnostic columns)
       await tx.insert(resourceHistory).values({
         id: nanoid(),
         resourceId: id,
@@ -165,6 +183,12 @@ export async function PUT(
         previousQuantityDeepDesert,
         newQuantityDeepDesert,
         changeAmountDeepDesert,
+        previousQuantityLocation1: previousQuantityHagga,
+        newQuantityLocation1: newQuantityHagga,
+        changeAmountLocation1: changeAmountHagga,
+        previousQuantityLocation2: previousQuantityDeepDesert,
+        newQuantityLocation2: newQuantityDeepDesert,
+        changeAmountLocation2: changeAmountDeepDesert,
         changeType: updateType || "absolute",
         updatedBy: effectiveUserId, // This is the user the action is for
         reason: reason,
@@ -194,7 +218,7 @@ export async function PUT(
           Math.abs(totalChangeAmount),
           {
             name: resource.name,
-            category: resource.category || "Other",
+            category: mapCategoryForRead(resource.category) || "Other",
             status: resourceStatus,
             multiplier: resource.multiplier || 1.0,
           },
@@ -208,7 +232,9 @@ export async function PUT(
         .where(eq(resources.id, id));
 
       return {
-        resource: updatedResource[0],
+        resource: updatedResource[0]
+          ? mapResourceRowForRead(updatedResource[0])
+          : updatedResource[0],
         pointsEarned: pointsCalculation?.finalPoints || 0,
         pointsCalculation,
       };

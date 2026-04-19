@@ -37,8 +37,65 @@ describe("GET /api/internal/resources/[id]/history", () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toEqual(mockHistory);
+    // GET augments each history row with location-agnostic quantity fields
+    // (falling back to the legacy Hagga/Deep Desert columns, which are absent
+    // here -> null) and a null transferDirection.
+    expect(body).toEqual([
+      expect.objectContaining({
+        id: "1",
+        resourceId: "123",
+        previousQuantityLocation1: null,
+        newQuantityLocation1: null,
+        changeAmountLocation1: null,
+        previousQuantityLocation2: null,
+        newQuantityLocation2: null,
+        changeAmountLocation2: null,
+        transferDirection: null,
+      }),
+    ]);
     expect(db.select).toHaveBeenCalled();
+  });
+
+  it("should fall back to legacy Hagga/Deep Desert quantity columns", async () => {
+    const mockHistory = [
+      {
+        id: "2",
+        resourceId: "123",
+        previousQuantityHagga: 10,
+        newQuantityHagga: 20,
+        changeAmountHagga: 10,
+        previousQuantityDeepDesert: 5,
+        newQuantityDeepDesert: 5,
+        changeAmountDeepDesert: 0,
+        transferDirection: "to_hagga",
+      },
+    ];
+    (db.select as jest.Mock).mockReturnValue({
+      from: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockResolvedValue(mockHistory),
+    });
+
+    const request = new NextRequest(
+      "http://localhost/api/internal/resources/123/history",
+    );
+    const response = await GET(request, {
+      params: Promise.resolve({ id: "123" }),
+    });
+    const body = await response.json();
+
+    expect(body[0]).toEqual(
+      expect.objectContaining({
+        previousQuantityLocation1: 10,
+        newQuantityLocation1: 20,
+        changeAmountLocation1: 10,
+        previousQuantityLocation2: 5,
+        newQuantityLocation2: 5,
+        changeAmountLocation2: 0,
+        transferDirection: "transfer_to_location_1",
+      }),
+    );
   });
 
   it("should default to 7 days if days parameter is not provided", async () => {

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, resourceHistory, resources } from "@/lib/db";
 import { eq, gte, desc, and, or } from "drizzle-orm";
+import {
+  mapCategoryForRead,
+  mapTransferDirectionForRead,
+} from "@/lib/resource-mapping";
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +57,12 @@ export async function GET(request: NextRequest) {
         previousQuantityDeepDesert: resourceHistory.previousQuantityDeepDesert,
         newQuantityDeepDesert: resourceHistory.newQuantityDeepDesert,
         changeAmountDeepDesert: resourceHistory.changeAmountDeepDesert,
+        previousQuantityLocation1: resourceHistory.previousQuantityLocation1,
+        newQuantityLocation1: resourceHistory.newQuantityLocation1,
+        changeAmountLocation1: resourceHistory.changeAmountLocation1,
+        previousQuantityLocation2: resourceHistory.previousQuantityLocation2,
+        newQuantityLocation2: resourceHistory.newQuantityLocation2,
+        changeAmountLocation2: resourceHistory.changeAmountLocation2,
         transferAmount: resourceHistory.transferAmount,
         transferDirection: resourceHistory.transferDirection,
         changeType: resourceHistory.changeType,
@@ -84,6 +94,22 @@ export async function GET(request: NextRequest) {
         (entry.changeAmountHagga || 0) + (entry.changeAmountDeepDesert || 0);
       return {
         ...entry,
+        resourceCategory: mapCategoryForRead(entry.resourceCategory),
+        previousQuantityLocation1:
+          entry.previousQuantityLocation1 ?? entry.previousQuantityHagga ?? null,
+        newQuantityLocation1:
+          entry.newQuantityLocation1 ?? entry.newQuantityHagga ?? null,
+        changeAmountLocation1:
+          entry.changeAmountLocation1 ?? entry.changeAmountHagga ?? null,
+        previousQuantityLocation2:
+          entry.previousQuantityLocation2 ??
+          entry.previousQuantityDeepDesert ??
+          null,
+        newQuantityLocation2:
+          entry.newQuantityLocation2 ?? entry.newQuantityDeepDesert ?? null,
+        changeAmountLocation2:
+          entry.changeAmountLocation2 ?? entry.changeAmountDeepDesert ?? null,
+        transferDirection: mapTransferDirectionForRead(entry.transferDirection),
         changeAmount: totalChangeAmount,
       };
     });
