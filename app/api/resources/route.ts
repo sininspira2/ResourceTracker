@@ -7,6 +7,7 @@ import { hasResourceAccess, hasResourceAdminAccess } from "@/lib/discord-roles";
 import { nanoid } from "nanoid";
 import { awardPoints } from "@/lib/leaderboard";
 import { calculateResourceStatus } from "@/lib/resource-utils";
+import { mapCategoryForRead, mapResourceRowForRead } from "@/lib/resource-mapping";
 
 /**
  * GET /api/resources
@@ -92,6 +93,8 @@ export async function POST(request: NextRequest) {
       quantity,
       quantityHagga,
       quantityDeepDesert,
+      quantityLocation1,
+      quantityLocation2,
       targetQuantity,
       multiplier,
     } = await request.json();
@@ -104,14 +107,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const haggaQty = quantityHagga || quantity || 0;
-    const deepDesertQty = quantityDeepDesert || 0;
+    const rawLocation1 = quantityLocation1 ?? quantityHagga ?? quantity ?? 0;
+    const rawLocation2 = quantityLocation2 ?? quantityDeepDesert ?? 0;
+
+    if (
+      typeof rawLocation1 !== "number" ||
+      typeof rawLocation2 !== "number" ||
+      !Number.isInteger(rawLocation1) ||
+      rawLocation1 < 0 ||
+      !Number.isInteger(rawLocation2) ||
+      rawLocation2 < 0
+    ) {
+      return NextResponse.json(
+        { error: "Quantities must be non-negative integers" },
+        { status: 400 },
+      );
+    }
+
+    const location1Qty = rawLocation1;
+    const location2Qty = rawLocation2;
 
     const newResource = {
       id: nanoid(),
       name,
-      quantityHagga: haggaQty,
-      quantityDeepDesert: deepDesertQty,
+      quantityHagga: location1Qty,
+      quantityDeepDesert: location2Qty,
+      quantityLocation1: location1Qty,
+      quantityLocation2: location2Qty,
       description: description || null,
       category,
       subcategory: subcategory || null,
@@ -131,7 +153,7 @@ export async function POST(request: NextRequest) {
         .values(newResource)
         .returning();
 
-      // Log the creation in history
+      // Log the creation in history (dual-write to legacy + location-agnostic columns)
       await tx.insert(resourceHistory).values({
         id: nanoid(),
         resourceId: inserted[0].id,
@@ -141,6 +163,12 @@ export async function POST(request: NextRequest) {
         previousQuantityDeepDesert: 0,
         newQuantityDeepDesert: inserted[0].quantityDeepDesert,
         changeAmountDeepDesert: inserted[0].quantityDeepDesert,
+        previousQuantityLocation1: 0,
+        newQuantityLocation1: inserted[0].quantityHagga,
+        changeAmountLocation1: inserted[0].quantityHagga,
+        previousQuantityLocation2: 0,
+        newQuantityLocation2: inserted[0].quantityDeepDesert,
+        changeAmountLocation2: inserted[0].quantityDeepDesert,
         changeType: "absolute",
         updatedBy: userId,
         reason: "Resource created",
@@ -290,16 +318,45 @@ export async function PUT(request: NextRequest) {
 
           const resource = currentResourcesMap.get(update.id);
           if (!resource) return null;
+
+          if (update.updateType === "absolute") {
+            if (
+              typeof update.quantity !== "number" ||
+              !Number.isInteger(update.quantity) ||
+              update.quantity < 0
+            ) {
+              throw new Error(
+                `Invalid quantity for resource ${update.id}: must be a non-negative integer`,
+              );
+            }
+          } else if (update.updateType === "relative") {
+            if (
+              typeof update.value !== "number" ||
+              !Number.isInteger(update.value)
+            ) {
+              throw new Error(
+                `Invalid value for resource ${update.id}: must be an integer`,
+              );
+            }
+          }
+
           const previousQuantityHagga = resource.quantityHagga;
-          const changeAmountHagga =
+          const newQuantityHagga =
             update.updateType === "relative"
-              ? update.value
-              : update.quantity - previousQuantityHagga;
+              ? previousQuantityHagga + update.value
+              : update.quantity;
+          if (newQuantityHagga < 0) {
+            throw new Error(
+              `Relative update would result in a negative quantity for resource ${update.id}`,
+            );
+          }
+          const changeAmountHagga = newQuantityHagga - previousQuantityHagga;
 
           await db
             .update(resources)
             .set({
-              quantityHagga: update.quantity,
+              quantityHagga: newQuantityHagga,
+              quantityLocation1: newQuantityHagga,
               lastUpdatedBy: userId,
               updatedAt: new Date(),
             })
@@ -309,11 +366,17 @@ export async function PUT(request: NextRequest) {
             id: nanoid(),
             resourceId: update.id,
             previousQuantityHagga: previousQuantityHagga,
-            newQuantityHagga: update.quantity,
+            newQuantityHagga: newQuantityHagga,
             changeAmountHagga: changeAmountHagga,
             previousQuantityDeepDesert: resource.quantityDeepDesert,
-            newQuantityDeepDesert: resource.quantityDeepDesert, // unchanged
+            newQuantityDeepDesert: resource.quantityDeepDesert,
             changeAmountDeepDesert: 0,
+            previousQuantityLocation1: previousQuantityHagga,
+            newQuantityLocation1: newQuantityHagga,
+            changeAmountLocation1: changeAmountHagga,
+            previousQuantityLocation2: resource.quantityDeepDesert,
+            newQuantityLocation2: resource.quantityDeepDesert,
+            changeAmountLocation2: 0,
             changeType: update.updateType,
             updatedBy: userId,
             reason: update.reason,
@@ -335,9 +398,9 @@ export async function PUT(request: NextRequest) {
               Math.abs(changeAmountHagga),
               {
                 name: resource.name,
-                category: resource.category || "Other",
+                category: mapCategoryForRead(resource.category) || "Other",
                 status: calculateResourceStatus(
-                  resource.quantityHagga + resource.quantityDeepDesert,
+                  newQuantityHagga + resource.quantityDeepDesert,
                   resource.targetQuantity,
                 ),
                 multiplier: resource.multiplier || 1.0,
@@ -360,7 +423,7 @@ export async function PUT(request: NextRequest) {
 
       return NextResponse.json(
         {
-          resources: updatedResources,
+          resources: updatedResources.map(mapResourceRowForRead),
           totalPointsEarned,
           pointsBreakdown: pointsResults.filter((result) => result !== null),
         },

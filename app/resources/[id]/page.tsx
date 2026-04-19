@@ -11,7 +11,12 @@ import { UpdateQuantityModal } from "@/app/components/UpdateQuantityModal";
 import { ChangeTargetModal } from "@/app/components/ChangeTargetModal";
 import { TransferModal } from "@/app/components/TransferModal";
 import { EditResourceModal } from "@/app/components/EditResourceModal";
-import { TIER_OPTIONS, UPDATE_TYPE } from "@/lib/constants";
+import {
+  TIER_OPTIONS,
+  UPDATE_TYPE,
+  type QuantityField,
+  type TransferDirection,
+} from "@/lib/constants";
 import {
   Plus,
   Baseline,
@@ -21,6 +26,13 @@ import {
   Trash2,
   AlertTriangle,
 } from "lucide-react";
+
+const TRANSFER_DIRECTION_LABEL: Record<string, string> = {
+  transfer_to_location_2: "to Deep Desert",
+  to_deep_desert: "to Deep Desert",
+  transfer_to_location_1: "to Hagga",
+  to_hagga: "to Hagga",
+};
 
 const getTierClassName = (tier: number | null | undefined): string => {
   if (tier === null || tier === undefined) return "bg-gray-200 text-gray-800";
@@ -104,6 +116,8 @@ interface Resource {
   name: string;
   quantityHagga: number;
   quantityDeepDesert: number;
+  quantityLocation1: number;
+  quantityLocation2: number;
   description?: string;
   category?: string;
   subcategory?: string;
@@ -364,7 +378,7 @@ export default function ResourceDetailPage() {
   const handleUpdate = async (
     resourceId: string,
     amount: number,
-    quantityField: "quantityHagga" | "quantityDeepDesert",
+    quantityField: QuantityField,
     updateType: "absolute" | "relative",
     reason?: string,
     onBehalfOf?: string,
@@ -465,7 +479,7 @@ export default function ResourceDetailPage() {
   const handleTransfer = async (
     resourceId: string,
     amount: number,
-    direction: "to_deep_desert" | "to_hagga",
+    direction: TransferDirection,
   ) => {
     try {
       const response = await fetch(`/api/resources/${resourceId}/transfer`, {
@@ -1855,9 +1869,7 @@ export default function ResourceDetailPage() {
                             {entry.changeType === "transfer" ? (
                               <span>
                                 Transfer {entry.transferAmount}{" "}
-                                {entry.transferDirection === "to_deep_desert"
-                                  ? "to Deep Desert"
-                                  : "to Hagga"}
+                                {TRANSFER_DIRECTION_LABEL[entry.transferDirection] ?? "to Hagga"}
                               </span>
                             ) : (
                               <div className="flex flex-col">

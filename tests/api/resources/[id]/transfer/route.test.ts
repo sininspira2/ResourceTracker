@@ -192,7 +192,9 @@ describe("PUT /api/resources/[id]/transfer", () => {
       expect.objectContaining({
         changeType: "transfer",
         transferAmount: 10,
-        transferDirection: "to_deep_desert",
+        // Dual-write: legacy strings are translated to the new
+        // location-agnostic values when written to history.
+        transferDirection: "transfer_to_location_2",
         updatedBy: expect.any(String),
         previousQuantityHagga: 50,
         newQuantityHagga: 40,
@@ -200,6 +202,66 @@ describe("PUT /api/resources/[id]/transfer", () => {
         previousQuantityDeepDesert: 10,
         newQuantityDeepDesert: 20,
         changeAmountDeepDesert: 10,
+        previousQuantityLocation1: 50,
+        newQuantityLocation1: 40,
+        changeAmountLocation1: -10,
+        previousQuantityLocation2: 10,
+        newQuantityLocation2: 20,
+        changeAmountLocation2: 10,
+      }),
+    );
+  });
+
+  it("should accept the new transfer_to_location_2 direction", async () => {
+    const resource = {
+      id: "test-id",
+      quantityHagga: 50,
+      quantityDeepDesert: 10,
+    };
+    const updatedResource = {
+      ...resource,
+      quantityHagga: 40,
+      quantityDeepDesert: 20,
+    };
+
+    let capturedTxMock: any;
+    mockDb.transaction.mockImplementation(async (callback) => {
+      const whereMock = jest
+        .fn()
+        .mockResolvedValueOnce([resource])
+        .mockResolvedValueOnce([updatedResource]);
+
+      const mockInsertValues = jest.fn().mockResolvedValue(undefined);
+
+      capturedTxMock = {
+        select: jest.fn(() => ({
+          from: jest.fn(() => ({ where: whereMock })),
+        })),
+        update: jest.fn(() => ({
+          set: jest.fn(() => ({
+            where: jest.fn().mockResolvedValue(undefined),
+          })),
+        })),
+        insert: jest.fn(() => ({
+          values: mockInsertValues,
+        })),
+        mockInsertValues,
+      };
+      return callback(capturedTxMock);
+    });
+
+    const request = createRequest({
+      transferAmount: 10,
+      transferDirection: "transfer_to_location_2",
+    });
+    const response = await PUT(request, {
+      params: Promise.resolve({ id: "test-id" }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(capturedTxMock.mockInsertValues).toHaveBeenCalledWith(
+      expect.objectContaining({
+        transferDirection: "transfer_to_location_2",
       }),
     );
   });

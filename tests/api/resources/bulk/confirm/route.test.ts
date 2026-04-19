@@ -133,18 +133,20 @@ describe("POST /api/resources/bulk/confirm", () => {
 
     expect(capturedTx.insert).toHaveBeenCalledWith(resourceHistory);
     expect(capturedTx.mockInsertValues).toHaveBeenCalledWith(
-      expect.objectContaining({
-        changeType: "absolute",
-        reason: "Bulk CSV import",
-        resourceId: "r1",
-        previousQuantityHagga: 10,
-        newQuantityHagga: 25,
-        changeAmountHagga: 15,
-        previousQuantityDeepDesert: 5,
-        newQuantityDeepDesert: 8,
-        changeAmountDeepDesert: 3,
-        updatedBy: expect.any(String),
-      }),
+      expect.arrayContaining([
+        expect.objectContaining({
+          changeType: "absolute",
+          reason: "Bulk CSV import",
+          resourceId: "r1",
+          previousQuantityHagga: 10,
+          newQuantityHagga: 25,
+          changeAmountHagga: 15,
+          previousQuantityDeepDesert: 5,
+          newQuantityDeepDesert: 8,
+          changeAmountDeepDesert: 3,
+          updatedBy: expect.any(String),
+        }),
+      ]),
     );
   });
 
@@ -194,10 +196,12 @@ describe("POST /api/resources/bulk/confirm", () => {
     // De-duplication: insert called exactly once for r1 (last entry wins)
     expect(capturedTx.mockInsertValues).toHaveBeenCalledTimes(1);
     expect(capturedTx.mockInsertValues).toHaveBeenCalledWith(
-      expect.objectContaining({
-        newQuantityHagga: 99,
-        newQuantityDeepDesert: 99,
-      }),
+      expect.arrayContaining([
+        expect.objectContaining({
+          newQuantityHagga: 99,
+          newQuantityDeepDesert: 99,
+        }),
+      ]),
     );
   });
 

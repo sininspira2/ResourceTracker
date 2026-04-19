@@ -28,6 +28,8 @@ export const resources = sqliteTable("resources", {
   name: text("name").notNull(),
   quantityHagga: integer("quantity_hagga").notNull().default(0),
   quantityDeepDesert: integer("quantity_deep_desert").notNull().default(0),
+  quantityLocation1: integer("quantity_location_1").notNull().default(0),
+  quantityLocation2: integer("quantity_location_2").notNull().default(0),
   description: text("description"),
   category: text("category"),
   subcategory: text("subcategory"),
@@ -58,12 +60,18 @@ export const resourceHistory = sqliteTable("resource_history", {
   ).notNull(),
   newQuantityDeepDesert: integer("new_quantity_deep_desert").notNull(),
   changeAmountDeepDesert: integer("change_amount_deep_desert").notNull(),
+  previousQuantityLocation1: integer("previous_quantity_location_1"),
+  newQuantityLocation1: integer("new_quantity_location_1"),
+  changeAmountLocation1: integer("change_amount_location_1"),
+  previousQuantityLocation2: integer("previous_quantity_location_2"),
+  newQuantityLocation2: integer("new_quantity_location_2"),
+  changeAmountLocation2: integer("change_amount_location_2"),
   changeType: text("change_type").notNull(), // 'absolute', 'relative', or 'transfer'
   updatedBy: text("updated_by").notNull(),
   reason: text("reason"), // Optional reason for the change
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   transferAmount: integer("transfer_amount"),
-  transferDirection: text("transfer_direction"), // 'to_deep_desert' or 'to_hagga'
+  transferDirection: text("transfer_direction"), // 'to_deep_desert', 'to_hagga', 'transfer_to_location_1', or 'transfer_to_location_2'
 });
 
 export const leaderboard = sqliteTable("leaderboard", {

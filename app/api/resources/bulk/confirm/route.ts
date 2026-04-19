@@ -45,6 +45,45 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid update data" }, { status: 400 });
   }
 
+  for (const item of updates) {
+    if (
+      !item ||
+      typeof item !== "object" ||
+      typeof item.id !== "string" ||
+      !item.id ||
+      !item.new ||
+      typeof item.new !== "object"
+    ) {
+      return NextResponse.json(
+        { error: "Each update must have a valid id and numeric quantities" },
+        { status: 400 },
+      );
+    }
+    const qtyHagga = Number(item.new.quantityHagga);
+    const qtyDeepDesert = Number(item.new.quantityDeepDesert);
+    if (
+      !Number.isInteger(qtyHagga) ||
+      qtyHagga < 0 ||
+      !Number.isInteger(qtyDeepDesert) ||
+      qtyDeepDesert < 0
+    ) {
+      return NextResponse.json(
+        { error: "Each update must have a valid id and numeric quantities" },
+        { status: 400 },
+      );
+    }
+    const tgt = item.new.targetQuantity;
+    if (tgt !== null && tgt !== undefined) {
+      const targetNum = Number(tgt);
+      if (!Number.isInteger(targetNum) || targetNum < 0) {
+        return NextResponse.json(
+          { error: "Each update must have a valid id and numeric quantities" },
+          { status: 400 },
+        );
+      }
+    }
+  }
+
   try {
     await db.transaction(async (tx) => {
       const changedUpdates = updates.filter(
@@ -76,38 +115,61 @@ export async function POST(request: NextRequest) {
         currentResources.map((r) => [r.id, r]),
       );
 
+      const now = new Date();
+      const historyEntries: (typeof resourceHistory.$inferInsert)[] = [];
+
       for (const update of uniqueChangedUpdates) {
         const current = currentResourcesMap.get(update.id);
         if (!current) {
           continue;
         }
 
+        const newQtyHagga = Number(update.new.quantityHagga);
+        const newQtyDeepDesert = Number(update.new.quantityDeepDesert);
+        const tgt = update.new.targetQuantity;
+        const newTargetQty =
+          tgt === null || tgt === undefined ? null : Number(tgt);
+        const changeAmountHagga = newQtyHagga - current.quantityHagga;
+        const changeAmountDeepDesert =
+          newQtyDeepDesert - current.quantityDeepDesert;
+
         await tx
           .update(resources)
           .set({
-            quantityHagga: update.new.quantityHagga,
-            quantityDeepDesert: update.new.quantityDeepDesert,
-            targetQuantity: update.new.targetQuantity,
+            quantityHagga: newQtyHagga,
+            quantityDeepDesert: newQtyDeepDesert,
+            quantityLocation1: newQtyHagga,
+            quantityLocation2: newQtyDeepDesert,
+            targetQuantity: newTargetQty,
             lastUpdatedBy: userId,
-            updatedAt: new Date(),
+            updatedAt: now,
           })
           .where(eq(resources.id, update.id));
 
-        await tx.insert(resourceHistory).values({
+        historyEntries.push({
           id: nanoid(),
           resourceId: update.id,
           previousQuantityHagga: current.quantityHagga,
-          newQuantityHagga: update.new.quantityHagga,
-          changeAmountHagga: update.new.quantityHagga - current.quantityHagga,
+          newQuantityHagga: newQtyHagga,
+          changeAmountHagga,
           previousQuantityDeepDesert: current.quantityDeepDesert,
-          newQuantityDeepDesert: update.new.quantityDeepDesert,
-          changeAmountDeepDesert:
-            update.new.quantityDeepDesert - current.quantityDeepDesert,
-          changeType: "absolute",
+          newQuantityDeepDesert: newQtyDeepDesert,
+          changeAmountDeepDesert,
+          previousQuantityLocation1: current.quantityHagga,
+          newQuantityLocation1: newQtyHagga,
+          changeAmountLocation1: changeAmountHagga,
+          previousQuantityLocation2: current.quantityDeepDesert,
+          newQuantityLocation2: newQtyDeepDesert,
+          changeAmountLocation2: changeAmountDeepDesert,
+          changeType: "absolute" as const,
           updatedBy: userId,
           reason: "Bulk CSV import",
-          createdAt: new Date(),
+          createdAt: now,
         });
+      }
+
+      if (historyEntries.length > 0) {
+        await tx.insert(resourceHistory).values(historyEntries);
       }
     });
 

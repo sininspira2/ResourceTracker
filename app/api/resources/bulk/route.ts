@@ -9,14 +9,7 @@ import {
   UPDATE_THRESHOLD_NON_PRIORITY_MS,
   UPDATE_THRESHOLD_PRIORITY_MS,
 } from "@/lib/constants";
-
-interface CsvRow {
-  id: string;
-  name: string;
-  quantityHagga: string;
-  quantityDeepDesert: string;
-  targetQuantity: string;
-}
+import { getLocationNames } from "@/lib/global-settings";
 
 // Formula injection prevention: prefix values that would be interpreted as
 // spreadsheet formulas (=, +, -, @, tab, carriage-return) with a single quote.
@@ -191,11 +184,34 @@ export async function GET(request: NextRequest) {
     .where(and(...whereConditions));
   const filteredResources = await query;
 
+  const { location1Name, location2Name } = await getLocationNames();
+
+  const EXPORT_RESERVED = new Set([
+    "id",
+    "name",
+    "targetQuantity",
+    "quantityHagga",
+    "quantityDeepDesert",
+  ]);
+  if (
+    EXPORT_RESERVED.has(location1Name) ||
+    EXPORT_RESERVED.has(location2Name) ||
+    location1Name === location2Name
+  ) {
+    return NextResponse.json(
+      {
+        error:
+          "Location names are misconfigured: they must not match reserved column names (id, name, targetQuantity) or be identical to each other.",
+      },
+      { status: 500 },
+    );
+  }
+
   const dataForCsv = filteredResources.map((r) => ({
     id: sanitizeCsvField(r.id),
     name: sanitizeCsvField(r.name),
-    quantityHagga: r.quantityHagga,
-    quantityDeepDesert: r.quantityDeepDesert,
+    [location1Name]: r.quantityHagga,
+    [location2Name]: r.quantityDeepDesert,
     targetQuantity: r.targetQuantity,
   }));
 
@@ -255,16 +271,54 @@ export async function POST(request: NextRequest) {
   }
 
   const csvData = await file.text();
-  const parsed = Papa.parse<CsvRow>(csvData, {
+  const parsed = Papa.parse<Record<string, string>>(csvData, {
     header: true,
     skipEmptyLines: true,
   });
 
-  const requiredColumns = ["id", "name", "quantityHagga", "quantityDeepDesert"];
+  const { location1Name, location2Name } = await getLocationNames();
   const presentColumns = parsed.meta.fields ?? [];
-  const missingColumns = requiredColumns.filter(
-    (col) => !presentColumns.includes(col),
-  );
+
+  const IMPORT_RESERVED = new Set([
+    "id",
+    "name",
+    "quantityHagga",
+    "quantityDeepDesert",
+  ]);
+  const loc1NameValid =
+    !IMPORT_RESERVED.has(location1Name) && location1Name !== location2Name;
+  const loc2NameValid =
+    !IMPORT_RESERVED.has(location2Name) && location1Name !== location2Name;
+  if (!loc1NameValid || !loc2NameValid) {
+    return NextResponse.json(
+      {
+        error:
+          "Location names are misconfigured: they must not match reserved column names (id, name, quantityHagga, quantityDeepDesert) or be identical to each other.",
+      },
+      { status: 500 },
+    );
+  }
+
+  // Accept either the validated configured name or the legacy column name
+  const loc1Key =
+    loc1NameValid && presentColumns.includes(location1Name)
+      ? location1Name
+      : presentColumns.includes("quantityHagga")
+        ? "quantityHagga"
+        : null;
+  const loc2Key =
+    loc2NameValid && presentColumns.includes(location2Name)
+      ? location2Name
+      : presentColumns.includes("quantityDeepDesert")
+        ? "quantityDeepDesert"
+        : null;
+
+  const missingColumns = [
+    ...(!presentColumns.includes("id") ? ["id"] : []),
+    ...(!presentColumns.includes("name") ? ["name"] : []),
+    ...(!loc1Key ? [`${location1Name} or quantityHagga`] : []),
+    ...(!loc2Key ? [`${location2Name} or quantityDeepDesert`] : []),
+  ];
   if (missingColumns.length > 0) {
     return NextResponse.json(
       {
@@ -301,20 +355,17 @@ export async function POST(request: NextRequest) {
     const newValues: any = {};
     const validationErrors: any = {};
 
-    const validateAndSet = (
-      value: any,
-      fieldName: "quantityHagga" | "quantityDeepDesert",
-    ) => {
+    const validateAndSet = (value: unknown, internalField: "quantityHagga" | "quantityDeepDesert") => {
       const num = Number(value);
       if (isNaN(num) || num < 0 || !Number.isInteger(num)) {
-        validationErrors[fieldName] = "Must be a positive integer";
+        validationErrors[internalField] = "Must be a positive integer";
       } else {
-        newValues[fieldName] = num;
+        newValues[internalField] = num;
       }
     };
 
-    validateAndSet(row.quantityHagga, "quantityHagga");
-    validateAndSet(row.quantityDeepDesert, "quantityDeepDesert");
+    validateAndSet(desanitizeCsvField(row[loc1Key!]), "quantityHagga");
+    validateAndSet(desanitizeCsvField(row[loc2Key!]), "quantityDeepDesert");
 
     // Validate targetQuantity
     const newTargetRaw = row.targetQuantity;
@@ -343,9 +394,9 @@ export async function POST(request: NextRequest) {
           targetQuantity: current.targetQuantity,
         },
         new: {
-          quantityHagga: row.quantityHagga,
-          quantityDeepDesert: row.quantityDeepDesert,
-          targetQuantity: row.targetQuantity,
+          quantityHagga: desanitizeCsvField(row[loc1Key!]),
+          quantityDeepDesert: desanitizeCsvField(row[loc2Key!]),
+          targetQuantity: desanitizeCsvField(row.targetQuantity),
         },
       };
     }
