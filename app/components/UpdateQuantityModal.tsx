@@ -249,7 +249,9 @@ export function UpdateQuantityModal({
               className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
             >
               <option value={QUANTITY_FIELD.HAGGA}>{location1Name}</option>
-              <option value={QUANTITY_FIELD.DEEP_DESERT}>{location2Name}</option>
+              <option value={QUANTITY_FIELD.DEEP_DESERT}>
+                {location2Name}
+              </option>
             </select>
           </div>
 

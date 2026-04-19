@@ -74,12 +74,14 @@ export function SettingsForm() {
         Inventory Location Names
       </h2>
       <p className="mb-6 text-sm text-text-tertiary">
-        Customize the display names for the two inventory locations shown throughout the app.
+        Customize the display names for the two inventory locations shown
+        throughout the app.
       </p>
 
       {loadWarning && (
         <div className="mb-4 rounded-md bg-background-warning p-3 text-sm text-text-warning">
-          Could not load current settings — showing defaults. You can still save new values.
+          Could not load current settings — showing defaults. You can still save
+          new values.
         </div>
       )}
 
@@ -98,7 +100,7 @@ export function SettingsForm() {
             onChange={(e) => setLocation1Name(e.target.value)}
             maxLength={50}
             required
-            className="w-full rounded-lg border border-border-secondary bg-background-primary px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-lg border border-border-secondary bg-background-primary px-3 py-2 text-text-primary focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="e.g. Hagga"
           />
         </div>
@@ -117,7 +119,7 @@ export function SettingsForm() {
             onChange={(e) => setLocation2Name(e.target.value)}
             maxLength={50}
             required
-            className="w-full rounded-lg border border-border-secondary bg-background-primary px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-lg border border-border-secondary bg-background-primary px-3 py-2 text-text-primary focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="e.g. Deep Desert"
           />
         </div>

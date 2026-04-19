@@ -690,9 +690,7 @@ export default function ResourceDetailPage() {
             await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
           }
 
-          const response = await fetch(
-            `/api/resources?_t=${Date.now()}`,
-          );
+          const response = await fetch(`/api/resources?_t=${Date.now()}`);
 
           if (!response.ok) {
             setError("Failed to fetch resource");
@@ -973,7 +971,8 @@ export default function ResourceDetailPage() {
                     <div className="flex flex-col gap-6 text-center sm:flex-row">
                       <div>
                         <div className="text-xl font-bold text-text-primary">
-                          {location1Name}: {formatNumber(resource.quantityHagga)}
+                          {location1Name}:{" "}
+                          {formatNumber(resource.quantityHagga)}
                         </div>
                         <div className="text-xl font-bold text-text-primary">
                           {location2Name}:{" "}

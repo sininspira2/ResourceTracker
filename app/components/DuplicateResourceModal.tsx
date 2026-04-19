@@ -359,7 +359,9 @@ export function DuplicateResourceModal({
               className="mb-1 block text-sm font-medium text-text-secondary"
             >
               Target Quantity{" "}
-              <span className="font-normal text-text-quaternary">(optional)</span>
+              <span className="font-normal text-text-quaternary">
+                (optional)
+              </span>
             </label>
             <input
               id="dup-target-quantity-input"

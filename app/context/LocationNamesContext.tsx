@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface LocationNamesContextValue {
   location1Name: string;
@@ -27,7 +33,10 @@ export function LocationNamesProvider({
     if (!r.ok) return;
     const data = await r.json();
     if (data?.location1Name && data?.location2Name) {
-      setNames({ location1Name: data.location1Name, location2Name: data.location2Name });
+      setNames({
+        location1Name: data.location1Name,
+        location2Name: data.location2Name,
+      });
     }
   }, []);
 
