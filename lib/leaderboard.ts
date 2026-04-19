@@ -1,6 +1,7 @@
 import { db, leaderboard, resources } from "./db";
 import { eq, desc, sql, and, gte } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { mapCategoryForRead } from "./resource-mapping";
 
 // Constants for points calculation
 const BASE_POINTS_PER_1000_RESOURCES = 100;
@@ -116,12 +117,17 @@ export async function awardPoints(
   },
   dbInstance: any = db,
 ): Promise<PointsCalculation> {
+  // Normalize legacy category strings before persisting — the leaderboard
+  // always stores the new location/role-agnostic category names.
+  const normalizedCategory =
+    mapCategoryForRead(resourceData.category) ?? resourceData.category;
+
   const calculation = calculatePoints(
     actionType,
     quantityChanged,
     resourceData.multiplier,
     resourceData.status,
-    resourceData.category,
+    normalizedCategory,
   );
 
   // Only create leaderboard entry if points were earned
@@ -137,7 +143,7 @@ export async function awardPoints(
       statusBonus: calculation.statusBonus,
       finalPoints: calculation.finalPoints,
       resourceName: resourceData.name,
-      resourceCategory: resourceData.category,
+      resourceCategory: normalizedCategory,
       resourceStatus: resourceData.status,
       createdAt: new Date(),
     });

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserContributions, getUserRank } from "@/lib/leaderboard";
+import { mapCategoryForRead } from "@/lib/resource-mapping";
 
 /**
  * GET /api/leaderboard/[userId]
@@ -40,12 +41,18 @@ export async function GET(
       getUserRank(userId, timeFilter),
     ]);
 
+    const mappedContributions = contributions.contributions.map((entry: any) =>
+      entry && typeof entry === "object" && "resourceCategory" in entry
+        ? { ...entry, resourceCategory: mapCategoryForRead(entry.resourceCategory) }
+        : entry,
+    );
+
     return NextResponse.json(
       {
         userId: userId,
         timeFilter,
         rank,
-        contributions: contributions.contributions,
+        contributions: mappedContributions,
         summary: contributions.summary,
         total: contributions.total,
         page,

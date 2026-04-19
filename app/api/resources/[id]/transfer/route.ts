@@ -6,14 +6,21 @@ import { resources, resourceHistory } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { hasResourceAccess } from "@/lib/discord-roles";
+import { mapResourceRowForRead } from "@/lib/resource-mapping";
 
 /**
  * PUT /api/resources/[id]/transfer
  *
- * Transfers a quantity of a resource between the Hagga base and Deep Desert
- * storage. The transfer direction is specified by `transferDirection`:
- * - `"to_deep_desert"` — moves units from Hagga → Deep Desert
- * - `"to_hagga"` — moves units from Deep Desert → Hagga
+ * Transfers a quantity of a resource between the two inventory locations.
+ * Accepts either the legacy direction strings or their location-agnostic
+ * equivalents:
+ * - `"to_deep_desert"` / `"transfer_to_location_2"` — moves units from
+ *   location 1 (legacy: Hagga) → location 2 (legacy: Deep Desert)
+ * - `"to_hagga"` / `"transfer_to_location_1"` — moves units from location 2 →
+ *   location 1
+ *
+ * History entries are written using the new `transfer_to_location_{1,2}`
+ * direction strings.
  *
  * Validates that the source location has sufficient stock, then atomically
  * updates both quantities and logs the transfer in resource history.
@@ -46,10 +53,19 @@ export async function PUT(
       );
     }
 
-    if (
-      transferDirection !== "to_deep_desert" &&
-      transferDirection !== "to_hagga"
-    ) {
+    const TO_LOCATION_2_DIRECTIONS = new Set([
+      "to_deep_desert",
+      "transfer_to_location_2",
+    ]);
+    const TO_LOCATION_1_DIRECTIONS = new Set([
+      "to_hagga",
+      "transfer_to_location_1",
+    ]);
+
+    const isToLocation2 = TO_LOCATION_2_DIRECTIONS.has(transferDirection);
+    const isToLocation1 = TO_LOCATION_1_DIRECTIONS.has(transferDirection);
+
+    if (!isToLocation1 && !isToLocation2) {
       return NextResponse.json(
         { error: "Invalid transferDirection" },
         { status: 400 },
@@ -69,14 +85,13 @@ export async function PUT(
       let newQuantityHagga = resource.quantityHagga;
       let newQuantityDeepDesert = resource.quantityDeepDesert;
 
-      if (transferDirection === "to_deep_desert") {
+      if (isToLocation2) {
         if (resource.quantityHagga < transferAmount) {
           throw new Error("Insufficient quantity in Hagga base");
         }
         newQuantityHagga = resource.quantityHagga - transferAmount;
         newQuantityDeepDesert = resource.quantityDeepDesert + transferAmount;
       } else {
-        // to_hagga
         if (resource.quantityDeepDesert < transferAmount) {
           throw new Error("Insufficient quantity in Deep Desert base");
         }
@@ -89,37 +104,53 @@ export async function PUT(
         .set({
           quantityHagga: newQuantityHagga,
           quantityDeepDesert: newQuantityDeepDesert,
+          quantityLocation1: newQuantityHagga,
+          quantityLocation2: newQuantityDeepDesert,
           lastUpdatedBy: userId,
           updatedAt: new Date(),
         })
         .where(eq(resources.id, id));
+
+      const changeAmountHagga = isToLocation1 ? transferAmount : -transferAmount;
+      const changeAmountDeepDesert = isToLocation2
+        ? transferAmount
+        : -transferAmount;
+      const newTransferDirection = isToLocation2
+        ? "transfer_to_location_2"
+        : "transfer_to_location_1";
 
       await tx.insert(resourceHistory).values({
         id: nanoid(),
         resourceId: id,
         previousQuantityHagga: resource.quantityHagga,
         newQuantityHagga: newQuantityHagga,
-        changeAmountHagga:
-          transferDirection === "to_hagga" ? transferAmount : -transferAmount,
+        changeAmountHagga,
         previousQuantityDeepDesert: resource.quantityDeepDesert,
         newQuantityDeepDesert: newQuantityDeepDesert,
-        changeAmountDeepDesert:
-          transferDirection === "to_deep_desert"
-            ? transferAmount
-            : -transferAmount,
+        changeAmountDeepDesert,
+        previousQuantityLocation1: resource.quantityHagga,
+        newQuantityLocation1: newQuantityHagga,
+        changeAmountLocation1: changeAmountHagga,
+        previousQuantityLocation2: resource.quantityDeepDesert,
+        newQuantityLocation2: newQuantityDeepDesert,
+        changeAmountLocation2: changeAmountDeepDesert,
         changeType: "transfer",
         updatedBy: userId,
-        reason: `Transfer ${transferAmount} ${transferDirection}`,
+        reason: `Transfer ${transferAmount} ${newTransferDirection}`,
         createdAt: new Date(),
         transferAmount: transferAmount,
-        transferDirection: transferDirection,
+        transferDirection: newTransferDirection,
       });
 
       const updatedResource = await tx
         .select()
         .from(resources)
         .where(eq(resources.id, id));
-      return { resource: updatedResource[0] };
+      return {
+        resource: updatedResource[0]
+          ? mapResourceRowForRead(updatedResource[0])
+          : updatedResource[0],
+      };
     });
 
     return NextResponse.json(result, {

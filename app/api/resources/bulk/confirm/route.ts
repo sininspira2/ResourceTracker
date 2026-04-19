@@ -87,22 +87,34 @@ export async function POST(request: NextRequest) {
           .set({
             quantityHagga: update.new.quantityHagga,
             quantityDeepDesert: update.new.quantityDeepDesert,
+            quantityLocation1: update.new.quantityHagga,
+            quantityLocation2: update.new.quantityDeepDesert,
             targetQuantity: update.new.targetQuantity,
             lastUpdatedBy: userId,
             updatedAt: new Date(),
           })
           .where(eq(resources.id, update.id));
 
+        const changeAmountHagga =
+          update.new.quantityHagga - current.quantityHagga;
+        const changeAmountDeepDesert =
+          update.new.quantityDeepDesert - current.quantityDeepDesert;
+
         await tx.insert(resourceHistory).values({
           id: nanoid(),
           resourceId: update.id,
           previousQuantityHagga: current.quantityHagga,
           newQuantityHagga: update.new.quantityHagga,
-          changeAmountHagga: update.new.quantityHagga - current.quantityHagga,
+          changeAmountHagga,
           previousQuantityDeepDesert: current.quantityDeepDesert,
           newQuantityDeepDesert: update.new.quantityDeepDesert,
-          changeAmountDeepDesert:
-            update.new.quantityDeepDesert - current.quantityDeepDesert,
+          changeAmountDeepDesert,
+          previousQuantityLocation1: current.quantityHagga,
+          newQuantityLocation1: update.new.quantityHagga,
+          changeAmountLocation1: changeAmountHagga,
+          previousQuantityLocation2: current.quantityDeepDesert,
+          newQuantityLocation2: update.new.quantityDeepDesert,
+          changeAmountLocation2: changeAmountDeepDesert,
           changeType: "absolute",
           updatedBy: userId,
           reason: "Bulk CSV import",

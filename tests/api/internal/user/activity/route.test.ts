@@ -60,8 +60,10 @@ describe("GET /api/internal/user/activity", () => {
       {
         id: 1,
         resourceName: "Wood",
+        resourceCategory: "Raw",
         changeAmountHagga: 10,
         changeAmountDeepDesert: 5,
+        transferDirection: null,
       },
     ];
     mockLimit.mockResolvedValue(mockActivity);
@@ -74,7 +76,21 @@ describe("GET /api/internal/user/activity", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body).toEqual([{ ...mockActivity[0], changeAmount: 15 }]);
+    expect(body).toEqual([
+      expect.objectContaining({
+        id: 1,
+        resourceName: "Wood",
+        resourceCategory: "Raw",
+        changeAmount: 15,
+        previousQuantityLocation1: null,
+        newQuantityLocation1: null,
+        changeAmountLocation1: 10,
+        previousQuantityLocation2: null,
+        newQuantityLocation2: null,
+        changeAmountLocation2: 5,
+        transferDirection: null,
+      }),
+    ]);
     expect(db.db.where).toHaveBeenCalled();
   });
 
@@ -84,8 +100,10 @@ describe("GET /api/internal/user/activity", () => {
       {
         id: 2,
         resourceName: "Stone",
+        resourceCategory: "Blueprints",
         changeAmountHagga: -5,
         changeAmountDeepDesert: 0,
+        transferDirection: "to_deep_desert",
       },
     ];
     mockLimit.mockResolvedValue(mockActivity);
@@ -98,7 +116,17 @@ describe("GET /api/internal/user/activity", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body).toEqual([{ ...mockActivity[0], changeAmount: -5 }]);
+    expect(body).toEqual([
+      expect.objectContaining({
+        id: 2,
+        resourceName: "Stone",
+        // Legacy "Blueprints" category is translated to "Gear Blueprints"
+        resourceCategory: "Gear Blueprints",
+        changeAmount: -5,
+        // Legacy transferDirection is translated to the new value
+        transferDirection: "transfer_to_location_2",
+      }),
+    ]);
     expect(db.db.where).toHaveBeenCalled();
   });
 
