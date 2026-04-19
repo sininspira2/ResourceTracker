@@ -4,7 +4,10 @@ export const CATEGORY_OPTIONS = [
   "Raw",
   "Refined",
   "Components",
-  "Blueprints",
+  "Gear Blueprints",
+  "Gear",
+  "Augmentations",
+  "Augmentation Blueprints",
   "Other",
 ] as const;
 
@@ -43,6 +46,8 @@ export type UpdateType = (typeof UPDATE_TYPE)[keyof typeof UPDATE_TYPE];
 export const QUANTITY_FIELD = {
   HAGGA: "quantityHagga",
   DEEP_DESERT: "quantityDeepDesert",
+  LOCATION_1: "quantityLocation1",
+  LOCATION_2: "quantityLocation2",
 } as const;
 
 export type QuantityField =
@@ -51,6 +56,8 @@ export type QuantityField =
 export const TRANSFER_DIRECTION = {
   TO_DEEP_DESERT: "to_deep_desert",
   TO_HAGGA: "to_hagga",
+  TO_LOCATION_1: "transfer_to_location_1",
+  TO_LOCATION_2: "transfer_to_location_2",
 } as const;
 
 export type TransferDirection =
@@ -85,7 +92,7 @@ export const WATER_RESOURCE_ID = "45";
 export const UNCATEGORIZED = "Uncategorized";
 export const RAW_CATEGORY = "Raw";
 export const COMPONENTS_CATEGORY = "Components";
-export const BP_CATEGORY = "Blueprints";
+export const BP_CATEGORY = "Gear Blueprints";
 
 export const TIER_OPTIONS = [
   { value: "0", label: "Tier 0 (Scrap)" },
@@ -94,7 +101,12 @@ export const TIER_OPTIONS = [
   { value: "3", label: "Tier 3 (Steel)" },
   { value: "4", label: "Tier 4 (Aluminum)" },
   { value: "5", label: "Tier 5 (Duraluminum)" },
-  { value: "6", label: "Tier 6 (Plastanium)" },
+  { value: "6", label: "Tier 6/Grade 0 (Plastanium)" },
+  { value: "7", label: "Grade 1" },
+  { value: "8", label: "Grade 2" },
+  { value: "9", label: "Grade 3" },
+  { value: "10", label: "Grade 4" },
+  { value: "11", label: "Grade 5" },
 ];
 
 export const SUBCATEGORY_OPTIONS: Record<string, string[]> = {
@@ -106,7 +118,7 @@ export const SUBCATEGORY_OPTIONS: Record<string, string[]> = {
     "Spice Refined",
   ],
   Components: ["Looted", "Craftable"],
-  Blueprints: [
+  "Gear Blueprints": [
     "Heavy Armor",
     "Light Armor",
     "Stillsuits",
@@ -114,6 +126,16 @@ export const SUBCATEGORY_OPTIONS: Record<string, string[]> = {
     "Weapon",
     "Utility",
   ],
+  Gear: [
+    "Heavy Armor",
+    "Light Armor",
+    "Stillsuits",
+    "Vehicle",
+    "Weapon",
+    "Utility",
+  ],
+  Augmentations: ["Garment", "Melee", "Ranged", "Generic"],
+  "Augmentation Blueprints": ["Garment", "Melee", "Ranged", "Generic"],
   Other: ["Ammo", "Currency"],
 };
 
