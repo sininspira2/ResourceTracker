@@ -10,108 +10,28 @@ Removed from fork network due to original author repository being deleted, and d
 
 ---
 
-## 🚀 Release Notes - Version 4.1.4: Subcategory Management and Dynamic Filtering
+### [4.3.0] - 2026-04-19
 
-**Release Date:** October 27, 2025
+**Dynamic Inventory Locations, Category Expansion, & Dependency Updates**
 
-### ✨ New Features
+#### ✨ Features
 
-#### Subcategory System for Resources
+- **Custom Inventory Locations:** Admins can now dynamically rename the two inventory locations via the Settings page (`/dashboard/settings`). The UI (tables, modals, and activity logs) now reads these location names from a shared React Context rather than using hardcoded values.
+- **Rapid Resource Templating:** Admins can now duplicate an existing resource directly from its detail page using a pre-filled modal.
+- **Expanded Categories & Subcategories:** \* Renamed the legacy "Blueprints" category to "Gear Blueprints".
+  - Added three new resource categories: "Gear", "Augmentations", and "Augmentation Blueprints", each complete with subcategory mapping.
+- **Expanded Resource Tiers:** Renamed Tier 6 to "Tier 6/Grade 0 (Plastanium)" and introduced Graded support with Grade 1 through Grade 5 options (values 7–11).
+- **Agnostic Database Schema:** Introduced `quantityLocation1` and `quantityLocation2` columns to the database schema to replace hardcoded "Hagga" and "Deep Desert" columns.
+- **Seamless API Fallbacks:** All backend routing (resources, history, leaderboard, and activity) has been refactored to dual-read and dual-write across the legacy and new location schemas, ensuring a seamless, zero-downtime transition. Read operations dynamically fallback to legacy values if new columns are not yet populated.
 
-A new **'subcategory'** attribute has been added to resources, significantly improving organization and allowing for more granular filtering.
+#### 🚀 Improvements & Tech Debt
 
-- **Dynamic UI:** The 'Edit Resource' modal and the resource creation form now include a dynamic subcategory dropdown. This menu intelligently populates its options based on the selected primary category.
-- **Enhanced Filtering:** The resource table now features a new **subcategory filter**. This filter is interactive, automatically enabling or disabling itself based on the user's selection in the main category filter.
-
-### 🚀 Improvements
-
-#### API and UI Enhancements
-
-- **Backend Support:** The backend API endpoints for creating, updating, and bulk-fetching resources have been updated to fully support the new `subcategory` field, including robust server-side filtering.
-- **Consistent Styling:** New constants for subcategory options and corresponding CSS variables have been defined to ensure a consistent UI presentation across all themes.
-
-### ❗ Important Notes
-
-#### Database Migration
-
-This update utilizes the `subcategory` column in the database, which was added in **version 4.1.0**.
-
-A database migration is **not required** for this update _unless_ you are updating from a version prior to 4.1.0 **and** you see a yellow warning banner displayed above the navigation bar. If you do not see this banner, your database is already up to date.
-
----
-
-## 🚀 Release Notes - Version 4.1.3: Resource Tier System and Multi-Select Filtering
-
-**Release Date:** October 24, 2025
-
-### ✨ New Features
-
-#### Resource Tier System
-
-This release introduces a new **'tier' attribute** for resources, allowing for a more granular classification based on importance or progression level.
-
-- **Tier Management:** The 'Edit Resource' modal has been updated to allow users to assign a tier to any resource.
-- **Enhanced UI:** Resource detail pages now display the assigned tier with distinct styling, making it easy to identify a resource's classification at a glance.
-
-#### Advanced Multi-Select Filtering
-
-The filtering system on the resource table has been significantly upgraded to provide more powerful and flexible data organization.
-
-- **Multi-Select:** Users can now select multiple options simultaneously for the **Status**, **Category**, and new **Tier** filters.
-- **New Component:** This feature is powered by a new `MultiSelectDropdown` component for a clean and intuitive user experience.
-
-### ❗ Important Notes
-
-#### Database Migration
-
-This update utilizes the `tier` column in the database, which was added in **version 4.1.0**.
-
-A database migration is **not required** for this update _unless_ you are updating from a version prior to 4.1.0 **and** you see a yellow warning banner displayed above the navigation bar. If you do not see this banner, your database is already up to date.
-
----
-
-## 🚀 Release Notes - Version 4.1.2: CSV Data Import/Export and UI Enhancements
-
-**Release Date:** October 23, 2025
-
-### ✨ New Features
-
-#### Bulk Resource Management via CSV Import/Export
-
-A powerful new bulk data management feature has been added to the Resources page, available for users with `canEditTargets` permissions.
-
-- **Export:** A new **"Export CSV"** button allows users to download the currently filtered list of resources. A confirmation modal displays the total resource count before downloading. The export includes key data: `id`, `name`, `quantityHagga`, `quantityDeepDesert`, and `targetQuantity`.
-- **Import:** An **"Import CSV"** button opens a modal to upload a CSV file. The system provides a detailed **preview of all pending changes**, showing the old and new values for each resource to ensure accuracy before confirmation.
-- **Transactional Updates:** To ensure data integrity, all changes from an import are processed in a **single database transaction** after the user confirms the preview.
-- **API:** This feature is supported by new secure API endpoints at `/api/resources/bulk` and `/api/resources/bulk/confirm`, which are protected by the same permission checks.
-
-### 🚀 Improvements
-
-#### Robust File Validation
-
-The CSV import feature includes multi-layered validation to ensure data quality and security.
-
-- **Client-Side Checks:** The import modal provides immediate user feedback by validating the file for the correct `.csv` extension and a maximum file size of 256KB.
-- **Server-Side Checks:** The same validation rules are enforced on the API to prevent circumvention of client-side checks. Invalid files are rejected with a `400 Bad Request` status, with new API tests confirming this behavior.
-- **Accessibility:** The import modal's file input is now correctly associated with a `label` for improved screen reader support.
-
-#### Responsive Navigation UI
-
-The main `ClientNavigation` component has been refactored for better usability on different screen sizes.
-
-- **Mobile View:** The version button is now positioned **below** the page title, preventing layout crowding on smaller screens.
-- **Desktop View:** The button remains in its original position **next to** the page title.
-
-### 🐛 Bug Fixes
-
-- **Testing Stability:** Resolved a compatibility issue between Jest and `node-fetch v3` to stabilize the testing environment.
-
-### 🔧 Other Changes
-
-- **Test Coverage:** Added test coverage for API routes and core components.
-- **CI/CD Pipeline:** Updated the `ci.yml` workflow to include Vercel notifications and ensure `npm install` is used.
-- **Dependencies:** Bumped development dependencies, including `@types/node` to `22.18.12`.
-- **Code Style:** Ran `prettier` across the codebase to ensure consistent formatting.
+- **Automated Data Backfill:** Implemented an idempotent background migration script (`scripts/backfill-inventory-locations.ts`) that runs automatically during the Vercel build pipeline to copy legacy inventory stock and history over to the new schema columns.
+- **TypeScript 6.0 Upgrade:** Upgraded TypeScript to `6.0.2` and implemented `types/vendor.d.ts` for side-effect-only imports.
+- **ESLint 10.0 Upgrade:** Upgraded ESLint to `10.1.0` and migrated `eslint.config.mjs` to utilize native flat config combined with `@typescript-eslint/parser`.
+- **Dependency Bumps:** \* Updated `drizzle-orm` to `0.45.2`.
+  - Updated `lucide-react` to `1.7.0` (swapping the deprecated Github icon for `FaGithub`).
+  - Applied security patches for `picomatch` (`2.3.2`).
 
 _See `lib/changelog.json` for previous update history._
 

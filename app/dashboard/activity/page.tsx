@@ -49,7 +49,11 @@ interface ActivityEntry {
   newQuantityDeepDesert: number;
   changeAmountDeepDesert: number;
   transferAmount?: number;
-  transferDirection?: "to_deep_desert" | "to_hagga" | "transfer_to_location_2" | "transfer_to_location_1";
+  transferDirection?:
+    | "to_deep_desert"
+    | "to_hagga"
+    | "transfer_to_location_2"
+    | "transfer_to_location_1";
   changeAmount: number; // This is the total change amount, added in the API
   changeType: "absolute" | "relative" | "transfer";
   reason?: string;
@@ -272,8 +276,10 @@ export default function ActivityLogPage() {
                             {activity.changeType === "transfer" ? (
                               <span>
                                 Transfer {activity.transferAmount}{" "}
-                                {activity.transferDirection === "to_deep_desert" ||
-                                activity.transferDirection === "transfer_to_location_2"
+                                {activity.transferDirection ===
+                                  "to_deep_desert" ||
+                                activity.transferDirection ===
+                                  "transfer_to_location_2"
                                   ? `to ${location2Name}`
                                   : `to ${location1Name}`}
                               </span>

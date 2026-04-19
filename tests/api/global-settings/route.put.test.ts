@@ -19,7 +19,10 @@ describe("PUT /api/global-settings", () => {
     const { PUT } = await import("@/app/api/global-settings/route");
     const request = new NextRequest("http://localhost/api/global-settings", {
       method: "PUT",
-      body: JSON.stringify({ location1Name: "Hagga", location2Name: "Deep Desert" }),
+      body: JSON.stringify({
+        location1Name: "Hagga",
+        location2Name: "Deep Desert",
+      }),
       headers: { "Content-Type": "application/json" },
     });
     const response = await PUT(request);
@@ -38,7 +41,10 @@ describe("PUT /api/global-settings", () => {
     const { PUT } = await import("@/app/api/global-settings/route");
     const request = new NextRequest("http://localhost/api/global-settings", {
       method: "PUT",
-      body: JSON.stringify({ location1Name: "Hagga", location2Name: "Deep Desert" }),
+      body: JSON.stringify({
+        location1Name: "Hagga",
+        location2Name: "Deep Desert",
+      }),
       headers: { "Content-Type": "application/json" },
     });
     const response = await PUT(request);
@@ -76,7 +82,10 @@ describe("PUT /api/global-settings", () => {
     const { PUT } = await import("@/app/api/global-settings/route");
     const request = new NextRequest("http://localhost/api/global-settings", {
       method: "PUT",
-      body: JSON.stringify({ location1Name: "  ", location2Name: "Deep Desert" }),
+      body: JSON.stringify({
+        location1Name: "  ",
+        location2Name: "Deep Desert",
+      }),
       headers: { "Content-Type": "application/json" },
     });
     const response = await PUT(request);
@@ -96,7 +105,10 @@ describe("PUT /api/global-settings", () => {
     const longName = "A".repeat(51);
     const request = new NextRequest("http://localhost/api/global-settings", {
       method: "PUT",
-      body: JSON.stringify({ location1Name: longName, location2Name: "Deep Desert" }),
+      body: JSON.stringify({
+        location1Name: longName,
+        location2Name: "Deep Desert",
+      }),
       headers: { "Content-Type": "application/json" },
     });
     const response = await PUT(request);
@@ -131,7 +143,9 @@ describe("PUT /api/global-settings", () => {
     });
 
     const mockOnConflictDoUpdate = jest.fn().mockResolvedValue(undefined);
-    const mockValues = jest.fn().mockReturnValue({ onConflictDoUpdate: mockOnConflictDoUpdate });
+    const mockValues = jest
+      .fn()
+      .mockReturnValue({ onConflictDoUpdate: mockOnConflictDoUpdate });
     const mockInsert = jest.fn().mockReturnValue({ values: mockValues });
 
     jest.doMock("@/lib/db", () => ({
@@ -147,14 +161,20 @@ describe("PUT /api/global-settings", () => {
     const { PUT } = await import("@/app/api/global-settings/route");
     const request = new NextRequest("http://localhost/api/global-settings", {
       method: "PUT",
-      body: JSON.stringify({ location1Name: "  Arrakeen  ", location2Name: "Sietch Tabr" }),
+      body: JSON.stringify({
+        location1Name: "  Arrakeen  ",
+        location2Name: "Sietch Tabr",
+      }),
       headers: { "Content-Type": "application/json" },
     });
     const response = await PUT(request);
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toEqual({ location1Name: "Arrakeen", location2Name: "Sietch Tabr" });
+    expect(body).toEqual({
+      location1Name: "Arrakeen",
+      location2Name: "Sietch Tabr",
+    });
     expect(mockInsert).toHaveBeenCalledWith({});
     expect(mockValues).toHaveBeenCalledWith(
       expect.arrayContaining([
@@ -183,10 +203,16 @@ describe("PUT /api/global-settings", () => {
       user: { permissions: { hasResourceAdminAccess: true } },
     });
 
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
-    const mockOnConflictDoUpdate = jest.fn().mockRejectedValue(new Error("DB failure"));
-    const mockValues = jest.fn().mockReturnValue({ onConflictDoUpdate: mockOnConflictDoUpdate });
+    const mockOnConflictDoUpdate = jest
+      .fn()
+      .mockRejectedValue(new Error("DB failure"));
+    const mockValues = jest
+      .fn()
+      .mockReturnValue({ onConflictDoUpdate: mockOnConflictDoUpdate });
     const mockInsert = jest.fn().mockReturnValue({ values: mockValues });
 
     jest.doMock("@/lib/db", () => ({
@@ -202,7 +228,10 @@ describe("PUT /api/global-settings", () => {
     const { PUT } = await import("@/app/api/global-settings/route");
     const request = new NextRequest("http://localhost/api/global-settings", {
       method: "PUT",
-      body: JSON.stringify({ location1Name: "Hagga", location2Name: "Deep Desert" }),
+      body: JSON.stringify({
+        location1Name: "Hagga",
+        location2Name: "Deep Desert",
+      }),
       headers: { "Content-Type": "application/json" },
     });
     const response = await PUT(request);

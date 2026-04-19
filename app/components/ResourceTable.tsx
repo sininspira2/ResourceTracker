@@ -1847,7 +1847,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           {/* Quantity Display */}
                           <div className="text-center">
                             <div className="text-sm font-bold text-text-primary">
-                              {location1Name}: {formatNumber(resource.quantityHagga)}
+                              {location1Name}:{" "}
+                              {formatNumber(resource.quantityHagga)}
                             </div>
                             <div className="text-sm font-bold text-text-primary">
                               {location2Name}:{" "}
@@ -2152,7 +2153,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                       <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
                         {location1Name}: {formatNumber(resource.quantityHagga)}
                         <br />
-                        {location2Name}: {formatNumber(resource.quantityDeepDesert)}
+                        {location2Name}:{" "}
+                        {formatNumber(resource.quantityDeepDesert)}
                       </td>
                       {canEdit && (
                         <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">

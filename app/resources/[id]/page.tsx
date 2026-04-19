@@ -11,6 +11,7 @@ import { UpdateQuantityModal } from "@/app/components/UpdateQuantityModal";
 import { ChangeTargetModal } from "@/app/components/ChangeTargetModal";
 import { TransferModal } from "@/app/components/TransferModal";
 import { EditResourceModal } from "@/app/components/EditResourceModal";
+import { DuplicateResourceModal } from "@/app/components/DuplicateResourceModal";
 import {
   TIER_OPTIONS,
   UPDATE_TYPE,
@@ -23,6 +24,7 @@ import {
   ArrowRightLeft,
   Target,
   Pencil,
+  Copy,
   Trash2,
   AlertTriangle,
 } from "lucide-react";
@@ -193,6 +195,11 @@ export default function ResourceDetailPage() {
     resource: Resource | null;
   }>({ isOpen: false, resource: null });
 
+  const [duplicateModalState, setDuplicateModalState] = useState<{
+    isOpen: boolean;
+    resource: Resource | null;
+  }>({ isOpen: false, resource: null });
+
   const [deleteConfirm, setDeleteConfirm] = useState<{
     resourceId: string | null;
     resourceName: string;
@@ -212,6 +219,10 @@ export default function ResourceDetailPage() {
   const startEditResource = (resource: Resource) => {
     if (!isResourceAdmin) return;
     setEditModalState({ isOpen: true, resource: resource });
+  };
+
+  const handleDuplicateSuccess = (newResourceId: string) => {
+    router.push(`/resources/${newResourceId}`);
   };
 
   // Fetch history data
@@ -668,11 +679,24 @@ export default function ResourceDetailPage() {
     }
 
     const fetchResource = async () => {
+      const MAX_ATTEMPTS = 5;
+      const RETRY_DELAY_MS = 1000;
+
       try {
         setLoading(true);
-        const response = await fetch(`/api/resources`);
 
-        if (response.ok) {
+        for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+          if (attempt > 0) {
+            await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+          }
+
+          const response = await fetch(`/api/resources?_t=${Date.now()}`);
+
+          if (!response.ok) {
+            setError("Failed to fetch resource");
+            return;
+          }
+
           const resources = await response.json();
           const foundResource = resources.find(
             (r: Resource) => r.id === resourceId,
@@ -681,7 +705,6 @@ export default function ResourceDetailPage() {
           if (foundResource) {
             setResource({
               ...foundResource,
-              // Fix date parsing - only convert if it's not already a string
               updatedAt:
                 typeof foundResource.updatedAt === "string"
                   ? foundResource.updatedAt
@@ -691,13 +714,14 @@ export default function ResourceDetailPage() {
                   ? foundResource.createdAt
                   : new Date(foundResource.createdAt).toISOString(),
             });
-            setNewQuantity(foundResource.quantityHagga); // Initialize edit form
+            setNewQuantity(foundResource.quantityHagga);
             setNewQuantityInput(foundResource.quantityHagga.toString());
-          } else {
+            return;
+          }
+
+          if (attempt === MAX_ATTEMPTS - 1) {
             setError("Resource not found");
           }
-        } else {
-          setError("Failed to fetch resource");
         }
       } catch (error) {
         console.error("Error fetching resource:", error);
@@ -947,7 +971,8 @@ export default function ResourceDetailPage() {
                     <div className="flex flex-col gap-6 text-center sm:flex-row">
                       <div>
                         <div className="text-xl font-bold text-text-primary">
-                          {location1Name}: {formatNumber(resource.quantityHagga)}
+                          {location1Name}:{" "}
+                          {formatNumber(resource.quantityHagga)}
                         </div>
                         <div className="text-xl font-bold text-text-primary">
                           {location2Name}:{" "}
@@ -1073,6 +1098,19 @@ export default function ResourceDetailPage() {
                               >
                                 <Pencil className="hidden h-4 w-4 md:inline-block" />
                                 Edit
+                              </button>
+                              <button
+                                onClick={() =>
+                                  setDuplicateModalState({
+                                    isOpen: true,
+                                    resource,
+                                  })
+                                }
+                                className="flex w-full items-center justify-center gap-2 rounded-md bg-button-subtle-blue-bg px-3 py-1.5 text-sm font-medium text-button-subtle-blue-text transition-colors hover:bg-button-subtle-blue-bg-hover"
+                                title="Create a duplicate of this resource"
+                              >
+                                <Copy className="hidden h-4 w-4 md:inline-block" />
+                                Duplicate
                               </button>
                               <button
                                 onClick={() =>
@@ -2046,6 +2084,17 @@ export default function ResourceDetailPage() {
           resource={editModalState.resource}
           onClose={() => setEditModalState({ isOpen: false, resource: null })}
           onSave={saveResourceMetadata}
+        />
+      )}
+
+      {duplicateModalState.isOpen && duplicateModalState.resource && (
+        <DuplicateResourceModal
+          isOpen={duplicateModalState.isOpen}
+          resource={duplicateModalState.resource}
+          onClose={() =>
+            setDuplicateModalState({ isOpen: false, resource: null })
+          }
+          onSuccess={handleDuplicateSuccess}
         />
       )}
 

@@ -11,6 +11,7 @@ jest.mock("next-auth", () => ({
     },
   }),
 }));
+jest.mock("next/cache");
 jest.mock("@/lib/leaderboard", () => ({
   awardPoints: jest.fn().mockResolvedValue({ finalPoints: 10 }),
 }));

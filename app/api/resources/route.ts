@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions, getUserIdentifier } from "@/lib/auth";
 import { db, resources, resourceHistory } from "@/lib/db";
@@ -92,6 +93,7 @@ export async function POST(request: NextRequest) {
       subcategory,
       tier,
       description,
+      icon,
       imageUrl,
       quantity,
       quantityHagga,
@@ -100,6 +102,7 @@ export async function POST(request: NextRequest) {
       quantityLocation2,
       targetQuantity,
       multiplier,
+      isPriority,
     } = await request.json();
     const userId = getUserIdentifier(session);
 
@@ -141,6 +144,7 @@ export async function POST(request: NextRequest) {
       category,
       subcategory: subcategory || null,
       tier: tier || null,
+      icon: icon || null,
       imageUrl: imageUrl || null,
       targetQuantity: targetQuantity || null,
       multiplier:
@@ -150,6 +154,7 @@ export async function POST(request: NextRequest) {
         Number.isFinite(multiplier)
           ? multiplier
           : 1.0,
+      isPriority: isPriority === true,
       lastUpdatedBy: userId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -185,6 +190,8 @@ export async function POST(request: NextRequest) {
 
       return inserted;
     });
+
+    revalidatePath("/api/internal/resources");
 
     return NextResponse.json(createdResource, {
       headers: {

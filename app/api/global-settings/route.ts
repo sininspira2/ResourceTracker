@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getLocationNames, LOCATION_1_NAME_KEY, LOCATION_2_NAME_KEY } from "@/lib/global-settings";
+import {
+  getLocationNames,
+  LOCATION_1_NAME_KEY,
+  LOCATION_2_NAME_KEY,
+} from "@/lib/global-settings";
 import { db, globalSettings } from "@/lib/db";
 import { sql } from "drizzle-orm";
 
@@ -63,10 +67,16 @@ export async function PUT(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid request body" },
+      { status: 400 },
+    );
   }
 
-  const { location1Name, location2Name } = (body ?? {}) as Record<string, unknown>;
+  const { location1Name, location2Name } = (body ?? {}) as Record<
+    string,
+    unknown
+  >;
 
   if (
     typeof location1Name !== "string" ||
@@ -76,7 +86,10 @@ export async function PUT(request: NextRequest) {
     location2Name.trim().length === 0 ||
     location2Name.trim().length > 50
   ) {
-    return NextResponse.json({ error: "Invalid location names" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid location names" },
+      { status: 400 },
+    );
   }
 
   const trimmed1 = location1Name.trim();
@@ -110,7 +123,10 @@ export async function PUT(request: NextRequest) {
         },
       });
 
-    return NextResponse.json({ location1Name: trimmed1, location2Name: trimmed2 });
+    return NextResponse.json({
+      location1Name: trimmed1,
+      location2Name: trimmed2,
+    });
   } catch (error) {
     console.error(
       "Error updating global settings:",
