@@ -102,6 +102,7 @@ export async function POST(request: NextRequest) {
       quantityLocation2,
       targetQuantity,
       multiplier,
+      isPriority,
     } = await request.json();
     const userId = getUserIdentifier(session);
 
@@ -153,6 +154,7 @@ export async function POST(request: NextRequest) {
         Number.isFinite(multiplier)
           ? multiplier
           : 1.0,
+      isPriority: isPriority === true,
       lastUpdatedBy: userId,
       createdAt: new Date(),
       updatedAt: new Date(),
