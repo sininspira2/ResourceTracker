@@ -1,6 +1,30 @@
 {
-  "currentVersion": "4.1.6",
+  "currentVersion": "4.2.0",
   "releases": [
+    {
+      "version": "4.2.0",
+      "date": "2026-04-19",
+      "title": "Category & Tier Expansion",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Renamed 'Blueprints' category to 'Gear Blueprints' and added three new categories: Gear, Augmentations, and Augmentation Blueprints, each with appropriate subcategory options."
+        },
+        {
+          "type": "feature",
+          "description": "Extended TIER_OPTIONS: renamed Tier 6 to 'Tier 6/Grade 0 (Plastanium)' and added Grade 1 through Grade 5 (values 7–11)."
+        },
+        {
+          "type": "feature",
+          "description": "Added agnostic quantity fields (LOCATION_1/LOCATION_2) to QUANTITY_FIELD and TRANSFER_DIRECTION constants alongside the existing Hagga/Deep Desert values for a backward-compatible transition."
+        },
+        {
+          "type": "feature",
+          "description": "Added quantityLocation1 and quantityLocation2 columns to the resources table and six corresponding history columns to resource_history via a new Drizzle migration."
+        }
+      ]
+    },
     {
       "version": "4.1.6",
       "date": "2026-04-18",

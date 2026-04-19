@@ -15,6 +15,13 @@
       "when": 1759958216734,
       "tag": "0001_spooky_mephistopheles",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1776565637797,
+      "tag": "0002_worthless_nehzno",
+      "breakpoints": true
     }
   ]
 }
