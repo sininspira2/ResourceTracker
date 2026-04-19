@@ -75,7 +75,7 @@ export function DuplicateResourceModal({
         description: resource.description ?? "",
         multiplier: resource.multiplier ?? 1.0,
         targetQuantity: resource.targetQuantity ?? null,
-        isPriority: false,
+        isPriority: resource.isPriority ?? false,
       });
       setError(null);
       setSaving(false);
@@ -342,12 +342,13 @@ export function DuplicateResourceModal({
               step="0.1"
               min="0"
               value={formData.multiplier}
-              onChange={(e) =>
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
                 setFormData({
                   ...formData,
-                  multiplier: parseFloat(e.target.value) || 1.0,
-                })
-              }
+                  multiplier: isNaN(val) ? 1.0 : val,
+                });
+              }}
               className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
             />
           </div>
