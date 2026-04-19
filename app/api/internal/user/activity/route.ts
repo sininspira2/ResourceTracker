@@ -90,8 +90,9 @@ export async function GET(request: NextRequest) {
       .limit(limit);
 
     const processedActivity = activity.map((entry) => {
-      const totalChangeAmount =
-        (entry.changeAmountHagga || 0) + (entry.changeAmountDeepDesert || 0);
+      const loc1Amount = (entry.changeAmountLocation1 ?? entry.changeAmountHagga) ?? 0;
+      const loc2Amount = (entry.changeAmountLocation2 ?? entry.changeAmountDeepDesert) ?? 0;
+      const totalChangeAmount = loc1Amount + loc2Amount;
       return {
         ...entry,
         resourceCategory: mapCategoryForRead(entry.resourceCategory),

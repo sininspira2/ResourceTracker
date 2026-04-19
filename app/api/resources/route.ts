@@ -7,7 +7,7 @@ import { hasResourceAccess, hasResourceAdminAccess } from "@/lib/discord-roles";
 import { nanoid } from "nanoid";
 import { awardPoints } from "@/lib/leaderboard";
 import { calculateResourceStatus } from "@/lib/resource-utils";
-import { mapCategoryForRead } from "@/lib/resource-mapping";
+import { mapCategoryForRead, mapResourceRowForRead } from "@/lib/resource-mapping";
 
 /**
  * GET /api/resources
@@ -107,8 +107,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const location1Qty = quantityLocation1 ?? quantityHagga ?? quantity ?? 0;
-    const location2Qty = quantityLocation2 ?? quantityDeepDesert ?? 0;
+    const rawLocation1 = quantityLocation1 ?? quantityHagga ?? quantity ?? 0;
+    const rawLocation2 = quantityLocation2 ?? quantityDeepDesert ?? 0;
+
+    const location1Qty = Number(rawLocation1);
+    const location2Qty = Number(rawLocation2);
+
+    if (
+      !Number.isInteger(location1Qty) || location1Qty < 0 ||
+      !Number.isInteger(location2Qty) || location2Qty < 0
+    ) {
+      return NextResponse.json(
+        { error: "Quantities must be non-negative integers" },
+        { status: 400 },
+      );
+    }
 
     const newResource = {
       id: nanoid(),
@@ -306,6 +319,10 @@ export async function PUT(request: NextRequest) {
             update.updateType === "relative"
               ? update.value
               : update.quantity - previousQuantityHagga;
+          const newQuantityHagga =
+            update.updateType === "relative"
+              ? previousQuantityHagga + update.value
+              : update.quantity;
 
           await db
             .update(resources)
@@ -355,7 +372,7 @@ export async function PUT(request: NextRequest) {
                 name: resource.name,
                 category: mapCategoryForRead(resource.category) || "Other",
                 status: calculateResourceStatus(
-                  resource.quantityHagga + resource.quantityDeepDesert,
+                  newQuantityHagga + resource.quantityDeepDesert,
                   resource.targetQuantity,
                 ),
                 multiplier: resource.multiplier || 1.0,
@@ -378,7 +395,7 @@ export async function PUT(request: NextRequest) {
 
       return NextResponse.json(
         {
-          resources: updatedResources,
+          resources: updatedResources.map(mapResourceRowForRead),
           totalPointsEarned,
           pointsBreakdown: pointsResults.filter((result) => result !== null),
         },

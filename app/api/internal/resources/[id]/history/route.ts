@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { db, resourceHistory } from "@/lib/db";
 import { eq, gte, desc, and } from "drizzle-orm";
+import { hasResourceAccess } from "@/lib/discord-roles";
 import { mapHistoryRowForRead } from "@/lib/resource-mapping";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +24,11 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || !hasResourceAccess(session.user.roles)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const days = Math.max(1, Math.min(500, parseInt(searchParams.get("days") || "7", 10) || 7));

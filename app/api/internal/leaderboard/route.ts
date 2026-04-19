@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLeaderboard } from "@/lib/leaderboard";
-import { mapCategoryForRead } from "@/lib/resource-mapping";
 
 export const dynamic = "force-dynamic";
 
@@ -34,14 +33,8 @@ export async function GET(request: NextRequest) {
 
     const result = await getLeaderboard(timeFilter, effectiveLimit, offset);
 
-    const mappedRankings = result.rankings.map((entry: any) =>
-      entry && typeof entry === "object" && "resourceCategory" in entry
-        ? { ...entry, resourceCategory: mapCategoryForRead(entry.resourceCategory) }
-        : entry,
-    );
-
     return NextResponse.json({
-      leaderboard: mappedRankings,
+      leaderboard: result.rankings,
       timeFilter,
       total: result.total,
       page,

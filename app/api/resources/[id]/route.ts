@@ -151,6 +151,9 @@ export async function PUT(
             : quantity - previousQuantityDeepDesert;
         newQuantityDeepDesert =
           previousQuantityDeepDesert + changeAmountDeepDesert;
+        if (newQuantityDeepDesert < 0) {
+          throw new Error("ValidationError:NegativeQuantity");
+        }
       } else {
         // default to location 1 (legacy: hagga)
         changeAmountHagga =
@@ -158,6 +161,9 @@ export async function PUT(
             ? changeValue
             : quantity - previousQuantityHagga;
         newQuantityHagga = previousQuantityHagga + changeAmountHagga;
+        if (newQuantityHagga < 0) {
+          throw new Error("ValidationError:NegativeQuantity");
+        }
       }
 
       // Update the resource (dual-write to legacy + location-agnostic columns)
@@ -207,7 +213,7 @@ export async function PUT(
               : "REMOVE";
 
         const resourceStatus = calculateResourceStatus(
-          resource.quantityHagga + resource.quantityDeepDesert,
+          newQuantityHagga + newQuantityDeepDesert,
           resource.targetQuantity,
         );
 
@@ -253,6 +259,12 @@ export async function PUT(
       return NextResponse.json(
         { error: "Resource not found" },
         { status: 404 },
+      );
+    }
+    if (errorMessage === "ValidationError:NegativeQuantity") {
+      return NextResponse.json(
+        { error: "Relative update would result in a negative quantity" },
+        { status: 400 },
       );
     }
     console.error("Error updating resource:", error);

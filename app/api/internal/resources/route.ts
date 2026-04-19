@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { db, resources } from "@/lib/db";
+import { hasResourceAccess } from "@/lib/discord-roles";
 import { mapResourceRowForRead } from "@/lib/resource-mapping";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +20,11 @@ export const dynamic = "force-dynamic";
  * category is returned as "Gear Blueprints".
  */
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session || !hasResourceAccess(session.user.roles)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const allResources = await db.select().from(resources);
 
