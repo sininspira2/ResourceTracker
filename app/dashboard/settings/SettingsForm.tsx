@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLocationNames } from "@/app/context/LocationNamesContext";
 
 export function SettingsForm() {
-  const [location1Name, setLocation1Name] = useState("");
-  const [location2Name, setLocation2Name] = useState("");
+  const { refreshLocationNames } = useLocationNames();
+  const [location1Name, setLocation1Name] = useState("Hagga");
+  const [location2Name, setLocation2Name] = useState("Deep Desert");
   const [loading, setLoading] = useState(true);
+  const [loadWarning, setLoadWarning] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -14,13 +17,18 @@ export function SettingsForm() {
     fetch("/api/global-settings")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (data) {
-          setLocation1Name(data.location1Name || "Hagga");
-          setLocation2Name(data.location2Name || "Deep Desert");
+        if (data?.location1Name && data?.location2Name) {
+          setLocation1Name(data.location1Name);
+          setLocation2Name(data.location2Name);
+        } else {
+          setLoadWarning(true);
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setLoadWarning(true);
+        setLoading(false);
+      });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,6 +48,7 @@ export function SettingsForm() {
         setError(data.error || "Failed to save settings");
       } else {
         setSuccess(true);
+        await refreshLocationNames();
       }
     } catch {
       setError("Network error, please try again");
@@ -67,6 +76,12 @@ export function SettingsForm() {
       <p className="mb-6 text-sm text-text-tertiary">
         Customize the display names for the two inventory locations shown throughout the app.
       </p>
+
+      {loadWarning && (
+        <div className="mb-4 rounded-md bg-background-warning p-3 text-sm text-text-warning">
+          Could not load current settings — showing defaults. You can still save new values.
+        </div>
+      )}
 
       <div className="space-y-4">
         <div>
@@ -116,7 +131,7 @@ export function SettingsForm() {
 
       {success && (
         <div className="mt-4 rounded-md bg-background-success p-3 text-sm text-text-success">
-          Settings saved successfully. Changes will appear after the next page load.
+          Settings saved successfully. Changes are now reflected across the app.
         </div>
       )}
 

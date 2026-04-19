@@ -112,7 +112,10 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ location1Name: trimmed1, location2Name: trimmed2 });
   } catch (error) {
-    console.error("Error updating global settings:", error);
+    console.error(
+      "Error updating global settings:",
+      error instanceof Error ? error.message : String(error),
+    );
     return NextResponse.json(
       { error: "Failed to update global settings" },
       { status: 500 },

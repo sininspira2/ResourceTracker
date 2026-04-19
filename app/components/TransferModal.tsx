@@ -71,8 +71,9 @@ export function TransferModal({
     try {
       await onTransfer(resource.id, amount, direction);
       onClose();
-    } catch (err: any) {
-      setError(err.message || "An error occurred.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setError(message || "An error occurred.");
     }
   };
 

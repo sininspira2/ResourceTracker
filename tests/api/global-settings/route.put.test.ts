@@ -3,6 +3,7 @@
  */
 import { NextRequest } from "next/server";
 
+jest.mock("next/cache");
 jest.mock("next-auth");
 
 describe("PUT /api/global-settings", () => {
@@ -155,6 +156,25 @@ describe("PUT /api/global-settings", () => {
     expect(response.status).toBe(200);
     expect(body).toEqual({ location1Name: "Arrakeen", location2Name: "Sietch Tabr" });
     expect(mockInsert).toHaveBeenCalledWith({});
+    expect(mockValues).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          settingKey: "inventory_location_1_name",
+          settingValue: "Arrakeen",
+        }),
+        expect.objectContaining({
+          settingKey: "inventory_location_2_name",
+          settingValue: "Sietch Tabr",
+        }),
+      ]),
+    );
+    expect(mockOnConflictDoUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        set: expect.objectContaining({
+          lastUpdatedAt: expect.any(Date),
+        }),
+      }),
+    );
   });
 
   it("returns 500 on database failure", async () => {
