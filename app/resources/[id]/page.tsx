@@ -679,11 +679,26 @@ export default function ResourceDetailPage() {
     }
 
     const fetchResource = async () => {
+      const MAX_ATTEMPTS = 5;
+      const RETRY_DELAY_MS = 1000;
+
       try {
         setLoading(true);
-        const response = await fetch(`/api/resources`);
 
-        if (response.ok) {
+        for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+          if (attempt > 0) {
+            await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+          }
+
+          const response = await fetch(
+            `/api/resources?_t=${Date.now()}`,
+          );
+
+          if (!response.ok) {
+            setError("Failed to fetch resource");
+            return;
+          }
+
           const resources = await response.json();
           const foundResource = resources.find(
             (r: Resource) => r.id === resourceId,
@@ -692,7 +707,6 @@ export default function ResourceDetailPage() {
           if (foundResource) {
             setResource({
               ...foundResource,
-              // Fix date parsing - only convert if it's not already a string
               updatedAt:
                 typeof foundResource.updatedAt === "string"
                   ? foundResource.updatedAt
@@ -702,13 +716,14 @@ export default function ResourceDetailPage() {
                   ? foundResource.createdAt
                   : new Date(foundResource.createdAt).toISOString(),
             });
-            setNewQuantity(foundResource.quantityHagga); // Initialize edit form
+            setNewQuantity(foundResource.quantityHagga);
             setNewQuantityInput(foundResource.quantityHagga.toString());
-          } else {
+            return;
+          }
+
+          if (attempt === MAX_ATTEMPTS - 1) {
             setError("Resource not found");
           }
-        } else {
-          setError("Failed to fetch resource");
         }
       } catch (error) {
         console.error("Error fetching resource:", error);
