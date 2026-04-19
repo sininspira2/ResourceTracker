@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { TRANSFER_DIRECTION, type TransferDirection } from "@/lib/constants";
+import { useLocationNames } from "@/app/context/LocationNamesContext";
 
 interface TransferModalProps {
   resource: {
@@ -25,6 +26,7 @@ export function TransferModal({
   onClose,
   onTransfer,
 }: TransferModalProps) {
+  const { location1Name, location2Name } = useLocationNames();
   const [amount, setAmount] = useState(0);
   const [direction, setDirection] = useState<TransferDirection>(
     TRANSFER_DIRECTION.TO_DEEP_DESERT,
@@ -55,22 +57,23 @@ export function TransferModal({
       direction === TRANSFER_DIRECTION.TO_DEEP_DESERT &&
       amount > resource.quantityHagga
     ) {
-      setError("Insufficient quantity in Hagga base.");
+      setError(`Insufficient quantity in ${location1Name} base.`);
       return;
     }
     if (
       direction === TRANSFER_DIRECTION.TO_HAGGA &&
       amount > resource.quantityDeepDesert
     ) {
-      setError("Insufficient quantity in Deep Desert base.");
+      setError(`Insufficient quantity in ${location2Name} base.`);
       return;
     }
 
     try {
       await onTransfer(resource.id, amount, direction);
       onClose();
-    } catch (err: any) {
-      setError(err.message || "An error occurred.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setError(message || "An error occurred.");
     }
   };
 
@@ -142,10 +145,10 @@ export function TransferModal({
               className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
             >
               <option value={TRANSFER_DIRECTION.TO_DEEP_DESERT}>
-                Hagga to Deep Desert
+                {location1Name} to {location2Name}
               </option>
               <option value={TRANSFER_DIRECTION.TO_HAGGA}>
-                Deep Desert to Hagga
+                {location2Name} to {location1Name}
               </option>
             </select>
           </div>

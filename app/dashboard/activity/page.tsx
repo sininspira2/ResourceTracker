@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useLocationNames } from "@/app/context/LocationNamesContext";
 // Note: hasResourceAccess now computed server-side and available in session.user.permissions
 
 // Utility function to format numbers with commas
@@ -48,7 +49,7 @@ interface ActivityEntry {
   newQuantityDeepDesert: number;
   changeAmountDeepDesert: number;
   transferAmount?: number;
-  transferDirection?: "to_deep_desert" | "to_hagga";
+  transferDirection?: "to_deep_desert" | "to_hagga" | "transfer_to_location_2" | "transfer_to_location_1";
   changeAmount: number; // This is the total change amount, added in the API
   changeType: "absolute" | "relative" | "transfer";
   reason?: string;
@@ -58,6 +59,7 @@ interface ActivityEntry {
 export default function ActivityLogPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { location1Name, location2Name } = useLocationNames();
   const [activities, setActivities] = useState<ActivityEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeFilter, setTimeFilter] = useState(30); // days
@@ -270,19 +272,20 @@ export default function ActivityLogPage() {
                             {activity.changeType === "transfer" ? (
                               <span>
                                 Transfer {activity.transferAmount}{" "}
-                                {activity.transferDirection === "to_deep_desert"
-                                  ? "to Deep Desert"
-                                  : "to Hagga"}
+                                {activity.transferDirection === "to_deep_desert" ||
+                                activity.transferDirection === "transfer_to_location_2"
+                                  ? `to ${location2Name}`
+                                  : `to ${location1Name}`}
                               </span>
                             ) : (
                               <div>
                                 <div>
-                                  Hagga:{" "}
+                                  {location1Name}:{" "}
                                   {formatNumber(activity.previousQuantityHagga)}{" "}
                                   → {formatNumber(activity.newQuantityHagga)}
                                 </div>
                                 <div>
-                                  Deep Desert:{" "}
+                                  {location2Name}:{" "}
                                   {formatNumber(
                                     activity.previousQuantityDeepDesert,
                                   )}{" "}

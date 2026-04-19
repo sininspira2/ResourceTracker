@@ -40,6 +40,7 @@ import {
   type TransferDirection,
   type QuantityField,
 } from "@/lib/constants";
+import { useLocationNames } from "@/app/context/LocationNamesContext";
 
 // Utility function to format numbers with commas
 const formatNumber = (num: number): string => {
@@ -208,6 +209,7 @@ interface CongratulationsState {
 export function ResourceTable({ userId }: ResourceTableProps) {
   const { data: session } = useSession();
   const router = useRouter();
+  const { location1Name, location2Name } = useLocationNames();
 
   // Use pre-computed permissions from session (computed server-side)
   const canEdit = session?.user?.permissions?.hasResourceAccess ?? false;
@@ -1374,7 +1376,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
 
                 <div>
                   <label className="mb-1 block text-sm font-medium text-text-secondary">
-                    Initial Quantity (Hagga)
+                    Initial Quantity ({location1Name})
                   </label>
                   <input
                     type="number"
@@ -1391,7 +1393,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-text-secondary">
-                    Initial Quantity (Deep Desert)
+                    Initial Quantity ({location2Name})
                   </label>
                   <input
                     type="number"
@@ -1845,10 +1847,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           {/* Quantity Display */}
                           <div className="text-center">
                             <div className="text-sm font-bold text-text-primary">
-                              Hagga: {formatNumber(resource.quantityHagga)}
+                              {location1Name}: {formatNumber(resource.quantityHagga)}
                             </div>
                             <div className="text-sm font-bold text-text-primary">
-                              Deep Desert:{" "}
+                              {location2Name}:{" "}
                               {formatNumber(resource.quantityDeepDesert)}
                             </div>
                             <div className="text-xs text-text-quaternary">
@@ -2148,9 +2150,9 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         </span>
                       </td>
                       <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
-                        Hagga: {formatNumber(resource.quantityHagga)}
+                        {location1Name}: {formatNumber(resource.quantityHagga)}
                         <br />
-                        Deep Desert: {formatNumber(resource.quantityDeepDesert)}
+                        {location2Name}: {formatNumber(resource.quantityDeepDesert)}
                       </td>
                       {canEdit && (
                         <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">

@@ -1,10 +1,11 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ImportModal } from "./ImportModal";
 import { ExportConfirmationModal } from "./ExportConfirmationModal";
 import { HardDriveDownload, FileInput } from "lucide-react";
+import { useLocationNames } from "@/app/context/LocationNamesContext";
 
 interface Filters {
   [key: string]: string | number | boolean | Array<string | number | boolean>;
@@ -20,30 +21,9 @@ export function BulkActions({
   filteredCount: number;
 }) {
   const { data: session } = useSession();
+  const { location1Name, location2Name } = useLocationNames();
   const [isImportModalOpen, setisImportModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  const [location1Name, setLocation1Name] = useState("Hagga");
-  const [location2Name, setLocation2Name] = useState("Deep Desert");
-
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch("/api/global-settings", { signal: controller.signal })
-      .then((r) => {
-        if (!r.ok) return;
-        return r.json();
-      })
-      .then((data) => {
-        if (!data) return;
-        if (data.location1Name) setLocation1Name(data.location1Name);
-        if (data.location2Name) setLocation2Name(data.location2Name);
-      })
-      .catch((err) => {
-        if (err.name !== "AbortError") {
-          // ignore non-abort fetch errors silently
-        }
-      });
-    return () => controller.abort();
-  }, []);
 
   if (!session?.user?.permissions?.hasTargetEditAccess) {
     return null;
