@@ -115,7 +115,6 @@ export function DuplicateResourceModal({
       if (!response.ok) {
         throw new Error(data.error ?? "Failed to create resource");
       }
-      await new Promise((resolve) => setTimeout(resolve, 1500));
       onSuccess(data.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));

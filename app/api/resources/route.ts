@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions, getUserIdentifier } from "@/lib/auth";
 import { db, resources, resourceHistory } from "@/lib/db";
@@ -187,6 +188,8 @@ export async function POST(request: NextRequest) {
 
       return inserted;
     });
+
+    revalidatePath("/api/internal/resources");
 
     return NextResponse.json(createdResource, {
       headers: {
