@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Github, Bug } from "lucide-react";
+import { Bug } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
 import {
   getCurrentVersion,
   getReleasesSince,
@@ -161,7 +162,7 @@ export function WhatsNewModal({
                 aria-label="Visit project Github"
                 title="Visit project Github"
               >
-                <Github className="h-6 w-6" />
+                <FaGithub className="h-6 w-6" />
               </a>
               <button
                 onClick={() => handleClose(true)}
