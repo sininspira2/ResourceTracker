@@ -14,6 +14,10 @@
         {
           "type": "improvement",
           "description": "All hardcoded 'Hagga' and 'Deep Desert' UI labels in ResourceTable, TransferModal, UpdateQuantityModal, the resource detail page, and the activity log are now driven by the configured location names fetched from a shared React Context (LocationNamesProvider), eliminating per-component fetches."
+        },
+        {
+          "type": "feature",
+          "description": "Admins can now duplicate an existing resource from its detail page via a pre-filled modal, enabling rapid templating of similar resources."
         }
       ]
     },

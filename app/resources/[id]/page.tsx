@@ -11,6 +11,7 @@ import { UpdateQuantityModal } from "@/app/components/UpdateQuantityModal";
 import { ChangeTargetModal } from "@/app/components/ChangeTargetModal";
 import { TransferModal } from "@/app/components/TransferModal";
 import { EditResourceModal } from "@/app/components/EditResourceModal";
+import { DuplicateResourceModal } from "@/app/components/DuplicateResourceModal";
 import {
   TIER_OPTIONS,
   UPDATE_TYPE,
@@ -23,6 +24,7 @@ import {
   ArrowRightLeft,
   Target,
   Pencil,
+  Copy,
   Trash2,
   AlertTriangle,
 } from "lucide-react";
@@ -193,6 +195,11 @@ export default function ResourceDetailPage() {
     resource: Resource | null;
   }>({ isOpen: false, resource: null });
 
+  const [duplicateModalState, setDuplicateModalState] = useState<{
+    isOpen: boolean;
+    resource: Resource | null;
+  }>({ isOpen: false, resource: null });
+
   const [deleteConfirm, setDeleteConfirm] = useState<{
     resourceId: string | null;
     resourceName: string;
@@ -212,6 +219,10 @@ export default function ResourceDetailPage() {
   const startEditResource = (resource: Resource) => {
     if (!isResourceAdmin) return;
     setEditModalState({ isOpen: true, resource: resource });
+  };
+
+  const handleDuplicateSuccess = (newResourceId: string) => {
+    router.push(`/resources/${newResourceId}`);
   };
 
   // Fetch history data
@@ -1073,6 +1084,19 @@ export default function ResourceDetailPage() {
                               >
                                 <Pencil className="hidden h-4 w-4 md:inline-block" />
                                 Edit
+                              </button>
+                              <button
+                                onClick={() =>
+                                  setDuplicateModalState({
+                                    isOpen: true,
+                                    resource,
+                                  })
+                                }
+                                className="flex w-full items-center justify-center gap-2 rounded-md bg-button-subtle-blue-bg px-3 py-1.5 text-sm font-medium text-button-subtle-blue-text transition-colors hover:bg-button-subtle-blue-bg-hover"
+                                title="Create a duplicate of this resource"
+                              >
+                                <Copy className="hidden h-4 w-4 md:inline-block" />
+                                Duplicate
                               </button>
                               <button
                                 onClick={() =>
@@ -2046,6 +2070,17 @@ export default function ResourceDetailPage() {
           resource={editModalState.resource}
           onClose={() => setEditModalState({ isOpen: false, resource: null })}
           onSave={saveResourceMetadata}
+        />
+      )}
+
+      {duplicateModalState.isOpen && duplicateModalState.resource && (
+        <DuplicateResourceModal
+          isOpen={duplicateModalState.isOpen}
+          resource={duplicateModalState.resource}
+          onClose={() =>
+            setDuplicateModalState({ isOpen: false, resource: null })
+          }
+          onSuccess={handleDuplicateSuccess}
         />
       )}
 

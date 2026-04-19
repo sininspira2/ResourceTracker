@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
       subcategory,
       tier,
       description,
+      icon,
       imageUrl,
       quantity,
       quantityHagga,
@@ -141,6 +142,7 @@ export async function POST(request: NextRequest) {
       category,
       subcategory: subcategory || null,
       tier: tier || null,
+      icon: icon || null,
       imageUrl: imageUrl || null,
       targetQuantity: targetQuantity || null,
       multiplier:
