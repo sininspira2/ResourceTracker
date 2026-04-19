@@ -52,9 +52,20 @@ export async function POST(request: NextRequest) {
       typeof item.id !== "string" ||
       !item.id ||
       !item.new ||
-      typeof item.new !== "object" ||
-      !Number.isFinite(item.new.quantityHagga) ||
-      !Number.isFinite(item.new.quantityDeepDesert)
+      typeof item.new !== "object"
+    ) {
+      return NextResponse.json(
+        { error: "Each update must have a valid id and numeric quantities" },
+        { status: 400 },
+      );
+    }
+    const qtyHagga = Number(item.new.quantityHagga);
+    const qtyDeepDesert = Number(item.new.quantityDeepDesert);
+    if (
+      !Number.isInteger(qtyHagga) ||
+      qtyHagga < 0 ||
+      !Number.isInteger(qtyDeepDesert) ||
+      qtyDeepDesert < 0
     ) {
       return NextResponse.json(
         { error: "Each update must have a valid id and numeric quantities" },
@@ -100,38 +111,38 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
+        const newQtyHagga = Number(update.new.quantityHagga);
+        const newQtyDeepDesert = Number(update.new.quantityDeepDesert);
+        const changeAmountHagga = newQtyHagga - current.quantityHagga;
+        const changeAmountDeepDesert = newQtyDeepDesert - current.quantityDeepDesert;
+
         await tx
           .update(resources)
           .set({
-            quantityHagga: update.new.quantityHagga,
-            quantityDeepDesert: update.new.quantityDeepDesert,
-            quantityLocation1: update.new.quantityHagga,
-            quantityLocation2: update.new.quantityDeepDesert,
+            quantityHagga: newQtyHagga,
+            quantityDeepDesert: newQtyDeepDesert,
+            quantityLocation1: newQtyHagga,
+            quantityLocation2: newQtyDeepDesert,
             targetQuantity: update.new.targetQuantity,
             lastUpdatedBy: userId,
             updatedAt: new Date(),
           })
           .where(eq(resources.id, update.id));
 
-        const changeAmountHagga =
-          update.new.quantityHagga - current.quantityHagga;
-        const changeAmountDeepDesert =
-          update.new.quantityDeepDesert - current.quantityDeepDesert;
-
         await tx.insert(resourceHistory).values({
           id: nanoid(),
           resourceId: update.id,
           previousQuantityHagga: current.quantityHagga,
-          newQuantityHagga: update.new.quantityHagga,
+          newQuantityHagga: newQtyHagga,
           changeAmountHagga,
           previousQuantityDeepDesert: current.quantityDeepDesert,
-          newQuantityDeepDesert: update.new.quantityDeepDesert,
+          newQuantityDeepDesert: newQtyDeepDesert,
           changeAmountDeepDesert,
           previousQuantityLocation1: current.quantityHagga,
-          newQuantityLocation1: update.new.quantityHagga,
+          newQuantityLocation1: newQtyHagga,
           changeAmountLocation1: changeAmountHagga,
           previousQuantityLocation2: current.quantityDeepDesert,
-          newQuantityLocation2: update.new.quantityDeepDesert,
+          newQuantityLocation2: newQtyDeepDesert,
           changeAmountLocation2: changeAmountDeepDesert,
           changeType: "absolute",
           updatedBy: userId,

@@ -345,6 +345,11 @@ export async function PUT(request: NextRequest) {
             update.updateType === "relative"
               ? previousQuantityHagga + update.value
               : update.quantity;
+          if (newQuantityHagga < 0) {
+            throw new Error(
+              `Relative update would result in a negative quantity for resource ${update.id}`,
+            );
+          }
           const changeAmountHagga = newQuantityHagga - previousQuantityHagga;
 
           await db
