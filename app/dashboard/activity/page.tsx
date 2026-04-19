@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useLocationNames } from "@/app/context/LocationNamesContext";
 // Note: hasResourceAccess now computed server-side and available in session.user.permissions
 
 // Utility function to format numbers with commas
@@ -58,6 +59,7 @@ interface ActivityEntry {
 export default function ActivityLogPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { location1Name, location2Name } = useLocationNames();
   const [activities, setActivities] = useState<ActivityEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeFilter, setTimeFilter] = useState(30); // days
@@ -271,18 +273,18 @@ export default function ActivityLogPage() {
                               <span>
                                 Transfer {activity.transferAmount}{" "}
                                 {activity.transferDirection === "to_deep_desert"
-                                  ? "to Deep Desert"
-                                  : "to Hagga"}
+                                  ? `to ${location2Name}`
+                                  : `to ${location1Name}`}
                               </span>
                             ) : (
                               <div>
                                 <div>
-                                  Hagga:{" "}
+                                  {location1Name}:{" "}
                                   {formatNumber(activity.previousQuantityHagga)}{" "}
                                   → {formatNumber(activity.newQuantityHagga)}
                                 </div>
                                 <div>
-                                  Deep Desert:{" "}
+                                  {location2Name}:{" "}
                                   {formatNumber(
                                     activity.previousQuantityDeepDesert,
                                   )}{" "}

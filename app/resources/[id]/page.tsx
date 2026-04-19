@@ -26,13 +26,7 @@ import {
   Trash2,
   AlertTriangle,
 } from "lucide-react";
-
-const TRANSFER_DIRECTION_LABEL: Record<string, string> = {
-  transfer_to_location_2: "to Deep Desert",
-  to_deep_desert: "to Deep Desert",
-  transfer_to_location_1: "to Hagga",
-  to_hagga: "to Hagga",
-};
+import { useLocationNames } from "@/app/context/LocationNamesContext";
 
 const getTierClassName = (tier: number | null | undefined): string => {
   if (tier === null || tier === undefined) return "bg-gray-200 text-gray-800";
@@ -135,6 +129,13 @@ export default function ResourceDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
+  const { location1Name, location2Name } = useLocationNames();
+  const TRANSFER_DIRECTION_LABEL: Record<string, string> = {
+    transfer_to_location_2: `to ${location2Name}`,
+    to_deep_desert: `to ${location2Name}`,
+    transfer_to_location_1: `to ${location1Name}`,
+    to_hagga: `to ${location1Name}`,
+  };
   const [resource, setResource] = useState<Resource | null>(null);
   const [history, setHistory] = useState<any[]>([]);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
@@ -946,10 +947,10 @@ export default function ResourceDetailPage() {
                     <div className="flex flex-col gap-6 text-center sm:flex-row">
                       <div>
                         <div className="text-xl font-bold text-text-primary">
-                          Hagga: {formatNumber(resource.quantityHagga)}
+                          {location1Name}: {formatNumber(resource.quantityHagga)}
                         </div>
                         <div className="text-xl font-bold text-text-primary">
-                          Deep Desert:{" "}
+                          {location2Name}:{" "}
                           {formatNumber(resource.quantityDeepDesert)}
                         </div>
                         <div className="text-sm text-text-tertiary">
@@ -1045,7 +1046,7 @@ export default function ResourceDetailPage() {
                               setTransferModalState({ isOpen: true, resource })
                             }
                             className="flex w-full items-center justify-center gap-2 rounded-md bg-button-subtle-green-bg px-3 py-1.5 text-sm font-medium text-button-subtle-green-text transition-colors hover:bg-button-subtle-green-bg-hover"
-                            title="Transfer quantities between Hagga and Deep Desert"
+                            title={`Transfer quantities between ${location1Name} and ${location2Name}`}
                           >
                             <ArrowRightLeft className="hidden h-4 w-4 md:inline-block" />
                             Transfer
@@ -1560,14 +1561,14 @@ export default function ResourceDetailPage() {
                       className="h-3 w-3 flex-shrink-0 rounded-full"
                       style={{ backgroundColor: CHART_COLORS.hagga }}
                     ></div>
-                    <span>Hagga</span>
+                    <span>{location1Name}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <div
                       className="h-3 w-3 flex-shrink-0 rounded-full"
                       style={{ backgroundColor: CHART_COLORS.deepDesert }}
                     ></div>
-                    <span>Deep Desert</span>
+                    <span>{location2Name}</span>
                   </div>
                   <div className="ml-4 text-text-quaternary">
                     💡 Hover points for details, click to highlight below •
@@ -1871,19 +1872,19 @@ export default function ResourceDetailPage() {
                                 Transfer {entry.transferAmount}{" "}
                                 {TRANSFER_DIRECTION_LABEL[
                                   entry.transferDirection
-                                ] ?? "to Hagga"}
+                                ] ?? `to ${location1Name}`}
                               </span>
                             ) : (
                               <div className="flex flex-col">
                                 <div>
-                                  Hagga:{" "}
+                                  {location1Name}:{" "}
                                   {formatNumber(entry.previousQuantityHagga)} →{" "}
                                   {formatNumber(entry.newQuantityHagga)} (
                                   {entry.changeAmountHagga > 0 ? "+" : ""}
                                   {formatNumber(entry.changeAmountHagga)})
                                 </div>
                                 <div>
-                                  Deep Desert:{" "}
+                                  {location2Name}:{" "}
                                   {formatNumber(
                                     entry.previousQuantityDeepDesert,
                                   )}{" "}

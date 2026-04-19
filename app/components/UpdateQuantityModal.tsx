@@ -9,6 +9,7 @@ import {
   type UpdateType,
 } from "@/lib/constants";
 import { hasResourceAdminAccess } from "@/lib/discord-roles";
+import { useLocationNames } from "@/app/context/LocationNamesContext";
 import { type User } from "next-auth";
 
 interface UpdateQuantityModalProps {
@@ -40,6 +41,7 @@ export function UpdateQuantityModal({
   updateType,
   session,
 }: UpdateQuantityModalProps) {
+  const { location1Name, location2Name } = useLocationNames();
   const [users, setUsers] = useState<
     { id: string; username: string; customNickname: string | null }[]
   >([]);
@@ -246,8 +248,8 @@ export function UpdateQuantityModal({
               }
               className="w-full rounded-lg border border-border-secondary bg-background-modal-content-inset px-3 py-2 text-text-primary"
             >
-              <option value={QUANTITY_FIELD.HAGGA}>Hagga</option>
-              <option value={QUANTITY_FIELD.DEEP_DESERT}>Deep Desert</option>
+              <option value={QUANTITY_FIELD.HAGGA}>{location1Name}</option>
+              <option value={QUANTITY_FIELD.DEEP_DESERT}>{location2Name}</option>
             </select>
           </div>
 

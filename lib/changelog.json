@@ -1,6 +1,22 @@
 {
-  "currentVersion": "4.2.0",
+  "currentVersion": "4.3.0",
   "releases": [
+    {
+      "version": "4.3.0",
+      "date": "2026-04-19",
+      "title": "Dynamic Inventory Location Names",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Admin Settings page (/dashboard/settings) allows admins to rename the two inventory locations via PUT /api/global-settings. Changes are persisted to the global_settings table."
+        },
+        {
+          "type": "improvement",
+          "description": "All hardcoded 'Hagga' and 'Deep Desert' UI labels in ResourceTable, TransferModal, UpdateQuantityModal, the resource detail page, and the activity log are now driven by the configured location names fetched from a shared React Context (LocationNamesProvider), eliminating per-component fetches."
+        }
+      ]
+    },
     {
       "version": "4.2.0",
       "date": "2026-04-19",
