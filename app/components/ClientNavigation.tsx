@@ -31,7 +31,7 @@ export function ClientNavigation({
 
   return (
     <>
-      <nav className="border-b border-border-primary bg-background-secondary shadow-xs transition-colors duration-300">
+      <nav className="view-transition-header border-b border-border-primary bg-background-secondary shadow-xs transition-colors duration-300">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             {/* Left side - Title and Version */}

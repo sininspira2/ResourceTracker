@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Pagination } from "@/app/components/Pagination";
+import { PageContainer } from "@/app/components/PageContainer";
 
 interface LeaderboardEntry {
   userId: string;
@@ -94,7 +95,7 @@ export default function LeaderboardPage() {
 
   return (
     <div className="min-h-screen bg-background-primary py-8">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <PageContainer className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 rounded-lg bg-background-panel p-6 shadow-lg">
           <div className="flex items-center justify-between">
@@ -200,7 +201,8 @@ export default function LeaderboardPage() {
                   return (
                     <div
                       key={entry.userId}
-                      className="cursor-pointer p-6 transition-colors hover:bg-table-row-hover-leaderboard-bg"
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                      className="animate-fade-in-left cursor-pointer p-6 transition-colors hover:bg-table-row-hover-leaderboard-bg"
                       onClick={() => handleUserClick(entry.userId)}
                     >
                       <div className="flex items-center justify-between">
@@ -310,7 +312,7 @@ export default function LeaderboardPage() {
             </p>
           </div>
         </div>
-      </div>
+      </PageContainer>
     </div>
   );
 }

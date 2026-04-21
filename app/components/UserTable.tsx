@@ -97,8 +97,12 @@ export function UserTable() {
           </thead>
           <tbody className="divide-y divide-border-primary bg-background-primary">
             {users.length > 0 ? (
-              users.map((user) => (
-                <tr key={user.id}>
+              users.map((user, index) => (
+                <tr
+                  key={user.id}
+                  className="animate-fade-in-left"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
                   <td className="px-3 py-3 text-sm whitespace-nowrap text-text-primary">
                     {user.username}
                   </td>

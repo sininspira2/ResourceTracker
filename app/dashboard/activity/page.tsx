@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useLocationNames } from "@/app/context/LocationNamesContext";
+import { PageContainer } from "@/app/components/PageContainer";
 // Note: hasResourceAccess now computed server-side and available in session.user.permissions
 
 // Utility function to format numbers with commas
@@ -170,7 +171,7 @@ export default function ActivityLogPage() {
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      <PageContainer className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {loading ? (
           <div className="py-12 text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-text-link"></div>
@@ -236,10 +237,11 @@ export default function ActivityLogPage() {
                 Activity Timeline
               </h2>
               <div className="space-y-4">
-                {activities.map((activity) => (
+                {activities.map((activity, index) => (
                   <div
                     key={activity.id}
-                    className="flex items-start gap-4 rounded-lg bg-button-secondary-neutral-bg p-4 transition-colors hover:bg-button-secondary-neutral-bg-hover"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                    className="animate-fade-in-left flex items-start gap-4 rounded-lg bg-button-secondary-neutral-bg p-4 transition-colors hover:bg-button-secondary-neutral-bg-hover"
                   >
                     <div
                       className={`mt-2 h-3 w-3 rounded-full ${
@@ -336,7 +338,7 @@ export default function ActivityLogPage() {
             </div>
           </div>
         )}
-      </div>
+      </PageContainer>
     </div>
   );
 }

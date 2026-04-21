@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Pagination } from "@/app/components/Pagination";
+import { PageContainer } from "@/app/components/PageContainer";
 
 interface Contribution {
   id: string;
@@ -210,7 +211,7 @@ export default function UserContributionsPage() {
 
   return (
     <div className="min-h-screen bg-background-primary py-8">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <PageContainer className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 rounded-lg bg-background-panel p-6 shadow-lg">
           <div className="flex items-center justify-between">
@@ -319,10 +320,11 @@ export default function UserContributionsPage() {
           ) : (
             <>
               <div className="divide-y divide-border-primary">
-                {data.contributions.map((contribution) => (
+                {data.contributions.map((contribution, index) => (
                   <div
                     key={contribution.id}
-                    className="p-6 hover:bg-button-secondary-bg"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                    className="animate-fade-in-left p-6 hover:bg-button-secondary-bg"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
@@ -412,7 +414,7 @@ export default function UserContributionsPage() {
             </p>
           </div>
         </div>
-      </div>
+      </PageContainer>
     </div>
   );
 }

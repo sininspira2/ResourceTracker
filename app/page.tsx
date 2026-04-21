@@ -13,7 +13,10 @@ export default async function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-blue-900 to-purple-900 text-text-white transition-colors duration-300 dark:from-gray-900 dark:to-blue-900">
+    <main
+      className="view-transition-content animate-fade-in-up min-h-screen bg-linear-to-br from-blue-900 to-purple-900 text-text-white transition-colors duration-300 dark:from-gray-900 dark:to-blue-900"
+      style={{ viewTransitionName: "page-content" }}
+    >
       <div className="container mx-auto px-4 py-16">
         <header className="mb-16 text-center">
           <h1 className="mb-4 text-5xl font-bold">

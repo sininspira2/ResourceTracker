@@ -1026,10 +1026,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
             </div>
           ) : (
             <div className="space-y-3">
-              {recentActivity.slice(0, 5).map((activity) => (
+              {recentActivity.slice(0, 5).map((activity, index) => (
                 <div
                   key={activity.id}
-                  className="flex cursor-pointer items-center justify-between rounded-lg bg-button-secondary-neutral-bg p-3 transition-colors hover:bg-button-secondary-neutral-bg-hover"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                  className="animate-fade-in-up flex cursor-pointer items-center justify-between rounded-lg bg-button-secondary-neutral-bg p-3 transition-colors hover:bg-button-secondary-neutral-bg-hover"
                   onClick={() => handleResourceClick(activity.resourceId)}
                 >
                   <div className="flex items-center gap-3">
@@ -1718,13 +1719,17 @@ export function ResourceTable({ userId }: ResourceTableProps) {
               // If neither is in the defined order, sort alphabetically
               return categoryA.localeCompare(categoryB);
             })
-            .map(([category, categoryResources]) => (
+            .map(([category, categoryResources], catIdx, allCategories) => {
+              const categoryStartIndex = allCategories
+                .slice(0, catIdx)
+                .reduce((sum, [, items]) => sum + items.length, 0);
+              return (
               <div key={category} className="space-y-4">
                 <h3 className="border-b border-border-primary pb-2 text-lg font-semibold text-text-primary">
                   {category} ({categoryResources.length})
                 </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                  {categoryResources.map((resource) => {
+                  {categoryResources.map((resource, idx) => {
                     const status = calculateResourceStatus(
                       resource.quantityHagga + resource.quantityDeepDesert,
                       resource.targetQuantity || null,
@@ -1738,7 +1743,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     return (
                       <div
                         key={resource.id}
-                        className={`group cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
+                        style={{
+                          animationDelay: `${(categoryStartIndex + idx) * 0.05}s`,
+                        }}
+                        className={`animate-fade-in-up group cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
                           isOutdated
                             ? "border-update-indicator-border ring-1 ring-update-indicator-ring"
                             : "border-border-primary"
@@ -1996,7 +2004,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   })}
                 </div>
               </div>
-            ))}
+              );
+            })}
         </div>
       )}
 
@@ -2033,7 +2042,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-primary bg-background-panel">
-                {filteredResources.map((resource) => {
+                {filteredResources.map((resource, index) => {
                   const status = calculateResourceStatus(
                     resource.quantityHagga + resource.quantityDeepDesert,
                     resource.targetQuantity || 0,
@@ -2047,7 +2056,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   return (
                     <tr
                       key={resource.id}
-                      className={`group cursor-pointer transition-colors ${
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                      className={`animate-fade-in-left group cursor-pointer transition-colors ${
                         isOutdated
                           ? "border-l-4 border-l-update-indicator-border"
                           : ""

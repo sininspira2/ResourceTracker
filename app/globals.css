@@ -255,6 +255,8 @@
   --color-tier-5-text: theme(colors.amber.800);
   --color-tier-6-bg: theme(colors.blue.300);
   --color-tier-6-text: theme(colors.blue.800);
+
+  --animate-shake: shake 0.5s ease-in-out;
 }
 
 .dark {
@@ -447,4 +449,112 @@
   --color-tier-5-text: theme(colors.amber.200);
   --color-tier-6-bg: theme(colors.blue.800);
   --color-tier-6-text: theme(colors.blue.200);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideFromRight {
+  from {
+    transform: translateX(30px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideToLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-30px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-left {
+  animation: fadeInLeft 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.view-transition-content {
+  view-transition-name: page-content;
+}
+
+.view-transition-header {
+  view-transition-name: page-header;
+}
+
+::view-transition-old(page-content) {
+  animation:
+    200ms cubic-bezier(0.22, 1, 0.36, 1) both fadeOut,
+    200ms cubic-bezier(0.22, 1, 0.36, 1) both slideToLeft;
+}
+
+::view-transition-new(page-content) {
+  animation:
+    300ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both fadeIn,
+    300ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both slideFromRight;
 }

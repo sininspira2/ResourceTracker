@@ -5,6 +5,7 @@ import Link from "next/link";
 import { RefreshRolesButton } from "../components/RefreshRolesButton";
 import { ClientNavigation } from "../components/ClientNavigation";
 import { NicknameSettings } from "../components/NicknameSettings";
+import { PageContainer } from "../components/PageContainer";
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions);
@@ -27,7 +28,7 @@ export default async function Dashboard() {
         showDashboardLink={false}
       />
 
-      <main className="container mx-auto px-4 py-8">
+      <PageContainer>
         <div className="mx-auto max-w-7xl">
           <header className="mb-8">
             <h1 className="mb-2 text-3xl font-bold text-text-primary">
@@ -335,7 +336,7 @@ export default async function Dashboard() {
             </div>
           </div>
         </div>
-      </main>
+      </PageContainer>
     </div>
   );
 }

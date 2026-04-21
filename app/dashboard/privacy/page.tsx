@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 // Note: hasResourceAccess now computed server-side and available in session.user.permissions
 import { getDisplayName } from "@/lib/auth";
+import { PageContainer } from "@/app/components/PageContainer";
 
 export default function PrivacyPage() {
   const { data: session, status } = useSession();
@@ -172,7 +173,7 @@ export default function PrivacyPage() {
       </div>
 
       {/* Content */}
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      <PageContainer className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-8">
           {/* Welcome */}
           <div className="text-center">
@@ -333,7 +334,7 @@ export default function PrivacyPage() {
             </p>
           </div>
         </div>
-      </div>
+      </PageContainer>
     </div>
   );
 }
