@@ -8,6 +8,10 @@
       "type": "minor",
       "changes": [
         {
+          "type": "improvement",
+          "description": "Added CSS-only page transitions (using the View Transitions API) and staggered fade-in animations for table rows, grid cards, leaderboard entries, contributions, and activity log items. The top navigation stays stable during page changes via a separate view-transition-name."
+        },
+        {
           "type": "feature",
           "description": "Admin Settings page (/dashboard/settings) allows admins to rename the two inventory locations via PUT /api/global-settings. Changes are persisted to the global_settings table."
         },

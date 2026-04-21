@@ -21,7 +21,10 @@ export default function SignInForm({ isDevelopment }: SignInFormProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white">
+    <main
+      className="view-transition-content animate-fade-in-up flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white"
+      style={{ viewTransitionName: "page-content" }}
+    >
       <div className="flex w-full max-w-md flex-col items-center rounded-lg bg-gray-800 p-8 shadow-2xl">
         <h1 className="mb-6 text-center text-3xl font-bold">Sign In</h1>
         <p className="mb-8 text-center text-gray-400">
@@ -78,6 +81,6 @@ export default function SignInForm({ isDevelopment }: SignInFormProps) {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

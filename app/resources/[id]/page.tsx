@@ -12,6 +12,7 @@ import { ChangeTargetModal } from "@/app/components/ChangeTargetModal";
 import { TransferModal } from "@/app/components/TransferModal";
 import { EditResourceModal } from "@/app/components/EditResourceModal";
 import { DuplicateResourceModal } from "@/app/components/DuplicateResourceModal";
+import { PageContainer } from "@/app/components/PageContainer";
 import {
   TIER_OPTIONS,
   UPDATE_TYPE,
@@ -868,7 +869,7 @@ export default function ResourceDetailPage() {
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <PageContainer className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-8">
           {/* Resource Info Card - Full Width Horizontal Layout */}
           <div className="w-full">
@@ -2017,7 +2018,7 @@ export default function ResourceDetailPage() {
             )}
           </div>
         </div>
-      </div>
+      </PageContainer>
 
       {/* Congratulations Popup */}
       {congratulationsState.isVisible && (
