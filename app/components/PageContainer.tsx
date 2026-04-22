@@ -11,7 +11,7 @@ export function PageContainer({
 }: PageContainerProps) {
   return (
     <main
-      className={`${className} view-transition-content animate-fade-in-up`}
+      className={`${className} view-transition-content animate-fade-in`}
       style={{ viewTransitionName: "page-content" }}
     >
       {children}
