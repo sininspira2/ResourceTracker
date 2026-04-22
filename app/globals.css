@@ -385,22 +385,22 @@
   --color-status-critical-text: theme(colors.red.200);
   --color-status-critical-border: theme(colors.red.800);
   --color-status-critical-bg-subtle: theme(colors.red.900 / 10%);
-  /* --color-status-critical-bg-subtle-hover: unchanged (red.100) */
+  --color-status-critical-bg-subtle-hover: theme(colors.red.900 / 20%);
   --color-status-below-target-bg: theme(colors.orange.900 / 50%);
   --color-status-below-target-text: theme(colors.orange.200);
   --color-status-below-target-border: theme(colors.orange.800);
   --color-status-below-target-bg-subtle: theme(colors.orange.900 / 10%);
-  /* --color-status-below-target-bg-subtle-hover: unchanged (orange.100) */
+  --color-status-below-target-bg-subtle-hover: theme(colors.orange.900 / 20%);
   --color-status-at-target-bg: theme(colors.green.900 / 50%);
   --color-status-at-target-text: theme(colors.green.200);
   --color-status-at-target-border: theme(colors.green.800);
   --color-status-at-target-bg-subtle: theme(colors.green.900 / 10%);
-  /* --color-status-at-target-bg-subtle-hover: unchanged (green.100) */
+  --color-status-at-target-bg-subtle-hover: theme(colors.green.900 / 20%);
   --color-status-above-target-bg: theme(colors.purple.900 / 50%);
   --color-status-above-target-text: theme(colors.purple.200);
   --color-status-above-target-border: theme(colors.purple.800);
   --color-status-above-target-bg-subtle: theme(colors.purple.900 / 10%);
-  /* --color-status-above-target-bg-subtle-hover: unchanged (purple.100) */
+  --color-status-above-target-bg-subtle-hover: theme(colors.purple.900 / 20%);
   --color-status-default-bg: theme(colors.gray.700);
   --color-status-default-text: theme(colors.gray.200);
   --color-status-default-border: theme(colors.gray.700);
