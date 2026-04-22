@@ -615,6 +615,11 @@
   opacity: 0;
 }
 
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+  opacity: 0;
+}
+
 .animate-fade-in-left {
   animation: fadeInLeft 0.5s ease-out forwards;
   opacity: 0;
