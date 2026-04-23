@@ -1724,286 +1724,287 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                 .slice(0, catIdx)
                 .reduce((sum, [, items]) => sum + items.length, 0);
               return (
-              <div key={category} className="space-y-4">
-                <h3 className="border-b border-border-primary pb-2 text-lg font-semibold text-text-primary">
-                  {category} ({categoryResources.length})
-                </h3>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                  {categoryResources.map((resource, idx) => {
-                    const status = calculateResourceStatus(
-                      resource.quantityHagga + resource.quantityDeepDesert,
-                      resource.targetQuantity || null,
-                    );
-                    const statusChange = statusChanges.get(resource.id);
-                    const isOutdated = needsUpdating(
-                      resource.updatedAt,
-                      !!resource.isPriority,
-                    );
+                <div key={category} className="space-y-4">
+                  <h3 className="border-b border-border-primary pb-2 text-lg font-semibold text-text-primary">
+                    {category} ({categoryResources.length})
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                    {categoryResources.map((resource, idx) => {
+                      const status = calculateResourceStatus(
+                        resource.quantityHagga + resource.quantityDeepDesert,
+                        resource.targetQuantity || null,
+                      );
+                      const statusChange = statusChanges.get(resource.id);
+                      const isOutdated = needsUpdating(
+                        resource.updatedAt,
+                        !!resource.isPriority,
+                      );
 
-                    return (
-                      <div
-                        key={resource.id}
-                        style={{
-                          animationDelay: `${(categoryStartIndex + idx) * 0.05}s`,
-                        }}
-                        className={`animate-fade-in-up group cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
-                          isOutdated
-                            ? "border-update-indicator-border ring-1 ring-update-indicator-ring"
-                            : "border-border-primary"
-                        } ${
-                          resource.category === BP_CATEGORY
-                            ? "bg-category-bp-bg hover:bg-category-bp-bg-hover"
-                            : isOutdated
-                              ? "bg-update-indicator-bg hover:bg-update-indicator-bg-hover"
-                              : "bg-background-panel hover:bg-button-secondary-neutral-bg"
-                        }`}
-                        onClick={() => handleResourceClick(resource.id)}
-                        title={
-                          isOutdated
-                            ? `⚠️ Not updated in over ${
-                                resource.isPriority ? "24 hours" : "7 days"
-                              } - Click to view details`
-                            : "Click to view detailed resource information"
-                        }
-                      >
-                        {/* Resource Image */}
-                        <div className="relative mb-3 aspect-square">
-                          {resource.imageUrl ? (
-                            <img
-                              src={resource.imageUrl}
-                              alt={resource.name}
-                              className="h-full w-full rounded-lg object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = "none";
-                                const fallback =
-                                  target.nextElementSibling as HTMLElement;
-                                if (fallback) fallback.style.display = "flex";
-                              }}
-                            />
-                          ) : null}
-                          <div
-                            className={`flex h-full w-full items-center justify-center rounded-lg bg-background-tertiary ${
-                              resource.imageUrl ? "hidden" : "flex"
-                            }`}
-                          >
-                            <span className="text-xs text-text-quaternary">
-                              No Image
-                            </span>
-                          </div>
-
-                          {/* Click indicator */}
-                          <div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
-                            <svg
-                              className="h-4 w-4 text-text-link"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-
-                        {/* Resource Info */}
+                      return (
                         <div
-                          className="space-y-2"
-                          onClick={(e) => e.stopPropagation()}
+                          key={resource.id}
+                          style={{
+                            animationDelay: `${(categoryStartIndex + idx) * 0.05}s`,
+                          }}
+                          className={`animate-fade-in-up group cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
+                            isOutdated
+                              ? "border-update-indicator-border ring-1 ring-update-indicator-ring"
+                              : "border-border-primary"
+                          } ${
+                            resource.category === BP_CATEGORY
+                              ? "bg-category-bp-bg hover:bg-category-bp-bg-hover"
+                              : isOutdated
+                                ? "bg-update-indicator-bg hover:bg-update-indicator-bg-hover"
+                                : "bg-background-panel hover:bg-button-secondary-neutral-bg"
+                          }`}
+                          onClick={() => handleResourceClick(resource.id)}
+                          title={
+                            isOutdated
+                              ? `⚠️ Not updated in over ${
+                                  resource.isPriority ? "24 hours" : "7 days"
+                                } - Click to view details`
+                              : "Click to view detailed resource information"
+                          }
                         >
-                          <h4 className="truncate text-sm font-medium text-text-primary transition-colors group-hover:text-text-link">
-                            {resource.isPriority && (
-                              <span className="text-text-priority">* </span>
-                            )}
-                            {resource.name}
-                          </h4>
-
-                          {/* Status Badge */}
-                          <div className="flex items-center justify-between">
-                            <span
-                              className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(
-                                status,
-                              )} ${statusChange ? "animate-pulse" : ""}`}
-                            >
-                              {getStatusText(status)}
-                            </span>
-
-                            {/* Multiplier Badge */}
-                            <span
-                              className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                                resource.multiplier === 0
-                                  ? "bg-multiplier-zero-bg text-multiplier-zero-text"
-                                  : (resource.multiplier || 1.0) >= 3.0
-                                    ? "bg-multiplier-high-bg text-multiplier-high-text"
-                                    : (resource.multiplier || 1.0) >= 2.0
-                                      ? "bg-multiplier-medium-bg text-multiplier-medium-text"
-                                      : (resource.multiplier || 1.0) >= 1.0
-                                        ? "bg-multiplier-low-bg text-multiplier-low-text"
-                                        : "bg-multiplier-very-low-bg text-multiplier-very-low-text"
+                          {/* Resource Image */}
+                          <div className="relative mb-3 aspect-square">
+                            {resource.imageUrl ? (
+                              <img
+                                src={resource.imageUrl}
+                                alt={resource.name}
+                                className="h-full w-full rounded-lg object-cover"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = "none";
+                                  const fallback =
+                                    target.nextElementSibling as HTMLElement;
+                                  if (fallback) fallback.style.display = "flex";
+                                }}
+                              />
+                            ) : null}
+                            <div
+                              className={`flex h-full w-full items-center justify-center rounded-lg bg-background-tertiary ${
+                                resource.imageUrl ? "hidden" : "flex"
                               }`}
                             >
-                              {resource.multiplier === 0
-                                ? "0x"
-                                : (resource.multiplier || 1.0).toFixed(1) + "x"}
-                            </span>
-                          </div>
-
-                          {/* Quantity Display */}
-                          <div className="text-center">
-                            <div className="text-sm font-bold text-text-primary">
-                              {location1Name}:{" "}
-                              {formatNumber(resource.quantityHagga)}
-                            </div>
-                            <div className="text-sm font-bold text-text-primary">
-                              {location2Name}:{" "}
-                              {formatNumber(resource.quantityDeepDesert)}
-                            </div>
-                            <div className="text-xs text-text-quaternary">
-                              {resource.targetQuantity
-                                ? `Target: ${formatNumber(
-                                    resource.targetQuantity,
-                                  )}`
-                                : "No target set"}
-                            </div>
-                          </div>
-
-                          {/* Last Updated Info */}
-                          <div className="border-t border-background-tertiary pt-2 text-center">
-                            <div className="text-xs text-text-quaternary">
-                              Updated by{" "}
-                              <span className="font-medium text-text-tertiary">
-                                {resource.lastUpdatedBy}
+                              <span className="text-xs text-text-quaternary">
+                                No Image
                               </span>
                             </div>
-                            <div className="flex items-center justify-center gap-1">
-                              {isOutdated && (
-                                <svg
-                                  className="h-3 w-3 text-update-indicator-text"
-                                  fill="currentColor"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              )}
-                              <div
-                                className={`cursor-help text-xs decoration-dotted hover:underline ${
-                                  isOutdated
-                                    ? "font-medium text-update-indicator-text"
-                                    : "text-text-quaternary"
-                                }`}
-                                title={new Date(
-                                  resource.updatedAt,
-                                ).toLocaleString()}
+
+                            {/* Click indicator */}
+                            <div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
+                              <svg
+                                className="h-4 w-4 text-text-link"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
                               >
-                                {getRelativeTime(resource.updatedAt)}
-                              </div>
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 5l7 7-7 7"
+                                />
+                              </svg>
                             </div>
                           </div>
 
-                          {/* Simplified Quick Update Controls - Only show on hover for grid view */}
-                          <div className="space-y-2 pt-2">
-                            <div className="space-y-2">
-                              {/* Regular quantity update buttons */}
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setUpdateModalState({
-                                      isOpen: true,
-                                      resource: resource,
-                                      updateType: UPDATE_TYPE.RELATIVE,
-                                    });
-                                  }}
-                                  className="flex-1 rounded-sm bg-button-subtle-blue-bg px-2 py-1 text-xs font-medium text-button-subtle-blue-text transition-colors hover:bg-button-subtle-blue-bg-hover"
-                                >
-                                  Add/Remove
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setUpdateModalState({
-                                      isOpen: true,
-                                      resource: resource,
-                                      updateType: UPDATE_TYPE.ABSOLUTE,
-                                    });
-                                  }}
-                                  className="flex-1 rounded-sm bg-button-subtle-purple-bg px-2 py-1 text-xs font-medium text-button-subtle-purple-text transition-colors hover:bg-button-subtle-purple-bg-hover"
-                                >
-                                  Set Qty
-                                </button>
-                              </div>
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setTransferModalState({
-                                      isOpen: true,
-                                      resource: resource,
-                                    });
-                                  }}
-                                  className="flex-1 rounded-sm bg-button-subtle-green-bg px-2 py-1 text-xs font-medium text-button-subtle-green-text transition-colors hover:bg-button-subtle-green-bg-hover"
-                                >
-                                  Transfer
-                                </button>
-                                {isTargetAdmin && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setChangeTargetModalState({
-                                        isOpen: true,
-                                        resource: resource,
-                                      });
-                                    }}
-                                    className="flex-1 rounded-sm bg-button-subtle-orange-bg px-2 py-1 text-xs font-medium text-button-subtle-orange-text transition-colors hover:bg-button-subtle-orange-bg-hover"
-                                  >
-                                    Set Target
-                                  </button>
-                                )}
-                              </div>
+                          {/* Resource Info */}
+                          <div
+                            className="space-y-2"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <h4 className="truncate text-sm font-medium text-text-primary transition-colors group-hover:text-text-link">
+                              {resource.isPriority && (
+                                <span className="text-text-priority">* </span>
+                              )}
+                              {resource.name}
+                            </h4>
 
-                              {/* Admin buttons */}
-                              {isResourceAdmin && (
+                            {/* Status Badge */}
+                            <div className="flex items-center justify-between">
+                              <span
+                                className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(
+                                  status,
+                                )} ${statusChange ? "animate-pulse" : ""}`}
+                              >
+                                {getStatusText(status)}
+                              </span>
+
+                              {/* Multiplier Badge */}
+                              <span
+                                className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                                  resource.multiplier === 0
+                                    ? "bg-multiplier-zero-bg text-multiplier-zero-text"
+                                    : (resource.multiplier || 1.0) >= 3.0
+                                      ? "bg-multiplier-high-bg text-multiplier-high-text"
+                                      : (resource.multiplier || 1.0) >= 2.0
+                                        ? "bg-multiplier-medium-bg text-multiplier-medium-text"
+                                        : (resource.multiplier || 1.0) >= 1.0
+                                          ? "bg-multiplier-low-bg text-multiplier-low-text"
+                                          : "bg-multiplier-very-low-bg text-multiplier-very-low-text"
+                                }`}
+                              >
+                                {resource.multiplier === 0
+                                  ? "0x"
+                                  : (resource.multiplier || 1.0).toFixed(1) +
+                                    "x"}
+                              </span>
+                            </div>
+
+                            {/* Quantity Display */}
+                            <div className="text-center">
+                              <div className="text-sm font-bold text-text-primary">
+                                {location1Name}:{" "}
+                                {formatNumber(resource.quantityHagga)}
+                              </div>
+                              <div className="text-sm font-bold text-text-primary">
+                                {location2Name}:{" "}
+                                {formatNumber(resource.quantityDeepDesert)}
+                              </div>
+                              <div className="text-xs text-text-quaternary">
+                                {resource.targetQuantity
+                                  ? `Target: ${formatNumber(
+                                      resource.targetQuantity,
+                                    )}`
+                                  : "No target set"}
+                              </div>
+                            </div>
+
+                            {/* Last Updated Info */}
+                            <div className="border-t border-background-tertiary pt-2 text-center">
+                              <div className="text-xs text-text-quaternary">
+                                Updated by{" "}
+                                <span className="font-medium text-text-tertiary">
+                                  {resource.lastUpdatedBy}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-center gap-1">
+                                {isOutdated && (
+                                  <svg
+                                    className="h-3 w-3 text-update-indicator-text"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                )}
+                                <div
+                                  className={`cursor-help text-xs decoration-dotted hover:underline ${
+                                    isOutdated
+                                      ? "font-medium text-update-indicator-text"
+                                      : "text-text-quaternary"
+                                  }`}
+                                  title={new Date(
+                                    resource.updatedAt,
+                                  ).toLocaleString()}
+                                >
+                                  {getRelativeTime(resource.updatedAt)}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Simplified Quick Update Controls - Only show on hover for grid view */}
+                            <div className="space-y-2 pt-2">
+                              <div className="space-y-2">
+                                {/* Regular quantity update buttons */}
                                 <div className="flex gap-1">
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      startEditResource(resource);
+                                      setUpdateModalState({
+                                        isOpen: true,
+                                        resource: resource,
+                                        updateType: UPDATE_TYPE.RELATIVE,
+                                      });
                                     }}
-                                    className="flex-1 rounded-sm bg-button-subtle-yellow-bg px-2 py-1 text-xs font-medium text-button-subtle-yellow-text transition-colors hover:bg-button-subtle-yellow-bg-hover"
+                                    className="flex-1 rounded-sm bg-button-subtle-blue-bg px-2 py-1 text-xs font-medium text-button-subtle-blue-text transition-colors hover:bg-button-subtle-blue-bg-hover"
                                   >
-                                    Edit
+                                    Add/Remove
                                   </button>
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      setDeleteConfirm({
-                                        resourceId: resource.id,
-                                        resourceName: resource.name,
-                                        showDialog: true,
+                                      setUpdateModalState({
+                                        isOpen: true,
+                                        resource: resource,
+                                        updateType: UPDATE_TYPE.ABSOLUTE,
                                       });
                                     }}
-                                    className="flex-1 rounded-sm bg-button-subtle-red-bg px-2 py-1 text-xs font-medium text-button-subtle-red-text transition-colors hover:bg-button-subtle-red-bg-hover"
+                                    className="flex-1 rounded-sm bg-button-subtle-purple-bg px-2 py-1 text-xs font-medium text-button-subtle-purple-text transition-colors hover:bg-button-subtle-purple-bg-hover"
                                   >
-                                    Delete
+                                    Set Qty
                                   </button>
                                 </div>
-                              )}
+                                <div className="flex gap-1">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setTransferModalState({
+                                        isOpen: true,
+                                        resource: resource,
+                                      });
+                                    }}
+                                    className="flex-1 rounded-sm bg-button-subtle-green-bg px-2 py-1 text-xs font-medium text-button-subtle-green-text transition-colors hover:bg-button-subtle-green-bg-hover"
+                                  >
+                                    Transfer
+                                  </button>
+                                  {isTargetAdmin && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setChangeTargetModalState({
+                                          isOpen: true,
+                                          resource: resource,
+                                        });
+                                      }}
+                                      className="flex-1 rounded-sm bg-button-subtle-orange-bg px-2 py-1 text-xs font-medium text-button-subtle-orange-text transition-colors hover:bg-button-subtle-orange-bg-hover"
+                                    >
+                                      Set Target
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Admin buttons */}
+                                {isResourceAdmin && (
+                                  <div className="flex gap-1">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        startEditResource(resource);
+                                      }}
+                                      className="flex-1 rounded-sm bg-button-subtle-yellow-bg px-2 py-1 text-xs font-medium text-button-subtle-yellow-text transition-colors hover:bg-button-subtle-yellow-bg-hover"
+                                    >
+                                      Edit
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setDeleteConfirm({
+                                          resourceId: resource.id,
+                                          resourceName: resource.name,
+                                          showDialog: true,
+                                        });
+                                      }}
+                                      className="flex-1 rounded-sm bg-button-subtle-red-bg px-2 py-1 text-xs font-medium text-button-subtle-red-text transition-colors hover:bg-button-subtle-red-bg-hover"
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
               );
             })}
         </div>
