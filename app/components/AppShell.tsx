@@ -321,14 +321,14 @@ export function AppShell({
           {/* Bottom: theme + user */}
           <div className="flex flex-col items-center gap-2.5">
             <div
-              className="flex items-center"
+              className="flex items-center gap-2.5"
               style={{
                 justifyContent: collapsed ? "center" : "space-between",
                 padding: collapsed ? 0 : "0 4px",
               }}
             >
               {!collapsed && (
-                <span className="gap-2.5 text-xs font-medium text-text-tertiary">
+                <span className="text-xs font-medium text-text-tertiary">
                   Theme Switch
                 </span>
               )}
