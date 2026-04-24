@@ -161,7 +161,8 @@ function UserBadge({ session, collapsed }: UserBadgeProps) {
         border: collapsed ? "none" : "1px solid",
         borderColor: collapsed ? "transparent" : undefined,
         minWidth: 0,
-        width: collapsed ? 48 : "100%",
+        width: collapsed ? "auto" : "100%",
+        justifyContent: collapsed ? "center" : undefined,
       }}
     >
       <div
