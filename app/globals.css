@@ -242,6 +242,12 @@
   --color-version-tag-bg: theme(colors.blue.100);
   --color-version-tag-text: theme(colors.blue.800);
 
+  /* 5.7 Charts */
+  --color-chart-grid-line: theme(colors.gray.200);
+  --color-chart-label: theme(colors.gray.400);
+  --color-chart-target-line: theme(colors.amber.500);
+  --color-chart-point-fill: theme(colors.white);
+
   /* ===== 6. SPECIAL / PAGE-SPECIFIC ===== */
 
   /* 6.1 Homepage & Gradient Stops */
@@ -499,6 +505,12 @@
   /* 5.6 Version Tags */
   --color-version-tag-bg: theme(colors.blue.900);
   --color-version-tag-text: theme(colors.blue.200);
+
+  /* 5.7 Charts */
+  --color-chart-grid-line: theme(colors.gray.700);
+  --color-chart-label: theme(colors.gray.500);
+  --color-chart-target-line: theme(colors.amber.400);
+  --color-chart-point-fill: theme(colors.gray.700);
 
   /* ===== 6. SPECIAL / PAGE-SPECIFIC ===== */
 

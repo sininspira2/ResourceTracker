@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -96,9 +96,9 @@ function SidebarNavItem({ item, active, collapsed }: SidebarNavItemProps) {
         padding: collapsed ? "9px 0" : "9px 12px",
         justifyContent: collapsed ? "center" : "flex-start",
         background: active
-          ? "color-mix(in srgb, #3b82f6 12%, transparent)"
+          ? "color-mix(in srgb, var(--color-text-link) 12%, transparent)"
           : "transparent",
-        color: active ? "#3b82f6" : undefined,
+        color: active ? "var(--color-text-link)" : undefined,
       }}
     >
       {active && !collapsed && (
@@ -109,7 +109,7 @@ function SidebarNavItem({ item, active, collapsed }: SidebarNavItemProps) {
             top: 8,
             bottom: 8,
             width: 3,
-            background: "#3b82f6",
+            background: "var(--color-text-link)",
           }}
         />
       )}
@@ -183,6 +183,7 @@ function UserBadge({ session, collapsed }: UserBadgeProps) {
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
             title="Sign out"
+            aria-label="Sign out"
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-tertiary transition-colors hover:bg-background-tertiary hover:text-text-secondary"
           >
             <LogOut size={14} />
@@ -204,21 +205,57 @@ export function AppShell({
 }: AppShellProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      localStorage.getItem("nav-collapsed") === "true",
+  );
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showChangelog, setShowChangelog] = useState(false);
-
-  // Persist collapsed state across page navigations
-  useEffect(() => {
-    const stored = localStorage.getItem("nav-collapsed");
-    if (stored === "true") setCollapsed(true);
-  }, []);
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   const toggleCollapsed = () => {
     const next = !collapsed;
     setCollapsed(next);
     localStorage.setItem("nav-collapsed", String(next));
   };
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const el = drawerRef.current;
+    if (!el) return;
+    const focusable = Array.from(
+      el.querySelectorAll<HTMLElement>(
+        'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ),
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setDrawerOpen(false);
+      } else if (e.key === "Tab") {
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last?.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first?.focus();
+          }
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
+    };
+  }, [drawerOpen]);
 
   // Current page label for mobile header
   const currentLabel = (() => {
@@ -276,6 +313,7 @@ export function AppShell({
               <button
                 onClick={toggleCollapsed}
                 title="Collapse sidebar"
+                aria-label="Collapse sidebar"
                 className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-border-primary text-text-tertiary transition-colors hover:bg-background-tertiary"
               >
                 <ChevronLeft size={12} />
@@ -288,6 +326,7 @@ export function AppShell({
             <button
               onClick={toggleCollapsed}
               title="Expand sidebar"
+              aria-label="Expand sidebar"
               className="flex h-6 w-full items-center justify-center rounded-md border border-border-primary text-text-tertiary transition-colors hover:bg-background-tertiary"
             >
               <ChevronRight size={12} />
@@ -347,6 +386,8 @@ export function AppShell({
             <div className="flex items-center gap-2.5">
               <button
                 onClick={() => setDrawerOpen(true)}
+                title="Open navigation menu"
+                aria-label="Open navigation menu"
                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-primary bg-background-tertiary text-text-primary transition-colors hover:bg-background-secondary"
               >
                 <Menu size={18} />
@@ -373,12 +414,22 @@ export function AppShell({
 
       {/* ── Mobile drawer overlay ── */}
       {drawerOpen && (
-        <div
-          className="fixed inset-0 z-50 md:hidden"
-          onClick={() => setDrawerOpen(false)}
-        >
-          <div className="absolute inset-0 bg-black/50" />
+        <div className="fixed inset-0 z-50 md:hidden">
           <div
+            className="absolute inset-0 bg-black/50"
+            role="button"
+            tabIndex={0}
+            aria-label="Close navigation menu"
+            onClick={() => setDrawerOpen(false)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") setDrawerOpen(false);
+            }}
+          />
+          <div
+            ref={drawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
             className="absolute top-0 bottom-0 left-0 flex w-64 flex-col gap-3.5 border-r border-border-primary bg-background-secondary p-4"
             style={{ animation: "slideInFromLeft 180ms ease" }}
             onClick={(e) => e.stopPropagation()}
@@ -407,6 +458,8 @@ export function AppShell({
               </div>
               <button
                 onClick={() => setDrawerOpen(false)}
+                title="Close navigation menu"
+                aria-label="Close navigation menu"
                 className="flex h-7 w-7 items-center justify-center rounded-md border border-border-primary text-text-secondary transition-colors hover:bg-background-tertiary"
               >
                 <X size={14} />
@@ -435,10 +488,10 @@ export function AppShell({
                           pathname,
                           item.exact,
                         )
-                          ? "color-mix(in srgb, #3b82f6 12%, transparent)"
+                          ? "color-mix(in srgb, var(--color-text-link) 12%, transparent)"
                           : "transparent",
                         color: isNavItemActive(item.href, pathname, item.exact)
-                          ? "#3b82f6"
+                          ? "var(--color-text-link)"
                           : undefined,
                       }}
                     >
