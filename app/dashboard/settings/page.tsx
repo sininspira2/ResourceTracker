@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { ClientNavigation } from "@/app/components/ClientNavigation";
+import { AppShell } from "@/app/components/AppShell";
 import { PageContainer } from "@/app/components/PageContainer";
 import { SettingsForm } from "./SettingsForm";
 
@@ -17,11 +17,7 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-primary transition-colors duration-300">
-      <ClientNavigation
-        title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}
-        showDashboardLink={true}
-      />
+    <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
       <PageContainer>
         <div className="mx-auto max-w-2xl">
           <header className="mb-8">
@@ -35,6 +31,6 @@ export default async function SettingsPage() {
           <SettingsForm />
         </div>
       </PageContainer>
-    </div>
+    </AppShell>
   );
 }

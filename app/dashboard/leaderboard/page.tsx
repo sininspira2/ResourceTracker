@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Pagination } from "@/app/components/Pagination";
 import { PageContainer } from "@/app/components/PageContainer";
+import { AppShell } from "@/app/components/AppShell";
 
 interface LeaderboardEntry {
   userId: string;
@@ -82,20 +83,20 @@ export default function LeaderboardPage() {
 
   if (loading && !data) {
     return (
-      <div className="min-h-screen bg-background-primary py-8">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+        <div className="flex flex-1 items-center justify-center py-8">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
             <p className="mt-4 text-text-tertiary">Loading leaderboard...</p>
           </div>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background-primary py-8">
-      <PageContainer className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+      <PageContainer className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 rounded-lg bg-background-panel p-6 shadow-lg">
           <div className="flex items-center justify-between">
@@ -313,6 +314,6 @@ export default function LeaderboardPage() {
           </div>
         </div>
       </PageContainer>
-    </div>
+    </AppShell>
   );
 }

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Pagination } from "@/app/components/Pagination";
 import { PageContainer } from "@/app/components/PageContainer";
+import { AppShell } from "@/app/components/AppShell";
 
 interface Contribution {
   id: string;
@@ -176,21 +177,21 @@ export default function UserContributionsPage() {
 
   if (loading && !data) {
     return (
-      <div className="min-h-screen bg-background-primary py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+        <div className="flex flex-1 items-center justify-center py-8">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
             <p className="mt-4 text-text-tertiary">Loading contributions...</p>
           </div>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background-primary py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+        <div className="flex flex-1 items-center justify-center py-8">
           <div className="text-center">
             <p className="text-text-danger">{error}</p>
             <button
@@ -201,7 +202,7 @@ export default function UserContributionsPage() {
             </button>
           </div>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
@@ -210,8 +211,8 @@ export default function UserContributionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-primary py-8">
-      <PageContainer className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+      <PageContainer className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 rounded-lg bg-background-panel p-6 shadow-lg">
           <div className="flex items-center justify-between">
@@ -415,6 +416,6 @@ export default function UserContributionsPage() {
           </div>
         </div>
       </PageContainer>
-    </div>
+    </AppShell>
   );
 }
