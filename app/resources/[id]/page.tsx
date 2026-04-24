@@ -43,8 +43,13 @@ const getTierClassName = (tier: number | null | undefined): string => {
     4: "bg-tier-4-bg text-tier-4-text",
     5: "bg-tier-5-bg text-tier-5-text",
     6: "bg-tier-6-bg text-tier-6-text",
+    7: "bg-tier-7-bg text-tier-7-text",
+    8: "bg-tier-8-bg text-tier-8-text",
+    9: "bg-tier-9-bg text-tier-9-text",
+    10: "bg-tier-10-bg text-tier-10-text",
+    11: "bg-tier-11-bg text-tier-11-text",
   };
-  return tierClasses[tier] || "bg-gray-200 text-gray-800";
+  return tierClasses[tier] ?? "bg-gray-200 text-gray-800";
 };
 
 const CHART_COLORS = {
