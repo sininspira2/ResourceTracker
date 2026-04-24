@@ -21,6 +21,7 @@ import {
 import { ThemeToggle } from "./ThemeToggle";
 import { VersionDisplay } from "./VersionDisplay";
 import { WhatsNewModal } from "./WhatsNewModal";
+import { GiLeechingWorm } from "react-icons/gi";
 
 interface NavItem {
   href: string;
@@ -94,7 +95,9 @@ function SidebarNavItem({ item, active, collapsed }: SidebarNavItemProps) {
         gap: collapsed ? 0 : 12,
         padding: collapsed ? "9px 0" : "9px 12px",
         justifyContent: collapsed ? "center" : "flex-start",
-        background: active ? "color-mix(in srgb, #3b82f6 12%, transparent)" : "transparent",
+        background: active
+          ? "color-mix(in srgb, #3b82f6 12%, transparent)"
+          : "transparent",
         color: active ? "#3b82f6" : undefined,
       }}
     >
@@ -170,10 +173,10 @@ function UserBadge({ session, collapsed }: UserBadgeProps) {
       {!collapsed && (
         <>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-xs font-semibold text-text-primary leading-tight">
+            <div className="truncate text-xs leading-tight font-semibold text-text-primary">
               {displayName}
             </div>
-            <div className="text-[10px] text-text-tertiary mt-0.5">{role}</div>
+            <div className="mt-0.5 text-[10px] text-text-tertiary">{role}</div>
           </div>
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
@@ -193,7 +196,10 @@ interface AppShellProps {
   title?: string;
 }
 
-export function AppShell({ children, title = process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker" }: AppShellProps) {
+export function AppShell({
+  children,
+  title = process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker",
+}: AppShellProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -227,7 +233,7 @@ export function AppShell({ children, title = process.env.NEXT_PUBLIC_ORG_NAME ||
       <div className="flex min-h-screen bg-background-primary transition-colors duration-300">
         {/* ── Desktop sidebar ── */}
         <aside
-          className="hidden md:flex flex-col border-r border-border-primary bg-background-secondary overflow-hidden"
+          className="hidden flex-col overflow-hidden border-r border-border-primary bg-background-secondary md:flex"
           style={{
             width: collapsed ? 68 : 232,
             flexShrink: 0,
@@ -236,21 +242,22 @@ export function AppShell({ children, title = process.env.NEXT_PUBLIC_ORG_NAME ||
             height: "100vh",
             padding: collapsed ? "16px 10px" : "16px 14px",
             gap: 18,
-            transition: "width 220ms cubic-bezier(0.4,0,0.2,1), padding 220ms cubic-bezier(0.4,0,0.2,1)",
+            transition:
+              "width 220ms cubic-bezier(0.4,0,0.2,1), padding 220ms cubic-bezier(0.4,0,0.2,1)",
           }}
         >
           {/* OrgMark + collapse button */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex min-w-0 items-center gap-2.5">
               <div
-                className="flex shrink-0 items-center justify-center rounded-lg bg-button-primary-bg font-mono text-xs font-bold text-text-white"
+                className="flex shrink-0 items-center justify-center rounded-lg bg-button-primary-bg text-text-white"
                 style={{ width: 32, height: 32 }}
               >
-                RT
+                <GiLeechingWorm size={18} />
               </div>
               {!collapsed && (
                 <div className="min-w-0">
-                  <div className="truncate text-sm font-bold text-text-primary leading-tight">
+                  <div className="truncate text-sm leading-tight font-bold text-text-primary">
                     {title}
                   </div>
                   <VersionDisplay
@@ -288,7 +295,7 @@ export function AppShell({ children, title = process.env.NEXT_PUBLIC_ORG_NAME ||
               <div key={section.label}>
                 {!collapsed ? (
                   <div
-                    className="px-3 pb-2 pt-1 text-[10px] font-semibold uppercase tracking-widest text-text-quaternary"
+                    className="px-3 pt-1 pb-2 text-[10px] font-semibold tracking-widest text-text-quaternary uppercase"
                     style={{ paddingTop: si > 0 ? 14 : 4 }}
                   >
                     {section.label}
@@ -341,10 +348,10 @@ export function AppShell({ children, title = process.env.NEXT_PUBLIC_ORG_NAME ||
               </button>
               <div className="flex items-center gap-2">
                 <div
-                  className="flex items-center justify-center rounded-md bg-button-primary-bg font-mono text-[11px] font-bold text-text-white"
+                  className="flex items-center justify-center rounded-md bg-button-primary-bg text-text-white"
                   style={{ width: 26, height: 26 }}
                 >
-                  RT
+                  <GiLeechingWorm size={14} />
                 </div>
                 <span className="text-sm font-semibold text-text-primary">
                   {currentLabel}
@@ -367,7 +374,7 @@ export function AppShell({ children, title = process.env.NEXT_PUBLIC_ORG_NAME ||
         >
           <div className="absolute inset-0 bg-black/50" />
           <div
-            className="absolute bottom-0 left-0 top-0 flex w-64 flex-col gap-3.5 border-r border-border-primary bg-background-secondary p-4"
+            className="absolute top-0 bottom-0 left-0 flex w-64 flex-col gap-3.5 border-r border-border-primary bg-background-secondary p-4"
             style={{ animation: "slideInFromLeft 180ms ease" }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -375,10 +382,10 @@ export function AppShell({ children, title = process.env.NEXT_PUBLIC_ORG_NAME ||
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div
-                  className="flex items-center justify-center rounded-lg bg-button-primary-bg font-mono text-xs font-bold text-text-white"
+                  className="flex items-center justify-center rounded-lg bg-button-primary-bg text-text-white"
                   style={{ width: 32, height: 32 }}
                 >
-                  RT
+                  <GiLeechingWorm size={18} />
                 </div>
                 <div>
                   <div className="text-sm font-bold text-text-primary">
@@ -406,7 +413,7 @@ export function AppShell({ children, title = process.env.NEXT_PUBLIC_ORG_NAME ||
               {NAV_SECTIONS.map((section, si) => (
                 <div key={section.label}>
                   <div
-                    className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-text-quaternary"
+                    className="px-3 pb-2 text-[10px] font-semibold tracking-widest text-text-quaternary uppercase"
                     style={{ paddingTop: si > 0 ? 14 : 4 }}
                   >
                     {section.label}
@@ -418,7 +425,11 @@ export function AppShell({ children, title = process.env.NEXT_PUBLIC_ORG_NAME ||
                       onClick={() => setDrawerOpen(false)}
                       className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors"
                       style={{
-                        background: isNavItemActive(item.href, pathname, item.exact)
+                        background: isNavItemActive(
+                          item.href,
+                          pathname,
+                          item.exact,
+                        )
                           ? "color-mix(in srgb, #3b82f6 12%, transparent)"
                           : "transparent",
                         color: isNavItemActive(item.href, pathname, item.exact)
