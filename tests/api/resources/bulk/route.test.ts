@@ -126,6 +126,74 @@ describe("GET /api/resources/bulk", () => {
 
     expect(mockWhere).toHaveBeenCalled();
   });
+
+  it("should include a read-only tier column with the human-readable label", async () => {
+    const mockWhere = jest.fn().mockResolvedValue([
+      {
+        id: "r1",
+        name: "Steel Plate",
+        tier: 3,
+        subcategory: null,
+        quantityHagga: 0,
+        quantityDeepDesert: 0,
+        targetQuantity: 10,
+      },
+      {
+        id: "r2",
+        name: "Burning Blades",
+        tier: 10,
+        subcategory: null,
+        quantityHagga: 0,
+        quantityDeepDesert: 0,
+        targetQuantity: 5,
+      },
+      {
+        id: "r3",
+        name: "No Tier",
+        tier: null,
+        subcategory: null,
+        quantityHagga: 0,
+        quantityDeepDesert: 0,
+        targetQuantity: 0,
+      },
+    ]);
+
+    jest.doMock("@/lib/db", () => ({
+      db: {
+        select: jest.fn().mockReturnValue({
+          from: jest.fn().mockReturnThis(),
+          where: mockWhere,
+        }),
+      },
+      resources: {
+        subcategory: "resources.subcategory",
+        tier: "resources.tier",
+        isPriority: "resources.isPriority",
+        updatedAt: "resources.updatedAt",
+      },
+    }));
+
+    jest.doMock("next-auth", () => ({
+      getServerSession: jest.fn().mockResolvedValue({
+        user: { roles: ["Target Editor"] },
+      }),
+    }));
+
+    jest.doMock("@/lib/discord-roles", () => ({
+      hasTargetEditAccess: jest.fn().mockReturnValue(true),
+    }));
+
+    const { GET } = await import("@/app/api/resources/bulk/route");
+    const request = new NextRequest("http://localhost/api/resources/bulk");
+    const response = await GET(request);
+    const csvText = await response.text();
+    const parsed = Papa.parse(csvText, { header: true });
+
+    expect(response.status).toBe(200);
+    expect((parsed.data[0] as any).tier).toBe("Tier 3 (Steel)");
+    expect((parsed.data[1] as any).tier).toBe("Grade 4");
+    expect((parsed.data[2] as any).tier).toBe("");
+  });
 });
 
 describe("POST /api/resources/bulk", () => {

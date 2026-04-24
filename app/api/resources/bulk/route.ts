@@ -8,6 +8,7 @@ import Papa from "papaparse";
 import {
   UPDATE_THRESHOLD_NON_PRIORITY_MS,
   UPDATE_THRESHOLD_PRIORITY_MS,
+  TIER_OPTIONS,
 } from "@/lib/constants";
 import { getLocationNames } from "@/lib/global-settings";
 
@@ -49,12 +50,17 @@ function desanitizeCsvField(value: unknown): string {
   return value.length > 1 && value.startsWith("'") ? value.slice(1) : value;
 }
 
+function getTierLabel(tier: number | null | undefined): string {
+  if (tier === null || tier === undefined) return "";
+  return TIER_OPTIONS.find((t) => t.value === tier.toString())?.label ?? "";
+}
+
 /**
  * GET /api/resources/bulk
  *
  * Exports a filtered list of resources as a CSV file. The CSV contains
- * `id`, `name`, `quantityHagga`, `quantityDeepDesert`, and `targetQuantity`
- * columns. String fields are sanitized against CSV injection.
+ * `id`, `name`, `tier` (read-only label), the two location quantity columns,
+ * and `targetQuantity` columns. String fields are sanitized against CSV injection.
  *
  * Supports the same filter parameters as the main resource list:
  * `status`, `category`, `subcategory`, `tier`, `needsUpdate`, `priority`,
@@ -189,6 +195,7 @@ export async function GET(request: NextRequest) {
   const EXPORT_RESERVED = new Set([
     "id",
     "name",
+    "tier",
     "targetQuantity",
     "quantityHagga",
     "quantityDeepDesert",
@@ -201,7 +208,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Location names are misconfigured: they must not match reserved column names (id, name, targetQuantity) or be identical to each other.",
+          "Location names are misconfigured: they must not match reserved column names (id, name, tier, targetQuantity) or be identical to each other.",
       },
       { status: 500 },
     );
@@ -210,6 +217,7 @@ export async function GET(request: NextRequest) {
   const dataForCsv = filteredResources.map((r) => ({
     id: sanitizeCsvField(r.id),
     name: sanitizeCsvField(r.name),
+    tier: getTierLabel(r.tier),
     [location1Name]: r.quantityHagga,
     [location2Name]: r.quantityDeepDesert,
     targetQuantity: r.targetQuantity,
