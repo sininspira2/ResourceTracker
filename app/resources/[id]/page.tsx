@@ -14,7 +14,6 @@ import { EditResourceModal } from "@/app/components/EditResourceModal";
 import { DuplicateResourceModal } from "@/app/components/DuplicateResourceModal";
 import { PageContainer } from "@/app/components/PageContainer";
 import { AppShell } from "@/app/components/AppShell";
-import { ArrowLeft } from "lucide-react";
 import {
   TIER_OPTIONS,
   UPDATE_TYPE,
@@ -22,6 +21,7 @@ import {
   type TransferDirection,
 } from "@/lib/constants";
 import {
+  ArrowLeft,
   Plus,
   Baseline,
   ArrowRightLeft,
@@ -252,8 +252,8 @@ export default function ResourceDetailPage() {
       n <= 6
         ? reversedHistory.map((_, i) => i)
         : [0, Math.round(n * 0.25), Math.round(n * 0.5), Math.round(n * 0.75), n - 1];
-    const todayStr = new Date().toLocaleDateString();
-    return { reversedHistory, maxV, xScale, yScale, totalPath, haggaPath, deepPath, yTicks, xIndices, todayStr };
+    const today = new Date();
+    return { reversedHistory, maxV, xScale, yScale, totalPath, haggaPath, deepPath, yTicks, xIndices, today };
   }, [history, resource?.targetQuantity]);
 
   // Admin function to start editing a resource
@@ -813,7 +813,7 @@ export default function ResourceDetailPage() {
   if (loading || sessionStatus === "loading") {
     return (
       <AppShell>
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex flex-1 items-center justify-center py-8">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
             <p className="mt-4 text-text-tertiary">Loading resource details...</p>
@@ -1307,7 +1307,7 @@ export default function ResourceDetailPage() {
                 </div>
                 <div className="relative">
                   {chartData && (() => {
-                    const { reversedHistory, xScale, yScale, totalPath, haggaPath, deepPath, yTicks, xIndices, todayStr } = chartData;
+                    const { reversedHistory, xScale, yScale, totalPath, haggaPath, deepPath, yTicks, xIndices, today } = chartData;
                     return (
                       <>
                   <svg
@@ -1331,14 +1331,14 @@ export default function ResourceDetailPage() {
                                 y1={yScale(v)}
                                 x2={CHART_W - CHART_PAD_R}
                                 y2={yScale(v)}
-                                stroke="#e5e7eb"
+                                stroke="var(--color-border-primary)"
                                 strokeDasharray="3 4"
                                 strokeWidth="1"
                               />
                               <text
                                 x={CHART_PAD_L - 8}
                                 y={yScale(v)}
-                                fill="#9ca3af"
+                                fill="var(--color-text-tertiary)"
                                 fontSize="10"
                                 textAnchor="end"
                                 dominantBaseline="middle"
@@ -1358,7 +1358,7 @@ export default function ResourceDetailPage() {
                                   y1={yScale(resource.targetQuantity)}
                                   x2={CHART_W - CHART_PAD_R}
                                   y2={yScale(resource.targetQuantity)}
-                                  stroke="#f59e0b"
+                                  stroke="var(--color-update-indicator-border)"
                                   strokeDasharray="4 4"
                                   strokeWidth="1.2"
                                   opacity="0.8"
@@ -1366,7 +1366,7 @@ export default function ResourceDetailPage() {
                                 <text
                                   x={CHART_W - CHART_PAD_R}
                                   y={yScale(resource.targetQuantity) - 6}
-                                  fill="#f59e0b"
+                                  fill="var(--color-update-indicator-border)"
                                   fontSize="10"
                                   textAnchor="end"
                                   fontFamily="ui-monospace,monospace"
@@ -1382,7 +1382,9 @@ export default function ResourceDetailPage() {
                             const entry = reversedHistory[i];
                             const date = new Date(entry.createdAt);
                             const label =
-                              date.toLocaleDateString() === todayStr
+                              date.getFullYear() === today.getFullYear() &&
+                              date.getMonth() === today.getMonth() &&
+                              date.getDate() === today.getDate()
                                 ? date.toLocaleTimeString([], {
                                     hour: "2-digit",
                                     minute: "2-digit",
@@ -1396,7 +1398,7 @@ export default function ResourceDetailPage() {
                                 key={i}
                                 x={xScale(i)}
                                 y={CHART_H - 8}
-                                fill="#9ca3af"
+                                fill="var(--color-text-tertiary)"
                                 fontSize="10"
                                 textAnchor="middle"
                               >
@@ -1462,7 +1464,7 @@ export default function ResourceDetailPage() {
                                   cx={x}
                                   cy={yTotal}
                                   r={r}
-                                  fill="white"
+                                  fill="var(--color-background-modal-content-inset)"
                                   stroke={CHART_COLORS.total}
                                   strokeWidth="1.5"
                                 />
@@ -1470,7 +1472,7 @@ export default function ResourceDetailPage() {
                                   cx={x}
                                   cy={yHagga}
                                   r={r}
-                                  fill="white"
+                                  fill="var(--color-background-modal-content-inset)"
                                   stroke={CHART_COLORS.hagga}
                                   strokeWidth="1.5"
                                 />
@@ -1478,7 +1480,7 @@ export default function ResourceDetailPage() {
                                   cx={x}
                                   cy={yDeep}
                                   r={r}
-                                  fill="white"
+                                  fill="var(--color-background-modal-content-inset)"
                                   stroke={CHART_COLORS.deepDesert}
                                   strokeWidth="1.5"
                                 />

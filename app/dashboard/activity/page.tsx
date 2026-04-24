@@ -124,12 +124,14 @@ export default function ActivityLogPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background-primary">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
-          <p className="mt-4 text-text-tertiary">Loading...</p>
+      <AppShell>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
+            <p className="mt-4 text-text-tertiary">Loading...</p>
+          </div>
         </div>
-      </div>
+      </AppShell>
     );
   }
 

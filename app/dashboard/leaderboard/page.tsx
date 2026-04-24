@@ -99,7 +99,7 @@ export default function LeaderboardPage() {
       <PageContainer className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 rounded-lg bg-background-panel p-6 shadow-lg">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <div>
               <h1 className="text-3xl font-bold text-text-primary">
                 🏆 Leaderboard
@@ -109,12 +109,6 @@ export default function LeaderboardPage() {
                 {process.env.NEXT_PUBLIC_ORG_NAME || "community"}
               </p>
             </div>
-            <button
-              onClick={() => router.push("/resources")}
-              className="rounded-lg bg-button-secondary-neutral-bg px-4 py-2 text-button-secondary-text hover:bg-button-secondary-neutral-bg-hover"
-            >
-              Back to Resources
-            </button>
           </div>
 
           {/* Time Filter */}
