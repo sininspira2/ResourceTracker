@@ -248,7 +248,10 @@ export function AppShell({
         >
           {/* OrgMark + collapse button */}
           <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2.5">
+            <div
+              className="flex min-w-0 items-center gap-2.5"
+              style={{ justifyContent: collapsed ? "center" : undefined }}
+            >
               <div
                 className="flex shrink-0 items-center justify-center rounded-lg bg-button-primary-bg text-text-white"
                 style={{ width: 32, height: 32 }}
@@ -316,7 +319,7 @@ export function AppShell({
           </nav>
 
           {/* Bottom: theme + user */}
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col items-center gap-2.5">
             <div
               className="flex items-center"
               style={{
