@@ -229,31 +229,61 @@ export default function ResourceDetailPage() {
     if (history.length <= 1) return null;
     const reversedHistory = history.slice().reverse();
     const maxV = Math.max(
-      ...reversedHistory.map((p) => p.newQuantityHagga + p.newQuantityDeepDesert),
+      ...reversedHistory.map(
+        (p) => p.newQuantityHagga + p.newQuantityDeepDesert,
+      ),
       resource?.targetQuantity || 0,
       1,
     );
     const xScale = (i: number) =>
-      CHART_PAD_L + (i / Math.max(reversedHistory.length - 1, 1)) * (CHART_W - CHART_PAD_L - CHART_PAD_R);
+      CHART_PAD_L +
+      (i / Math.max(reversedHistory.length - 1, 1)) *
+        (CHART_W - CHART_PAD_L - CHART_PAD_R);
     const yScale = (v: number) =>
       CHART_PAD_T + (1 - v / maxV) * (CHART_H - CHART_PAD_T - CHART_PAD_B);
     const totalPath = reversedHistory
-      .map((p, i) => `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityHagga + p.newQuantityDeepDesert)}`)
+      .map(
+        (p, i) =>
+          `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityHagga + p.newQuantityDeepDesert)}`,
+      )
       .join(" ");
     const haggaPath = reversedHistory
-      .map((p, i) => `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityHagga)}`)
+      .map(
+        (p, i) =>
+          `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityHagga)}`,
+      )
       .join(" ");
     const deepPath = reversedHistory
-      .map((p, i) => `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityDeepDesert)}`)
+      .map(
+        (p, i) =>
+          `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityDeepDesert)}`,
+      )
       .join(" ");
     const yTicks = [0, 0.25, 0.5, 0.75, 1].map((f) => Math.round(maxV * f));
     const n = reversedHistory.length;
     const xIndices =
       n <= 6
         ? reversedHistory.map((_, i) => i)
-        : [0, Math.round(n * 0.25), Math.round(n * 0.5), Math.round(n * 0.75), n - 1];
+        : [
+            0,
+            Math.round(n * 0.25),
+            Math.round(n * 0.5),
+            Math.round(n * 0.75),
+            n - 1,
+          ];
     const today = new Date();
-    return { reversedHistory, maxV, xScale, yScale, totalPath, haggaPath, deepPath, yTicks, xIndices, today };
+    return {
+      reversedHistory,
+      maxV,
+      xScale,
+      yScale,
+      totalPath,
+      haggaPath,
+      deepPath,
+      yTicks,
+      xIndices,
+      today,
+    };
   }, [history, resource?.targetQuantity]);
 
   // Admin function to start editing a resource
@@ -816,7 +846,9 @@ export default function ResourceDetailPage() {
         <div className="flex flex-1 items-center justify-center py-8">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
-            <p className="mt-4 text-text-tertiary">Loading resource details...</p>
+            <p className="mt-4 text-text-tertiary">
+              Loading resource details...
+            </p>
           </div>
         </div>
       </AppShell>
@@ -827,42 +859,42 @@ export default function ResourceDetailPage() {
     return (
       <AppShell>
         <div className="flex flex-1 items-center justify-center">
-        <div className="text-center">
-          <svg
-            className="mx-auto mb-4 h-16 w-16 text-text-quaternary"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
-          <h2 className="mb-2 text-2xl font-bold text-text-primary">
-            Resource Not Found
-          </h2>
-          <p className="mb-6 text-text-tertiary">
-            The resource you&apos;re looking for doesn&apos;t exist or you
-            don&apos;t have permission to view it.
-            {!canEdit && (
-              <>
-                <br />
-                <span className="text-sm">
-                  Please make sure you have the required Discord roles.
-                </span>
-              </>
-            )}
-          </p>
-          <button
-            onClick={() => router.push("/resources")}
-            className="rounded-lg bg-button-primary-bg px-4 py-2 text-text-white transition-colors hover:bg-button-primary-bg-hover"
-          >
-            Back to Resources
-          </button>
-        </div>
+          <div className="text-center">
+            <svg
+              className="mx-auto mb-4 h-16 w-16 text-text-quaternary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <h2 className="mb-2 text-2xl font-bold text-text-primary">
+              Resource Not Found
+            </h2>
+            <p className="mb-6 text-text-tertiary">
+              The resource you&apos;re looking for doesn&apos;t exist or you
+              don&apos;t have permission to view it.
+              {!canEdit && (
+                <>
+                  <br />
+                  <span className="text-sm">
+                    Please make sure you have the required Discord roles.
+                  </span>
+                </>
+              )}
+            </p>
+            <button
+              onClick={() => router.push("/resources")}
+              className="rounded-lg bg-button-primary-bg px-4 py-2 text-text-white transition-colors hover:bg-button-primary-bg-hover"
+            >
+              Back to Resources
+            </button>
+          </div>
         </div>
       </AppShell>
     );
@@ -1306,231 +1338,248 @@ export default function ResourceDetailPage() {
                   </div>
                 </div>
                 <div className="relative">
-                  {chartData && (() => {
-                    const { reversedHistory, xScale, yScale, totalPath, haggaPath, deepPath, yTicks, xIndices, today } = chartData;
-                    return (
-                      <>
-                  <svg
-                          viewBox={`0 0 ${CHART_W} ${CHART_H}`}
-                          width="100%"
-                          style={{ display: "block", overflow: "visible" }}
-                    onMouseMove={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      setMousePosition({
-                        x: e.clientX - rect.left,
-                        y: e.clientY - rect.top,
-                      });
-                    }}
-                    onMouseLeave={() => setHoveredPoint(null)}
-                  >
-                          {/* Grid lines + Y labels */}
-                          {yTicks.map((v, i) => (
-                            <g key={i}>
-                              <line
-                                x1={CHART_PAD_L}
-                                y1={yScale(v)}
-                                x2={CHART_W - CHART_PAD_R}
-                                y2={yScale(v)}
-                                stroke="var(--color-chart-grid-line)"
-                                strokeDasharray="3 4"
-                                strokeWidth="1"
-                              />
-                              <text
-                                x={CHART_PAD_L - 8}
-                                y={yScale(v)}
-                                fill="var(--color-chart-label)"
-                                fontSize="10"
-                                textAnchor="end"
-                                dominantBaseline="middle"
-                                fontFamily="ui-monospace,monospace"
-                              >
-                                {formatNumber(v)}
-                              </text>
-                            </g>
-                          ))}
-
-                          {/* Target line */}
-                          {resource.targetQuantity != null &&
-                            resource.targetQuantity > 0 && (
-                              <g>
+                  {chartData &&
+                    (() => {
+                      const {
+                        reversedHistory,
+                        xScale,
+                        yScale,
+                        totalPath,
+                        haggaPath,
+                        deepPath,
+                        yTicks,
+                        xIndices,
+                        today,
+                      } = chartData;
+                      return (
+                        <>
+                          <svg
+                            viewBox={`0 0 ${CHART_W} ${CHART_H}`}
+                            width="100%"
+                            style={{ display: "block", overflow: "visible" }}
+                            onMouseMove={(e) => {
+                              const rect =
+                                e.currentTarget.getBoundingClientRect();
+                              setMousePosition({
+                                x: e.clientX - rect.left,
+                                y: e.clientY - rect.top,
+                              });
+                            }}
+                            onMouseLeave={() => setHoveredPoint(null)}
+                          >
+                            {/* Grid lines + Y labels */}
+                            {yTicks.map((v, i) => (
+                              <g key={i}>
                                 <line
                                   x1={CHART_PAD_L}
-                                  y1={yScale(resource.targetQuantity)}
+                                  y1={yScale(v)}
                                   x2={CHART_W - CHART_PAD_R}
-                                  y2={yScale(resource.targetQuantity)}
-                                  stroke="var(--color-chart-target-line)"
-                                  strokeDasharray="4 4"
-                                  strokeWidth="1.2"
-                                  opacity="0.8"
+                                  y2={yScale(v)}
+                                  stroke="var(--color-chart-grid-line)"
+                                  strokeDasharray="3 4"
+                                  strokeWidth="1"
                                 />
                                 <text
-                                  x={CHART_W - CHART_PAD_R}
-                                  y={yScale(resource.targetQuantity) - 6}
-                                  fill="var(--color-chart-target-line)"
+                                  x={CHART_PAD_L - 8}
+                                  y={yScale(v)}
+                                  fill="var(--color-chart-label)"
                                   fontSize="10"
                                   textAnchor="end"
+                                  dominantBaseline="middle"
                                   fontFamily="ui-monospace,monospace"
                                 >
-                                  TARGET ·{" "}
-                                  {formatNumber(resource.targetQuantity)}
+                                  {formatNumber(v)}
                                 </text>
                               </g>
-                            )}
+                            ))}
 
-                          {/* X-axis date labels */}
-                          {xIndices.map((i) => {
-                            const entry = reversedHistory[i];
-                            const date = new Date(entry.createdAt);
-                            const label =
-                              date.getFullYear() === today.getFullYear() &&
-                              date.getMonth() === today.getMonth() &&
-                              date.getDate() === today.getDate()
-                                ? date.toLocaleTimeString([], {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  })
-                                : date.toLocaleDateString([], {
-                                    month: "short",
-                                    day: "numeric",
-                                  });
-                            return (
-                              <text
-                                key={i}
-                                x={xScale(i)}
-                                y={CHART_H - 8}
-                                fill="var(--color-chart-label)"
-                                fontSize="10"
-                                textAnchor="middle"
-                              >
-                                {label}
-                              </text>
-                            );
-                          })}
+                            {/* Target line */}
+                            {resource.targetQuantity != null &&
+                              resource.targetQuantity > 0 && (
+                                <g>
+                                  <line
+                                    x1={CHART_PAD_L}
+                                    y1={yScale(resource.targetQuantity)}
+                                    x2={CHART_W - CHART_PAD_R}
+                                    y2={yScale(resource.targetQuantity)}
+                                    stroke="var(--color-chart-target-line)"
+                                    strokeDasharray="4 4"
+                                    strokeWidth="1.2"
+                                    opacity="0.8"
+                                  />
+                                  <text
+                                    x={CHART_W - CHART_PAD_R}
+                                    y={yScale(resource.targetQuantity) - 6}
+                                    fill="var(--color-chart-target-line)"
+                                    fontSize="10"
+                                    textAnchor="end"
+                                    fontFamily="ui-monospace,monospace"
+                                  >
+                                    TARGET ·{" "}
+                                    {formatNumber(resource.targetQuantity)}
+                                  </text>
+                                </g>
+                              )}
 
-                          {/* Series paths */}
-                          <path
-                            d={totalPath}
-                            fill="none"
-                            stroke={CHART_COLORS.total}
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <path
-                            d={haggaPath}
-                            fill="none"
-                            stroke={CHART_COLORS.hagga}
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <path
-                            d={deepPath}
-                            fill="none"
-                            stroke={CHART_COLORS.deepDesert}
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
+                            {/* X-axis date labels */}
+                            {xIndices.map((i) => {
+                              const entry = reversedHistory[i];
+                              const date = new Date(entry.createdAt);
+                              const label =
+                                date.getFullYear() === today.getFullYear() &&
+                                date.getMonth() === today.getMonth() &&
+                                date.getDate() === today.getDate()
+                                  ? date.toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })
+                                  : date.toLocaleDateString([], {
+                                      month: "short",
+                                      day: "numeric",
+                                    });
+                              return (
+                                <text
+                                  key={i}
+                                  x={xScale(i)}
+                                  y={CHART_H - 8}
+                                  fill="var(--color-chart-label)"
+                                  fontSize="10"
+                                  textAnchor="middle"
+                                >
+                                  {label}
+                                </text>
+                              );
+                            })}
 
-                          {/* Data points */}
-                          {reversedHistory.map((entry, i) => {
-                            const x = xScale(i);
-                            const yTotal = yScale(
-                              entry.newQuantityHagga +
-                                entry.newQuantityDeepDesert,
-                            );
-                            const yHagga = yScale(entry.newQuantityHagga);
-                            const yDeep = yScale(entry.newQuantityDeepDesert);
-                            const isSelected = selectedPointId === entry.id;
-                            const isHovered = hoveredPoint?.id === entry.id;
-                            const r = isSelected ? 5 : isHovered ? 4 : 3;
+                            {/* Series paths */}
+                            <path
+                              d={totalPath}
+                              fill="none"
+                              stroke={CHART_COLORS.total}
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d={haggaPath}
+                              fill="none"
+                              stroke={CHART_COLORS.hagga}
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d={deepPath}
+                              fill="none"
+                              stroke={CHART_COLORS.deepDesert}
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
 
-                            return (
-                              <g
-                                key={entry.id}
-                                onMouseEnter={() => setHoveredPoint(entry)}
-                                onMouseLeave={() => setHoveredPoint(null)}
-                                onClick={() =>
-                                  setSelectedPointId(
-                                    selectedPointId === entry.id
-                                      ? null
-                                      : entry.id,
-                                  )
-                                }
-                                className="cursor-pointer"
-                              >
-                                <circle
-                                  cx={x}
-                                  cy={yTotal}
-                                  r={r}
-                                  fill="var(--color-chart-point-fill)"
-                                  stroke={CHART_COLORS.total}
-                                  strokeWidth="1.5"
-                                />
-                                <circle
-                                  cx={x}
-                                  cy={yHagga}
-                                  r={r}
-                                  fill="var(--color-chart-point-fill)"
-                                  stroke={CHART_COLORS.hagga}
-                                  strokeWidth="1.5"
-                                />
-                                <circle
-                                  cx={x}
-                                  cy={yDeep}
-                                  r={r}
-                                  fill="var(--color-chart-point-fill)"
-                                  stroke={CHART_COLORS.deepDesert}
-                                  strokeWidth="1.5"
-                                />
-                              </g>
-                            );
-                          })}
-                  </svg>
+                            {/* Data points */}
+                            {reversedHistory.map((entry, i) => {
+                              const x = xScale(i);
+                              const yTotal = yScale(
+                                entry.newQuantityHagga +
+                                  entry.newQuantityDeepDesert,
+                              );
+                              const yHagga = yScale(entry.newQuantityHagga);
+                              const yDeep = yScale(entry.newQuantityDeepDesert);
+                              const isSelected = selectedPointId === entry.id;
+                              const isHovered = hoveredPoint?.id === entry.id;
+                              const r = isSelected ? 5 : isHovered ? 4 : 3;
 
-                        {/* Hover tooltip */}
-                  {hoveredPoint && (
-                    <div
-                      className="pointer-events-none absolute z-10 rounded-sm bg-background-tooltip px-2 py-1 text-xs whitespace-nowrap text-text-tooltip"
-                      style={{
-                        left: mousePosition.x + 10,
-                        top: mousePosition.y - 10,
-                        transform:
-                          mousePosition.x > 200 ? "translateX(-100%)" : "none",
-                      }}
-                    >
-                      <div className="font-medium">
-                        {formatNumber(
-                          hoveredPoint.newQuantityHagga +
-                            hoveredPoint.newQuantityDeepDesert,
-                        )}
-                      </div>
-                      <div className="text-text-tooltip-secondary">
-                        {hoveredPoint.changeAmountHagga +
-                          hoveredPoint.changeAmountDeepDesert >
-                        0
-                          ? "+"
-                          : ""}
-                        {formatNumber(
-                          hoveredPoint.changeAmountHagga +
-                            hoveredPoint.changeAmountDeepDesert,
-                        )}
-                      </div>
-                      <div className="text-text-tooltip-secondary">
-                        By: {hoveredPoint.updatedBy}
-                      </div>
-                      <div className="text-text-tooltip-secondary">
-                        {getRelativeTime(hoveredPoint.createdAt, currentTime)}
-                      </div>
-                      <div className="mt-1 text-center text-text-tooltip-accent">
-                        Click to highlight
-                      </div>
-                    </div>
-                  )}
-                      </>
-                    );
-                  })()}
+                              return (
+                                <g
+                                  key={entry.id}
+                                  onMouseEnter={() => setHoveredPoint(entry)}
+                                  onMouseLeave={() => setHoveredPoint(null)}
+                                  onClick={() =>
+                                    setSelectedPointId(
+                                      selectedPointId === entry.id
+                                        ? null
+                                        : entry.id,
+                                    )
+                                  }
+                                  className="cursor-pointer"
+                                >
+                                  <circle
+                                    cx={x}
+                                    cy={yTotal}
+                                    r={r}
+                                    fill="var(--color-chart-point-fill)"
+                                    stroke={CHART_COLORS.total}
+                                    strokeWidth="1.5"
+                                  />
+                                  <circle
+                                    cx={x}
+                                    cy={yHagga}
+                                    r={r}
+                                    fill="var(--color-chart-point-fill)"
+                                    stroke={CHART_COLORS.hagga}
+                                    strokeWidth="1.5"
+                                  />
+                                  <circle
+                                    cx={x}
+                                    cy={yDeep}
+                                    r={r}
+                                    fill="var(--color-chart-point-fill)"
+                                    stroke={CHART_COLORS.deepDesert}
+                                    strokeWidth="1.5"
+                                  />
+                                </g>
+                              );
+                            })}
+                          </svg>
+
+                          {/* Hover tooltip */}
+                          {hoveredPoint && (
+                            <div
+                              className="pointer-events-none absolute z-10 rounded-sm bg-background-tooltip px-2 py-1 text-xs whitespace-nowrap text-text-tooltip"
+                              style={{
+                                left: mousePosition.x + 10,
+                                top: mousePosition.y - 10,
+                                transform:
+                                  mousePosition.x > 200
+                                    ? "translateX(-100%)"
+                                    : "none",
+                              }}
+                            >
+                              <div className="font-medium">
+                                {formatNumber(
+                                  hoveredPoint.newQuantityHagga +
+                                    hoveredPoint.newQuantityDeepDesert,
+                                )}
+                              </div>
+                              <div className="text-text-tooltip-secondary">
+                                {hoveredPoint.changeAmountHagga +
+                                  hoveredPoint.changeAmountDeepDesert >
+                                0
+                                  ? "+"
+                                  : ""}
+                                {formatNumber(
+                                  hoveredPoint.changeAmountHagga +
+                                    hoveredPoint.changeAmountDeepDesert,
+                                )}
+                              </div>
+                              <div className="text-text-tooltip-secondary">
+                                By: {hoveredPoint.updatedBy}
+                              </div>
+                              <div className="text-text-tooltip-secondary">
+                                {getRelativeTime(
+                                  hoveredPoint.createdAt,
+                                  currentTime,
+                                )}
+                              </div>
+                              <div className="mt-1 text-center text-text-tooltip-accent">
+                                Click to highlight
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
                 </div>
 
                 {/* Legend */}
@@ -1559,7 +1608,6 @@ export default function ResourceDetailPage() {
                 </div>
               </div>
             )}
-
 
             {!historyLoading && !chartData && (
               <div className="py-8 text-center text-text-quaternary">
