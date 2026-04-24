@@ -17,7 +17,7 @@ export default async function ResourcesPage() {
   }
 
   return (
-    <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+    <AppShell>
       <PageContainer>
         <div className="mx-auto max-w-7xl">
           <header className="mb-8">

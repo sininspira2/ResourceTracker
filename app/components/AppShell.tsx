@@ -190,10 +190,10 @@ function UserBadge({ session, collapsed }: UserBadgeProps) {
 
 interface AppShellProps {
   children: ReactNode;
-  title: string;
+  title?: string;
 }
 
-export function AppShell({ children, title }: AppShellProps) {
+export function AppShell({ children, title = process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker" }: AppShellProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);

@@ -149,7 +149,7 @@ export default function PrivacyPage() {
   const displayName = session ? getDisplayName(session.user) : "User";
 
   return (
-    <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+    <AppShell>
       <PageContainer className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-8">
           {/* Welcome */}

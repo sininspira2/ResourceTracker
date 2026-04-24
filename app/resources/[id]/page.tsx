@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { ResourceHistoryChart } from "@/app/components/ResourceHistoryChart";
@@ -52,6 +52,13 @@ const CHART_COLORS = {
   hagga: "#10b981",
   deepDesert: "#f97316",
 };
+
+const CHART_W = 860;
+const CHART_H = 260;
+const CHART_PAD_L = 52;
+const CHART_PAD_R = 20;
+const CHART_PAD_T = 24;
+const CHART_PAD_B = 36;
 
 // Utility function to format numbers with commas
 const formatNumber = (num: number): string => {
@@ -217,6 +224,37 @@ export default function ResourceDetailPage() {
   // Check if user can delete history entries
   const isResourceAdmin =
     session?.user?.permissions?.hasResourceAdminAccess ?? false;
+
+  const chartData = useMemo(() => {
+    if (history.length <= 1) return null;
+    const reversedHistory = history.slice().reverse();
+    const maxV = Math.max(
+      ...reversedHistory.map((p) => p.newQuantityHagga + p.newQuantityDeepDesert),
+      resource?.targetQuantity || 0,
+      1,
+    );
+    const xScale = (i: number) =>
+      CHART_PAD_L + (i / Math.max(reversedHistory.length - 1, 1)) * (CHART_W - CHART_PAD_L - CHART_PAD_R);
+    const yScale = (v: number) =>
+      CHART_PAD_T + (1 - v / maxV) * (CHART_H - CHART_PAD_T - CHART_PAD_B);
+    const totalPath = reversedHistory
+      .map((p, i) => `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityHagga + p.newQuantityDeepDesert)}`)
+      .join(" ");
+    const haggaPath = reversedHistory
+      .map((p, i) => `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityHagga)}`)
+      .join(" ");
+    const deepPath = reversedHistory
+      .map((p, i) => `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityDeepDesert)}`)
+      .join(" ");
+    const yTicks = [0, 0.25, 0.5, 0.75, 1].map((f) => Math.round(maxV * f));
+    const n = reversedHistory.length;
+    const xIndices =
+      n <= 6
+        ? reversedHistory.map((_, i) => i)
+        : [0, Math.round(n * 0.25), Math.round(n * 0.5), Math.round(n * 0.75), n - 1];
+    const todayStr = new Date().toLocaleDateString();
+    return { reversedHistory, maxV, xScale, yScale, totalPath, haggaPath, deepPath, yTicks, xIndices, todayStr };
+  }, [history, resource?.targetQuantity]);
 
   // Admin function to start editing a resource
   const startEditResource = (resource: Resource) => {
@@ -774,7 +812,7 @@ export default function ResourceDetailPage() {
 
   if (loading || sessionStatus === "loading") {
     return (
-      <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+      <AppShell>
         <div className="flex flex-1 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
@@ -787,7 +825,7 @@ export default function ResourceDetailPage() {
 
   if (!resource) {
     return (
-      <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+      <AppShell>
         <div className="flex flex-1 items-center justify-center">
         <div className="text-center">
           <svg
@@ -843,7 +881,7 @@ export default function ResourceDetailPage() {
     : null;
 
   return (
-    <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+    <AppShell>
       <PageContainer className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <button
@@ -1254,7 +1292,7 @@ export default function ResourceDetailPage() {
             </div>
 
             {/* History Chart */}
-            {!historyLoading && history.length > 1 && (
+            {!historyLoading && chartData && (
               <div className="mb-6 rounded-lg border border-border-secondary bg-background-modal-content-inset p-4">
                 <div className="mb-3 flex items-start justify-between">
                   <div>
@@ -1268,69 +1306,12 @@ export default function ResourceDetailPage() {
                   </div>
                 </div>
                 <div className="relative">
-                  {(() => {
-                    const reversedHistory = history.slice().reverse();
-                    const W = 860,
-                      H = 260,
-                      PAD_L = 52,
-                      PAD_R = 20,
-                      PAD_T = 24,
-                      PAD_B = 36;
-
-                    const maxV = Math.max(
-                      ...reversedHistory.map(
-                        (p) => p.newQuantityHagga + p.newQuantityDeepDesert,
-                      ),
-                      resource.targetQuantity || 0,
-                      1,
-                    );
-
-                    const xScale = (i: number) =>
-                      PAD_L +
-                      (i / Math.max(reversedHistory.length - 1, 1)) *
-                        (W - PAD_L - PAD_R);
-                    const yScale = (v: number) =>
-                      PAD_T + (1 - v / maxV) * (H - PAD_T - PAD_B);
-
-                    const totalPath = reversedHistory
-                      .map(
-                        (p, i) =>
-                          `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityHagga + p.newQuantityDeepDesert)}`,
-                      )
-                      .join(" ");
-                    const haggaPath = reversedHistory
-                      .map(
-                        (p, i) =>
-                          `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityHagga)}`,
-                      )
-                      .join(" ");
-                    const deepPath = reversedHistory
-                      .map(
-                        (p, i) =>
-                          `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityDeepDesert)}`,
-                      )
-                      .join(" ");
-
-                    const yTicks = [0, 0.25, 0.5, 0.75, 1].map((f) =>
-                      Math.round(maxV * f),
-                    );
-
-                    const xIndices = (() => {
-                      const n = reversedHistory.length;
-                      if (n <= 6) return reversedHistory.map((_, i) => i);
-                      return [
-                        0,
-                        Math.round(n * 0.25),
-                        Math.round(n * 0.5),
-                        Math.round(n * 0.75),
-                        n - 1,
-                      ];
-                    })();
-
+                  {chartData && (() => {
+                    const { reversedHistory, xScale, yScale, totalPath, haggaPath, deepPath, yTicks, xIndices, todayStr } = chartData;
                     return (
                       <>
                   <svg
-                          viewBox={`0 0 ${W} ${H}`}
+                          viewBox={`0 0 ${CHART_W} ${CHART_H}`}
                           width="100%"
                           style={{ display: "block", overflow: "visible" }}
                     onMouseMove={(e) => {
@@ -1346,16 +1327,16 @@ export default function ResourceDetailPage() {
                           {yTicks.map((v, i) => (
                             <g key={i}>
                               <line
-                                x1={PAD_L}
+                                x1={CHART_PAD_L}
                                 y1={yScale(v)}
-                                x2={W - PAD_R}
+                                x2={CHART_W - CHART_PAD_R}
                                 y2={yScale(v)}
                                 stroke="#e5e7eb"
                                 strokeDasharray="3 4"
                                 strokeWidth="1"
                               />
                               <text
-                                x={PAD_L - 8}
+                                x={CHART_PAD_L - 8}
                                 y={yScale(v)}
                                 fill="#9ca3af"
                                 fontSize="10"
@@ -1373,9 +1354,9 @@ export default function ResourceDetailPage() {
                             resource.targetQuantity > 0 && (
                               <g>
                                 <line
-                                  x1={PAD_L}
+                                  x1={CHART_PAD_L}
                                   y1={yScale(resource.targetQuantity)}
-                                  x2={W - PAD_R}
+                                  x2={CHART_W - CHART_PAD_R}
                                   y2={yScale(resource.targetQuantity)}
                                   stroke="#f59e0b"
                                   strokeDasharray="4 4"
@@ -1383,7 +1364,7 @@ export default function ResourceDetailPage() {
                                   opacity="0.8"
                                 />
                                 <text
-                                  x={W - PAD_R}
+                                  x={CHART_W - CHART_PAD_R}
                                   y={yScale(resource.targetQuantity) - 6}
                                   fill="#f59e0b"
                                   fontSize="10"
@@ -1401,8 +1382,7 @@ export default function ResourceDetailPage() {
                             const entry = reversedHistory[i];
                             const date = new Date(entry.createdAt);
                             const label =
-                              date.toLocaleDateString() ===
-                              new Date().toLocaleDateString()
+                              date.toLocaleDateString() === todayStr
                                 ? date.toLocaleTimeString([], {
                                     hour: "2-digit",
                                     minute: "2-digit",
@@ -1415,7 +1395,7 @@ export default function ResourceDetailPage() {
                               <text
                                 key={i}
                                 x={xScale(i)}
-                                y={H - 8}
+                                y={CHART_H - 8}
                                 fill="#9ca3af"
                                 fontSize="10"
                                 textAnchor="middle"
@@ -1579,7 +1559,7 @@ export default function ResourceDetailPage() {
             )}
 
 
-            {!historyLoading && history.length <= 1 && (
+            {!historyLoading && !chartData && (
               <div className="py-8 text-center text-text-quaternary">
                 <svg
                   className="mx-auto mb-4 h-12 w-12 text-text-quaternary"

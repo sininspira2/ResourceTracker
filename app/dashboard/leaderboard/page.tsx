@@ -83,7 +83,7 @@ export default function LeaderboardPage() {
 
   if (loading && !data) {
     return (
-      <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+      <AppShell>
         <div className="flex flex-1 items-center justify-center py-8">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
@@ -95,7 +95,7 @@ export default function LeaderboardPage() {
   }
 
   return (
-    <AppShell title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}>
+    <AppShell>
       <PageContainer className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 rounded-lg bg-background-panel p-6 shadow-lg">
