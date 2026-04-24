@@ -247,6 +247,7 @@
   --color-chart-label: theme(colors.gray.400);
   --color-chart-target-line: theme(colors.amber.500);
   --color-chart-point-fill: theme(colors.white);
+  --color-chart-line: theme(colors.blue.500);
 
   /* ===== 6. SPECIAL / PAGE-SPECIFIC ===== */
 
@@ -511,6 +512,7 @@
   --color-chart-label: theme(colors.gray.500);
   --color-chart-target-line: theme(colors.amber.400);
   --color-chart-point-fill: theme(colors.gray.700);
+  --color-chart-line: theme(colors.blue.400);
 
   /* ===== 6. SPECIAL / PAGE-SPECIFIC ===== */
 
