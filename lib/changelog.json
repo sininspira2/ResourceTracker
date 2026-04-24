@@ -14,6 +14,10 @@
         {
           "type": "improvement",
           "description": "Improved the Resource Details quantity-over-time chart with a proper coordinate system (viewBox), dashed grid lines, Y-axis labels, X-axis date labels, a dashed target line, path-based series rendering, and a legend below the chart."
+        },
+        {
+          "type": "improvement",
+          "description": "CSV export now includes a read-only 'tier' column showing the human-readable tier/grade label (e.g. \"Grade 4\", \"Tier 3 (Steel)\") to help identify resources that share the same name but differ by grade. The column is ignored on import."
         }
       ]
     },
