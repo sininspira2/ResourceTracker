@@ -231,7 +231,7 @@ export function ResourceHistoryChart({
                                 cy={`${y}%`}
                                 r="4"
                                 fill="#3b82f6"
-                                stroke="white"
+                                stroke="var(--color-chart-point-fill)"
                                 strokeWidth="2"
                                 className="hover:r-6 cursor-pointer transition-all"
                                 onMouseEnter={() => setHoveredPoint(entry)}
