@@ -1,6 +1,22 @@
 {
-  "currentVersion": "4.3.0",
+  "currentVersion": "4.4.0",
   "releases": [
+    {
+      "version": "4.4.0",
+      "date": "2026-04-24",
+      "title": "Sidebar Navigation & Improved Resource History Chart",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Replaced the top navigation bar with a collapsible sidebar on desktop and a slide-out drawer on mobile. The sidebar provides consistent navigation to Dashboard, Resources, Leaderboard, Activity, Settings, and Privacy from every page."
+        },
+        {
+          "type": "improvement",
+          "description": "Improved the Resource Details quantity-over-time chart with a proper coordinate system (viewBox), dashed grid lines, Y-axis labels, X-axis date labels, a dashed target line, path-based series rendering, and a legend below the chart."
+        }
+      ]
+    },
     {
       "version": "4.3.0",
       "date": "2026-04-19",
