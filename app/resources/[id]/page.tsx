@@ -1331,14 +1331,14 @@ export default function ResourceDetailPage() {
                                 y1={yScale(v)}
                                 x2={CHART_W - CHART_PAD_R}
                                 y2={yScale(v)}
-                                stroke="var(--color-border-primary)"
+                                stroke="var(--color-chart-grid-line)"
                                 strokeDasharray="3 4"
                                 strokeWidth="1"
                               />
                               <text
                                 x={CHART_PAD_L - 8}
                                 y={yScale(v)}
-                                fill="var(--color-text-tertiary)"
+                                fill="var(--color-chart-label)"
                                 fontSize="10"
                                 textAnchor="end"
                                 dominantBaseline="middle"
@@ -1358,7 +1358,7 @@ export default function ResourceDetailPage() {
                                   y1={yScale(resource.targetQuantity)}
                                   x2={CHART_W - CHART_PAD_R}
                                   y2={yScale(resource.targetQuantity)}
-                                  stroke="var(--color-update-indicator-border)"
+                                  stroke="var(--color-chart-target-line)"
                                   strokeDasharray="4 4"
                                   strokeWidth="1.2"
                                   opacity="0.8"
@@ -1366,7 +1366,7 @@ export default function ResourceDetailPage() {
                                 <text
                                   x={CHART_W - CHART_PAD_R}
                                   y={yScale(resource.targetQuantity) - 6}
-                                  fill="var(--color-update-indicator-border)"
+                                  fill="var(--color-chart-target-line)"
                                   fontSize="10"
                                   textAnchor="end"
                                   fontFamily="ui-monospace,monospace"
@@ -1398,7 +1398,7 @@ export default function ResourceDetailPage() {
                                 key={i}
                                 x={xScale(i)}
                                 y={CHART_H - 8}
-                                fill="var(--color-text-tertiary)"
+                                fill="var(--color-chart-label)"
                                 fontSize="10"
                                 textAnchor="middle"
                               >
@@ -1464,7 +1464,7 @@ export default function ResourceDetailPage() {
                                   cx={x}
                                   cy={yTotal}
                                   r={r}
-                                  fill="var(--color-background-modal-content-inset)"
+                                  fill="var(--color-chart-point-fill)"
                                   stroke={CHART_COLORS.total}
                                   strokeWidth="1.5"
                                 />
@@ -1472,7 +1472,7 @@ export default function ResourceDetailPage() {
                                   cx={x}
                                   cy={yHagga}
                                   r={r}
-                                  fill="var(--color-background-modal-content-inset)"
+                                  fill="var(--color-chart-point-fill)"
                                   stroke={CHART_COLORS.hagga}
                                   strokeWidth="1.5"
                                 />
@@ -1480,7 +1480,7 @@ export default function ResourceDetailPage() {
                                   cx={x}
                                   cy={yDeep}
                                   r={r}
-                                  fill="var(--color-background-modal-content-inset)"
+                                  fill="var(--color-chart-point-fill)"
                                   stroke={CHART_COLORS.deepDesert}
                                   strokeWidth="1.5"
                                 />
