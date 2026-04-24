@@ -196,7 +196,7 @@ export function ResourceHistoryChart({
                                 y1={`${y1}%`}
                                 x2={`${x2}%`}
                                 y2={`${y2}%`}
-                                stroke="#3b82f6"
+                                stroke="var(--color-chart-line)"
                                 strokeWidth="2"
                               />
                             );
@@ -230,7 +230,7 @@ export function ResourceHistoryChart({
                                 cx={`${x}%`}
                                 cy={`${y}%`}
                                 r="4"
-                                fill="#3b82f6"
+                                fill="var(--color-chart-line)"
                                 stroke="var(--color-chart-point-fill)"
                                 strokeWidth="2"
                                 className="hover:r-6 cursor-pointer transition-all"
