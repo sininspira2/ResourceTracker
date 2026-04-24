@@ -206,6 +206,16 @@
   --color-tier-5-text: theme(colors.amber.800);
   --color-tier-6-bg: theme(colors.blue.300);
   --color-tier-6-text: theme(colors.blue.800);
+  --color-tier-7-bg: theme(colors.violet.400);
+  --color-tier-7-text: theme(colors.violet.900);
+  --color-tier-8-bg: theme(colors.purple.400);
+  --color-tier-8-text: theme(colors.purple.900);
+  --color-tier-9-bg: theme(colors.fuchsia.400);
+  --color-tier-9-text: theme(colors.fuchsia.900);
+  --color-tier-10-bg: theme(colors.rose.400);
+  --color-tier-10-text: theme(colors.rose.900);
+  --color-tier-11-bg: theme(colors.red.400);
+  --color-tier-11-text: theme(colors.red.900);
 
   /* ===== 5. COMPONENTS ===== */
 
@@ -472,6 +482,16 @@
   --color-tier-5-text: theme(colors.amber.200);
   --color-tier-6-bg: theme(colors.blue.800);
   --color-tier-6-text: theme(colors.blue.200);
+  --color-tier-7-bg: theme(colors.violet.800);
+  --color-tier-7-text: theme(colors.violet.200);
+  --color-tier-8-bg: theme(colors.purple.800);
+  --color-tier-8-text: theme(colors.purple.200);
+  --color-tier-9-bg: theme(colors.fuchsia.800);
+  --color-tier-9-text: theme(colors.fuchsia.200);
+  --color-tier-10-bg: theme(colors.rose.800);
+  --color-tier-10-text: theme(colors.rose.200);
+  --color-tier-11-bg: theme(colors.red.800);
+  --color-tier-11-text: theme(colors.red.200);
 
   /* ===== 5. COMPONENTS ===== */
 
