@@ -200,16 +200,17 @@ export async function GET(request: NextRequest) {
     "quantityHagga",
     "quantityDeepDesert",
   ]);
-  if (
-    EXPORT_RESERVED.has(location1Name) ||
-    EXPORT_RESERVED.has(location2Name) ||
-    location1Name === location2Name
-  ) {
+  const conflictingNames = [location1Name, location2Name].filter((n) =>
+    EXPORT_RESERVED.has(n),
+  );
+  if (conflictingNames.length > 0 || location1Name === location2Name) {
+    const reserved = Array.from(EXPORT_RESERVED).join(", ");
+    const detail =
+      location1Name === location2Name
+        ? `location names must not be identical ("${location1Name}")`
+        : `"${conflictingNames.join('", "')}" conflicts with reserved column names (${reserved})`;
     return NextResponse.json(
-      {
-        error:
-          "Location names are misconfigured: they must not match reserved column names (id, name, tier, targetQuantity) or be identical to each other.",
-      },
+      { error: `Location names are misconfigured: ${detail}.` },
       { status: 500 },
     );
   }
