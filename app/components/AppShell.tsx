@@ -249,7 +249,7 @@ export function AppShell({
           {/* OrgMark + collapse button */}
           <div className="flex items-center justify-between gap-2">
             <div
-              className="flex min-w-0 items-center gap-2.5"
+              className="flex min-w-0 flex-1 items-center gap-2.5"
               style={{ justifyContent: collapsed ? "center" : undefined }}
             >
               <div
@@ -328,8 +328,8 @@ export function AppShell({
               }}
             >
               {!collapsed && (
-                <span className="text-xs font-medium text-text-tertiary">
-                  Theme
+                <span className="gap-2.5 text-xs font-medium text-text-tertiary">
+                  Theme Switch
                 </span>
               )}
               <ThemeToggle className="h-8 w-8" />
