@@ -3,7 +3,7 @@ import { authOptions, getDisplayName } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { RefreshRolesButton } from "../components/RefreshRolesButton";
-import { ClientNavigation } from "../components/ClientNavigation";
+import { AppShell } from "../components/AppShell";
 import { NicknameSettings } from "../components/NicknameSettings";
 import { PageContainer } from "../components/PageContainer";
 
@@ -22,12 +22,7 @@ export default async function Dashboard() {
   const displayName = getDisplayName(session.user);
 
   return (
-    <div className="min-h-screen bg-background-primary transition-colors duration-300">
-      <ClientNavigation
-        title={process.env.NEXT_PUBLIC_ORG_NAME || "Resource Tracker"}
-        showDashboardLink={false}
-      />
-
+    <AppShell>
       <PageContainer>
         <div className="mx-auto max-w-7xl">
           <header className="mb-8">
@@ -337,6 +332,6 @@ export default async function Dashboard() {
           </div>
         </div>
       </PageContainer>
-    </div>
+    </AppShell>
   );
 }

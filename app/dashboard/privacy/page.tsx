@@ -3,11 +3,10 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 // Note: hasResourceAccess now computed server-side and available in session.user.permissions
 import { getDisplayName } from "@/lib/auth";
 import { PageContainer } from "@/app/components/PageContainer";
+import { AppShell } from "@/app/components/AppShell";
 
 export default function PrivacyPage() {
   const { data: session, status } = useSession();
@@ -150,29 +149,7 @@ export default function PrivacyPage() {
   const displayName = session ? getDisplayName(session.user) : "User";
 
   return (
-    <div className="min-h-screen bg-background-primary transition-colors duration-300">
-      {/* Header */}
-      <div className="border-b border-border-primary bg-background-secondary shadow-xs">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link
-                href="/dashboard"
-                className="flex items-center text-text-tertiary transition-colors hover:text-text-primary"
-              >
-                <ArrowLeft className="h-5 w-5 sm:mr-2" />
-                <span className="hidden sm:inline">Back to Dashboard</span>
-              </Link>
-              <div className="h-6 w-px bg-border-secondary"></div>
-              <h1 className="text-xl font-semibold text-text-primary">
-                Privacy & Data
-              </h1>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
+    <AppShell>
       <PageContainer className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-8">
           {/* Welcome */}
@@ -335,6 +312,6 @@ export default function PrivacyPage() {
           </div>
         </div>
       </PageContainer>
-    </div>
+    </AppShell>
   );
 }

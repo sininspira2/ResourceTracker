@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { ResourceHistoryChart } from "@/app/components/ResourceHistoryChart";
@@ -13,6 +13,8 @@ import { TransferModal } from "@/app/components/TransferModal";
 import { EditResourceModal } from "@/app/components/EditResourceModal";
 import { DuplicateResourceModal } from "@/app/components/DuplicateResourceModal";
 import { PageContainer } from "@/app/components/PageContainer";
+import { AppShell } from "@/app/components/AppShell";
+import { ArrowLeft } from "lucide-react";
 import {
   TIER_OPTIONS,
   UPDATE_TYPE,
@@ -50,6 +52,13 @@ const CHART_COLORS = {
   hagga: "#10b981",
   deepDesert: "#f97316",
 };
+
+const CHART_W = 860;
+const CHART_H = 260;
+const CHART_PAD_L = 52;
+const CHART_PAD_R = 20;
+const CHART_PAD_T = 24;
+const CHART_PAD_B = 36;
 
 // Utility function to format numbers with commas
 const formatNumber = (num: number): string => {
@@ -215,6 +224,37 @@ export default function ResourceDetailPage() {
   // Check if user can delete history entries
   const isResourceAdmin =
     session?.user?.permissions?.hasResourceAdminAccess ?? false;
+
+  const chartData = useMemo(() => {
+    if (history.length <= 1) return null;
+    const reversedHistory = history.slice().reverse();
+    const maxV = Math.max(
+      ...reversedHistory.map((p) => p.newQuantityHagga + p.newQuantityDeepDesert),
+      resource?.targetQuantity || 0,
+      1,
+    );
+    const xScale = (i: number) =>
+      CHART_PAD_L + (i / Math.max(reversedHistory.length - 1, 1)) * (CHART_W - CHART_PAD_L - CHART_PAD_R);
+    const yScale = (v: number) =>
+      CHART_PAD_T + (1 - v / maxV) * (CHART_H - CHART_PAD_T - CHART_PAD_B);
+    const totalPath = reversedHistory
+      .map((p, i) => `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityHagga + p.newQuantityDeepDesert)}`)
+      .join(" ");
+    const haggaPath = reversedHistory
+      .map((p, i) => `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityHagga)}`)
+      .join(" ");
+    const deepPath = reversedHistory
+      .map((p, i) => `${i === 0 ? "M" : "L"}${xScale(i)},${yScale(p.newQuantityDeepDesert)}`)
+      .join(" ");
+    const yTicks = [0, 0.25, 0.5, 0.75, 1].map((f) => Math.round(maxV * f));
+    const n = reversedHistory.length;
+    const xIndices =
+      n <= 6
+        ? reversedHistory.map((_, i) => i)
+        : [0, Math.round(n * 0.25), Math.round(n * 0.5), Math.round(n * 0.75), n - 1];
+    const todayStr = new Date().toLocaleDateString();
+    return { reversedHistory, maxV, xScale, yScale, totalPath, haggaPath, deepPath, yTicks, xIndices, todayStr };
+  }, [history, resource?.targetQuantity]);
 
   // Admin function to start editing a resource
   const startEditResource = (resource: Resource) => {
@@ -772,18 +812,21 @@ export default function ResourceDetailPage() {
 
   if (loading || sessionStatus === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background-primary">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
-          <p className="mt-4 text-text-tertiary">Loading resource details...</p>
+      <AppShell>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-text-link"></div>
+            <p className="mt-4 text-text-tertiary">Loading resource details...</p>
+          </div>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
   if (!resource) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background-primary">
+      <AppShell>
+        <div className="flex flex-1 items-center justify-center">
         <div className="text-center">
           <svg
             className="mx-auto mb-4 h-16 w-16 text-text-quaternary"
@@ -820,7 +863,8 @@ export default function ResourceDetailPage() {
             Back to Resources
           </button>
         </div>
-      </div>
+        </div>
+      </AppShell>
     );
   }
 
@@ -837,39 +881,16 @@ export default function ResourceDetailPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-background-primary transition-colors duration-300">
-      {/* Header */}
-      <div className="border-b border-border-primary bg-background-secondary shadow-xs">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="relative flex h-16 items-center justify-center">
-            <button
-              onClick={() => router.push("/resources")}
-              className="absolute left-0 flex items-center text-text-tertiary transition-colors hover:text-text-primary"
-            >
-              <svg
-                className="h-5 w-5 md:mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              <span className="hidden md:inline">Back to Resources</span>
-            </button>
-            <h1 className="text-center text-xl font-semibold text-text-primary">
-              Resource Details
-            </h1>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
+    <AppShell>
       <PageContainer className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Breadcrumb */}
+        <button
+          onClick={() => router.push("/resources")}
+          className="mb-6 flex items-center gap-1.5 text-sm text-text-tertiary transition-colors hover:text-text-primary"
+        >
+          <ArrowLeft size={13} />
+          Resources
+        </button>
         <div className="space-y-8">
           {/* Resource Info Card - Full Width Horizontal Layout */}
           <div className="w-full">
@@ -1271,14 +1292,28 @@ export default function ResourceDetailPage() {
             </div>
 
             {/* History Chart */}
-            {!historyLoading && history.length > 1 && (
+            {!historyLoading && chartData && (
               <div className="mb-6 rounded-lg border border-border-secondary bg-background-modal-content-inset p-4">
-                <h4 className="text-md mb-4 font-medium text-text-secondary">
-                  Quantity Over Time
-                </h4>
-                <div className="relative h-72">
+                <div className="mb-3 flex items-start justify-between">
+                  <div>
+                    <h4 className="text-md font-medium text-text-secondary">
+                      Quantity Over Time
+                    </h4>
+                    <p className="mt-0.5 text-xs text-text-quaternary">
+                      Hover points for details · click to highlight · times
+                      update automatically
+                    </p>
+                  </div>
+                </div>
+                <div className="relative">
+                  {chartData && (() => {
+                    const { reversedHistory, xScale, yScale, totalPath, haggaPath, deepPath, yTicks, xIndices, todayStr } = chartData;
+                    return (
+                      <>
                   <svg
-                    className="h-full w-full"
+                          viewBox={`0 0 ${CHART_W} ${CHART_H}`}
+                          width="100%"
+                          style={{ display: "block", overflow: "visible" }}
                     onMouseMove={(e) => {
                       const rect = e.currentTarget.getBoundingClientRect();
                       setMousePosition({
@@ -1288,144 +1323,130 @@ export default function ResourceDetailPage() {
                     }}
                     onMouseLeave={() => setHoveredPoint(null)}
                   >
-                    {/* Chart Lines and Points */}
-                    {(() => {
-                      const reversedHistory = history.slice().reverse();
+                          {/* Grid lines + Y labels */}
+                          {yTicks.map((v, i) => (
+                            <g key={i}>
+                              <line
+                                x1={CHART_PAD_L}
+                                y1={yScale(v)}
+                                x2={CHART_W - CHART_PAD_R}
+                                y2={yScale(v)}
+                                stroke="#e5e7eb"
+                                strokeDasharray="3 4"
+                                strokeWidth="1"
+                              />
+                              <text
+                                x={CHART_PAD_L - 8}
+                                y={yScale(v)}
+                                fill="#9ca3af"
+                                fontSize="10"
+                                textAnchor="end"
+                                dominantBaseline="middle"
+                                fontFamily="ui-monospace,monospace"
+                              >
+                                {formatNumber(v)}
+                              </text>
+                            </g>
+                          ))}
 
-                      const { minQuantity, maxQuantity } = history.reduce(
-                        (acc, h) => {
-                          const total =
-                            h.newQuantityHagga + h.newQuantityDeepDesert;
-                          acc.minQuantity = Math.min(
-                            acc.minQuantity,
-                            h.newQuantityHagga,
-                            h.newQuantityDeepDesert,
-                            total,
-                          );
-                          acc.maxQuantity = Math.max(
-                            acc.maxQuantity,
-                            h.newQuantityHagga,
-                            h.newQuantityDeepDesert,
-                            total,
-                          );
-                          return acc;
-                        },
-                        { minQuantity: Infinity, maxQuantity: -Infinity },
-                      );
-
-                      const range =
-                        maxQuantity !== -Infinity && minQuantity !== Infinity
-                          ? maxQuantity - minQuantity || 1
-                          : 1;
-
-                      return (
-                        <>
-                          {/* Lines */}
-                          {reversedHistory.map((entry, index, arr) => {
-                            if (index === arr.length - 1) return null;
-                            const nextEntry = arr[index + 1];
-
-                            const x1 =
-                              10 + (index / Math.max(arr.length - 1, 1)) * 80;
-                            const x2 =
-                              10 +
-                              ((index + 1) / Math.max(arr.length - 1, 1)) * 80;
-
-                            const y1_total =
-                              80 -
-                              ((entry.newQuantityHagga +
-                                entry.newQuantityDeepDesert -
-                                minQuantity) /
-                                range) *
-                                60;
-                            const y2_total =
-                              80 -
-                              ((nextEntry.newQuantityHagga +
-                                nextEntry.newQuantityDeepDesert -
-                                minQuantity) /
-                                range) *
-                                60;
-                            const y1_hagga =
-                              80 -
-                              ((entry.newQuantityHagga - minQuantity) / range) *
-                                60;
-                            const y2_hagga =
-                              80 -
-                              ((nextEntry.newQuantityHagga - minQuantity) /
-                                range) *
-                                60;
-                            const y1_deep_desert =
-                              80 -
-                              ((entry.newQuantityDeepDesert - minQuantity) /
-                                range) *
-                                60;
-                            const y2_deep_desert =
-                              80 -
-                              ((nextEntry.newQuantityDeepDesert - minQuantity) /
-                                range) *
-                                60;
-
-                            return (
-                              <g key={`line-${entry.id}`}>
+                          {/* Target line */}
+                          {resource.targetQuantity != null &&
+                            resource.targetQuantity > 0 && (
+                              <g>
                                 <line
-                                  x1={`${x1}%`}
-                                  y1={`${y1_total}%`}
-                                  x2={`${x2}%`}
-                                  y2={`${y2_total}%`}
-                                  stroke={CHART_COLORS.total}
-                                  strokeWidth="2"
+                                  x1={CHART_PAD_L}
+                                  y1={yScale(resource.targetQuantity)}
+                                  x2={CHART_W - CHART_PAD_R}
+                                  y2={yScale(resource.targetQuantity)}
+                                  stroke="#f59e0b"
+                                  strokeDasharray="4 4"
+                                  strokeWidth="1.2"
+                                  opacity="0.8"
                                 />
-                                <line
-                                  x1={`${x1}%`}
-                                  y1={`${y1_hagga}%`}
-                                  x2={`${x2}%`}
-                                  y2={`${y2_hagga}%`}
-                                  stroke={CHART_COLORS.hagga}
-                                  strokeWidth="2"
-                                />
-                                <line
-                                  x1={`${x1}%`}
-                                  y1={`${y1_deep_desert}%`}
-                                  x2={`${x2}%`}
-                                  y2={`${y2_deep_desert}%`}
-                                  stroke={CHART_COLORS.deepDesert}
-                                  strokeWidth="2"
-                                />
+                                <text
+                                  x={CHART_W - CHART_PAD_R}
+                                  y={yScale(resource.targetQuantity) - 6}
+                                  fill="#f59e0b"
+                                  fontSize="10"
+                                  textAnchor="end"
+                                  fontFamily="ui-monospace,monospace"
+                                >
+                                  TARGET ·{" "}
+                                  {formatNumber(resource.targetQuantity)}
+                                </text>
                               </g>
+                            )}
+
+                          {/* X-axis date labels */}
+                          {xIndices.map((i) => {
+                            const entry = reversedHistory[i];
+                            const date = new Date(entry.createdAt);
+                            const label =
+                              date.toLocaleDateString() === todayStr
+                                ? date.toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })
+                                : date.toLocaleDateString([], {
+                                    month: "short",
+                                    day: "numeric",
+                                  });
+                            return (
+                              <text
+                                key={i}
+                                x={xScale(i)}
+                                y={CHART_H - 8}
+                                fill="#9ca3af"
+                                fontSize="10"
+                                textAnchor="middle"
+                              >
+                                {label}
+                              </text>
                             );
                           })}
-                          {/* Points */}
-                          {reversedHistory.map((entry, index, arr) => {
-                            const x =
-                              10 + (index / Math.max(arr.length - 1, 1)) * 80;
-                            const y_total =
-                              80 -
-                              ((entry.newQuantityHagga +
-                                entry.newQuantityDeepDesert -
-                                minQuantity) /
-                                range) *
-                                60;
-                            const y_hagga =
-                              80 -
-                              ((entry.newQuantityHagga - minQuantity) / range) *
-                                60;
-                            const y_deep_desert =
-                              80 -
-                              ((entry.newQuantityDeepDesert - minQuantity) /
-                                range) *
-                                60;
 
+                          {/* Series paths */}
+                          <path
+                            d={totalPath}
+                            fill="none"
+                            stroke={CHART_COLORS.total}
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d={haggaPath}
+                            fill="none"
+                            stroke={CHART_COLORS.hagga}
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d={deepPath}
+                            fill="none"
+                            stroke={CHART_COLORS.deepDesert}
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+
+                          {/* Data points */}
+                          {reversedHistory.map((entry, i) => {
+                            const x = xScale(i);
+                            const yTotal = yScale(
+                              entry.newQuantityHagga +
+                                entry.newQuantityDeepDesert,
+                            );
+                            const yHagga = yScale(entry.newQuantityHagga);
+                            const yDeep = yScale(entry.newQuantityDeepDesert);
                             const isSelected = selectedPointId === entry.id;
                             const isHovered = hoveredPoint?.id === entry.id;
-                            const pointRadius = isSelected
-                              ? "6"
-                              : isHovered
-                                ? "5"
-                                : "4";
+                            const r = isSelected ? 5 : isHovered ? 4 : 3;
 
                             return (
                               <g
-                                key={`point-group-${entry.id}`}
+                                key={entry.id}
                                 onMouseEnter={() => setHoveredPoint(entry)}
                                 onMouseLeave={() => setHoveredPoint(null)}
                                 onClick={() =>
@@ -1438,116 +1459,35 @@ export default function ResourceDetailPage() {
                                 className="cursor-pointer"
                               >
                                 <circle
-                                  cx={`${x}%`}
-                                  cy={`${y_total}%`}
-                                  r={pointRadius}
-                                  fill={CHART_COLORS.total}
-                                  stroke={
-                                    isSelected ? CHART_COLORS.total : "white"
-                                  }
-                                  strokeWidth="2"
+                                  cx={x}
+                                  cy={yTotal}
+                                  r={r}
+                                  fill="white"
+                                  stroke={CHART_COLORS.total}
+                                  strokeWidth="1.5"
                                 />
                                 <circle
-                                  cx={`${x}%`}
-                                  cy={`${y_hagga}%`}
-                                  r={pointRadius}
-                                  fill={CHART_COLORS.hagga}
-                                  stroke={
-                                    isSelected ? CHART_COLORS.hagga : "white"
-                                  }
-                                  strokeWidth="2"
+                                  cx={x}
+                                  cy={yHagga}
+                                  r={r}
+                                  fill="white"
+                                  stroke={CHART_COLORS.hagga}
+                                  strokeWidth="1.5"
                                 />
                                 <circle
-                                  cx={`${x}%`}
-                                  cy={`${y_deep_desert}%`}
-                                  r={pointRadius}
-                                  fill={CHART_COLORS.deepDesert}
-                                  stroke={
-                                    isSelected
-                                      ? CHART_COLORS.deepDesert
-                                      : "white"
-                                  }
-                                  strokeWidth="2"
+                                  cx={x}
+                                  cy={yDeep}
+                                  r={r}
+                                  fill="white"
+                                  stroke={CHART_COLORS.deepDesert}
+                                  strokeWidth="1.5"
                                 />
                               </g>
                             );
                           })}
-                          {/* Y-axis labels */}
-                          {Array.from({ length: 4 }).map((_, i) => {
-                            const numLabels = 4;
-                            const value =
-                              minQuantity + (range / (numLabels - 1)) * i;
-                            const y = 80 - ((value - minQuantity) / range) * 60;
-                            return (
-                              <text
-                                key={i}
-                                x="0"
-                                y={`${y}%`}
-                                dominant-baseline="middle"
-                                fontSize="10"
-                                fill="#6b7280"
-                                className="text-xs"
-                                textAnchor="start"
-                              >
-                                {formatNumber(Math.round(value))}
-                              </text>
-                            );
-                          })}
-                        </>
-                      );
-                    })()}
-
-                    {/* X-axis time labels */}
-                    {history.length > 1 &&
-                      history
-                        .slice()
-                        .reverse()
-                        .map((entry, index, arr) => {
-                          if (
-                            index % Math.max(1, Math.floor(arr.length / 4)) !==
-                              0 &&
-                            index !== arr.length - 1
-                          )
-                            return null;
-
-                          const x =
-                            10 + (index / Math.max(arr.length - 1, 1)) * 80;
-                          const date = new Date(entry.createdAt);
-                          const timeLabel =
-                            date.toLocaleDateString() ===
-                            new Date().toLocaleDateString()
-                              ? date.toLocaleTimeString([], {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })
-                              : date.toLocaleDateString([], {
-                                  month: "short",
-                                  day: "numeric",
-                                });
-
-                          const isHovered = hoveredPoint?.id === entry.id;
-                          const isSelected = selectedPointId === entry.id;
-
-                          return (
-                            <text
-                              key={`time-${entry.id}`}
-                              x={`${x}%`}
-                              y="98%"
-                              fontSize="9"
-                              fill="#6b7280"
-                              fontWeight={
-                                isHovered || isSelected ? "bold" : "normal"
-                              }
-                              className="text-xs transition-all"
-                              textAnchor="middle"
-                            >
-                              {timeLabel}
-                            </text>
-                          );
-                        })}
                   </svg>
 
-                  {/* Hover Tooltip */}
+                        {/* Hover tooltip */}
                   {hoveredPoint && (
                     <div
                       className="pointer-events-none absolute z-10 rounded-sm bg-background-tooltip px-2 py-1 text-xs whitespace-nowrap text-text-tooltip"
@@ -1586,38 +1526,40 @@ export default function ResourceDetailPage() {
                       </div>
                     </div>
                   )}
+                      </>
+                    );
+                  })()}
                 </div>
-                <div className="mt-4 flex items-center justify-center gap-6 text-xs text-text-tertiary">
-                  <div className="flex items-center gap-1">
-                    <div
-                      className="h-3 w-3 flex-shrink-0 rounded-full"
+
+                {/* Legend */}
+                <div className="mt-3 flex flex-wrap items-center justify-center gap-4 text-xs text-text-secondary">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-2.5 w-2.5 flex-shrink-0 rounded-full"
                       style={{ backgroundColor: CHART_COLORS.total }}
-                    ></div>
-                    <span>Total</span>
+                    />
+                    Total
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div
-                      className="h-3 w-3 flex-shrink-0 rounded-full"
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-2.5 w-2.5 flex-shrink-0 rounded-full"
                       style={{ backgroundColor: CHART_COLORS.hagga }}
-                    ></div>
-                    <span>{location1Name}</span>
+                    />
+                    {location1Name}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div
-                      className="h-3 w-3 flex-shrink-0 rounded-full"
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-2.5 w-2.5 flex-shrink-0 rounded-full"
                       style={{ backgroundColor: CHART_COLORS.deepDesert }}
-                    ></div>
-                    <span>{location2Name}</span>
-                  </div>
-                  <div className="ml-4 text-text-quaternary">
-                    💡 Hover points for details, click to highlight below •
-                    Times update automatically
+                    />
+                    {location2Name}
                   </div>
                 </div>
               </div>
             )}
 
-            {!historyLoading && history.length <= 1 && (
+
+            {!historyLoading && !chartData && (
               <div className="py-8 text-center text-text-quaternary">
                 <svg
                   className="mx-auto mb-4 h-12 w-12 text-text-quaternary"
@@ -2160,6 +2102,6 @@ export default function ResourceDetailPage() {
           </div>
         </div>
       )}
-    </div>
+    </AppShell>
   );
 }

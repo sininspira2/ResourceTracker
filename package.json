@@ -26,10 +26,10 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
     "@headlessui/react": "^2.2.10",
-    "@libsql/client": "^0.17.2",
+    "@libsql/client": "^0.17.3",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",
-    "lucide-react": "^1.7.0",
+    "lucide-react": "^1.9.0",
     "nanoid": "^5.1.9",
     "next": "15.5.15",
     "next-auth": "^4.24.13",
@@ -67,10 +67,10 @@
     "node-fetch": "^3.3.2",
     "postcss": "^8.5.10",
     "prettier": "^3.8.3",
-    "prettier-plugin-tailwindcss": "^0.7.2",
+    "prettier-plugin-tailwindcss": "^0.7.3",
     "tailwindcss": "^4.2.4",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.46.0"
+    "typescript-eslint": "^8.59.0"
   }
 }
