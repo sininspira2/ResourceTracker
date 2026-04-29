@@ -15,9 +15,8 @@ describe("DELETE /api/resources/[id]/history/[entryId]", () => {
     jest.doMock("next-auth", () => ({
       getServerSession: jest.fn().mockResolvedValue(null),
     }));
-    const { DELETE } = await import(
-      "@/app/api/resources/[id]/history/[entryId]/route"
-    );
+    const { DELETE } =
+      await import("@/app/api/resources/[id]/history/[entryId]/route");
     const request = new NextRequest(
       "http://localhost/api/resources/123/history/456",
       { method: "DELETE" },
@@ -45,9 +44,8 @@ describe("DELETE /api/resources/[id]/history/[entryId]", () => {
     jest.doMock("@/lib/discord-roles", () => ({
       hasResourceAdminAccess: jest.fn().mockReturnValue(false),
     }));
-    const { DELETE } = await import(
-      "@/app/api/resources/[id]/history/[entryId]/route"
-    );
+    const { DELETE } =
+      await import("@/app/api/resources/[id]/history/[entryId]/route");
     const request = new NextRequest(
       "http://localhost/api/resources/123/history/456",
       { method: "DELETE" },
@@ -79,9 +77,8 @@ describe("DELETE /api/resources/[id]/history/[entryId]", () => {
       return dbMock;
     });
 
-    const { DELETE } = await import(
-      "@/app/api/resources/[id]/history/[entryId]/route"
-    );
+    const { DELETE } =
+      await import("@/app/api/resources/[id]/history/[entryId]/route");
     const request = new NextRequest(
       "http://localhost/api/resources/123/history/456",
       { method: "DELETE" },
@@ -116,9 +113,8 @@ describe("DELETE /api/resources/[id]/history/[entryId]", () => {
       return dbMock;
     });
 
-    const { DELETE } = await import(
-      "@/app/api/resources/[id]/history/[entryId]/route"
-    );
+    const { DELETE } =
+      await import("@/app/api/resources/[id]/history/[entryId]/route");
     const request = new NextRequest(
       "http://localhost/api/resources/123/history/456",
       { method: "DELETE" },
