@@ -60,5 +60,7 @@ export const config = {
     "/api/user/:path*",
     "/api/users/:path*",
     "/api/internal/:path*",
+    "/api/leaderboard/:path*",
+    "/api/global-settings",
   ],
 };
