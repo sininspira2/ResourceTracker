@@ -194,7 +194,6 @@ describe("GET /api/resources/bulk", () => {
     expect((parsed.data[1] as any).tier).toBe("Grade 4");
     expect((parsed.data[2] as any).tier).toBe("");
   });
-});
 
   it("should expand 'Gear Blueprints' category filter to also match legacy 'Blueprints' DB rows", async () => {
     const capturedInArrayArgs: unknown[][] = [];

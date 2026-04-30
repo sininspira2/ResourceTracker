@@ -733,26 +733,25 @@ export default function ResourceDetailPage() {
     }
   };
 
+  // Auth guard: redirect whenever the session or its permissions change.
   useEffect(() => {
-    // Redirect if user is not authenticated
     if (sessionStatus === "unauthenticated") {
       router.push("/");
       return;
     }
-
-    // Don't proceed if session is still loading
-    if (sessionStatus === "loading") {
-      return;
-    }
-
-    // Check for resource access once session is loaded
     if (
       sessionStatus === "authenticated" &&
       (!session || !session.user?.permissions?.hasResourceAccess)
     ) {
       router.push("/");
-      return;
     }
+  }, [session, sessionStatus, router]);
+
+  // Data fetch: only re-run when the resource ID changes or auth becomes ready.
+  // Intentionally omits `session` so that NextAuth's background session refresh
+  // (which creates a new object reference) does not reset in-progress modal edits.
+  useEffect(() => {
+    if (sessionStatus !== "authenticated") return;
 
     const fetchResource = async () => {
       const MAX_ATTEMPTS = 5;
@@ -808,7 +807,6 @@ export default function ResourceDetailPage() {
     };
 
     fetchResource();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceId, sessionStatus]);
 
   // Fetch history when component mounts or time filter changes
