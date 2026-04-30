@@ -808,7 +808,8 @@ export default function ResourceDetailPage() {
     };
 
     fetchResource();
-  }, [resourceId, session, router, sessionStatus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resourceId, sessionStatus]);
 
   // Fetch history when component mounts or time filter changes
   useEffect(() => {
