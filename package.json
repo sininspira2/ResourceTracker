@@ -43,7 +43,10 @@
   "overrides": {
     "nodemailer": "^7.0.7",
     "esbuild": "^0.25.0",
-    "picomatch": "2.3.2"
+    "picomatch": "2.3.2",
+    "postcss": "^8.5.12",
+    "uuid": ">=14.0.0",
+    "brace-expansion": ">=2.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
@@ -64,8 +67,6 @@
     "eslint-config-next": "16.2.4",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.2.0",
-    "node-fetch": "^3.3.2",
-    "postcss": "^8.5.12",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.2.4",
