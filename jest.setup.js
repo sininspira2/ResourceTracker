@@ -10,25 +10,24 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn(),
 }));
 
-// Mock global fetch and related classes
-const fetch = require("node-fetch");
-global.fetch = fetch;
-global.Response = fetch.Response;
-global.Headers = fetch.Headers;
-
-// A more complete NextRequest mock
-const { Request } = fetch;
-class MockNextRequest extends Request {
-  constructor(input, init) {
-    super(input, init);
-    const url = new URL(this.url);
-    this.nextUrl = {
-      origin: url.origin,
-      searchParams: url.searchParams,
-    };
-  }
+// Use the native Node.js Request (available in Node 18+). The jsdom environment
+// does not expose it as a global, so we pull it from globalThis explicitly.
+// Defined with `let` so the jest.mock factory below can close over it.
+let MockNextRequest;
+const NativeRequest = globalThis.Request;
+if (NativeRequest) {
+  MockNextRequest = class extends NativeRequest {
+    constructor(input, init) {
+      super(input, init);
+      const url = new URL(this.url);
+      this.nextUrl = {
+        origin: url.origin,
+        searchParams: url.searchParams,
+      };
+    }
+  };
+  global.Request = MockNextRequest;
 }
-global.Request = MockNextRequest;
 
 // Mock NextResponse
 jest.mock("next/server", () => {

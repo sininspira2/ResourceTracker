@@ -25,9 +25,7 @@ const config = {
       },
     ],
   },
-  transformIgnorePatterns: [
-    "/node_modules/(?!nanoid/.*|node-fetch/.*|data-uri-to-buffer/.*|fetch-blob/.*|formdata-polyfill/.*)",
-  ],
+  transformIgnorePatterns: ["/node_modules/(?!nanoid/.*|uuid/.*)"],
 };
 
 module.exports = config;

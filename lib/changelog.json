@@ -1,6 +1,18 @@
 {
-  "currentVersion": "4.4.0",
+  "currentVersion": "4.4.1",
   "releases": [
+    {
+      "version": "4.4.1",
+      "date": "2026-04-30",
+      "title": "Security dependency updates",
+      "type": "patch",
+      "changes": [
+        {
+          "type": "improvement",
+          "description": "Resolved CVE-2026-41305 (PostCSS XSS), GHSA-w5hq-g745-h8pq (uuid buffer bounds), and CVE-2026-33750 (brace-expansion ReDoS) via package overrides. Removed node-fetch dev dependency in favour of the Node 22 native fetch API."
+        }
+      ]
+    },
     {
       "version": "4.4.0",
       "date": "2026-04-24",
