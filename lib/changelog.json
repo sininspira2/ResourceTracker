@@ -1,6 +1,18 @@
 {
-  "currentVersion": "4.4.1",
+  "currentVersion": "4.4.2",
   "releases": [
+    {
+      "version": "4.4.2",
+      "date": "2026-04-30",
+      "title": "Fix CSV export with Gear Blueprints category filter",
+      "type": "patch",
+      "changes": [
+        {
+          "type": "bugfix",
+          "description": "CSV export now correctly includes resources stored under the legacy 'Blueprints' category when filtering by 'Gear Blueprints', so filtered exports are no longer empty for that category."
+        }
+      ]
+    },
     {
       "version": "4.4.1",
       "date": "2026-04-30",

@@ -196,6 +196,67 @@ describe("GET /api/resources/bulk", () => {
   });
 });
 
+  it("should expand 'Gear Blueprints' category filter to also match legacy 'Blueprints' DB rows", async () => {
+    const capturedInArrayArgs: unknown[][] = [];
+
+    jest.doMock("drizzle-orm", () => {
+      const actual = jest.requireActual("drizzle-orm");
+      return {
+        ...actual,
+        inArray: jest.fn((...args: unknown[]) => {
+          capturedInArrayArgs.push(args as unknown[]);
+          return (actual as any).inArray(...args);
+        }),
+      };
+    });
+
+    const mockWhere = jest.fn().mockResolvedValue([]);
+
+    jest.doMock("@/lib/db", () => ({
+      db: {
+        select: jest.fn().mockReturnValue({
+          from: jest.fn().mockReturnThis(),
+          where: mockWhere,
+        }),
+      },
+      resources: {
+        category: "resources.category",
+        subcategory: "resources.subcategory",
+        tier: "resources.tier",
+        isPriority: "resources.isPriority",
+        updatedAt: "resources.updatedAt",
+      },
+    }));
+
+    jest.doMock("next-auth", () => ({
+      getServerSession: jest.fn().mockResolvedValue({
+        user: { roles: ["Target Editor"] },
+      }),
+    }));
+
+    jest.doMock("@/lib/discord-roles", () => ({
+      hasTargetEditAccess: jest.fn().mockReturnValue(true),
+    }));
+
+    const { GET } = await import("@/app/api/resources/bulk/route");
+    const request = new NextRequest(
+      "http://localhost/api/resources/bulk?category=Gear+Blueprints",
+    );
+    await GET(request);
+
+    // The category inArray call should include both the new and legacy names
+    const categoryInArrayCall = capturedInArrayArgs.find(
+      (args) =>
+        Array.isArray(args[1]) &&
+        (args[1] as string[]).includes("Gear Blueprints"),
+    );
+    expect(categoryInArrayCall).toBeDefined();
+    const filterValues = categoryInArrayCall![1] as string[];
+    expect(filterValues).toContain("Gear Blueprints");
+    expect(filterValues).toContain("Blueprints");
+  });
+});
+
 describe("POST /api/resources/bulk", () => {
   beforeEach(() => {
     jest.resetModules();
