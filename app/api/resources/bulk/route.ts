@@ -11,6 +11,10 @@ import {
   TIER_OPTIONS,
 } from "@/lib/constants";
 import { getLocationNames } from "@/lib/global-settings";
+import {
+  LEGACY_CATEGORY_BLUEPRINTS,
+  NEW_CATEGORY_GEAR_BLUEPRINTS,
+} from "@/lib/resource-mapping";
 
 // Formula injection prevention: prefix values that would be interpreted as
 // spreadsheet formulas (=, +, -, @, tab, carriage-return) with a single quote.
@@ -96,7 +100,14 @@ export async function GET(request: NextRequest) {
   }
 
   if (categoryFilter.length > 0) {
-    whereConditions.push(inArray(resources.category, categoryFilter));
+    // Expand "Gear Blueprints" to also match legacy "Blueprints" rows that
+    // haven't been migrated in the DB yet.
+    const expandedCategoryFilter = categoryFilter.flatMap((c) =>
+      c === NEW_CATEGORY_GEAR_BLUEPRINTS
+        ? [c, LEGACY_CATEGORY_BLUEPRINTS]
+        : [c],
+    );
+    whereConditions.push(inArray(resources.category, expandedCategoryFilter));
   }
 
   if (subcategoryFilter.length > 0) {
