@@ -1,6 +1,26 @@
 {
-  "currentVersion": "4.4.2",
+  "currentVersion": "4.5.0",
   "releases": [
+    {
+      "version": "4.5.0",
+      "date": "2026-05-01",
+      "title": "Redesigned resource cards",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "improvement",
+          "description": "Resource grid cards now display a status-keyed accent left border, tier pill overlaid on the image corner, inline status chip with colored dot, large monospace quantity totals, sparkline trend visualization, and a cleaner color-coded progress bar — in both desktop and mobile layouts."
+        },
+        {
+          "type": "improvement",
+          "description": "Table view image thumbnails now show the tier pill as a corner overlay, consistent with the grid cards."
+        },
+        {
+          "type": "improvement",
+          "description": "Resource details page image container is now larger (160×160 px), rounded, with a tier pill overlaid on the corner."
+        }
+      ]
+    },
     {
       "version": "4.4.2",
       "date": "2026-04-30",
