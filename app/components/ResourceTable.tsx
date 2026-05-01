@@ -173,38 +173,28 @@ const getTierShortLabel = (tier: number): string => {
   return `G${tier - 6}`;
 };
 
-// Returns inline style object for the status-keyed left accent border
-const getStatusAccentStyle = (status: string): React.CSSProperties => {
-  const colorMap: Record<string, string> = {
-    [RESOURCE_STATUS.CRITICAL]: "var(--color-progress-bar-critical-bg)",
-    [RESOURCE_STATUS.BELOW_TARGET]: "var(--color-progress-bar-below-target-bg)",
-    [RESOURCE_STATUS.AT_TARGET]: "var(--color-progress-bar-at-target-bg)",
-    [RESOURCE_STATUS.ABOVE_TARGET]: "var(--color-status-above-target-text)",
-  };
-  return { borderLeftColor: colorMap[status] ?? "var(--color-border-secondary)" };
+// Shared color map for status-keyed accent elements (border, progress bar, sparkline)
+const STATUS_COLOR_MAP: Record<string, string> = {
+  [RESOURCE_STATUS.CRITICAL]: "var(--color-progress-bar-critical-bg)",
+  [RESOURCE_STATUS.BELOW_TARGET]: "var(--color-progress-bar-below-target-bg)",
+  [RESOURCE_STATUS.AT_TARGET]: "var(--color-progress-bar-at-target-bg)",
+  [RESOURCE_STATUS.ABOVE_TARGET]: "var(--color-status-above-target-text)",
 };
 
-// Returns Tailwind class for the progress bar fill
-const getProgressBarColorStyle = (status: string): React.CSSProperties => {
-  const colorMap: Record<string, string> = {
-    [RESOURCE_STATUS.CRITICAL]: "var(--color-progress-bar-critical-bg)",
-    [RESOURCE_STATUS.BELOW_TARGET]: "var(--color-progress-bar-below-target-bg)",
-    [RESOURCE_STATUS.AT_TARGET]: "var(--color-progress-bar-at-target-bg)",
-    [RESOURCE_STATUS.ABOVE_TARGET]: "var(--color-status-above-target-text)",
-  };
-  return { backgroundColor: colorMap[status] ?? "var(--color-progress-bar-at-target-bg)" };
-};
+// Returns inline style object for the status-keyed left accent border
+const getStatusAccentStyle = (status: string): React.CSSProperties => ({
+  borderLeftColor: STATUS_COLOR_MAP[status] ?? "var(--color-border-secondary)",
+});
+
+// Returns inline style object for the progress bar fill
+const getProgressBarColorStyle = (status: string): React.CSSProperties => ({
+  backgroundColor:
+    STATUS_COLOR_MAP[status] ?? "var(--color-progress-bar-at-target-bg)",
+});
 
 // Returns stroke color for sparkline based on status
-const getSparklineColor = (status: string): string => {
-  const colorMap: Record<string, string> = {
-    [RESOURCE_STATUS.CRITICAL]: "var(--color-progress-bar-critical-bg)",
-    [RESOURCE_STATUS.BELOW_TARGET]: "var(--color-progress-bar-below-target-bg)",
-    [RESOURCE_STATUS.AT_TARGET]: "var(--color-progress-bar-at-target-bg)",
-    [RESOURCE_STATUS.ABOVE_TARGET]: "var(--color-status-above-target-text)",
-  };
-  return colorMap[status] ?? "var(--color-border-secondary)";
-};
+const getSparklineColor = (status: string): string =>
+  STATUS_COLOR_MAP[status] ?? "var(--color-border-secondary)";
 
 // Generates a deterministic sparkline SVG element based on resource id
 function renderSparklineSVG(
