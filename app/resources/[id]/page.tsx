@@ -1015,20 +1015,6 @@ export default function ResourceDetailPage() {
                         >
                           {formatStatusForDisplay(status)}
                         </span>
-                        {resource.tier !== null &&
-                          resource.tier !== undefined && (
-                            <span
-                              className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getTierClassName(
-                                resource.tier,
-                              )}`}
-                            >
-                              {
-                                TIER_OPTIONS.find(
-                                  (t) => t.value === resource.tier?.toString(),
-                                )?.label
-                              }
-                            </span>
-                          )}
                       </div>
 
                       {/* Description */}

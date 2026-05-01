@@ -173,7 +173,13 @@ const getTierShortLabel = (tier: number): string => {
   return `G${tier - 6}`;
 };
 
-// Shared color map for status-keyed accent elements (border, progress bar, sparkline)
+const getLocationShortLabel = (name: string): string =>
+  name
+    .split(/[\s-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
 const STATUS_COLOR_MAP: Record<string, string> = {
   [RESOURCE_STATUS.CRITICAL]: "var(--color-progress-bar-critical-bg)",
   [RESOURCE_STATUS.BELOW_TARGET]: "var(--color-progress-bar-below-target-bg)",
@@ -1957,10 +1963,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 {formatNumber(totalQty)}
                               </div>
                               <div className="mt-1 font-mono text-xs text-text-quaternary">
-                                {location1Name.charAt(0)}:{" "}
+                                {getLocationShortLabel(location1Name)}:{" "}
                                 {formatNumber(resource.quantityHagga)}
                                 {" · "}
-                                {location2Name.charAt(0)}:{" "}
+                                {getLocationShortLabel(location2Name)}:{" "}
                                 {formatNumber(resource.quantityDeepDesert)}
                               </div>
                             </div>
