@@ -1904,7 +1904,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 <span
                                   className={`absolute top-2 left-2 rounded px-1.5 py-0.5 font-mono text-[10px] font-bold leading-none ${getTierClassName(resource.tier)}`}
                                 >
-                                  {getTierShortLabel(resource.tier)}
+                                  {TIER_OPTIONS.find(
+                                    (t) =>
+                                      t.value === resource.tier?.toString(),
+                                  )?.label ?? getTierShortLabel(resource.tier)}
                                 </span>
                               )}
                           </div>
