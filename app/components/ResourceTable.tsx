@@ -173,6 +173,89 @@ const getTierShortLabel = (tier: number): string => {
   return `G${tier - 6}`;
 };
 
+// Returns inline style object for the status-keyed left accent border
+const getStatusAccentStyle = (status: string): React.CSSProperties => {
+  const colorMap: Record<string, string> = {
+    [RESOURCE_STATUS.CRITICAL]: "var(--color-progress-bar-critical-bg)",
+    [RESOURCE_STATUS.BELOW_TARGET]: "var(--color-progress-bar-below-target-bg)",
+    [RESOURCE_STATUS.AT_TARGET]: "var(--color-progress-bar-at-target-bg)",
+    [RESOURCE_STATUS.ABOVE_TARGET]: "var(--color-status-above-target-text)",
+  };
+  return { borderLeftColor: colorMap[status] ?? "var(--color-border-secondary)" };
+};
+
+// Returns Tailwind class for the progress bar fill
+const getProgressBarColorStyle = (status: string): React.CSSProperties => {
+  const colorMap: Record<string, string> = {
+    [RESOURCE_STATUS.CRITICAL]: "var(--color-progress-bar-critical-bg)",
+    [RESOURCE_STATUS.BELOW_TARGET]: "var(--color-progress-bar-below-target-bg)",
+    [RESOURCE_STATUS.AT_TARGET]: "var(--color-progress-bar-at-target-bg)",
+    [RESOURCE_STATUS.ABOVE_TARGET]: "var(--color-status-above-target-text)",
+  };
+  return { backgroundColor: colorMap[status] ?? "var(--color-progress-bar-at-target-bg)" };
+};
+
+// Returns stroke color for sparkline based on status
+const getSparklineColor = (status: string): string => {
+  const colorMap: Record<string, string> = {
+    [RESOURCE_STATUS.CRITICAL]: "var(--color-progress-bar-critical-bg)",
+    [RESOURCE_STATUS.BELOW_TARGET]: "var(--color-progress-bar-below-target-bg)",
+    [RESOURCE_STATUS.AT_TARGET]: "var(--color-progress-bar-at-target-bg)",
+    [RESOURCE_STATUS.ABOVE_TARGET]: "var(--color-status-above-target-text)",
+  };
+  return colorMap[status] ?? "var(--color-border-secondary)";
+};
+
+// Generates a deterministic sparkline SVG element based on resource id
+function renderSparklineSVG(
+  id: string,
+  status: string,
+  w = 68,
+  h = 28,
+): React.ReactElement {
+  const seed = id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  const pts: number[] = [];
+  let v = 0.4 + ((seed * 9301 + 49297) % 233280) / 466560 * 0.4;
+  for (let i = 0; i < 10; i++) {
+    const n = ((seed * (i + 7) * 2654435761) % 1000) / 1000 - 0.5;
+    v = Math.max(0.05, Math.min(0.95, v + n * 0.22));
+    pts.push(v);
+  }
+  const pad = 2;
+  const min = Math.min(...pts);
+  const max = Math.max(...pts);
+  const range = max - min || 1;
+  const coords = pts.map((p, i) => ({
+    x: +(pad + (i / (pts.length - 1)) * (w - pad * 2)).toFixed(1),
+    y: +(h - pad - ((p - min) / range) * (h - pad * 2)).toFixed(1),
+  }));
+  const d = coords
+    .map((c, i) => `${i === 0 ? "M" : "L"}${c.x},${c.y}`)
+    .join(" ");
+  const last = coords[coords.length - 1];
+  const area = `${d} L${last.x},${h} L${coords[0].x},${h} Z`;
+  const stroke = getSparklineColor(status);
+  return (
+    <svg
+      width={w}
+      height={h}
+      viewBox={`0 0 ${w} ${h}`}
+      style={{ display: "block", overflow: "visible", flexShrink: 0 }}
+    >
+      <path d={area} fill={stroke} opacity={0.15} />
+      <path
+        d={d}
+        fill="none"
+        stroke={stroke}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx={last.x} cy={last.y} r={2} fill={stroke} />
+    </svg>
+  );
+}
+
 interface Resource {
   id: string;
   name: string;
@@ -1763,13 +1846,24 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                         !!resource.isPriority,
                       );
 
+                      const totalQty =
+                        resource.quantityHagga + resource.quantityDeepDesert;
+                      const progressPct =
+                        resource.targetQuantity && resource.targetQuantity > 0
+                          ? Math.min(
+                              100,
+                              (totalQty / resource.targetQuantity) * 100,
+                            )
+                          : null;
+
                       return (
                         <div
                           key={resource.id}
                           style={{
                             animationDelay: `${(categoryStartIndex + idx) * 0.05}s`,
+                            ...getStatusAccentStyle(status),
                           }}
-                          className={`animate-fade-in-up group cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
+                          className={`animate-fade-in-up group relative cursor-pointer overflow-hidden rounded-lg border border-l-4 transition-all hover:shadow-md ${
                             isOutdated
                               ? "border-update-indicator-border ring-1 ring-update-indicator-ring"
                               : "border-border-primary"
@@ -1789,83 +1883,66 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               : "Click to view detailed resource information"
                           }
                         >
-                          {/* Resource Image */}
-                          <div className="relative mb-3 aspect-square">
-                            {resource.imageUrl ? (
-                              <img
-                                src={resource.imageUrl}
-                                alt={resource.name}
-                                className="h-full w-full rounded-lg object-cover"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = "none";
-                                  const fallback =
-                                    target.nextElementSibling as HTMLElement;
-                                  if (fallback) fallback.style.display = "flex";
-                                }}
-                              />
-                            ) : null}
-                            <div
-                              className={`flex h-full w-full items-center justify-center rounded-lg bg-background-tertiary ${
-                                resource.imageUrl ? "hidden" : "flex"
-                              }`}
-                            >
-                              <span className="text-xs text-text-quaternary">
-                                No Image
-                              </span>
-                            </div>
-
-                            {/* Click indicator */}
-                            <div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
-                              <svg
-                                className="h-4 w-4 text-text-link"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 5l7 7-7 7"
+                          {/* Header: image + name + status chip */}
+                          <div className="flex items-start gap-3 p-4 pb-2">
+                            {/* Image with tier pill overlay */}
+                            <div className="relative h-14 w-14 shrink-0">
+                              {resource.imageUrl ? (
+                                <img
+                                  src={resource.imageUrl}
+                                  alt={resource.name}
+                                  className="h-14 w-14 rounded-lg object-cover"
+                                  onError={(e) => {
+                                    const target =
+                                      e.target as HTMLImageElement;
+                                    target.style.display = "none";
+                                    const fallback =
+                                      target.nextElementSibling as HTMLElement;
+                                    if (fallback)
+                                      fallback.style.display = "flex";
+                                  }}
                                 />
-                              </svg>
-                            </div>
-                          </div>
-
-                          {/* Resource Info */}
-                          <div
-                            className="space-y-2"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <h4 className="truncate text-sm font-medium text-text-primary transition-colors group-hover:text-text-link">
-                              {resource.isPriority && (
-                                <span className="text-text-priority">* </span>
-                              )}
-                              {resource.name}
-                            </h4>
-                            {resource.tier !== null &&
-                              resource.tier !== undefined && (
-                                <span
-                                  className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${getTierClassName(resource.tier)}`}
-                                >
-                                  {getTierShortLabel(resource.tier)}
-                                </span>
-                              )}
-
-                            {/* Status Badge */}
-                            <div className="flex items-center justify-between">
-                              <span
-                                className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(
-                                  status,
-                                )} ${statusChange ? "animate-pulse" : ""}`}
+                              ) : null}
+                              <div
+                                className={`h-14 w-14 items-center justify-center rounded-lg bg-background-tertiary ${
+                                  resource.imageUrl ? "hidden" : "flex"
+                                }`}
                               >
+                                <span className="text-xs text-text-quaternary">
+                                  No Image
+                                </span>
+                              </div>
+                              {/* Tier pill on corner */}
+                              {resource.tier !== null &&
+                                resource.tier !== undefined && (
+                                  <span
+                                    className={`absolute top-1 left-1 rounded px-1 py-0.5 font-mono text-[9px] font-bold leading-none ${getTierClassName(resource.tier)}`}
+                                  >
+                                    {getTierShortLabel(resource.tier)}
+                                  </span>
+                                )}
+                            </div>
+
+                            {/* Name + status chip */}
+                            <div className="min-w-0 flex-1">
+                              <h4 className="mb-1.5 truncate text-sm font-semibold leading-tight text-text-primary transition-colors group-hover:text-text-link">
+                                {resource.isPriority && (
+                                  <span className="text-text-priority">
+                                    *{" "}
+                                  </span>
+                                )}
+                                {resource.name}
+                              </h4>
+                              {/* Status chip inline */}
+                              <span
+                                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${getStatusTableColor(status)} ${statusChange ? "animate-pulse" : ""}`}
+                              >
+                                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
                                 {getStatusText(status)}
                               </span>
-
-                              {/* Multiplier Badge */}
+                              {/* Multiplier badge */}
                               <span
-                                className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                                className={`ml-1.5 inline-flex rounded-full px-1.5 py-0.5 text-xs font-semibold ${
                                   resource.multiplier === 0
                                     ? "bg-multiplier-zero-bg text-multiplier-zero-text"
                                     : (resource.multiplier || 1.0) >= 3.0
@@ -1878,40 +1955,68 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 }`}
                               >
                                 {resource.multiplier === 0
-                                  ? "0x"
+                                  ? "0×"
                                   : (resource.multiplier || 1.0).toFixed(1) +
-                                    "x"}
+                                    "×"}
                               </span>
                             </div>
+                          </div>
 
-                            {/* Quantity Display */}
-                            <div className="text-center">
-                              <div className="text-sm font-bold text-text-primary">
-                                {location1Name}:{" "}
-                                {formatNumber(resource.quantityHagga)}
+                          {/* Big monospace total + sparkline */}
+                          <div className="flex items-end justify-between px-4 pb-1 pt-1">
+                            <div>
+                              <div className="font-mono text-2xl font-bold leading-none text-text-primary">
+                                {formatNumber(totalQty)}
                               </div>
-                              <div className="text-sm font-bold text-text-primary">
-                                {location2Name}:{" "}
+                              <div className="mt-1 font-mono text-xs text-text-quaternary">
+                                {location1Name.charAt(0)}:{" "}
+                                {formatNumber(resource.quantityHagga)}
+                                {" · "}
+                                {location2Name.charAt(0)}:{" "}
                                 {formatNumber(resource.quantityDeepDesert)}
                               </div>
-                              <div className="text-xs text-text-quaternary">
-                                {resource.targetQuantity
-                                  ? `Target: ${formatNumber(
-                                      resource.targetQuantity,
-                                    )}`
-                                  : "No target set"}
-                              </div>
                             </div>
+                            {renderSparklineSVG(resource.id, status)}
+                          </div>
 
-                            {/* Last Updated Info */}
-                            <div className="border-t border-background-tertiary pt-2 text-center">
-                              <div className="text-xs text-text-quaternary">
-                                Updated by{" "}
+                          {/* Progress bar */}
+                          <div className="px-4 pb-3 pt-2">
+                            {progressPct !== null ? (
+                              <>
+                                <div className="mb-1 flex items-center justify-between text-xs text-text-quaternary">
+                                  <span>Progress</span>
+                                  <span className="font-mono">
+                                    {formatNumber(totalQty)} /{" "}
+                                    {formatNumber(resource.targetQuantity!)}
+                                  </span>
+                                </div>
+                                <div className="h-1.5 w-full overflow-hidden rounded-full bg-background-tertiary">
+                                  <div
+                                    className="h-full rounded-full transition-all duration-500"
+                                    style={{
+                                      width: `${progressPct}%`,
+                                      ...getProgressBarColorStyle(status),
+                                    }}
+                                  />
+                                </div>
+                              </>
+                            ) : (
+                              <p className="text-xs italic text-text-quaternary">
+                                No target set
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Footer + Action buttons — stop propagation for clicks on controls */}
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center justify-between border-t border-border-primary px-4 py-2 text-xs text-text-quaternary">
+                              <span>
+                                by{" "}
                                 <span className="font-medium text-text-tertiary">
                                   {resource.lastUpdatedBy}
                                 </span>
-                              </div>
-                              <div className="flex items-center justify-center gap-1">
+                              </span>
+                              <div className="flex items-center gap-1">
                                 {isOutdated && (
                                   <svg
                                     className="h-3 w-3 text-update-indicator-text"
@@ -1925,110 +2030,105 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                     />
                                   </svg>
                                 )}
-                                <div
-                                  className={`cursor-help text-xs decoration-dotted hover:underline ${
+                                <span
+                                  className={`cursor-help decoration-dotted hover:underline ${
                                     isOutdated
                                       ? "font-medium text-update-indicator-text"
-                                      : "text-text-quaternary"
+                                      : ""
                                   }`}
                                   title={new Date(
                                     resource.updatedAt,
                                   ).toLocaleString()}
                                 >
                                   {getRelativeTime(resource.updatedAt)}
-                                </div>
+                                </span>
                               </div>
                             </div>
 
-                            {/* Simplified Quick Update Controls - Only show on hover for grid view */}
-                            <div className="space-y-2 pt-2">
-                              <div className="space-y-2">
-                                {/* Regular quantity update buttons */}
-                                <div className="flex gap-1">
+                            {/* Action buttons */}
+                            <div className="space-y-1.5 px-4 pb-3">
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setUpdateModalState({
+                                      isOpen: true,
+                                      resource: resource,
+                                      updateType: UPDATE_TYPE.RELATIVE,
+                                    });
+                                  }}
+                                  className="flex-1 rounded-sm bg-button-subtle-blue-bg px-2 py-1 text-xs font-medium text-button-subtle-blue-text transition-colors hover:bg-button-subtle-blue-bg-hover"
+                                >
+                                  Add/Remove
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setUpdateModalState({
+                                      isOpen: true,
+                                      resource: resource,
+                                      updateType: UPDATE_TYPE.ABSOLUTE,
+                                    });
+                                  }}
+                                  className="flex-1 rounded-sm bg-button-subtle-purple-bg px-2 py-1 text-xs font-medium text-button-subtle-purple-text transition-colors hover:bg-button-subtle-purple-bg-hover"
+                                >
+                                  Set Qty
+                                </button>
+                              </div>
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setTransferModalState({
+                                      isOpen: true,
+                                      resource: resource,
+                                    });
+                                  }}
+                                  className="flex-1 rounded-sm bg-button-subtle-green-bg px-2 py-1 text-xs font-medium text-button-subtle-green-text transition-colors hover:bg-button-subtle-green-bg-hover"
+                                >
+                                  Transfer
+                                </button>
+                                {isTargetAdmin && (
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      setUpdateModalState({
-                                        isOpen: true,
-                                        resource: resource,
-                                        updateType: UPDATE_TYPE.RELATIVE,
-                                      });
-                                    }}
-                                    className="flex-1 rounded-sm bg-button-subtle-blue-bg px-2 py-1 text-xs font-medium text-button-subtle-blue-text transition-colors hover:bg-button-subtle-blue-bg-hover"
-                                  >
-                                    Add/Remove
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setUpdateModalState({
-                                        isOpen: true,
-                                        resource: resource,
-                                        updateType: UPDATE_TYPE.ABSOLUTE,
-                                      });
-                                    }}
-                                    className="flex-1 rounded-sm bg-button-subtle-purple-bg px-2 py-1 text-xs font-medium text-button-subtle-purple-text transition-colors hover:bg-button-subtle-purple-bg-hover"
-                                  >
-                                    Set Qty
-                                  </button>
-                                </div>
-                                <div className="flex gap-1">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setTransferModalState({
+                                      setChangeTargetModalState({
                                         isOpen: true,
                                         resource: resource,
                                       });
                                     }}
-                                    className="flex-1 rounded-sm bg-button-subtle-green-bg px-2 py-1 text-xs font-medium text-button-subtle-green-text transition-colors hover:bg-button-subtle-green-bg-hover"
+                                    className="flex-1 rounded-sm bg-button-subtle-orange-bg px-2 py-1 text-xs font-medium text-button-subtle-orange-text transition-colors hover:bg-button-subtle-orange-bg-hover"
                                   >
-                                    Transfer
+                                    Set Target
                                   </button>
-                                  {isTargetAdmin && (
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setChangeTargetModalState({
-                                          isOpen: true,
-                                          resource: resource,
-                                        });
-                                      }}
-                                      className="flex-1 rounded-sm bg-button-subtle-orange-bg px-2 py-1 text-xs font-medium text-button-subtle-orange-text transition-colors hover:bg-button-subtle-orange-bg-hover"
-                                    >
-                                      Set Target
-                                    </button>
-                                  )}
-                                </div>
-
-                                {/* Admin buttons */}
-                                {isResourceAdmin && (
-                                  <div className="flex gap-1">
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        startEditResource(resource);
-                                      }}
-                                      className="flex-1 rounded-sm bg-button-subtle-yellow-bg px-2 py-1 text-xs font-medium text-button-subtle-yellow-text transition-colors hover:bg-button-subtle-yellow-bg-hover"
-                                    >
-                                      Edit
-                                    </button>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setDeleteConfirm({
-                                          resourceId: resource.id,
-                                          resourceName: resource.name,
-                                          showDialog: true,
-                                        });
-                                      }}
-                                      className="flex-1 rounded-sm bg-button-subtle-red-bg px-2 py-1 text-xs font-medium text-button-subtle-red-text transition-colors hover:bg-button-subtle-red-bg-hover"
-                                    >
-                                      Delete
-                                    </button>
-                                  </div>
                                 )}
                               </div>
+                              {isResourceAdmin && (
+                                <div className="flex gap-1">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      startEditResource(resource);
+                                    }}
+                                    className="flex-1 rounded-sm bg-button-subtle-yellow-bg px-2 py-1 text-xs font-medium text-button-subtle-yellow-text transition-colors hover:bg-button-subtle-yellow-bg-hover"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setDeleteConfirm({
+                                        resourceId: resource.id,
+                                        resourceName: resource.name,
+                                        showDialog: true,
+                                      });
+                                    }}
+                                    className="flex-1 rounded-sm bg-button-subtle-red-bg px-2 py-1 text-xs font-medium text-button-subtle-red-text transition-colors hover:bg-button-subtle-red-bg-hover"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -2111,7 +2211,8 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                     >
                       <td className="px-3 py-3">
                         <div className="flex items-center">
-                          <div className="h-12 w-12 shrink-0">
+                          {/* Image with tier pill overlay */}
+                          <div className="relative h-12 w-12 shrink-0">
                             {resource.imageUrl ? (
                               <img
                                 className="h-12 w-12 rounded-lg object-cover"
@@ -2127,7 +2228,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               />
                             ) : null}
                             <div
-                              className={`flex h-12 w-12 items-center justify-center rounded-lg bg-background-tertiary ${
+                              className={`h-12 w-12 items-center justify-center rounded-lg bg-background-tertiary ${
                                 resource.imageUrl ? "hidden" : "flex"
                               }`}
                             >
@@ -2135,11 +2236,22 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 No image
                               </span>
                             </div>
+                            {/* Tier pill on corner */}
+                            {resource.tier !== null &&
+                              resource.tier !== undefined && (
+                                <span
+                                  className={`absolute top-0.5 left-0.5 rounded px-0.5 py-px font-mono text-[8px] font-bold leading-none ${getTierClassName(resource.tier)}`}
+                                >
+                                  {getTierShortLabel(resource.tier)}
+                                </span>
+                              )}
                           </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium break-words text-text-primary transition-colors group-hover:text-text-link">
+                          <div className="ml-3">
+                            <div className="break-words text-sm font-medium text-text-primary transition-colors group-hover:text-text-link">
                               {resource.isPriority && (
-                                <span className="text-priority">* </span>
+                                <span className="text-text-priority">
+                                  *{" "}
+                                </span>
                               )}
                               {resource.name}
                               <svg
@@ -2156,14 +2268,6 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 />
                               </svg>
                             </div>
-                            {resource.tier !== null &&
-                              resource.tier !== undefined && (
-                                <span
-                                  className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${getTierClassName(resource.tier)}`}
-                                >
-                                  {getTierShortLabel(resource.tier)}
-                                </span>
-                              )}
                           </div>
                         </div>
                       </td>

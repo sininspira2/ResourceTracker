@@ -932,28 +932,42 @@ export default function ResourceDetailPage() {
           <div className="w-full">
             <div className="rounded-lg border border-border-primary bg-tile-background p-6 shadow-md">
               <div className="flex flex-col gap-6 md:flex-row">
-                {/* Resource Image */}
-                <div className="shrink-0">
-                  {resource.imageUrl ? (
-                    <img
-                      src={resource.imageUrl}
-                      alt={resource.name}
-                      className="mx-auto h-32 w-32 rounded-lg border border-border-secondary object-cover md:mx-0"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = "none";
-                        const fallback =
-                          target.nextElementSibling as HTMLElement;
-                        if (fallback) fallback.style.display = "flex";
-                      }}
-                    />
-                  ) : null}
-                  <div
-                    className={`mx-auto flex h-32 w-32 items-center justify-center rounded-lg bg-background-tertiary md:mx-0 ${resource.imageUrl ? "hidden" : "flex"}`}
-                  >
-                    <span className="text-sm text-text-quaternary">
-                      No Image
-                    </span>
+                {/* Resource Image — improved container with tier pill overlay */}
+                <div className="mx-auto shrink-0 md:mx-0">
+                  <div className="relative h-40 w-40">
+                    {resource.imageUrl ? (
+                      <img
+                        src={resource.imageUrl}
+                        alt={resource.name}
+                        className="h-40 w-40 rounded-xl border border-border-secondary object-cover shadow-sm"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = "none";
+                          const fallback =
+                            target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = "flex";
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className={`h-40 w-40 items-center justify-center rounded-xl border border-border-secondary bg-background-tertiary ${resource.imageUrl ? "hidden" : "flex"}`}
+                    >
+                      <span className="text-sm text-text-quaternary">
+                        No Image
+                      </span>
+                    </div>
+                    {/* Tier pill on image corner */}
+                    {resource.tier !== null && resource.tier !== undefined && (
+                      <span
+                        className={`absolute top-2 left-2 rounded px-1.5 py-0.5 font-mono text-xs font-bold leading-none ${getTierClassName(resource.tier)}`}
+                      >
+                        {
+                          TIER_OPTIONS.find(
+                            (t) => t.value === resource.tier?.toString(),
+                          )?.label
+                        }
+                      </span>
+                    )}
                   </div>
                 </div>
 
