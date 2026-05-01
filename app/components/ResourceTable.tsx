@@ -1824,7 +1824,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                   <h3 className="border-b border-border-primary pb-2 text-lg font-semibold text-text-primary">
                     {category} ({categoryResources.length})
                   </h3>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {categoryResources.map((resource, idx) => {
                       const status = calculateResourceStatus(
                         resource.quantityHagga + resource.quantityDeepDesert,
@@ -1873,56 +1873,51 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               : "Click to view detailed resource information"
                           }
                         >
-                          {/* Header: image + name + status chip */}
-                          <div className="flex items-start gap-3 p-4 pb-2">
-                            {/* Image with tier pill overlay */}
-                            <div className="relative h-14 w-14 shrink-0">
-                              {resource.imageUrl ? (
-                                <img
-                                  src={resource.imageUrl}
-                                  alt={resource.name}
-                                  className="h-14 w-14 rounded-lg object-cover"
-                                  onError={(e) => {
-                                    const target =
-                                      e.target as HTMLImageElement;
-                                    target.style.display = "none";
-                                    const fallback =
-                                      target.nextElementSibling as HTMLElement;
-                                    if (fallback)
-                                      fallback.style.display = "flex";
-                                  }}
-                                />
-                              ) : null}
-                              <div
-                                className={`h-14 w-14 items-center justify-center rounded-lg bg-background-tertiary ${
-                                  resource.imageUrl ? "hidden" : "flex"
-                                }`}
-                              >
-                                <span className="text-xs text-text-quaternary">
-                                  No Image
-                                </span>
-                              </div>
-                              {/* Tier pill on corner */}
-                              {resource.tier !== null &&
-                                resource.tier !== undefined && (
-                                  <span
-                                    className={`absolute top-1 left-1 rounded px-1 py-0.5 font-mono text-[9px] font-bold leading-none ${getTierClassName(resource.tier)}`}
-                                  >
-                                    {getTierShortLabel(resource.tier)}
-                                  </span>
-                                )}
+                          {/* Full-width image at top */}
+                          <div className="relative h-40 w-full overflow-hidden bg-background-tertiary">
+                            {resource.imageUrl ? (
+                              <img
+                                src={resource.imageUrl}
+                                alt={resource.name}
+                                className="h-full w-full object-contain"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = "none";
+                                  const fallback =
+                                    target.nextElementSibling as HTMLElement;
+                                  if (fallback) fallback.style.display = "flex";
+                                }}
+                              />
+                            ) : null}
+                            <div
+                              className={`h-full w-full items-center justify-center ${
+                                resource.imageUrl ? "hidden" : "flex"
+                              }`}
+                            >
+                              <span className="text-xs text-text-quaternary">
+                                No Image
+                              </span>
                             </div>
+                            {/* Tier pill on corner */}
+                            {resource.tier !== null &&
+                              resource.tier !== undefined && (
+                                <span
+                                  className={`absolute top-2 left-2 rounded px-1.5 py-0.5 font-mono text-[10px] font-bold leading-none ${getTierClassName(resource.tier)}`}
+                                >
+                                  {getTierShortLabel(resource.tier)}
+                                </span>
+                              )}
+                          </div>
 
-                            {/* Name + status chip */}
-                            <div className="min-w-0 flex-1">
-                              <h4 className="mb-1.5 truncate text-sm font-semibold leading-tight text-text-primary transition-colors group-hover:text-text-link">
-                                {resource.isPriority && (
-                                  <span className="text-text-priority">
-                                    *{" "}
-                                  </span>
-                                )}
-                                {resource.name}
-                              </h4>
+                          {/* Name + status chip */}
+                          <div className="px-4 pt-3 pb-1">
+                            <h4 className="mb-2 text-sm font-semibold leading-snug text-text-primary transition-colors group-hover:text-text-link">
+                              {resource.isPriority && (
+                                <span className="text-text-priority">* </span>
+                              )}
+                              {resource.name}
+                            </h4>
+                            <div className="flex flex-wrap items-center gap-1.5">
                               {/* Status chip inline */}
                               <span
                                 className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${getStatusTableColor(status)} ${statusChange ? "animate-pulse" : ""}`}
@@ -1932,7 +1927,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                               </span>
                               {/* Multiplier badge */}
                               <span
-                                className={`ml-1.5 inline-flex rounded-full px-1.5 py-0.5 text-xs font-semibold ${
+                                className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-semibold ${
                                   resource.multiplier === 0
                                     ? "bg-multiplier-zero-bg text-multiplier-zero-text"
                                     : (resource.multiplier || 1.0) >= 3.0
@@ -1953,7 +1948,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                           </div>
 
                           {/* Big monospace total + sparkline */}
-                          <div className="flex items-end justify-between px-4 pb-1 pt-1">
+                          <div className="flex items-end justify-between px-4 pt-2 pb-1">
                             <div>
                               <div className="font-mono text-2xl font-bold leading-none text-text-primary">
                                 {formatNumber(totalQty)}
