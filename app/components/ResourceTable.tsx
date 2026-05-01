@@ -202,21 +202,16 @@ const getProgressBarColorStyle = (status: string): React.CSSProperties => ({
 const getSparklineColor = (status: string): string =>
   STATUS_COLOR_MAP[status] ?? "var(--color-border-secondary)";
 
-// Generates a deterministic sparkline SVG element based on resource id
+// Renders a sparkline SVG from an array of quantity data points
 function renderSparklineSVG(
-  id: string,
+  dataPoints: number[],
   status: string,
   w = 68,
   h = 28,
-): React.ReactElement {
-  const seed = id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-  const pts: number[] = [];
-  let v = 0.4 + ((seed * 9301 + 49297) % 233280) / 466560 * 0.4;
-  for (let i = 0; i < 10; i++) {
-    const n = ((seed * (i + 7) * 2654435761) % 1000) / 1000 - 0.5;
-    v = Math.max(0.05, Math.min(0.95, v + n * 0.22));
-    pts.push(v);
-  }
+): React.ReactElement | null {
+  if (!dataPoints || dataPoints.length < 2) return null;
+
+  const pts = dataPoints;
   const pad = 2;
   const min = Math.min(...pts);
   const max = Math.max(...pts);
@@ -411,6 +406,11 @@ export function ResourceTable({ userId }: ResourceTableProps) {
     resource: Resource | null;
   }>({ isOpen: false, resource: null });
 
+  // Sparkline data: resourceId → daily quantity totals (oldest-first)
+  const [sparklineData, setSparklineData] = useState<Record<string, number[]>>(
+    {},
+  );
+
   // Load view preference
   useEffect(() => {
     const savedViewMode = localStorage.getItem(LOCAL_STORAGE_KEYS.VIEW_MODE);
@@ -418,6 +418,15 @@ export function ResourceTable({ userId }: ResourceTableProps) {
       setViewMode(savedViewMode as (typeof VIEW_MODE)[keyof typeof VIEW_MODE]);
     }
   }, []);
+
+  // Fetch sparkline data when in grid mode
+  useEffect(() => {
+    if (viewMode !== VIEW_MODE.GRID) return;
+    fetch("/api/resources/sparklines?days=30")
+      .then((res) => (res.ok ? res.json() : {}))
+      .then((data: Record<string, number[]>) => setSparklineData(data))
+      .catch(() => {});
+  }, [viewMode]);
 
   // Save view preference
   const setAndSaveViewMode = (
@@ -1970,7 +1979,10 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 {formatNumber(resource.quantityDeepDesert)}
                               </div>
                             </div>
-                            {renderSparklineSVG(resource.id, status)}
+                            {renderSparklineSVG(
+                              sparklineData[resource.id] ?? [],
+                              status,
+                            )}
                           </div>
 
                           {/* Progress bar */}

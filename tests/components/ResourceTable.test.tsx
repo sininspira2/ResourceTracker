@@ -116,6 +116,12 @@ describe("ResourceTable", () => {
 
     // Mock fetch
     global.fetch = jest.fn((url) => {
+      if (url.toString().includes("/api/resources/sparklines")) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({}),
+        });
+      }
       if (url.toString().startsWith(RESOURCES_API_PATH)) {
         return Promise.resolve({
           ok: true,
