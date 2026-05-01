@@ -22,6 +22,10 @@
         {
           "type": "improvement",
           "description": "Sparkline charts on resource grid cards now display real 30-day historical data fetched via a batch endpoint, with an all-time fallback for resources that have fewer than 2 data points in the window. Resources with no history show no sparkline."
+        },
+        {
+          "type": "improvement",
+          "description": "Resource grid cards now always show a sparkline: resources with insufficient history display a deterministic pseudo-random synthetic curve (seeded from the resource ID) behind a blur and a small-caps 'NOT ENOUGH HISTORICAL DATA' overlay, keeping card layouts consistent. The sparkline is also responsive — wider on single-column (full-width) cards and narrower in multi-column grid layouts."
         }
       ]
     },

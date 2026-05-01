@@ -202,7 +202,37 @@ const getProgressBarColorStyle = (status: string): React.CSSProperties => ({
 const getSparklineColor = (status: string): string =>
   STATUS_COLOR_MAP[status] ?? "var(--color-border-secondary)";
 
-// Renders a sparkline SVG from an array of quantity data points
+// FNV-1a + xorshift32 seeded PRNG derived from a string seed
+function seededRandom(seed: string): () => number {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  let state = h || 1;
+  return () => {
+    state ^= state << 13;
+    state ^= state >>> 17;
+    state ^= state << 5;
+    state = state >>> 0;
+    return state / 4294967296;
+  };
+}
+
+// Generate deterministic synthetic quantity history from a resource ID
+function generateSyntheticDataPoints(id: string, count = 20): number[] {
+  const rng = seededRandom(id);
+  const base = 40 + rng() * 160;
+  const points: number[] = [base];
+  for (let i = 1; i < count; i++) {
+    const delta = (rng() - 0.42) * 30;
+    points.push(Math.max(1, points[i - 1] + delta));
+  }
+  return points;
+}
+
+// Renders a sparkline SVG from an array of quantity data points.
+// The SVG uses width="100%" so it fills whatever container it's placed in.
 function renderSparklineSVG(
   dataPoints: number[],
   status: string,
@@ -228,10 +258,11 @@ function renderSparklineSVG(
   const stroke = getSparklineColor(status);
   return (
     <svg
-      width={w}
+      width="100%"
       height={h}
       viewBox={`0 0 ${w} ${h}`}
-      style={{ display: "block", overflow: "visible", flexShrink: 0 }}
+      preserveAspectRatio="none"
+      style={{ display: "block", overflow: "visible" }}
     >
       <path d={area} fill={stroke} opacity={0.15} />
       <path
@@ -244,6 +275,40 @@ function renderSparklineSVG(
       />
       <circle cx={last.x} cy={last.y} r={2} fill={stroke} />
     </svg>
+  );
+}
+
+// Renders a blurred synthetic sparkline with a "NOT ENOUGH HISTORICAL DATA"
+// overlay for resources that have no real history to display.
+function renderSyntheticSparklinePlaceholder(
+  id: string,
+  status: string,
+): React.ReactElement {
+  const syntheticPoints = generateSyntheticDataPoints(id);
+  return (
+    <div
+      className="relative"
+      data-testid="sparkline-placeholder"
+      style={{ userSelect: "none" }}
+    >
+      <div style={{ filter: "blur(2.5px)", opacity: 0.4 }}>
+        {renderSparklineSVG(syntheticPoints, status)}
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span
+          className="text-center leading-tight text-text-quaternary"
+          style={{
+            fontSize: "6px",
+            fontVariant: "small-caps",
+            letterSpacing: "0.05em",
+          }}
+        >
+          NOT ENOUGH
+          <br />
+          HISTORICAL DATA
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -1979,10 +2044,18 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                                 {formatNumber(resource.quantityDeepDesert)}
                               </div>
                             </div>
-                            {renderSparklineSVG(
-                              sparklineData[resource.id] ?? [],
-                              status,
-                            )}
+                            {/* Responsive sparkline container: wider on full-width single-column cards */}
+                            <div className="w-28 flex-shrink-0 sm:w-20 lg:w-[68px]">
+                              {sparklineData[resource.id]
+                                ? renderSparklineSVG(
+                                    sparklineData[resource.id],
+                                    status,
+                                  )
+                                : renderSyntheticSparklinePlaceholder(
+                                    resource.id,
+                                    status,
+                                  )}
+                            </div>
                           </div>
 
                           {/* Progress bar */}
