@@ -2046,7 +2046,7 @@ export function ResourceTable({ userId }: ResourceTableProps) {
                             </div>
                             {/* Responsive sparkline container: wider on full-width single-column cards */}
                             <div className="w-28 flex-shrink-0 sm:w-20 lg:w-[68px]">
-                              {sparklineData[resource.id]
+                              {sparklineData[resource.id]?.length >= 2
                                 ? renderSparklineSVG(
                                     sparklineData[resource.id],
                                     status,

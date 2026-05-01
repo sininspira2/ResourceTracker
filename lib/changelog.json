@@ -21,7 +21,7 @@
         },
         {
           "type": "improvement",
-          "description": "Sparkline charts on resource grid cards now display real 30-day historical data fetched via a batch endpoint, with an all-time fallback for resources that have fewer than 2 data points in the window. Resources with no history show no sparkline."
+          "description": "Sparkline charts on resource grid cards now display real 30-day historical data fetched via a batch endpoint, with an all-time fallback for resources that have fewer than 2 data points in the window."
         },
         {
           "type": "improvement",
