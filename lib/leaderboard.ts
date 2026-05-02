@@ -6,7 +6,6 @@ import { mapCategoryForRead } from "./resource-mapping";
 // Constants for points calculation
 const BASE_POINTS_PER_1000_RESOURCES = 100;
 const SET_ACTION_POINTS = 1;
-const REFINED_ACTION_POINTS = 2; // Special points for Refined category
 
 // Status bonuses (as decimal percentages).
 // calculateResourceStatus returns only: "critical", "below_target", "at_target", "above_target".
@@ -21,9 +20,6 @@ const STATUS_BONUSES = {
   well_stocked: 0.0, // 0% — reserved, not currently returned by calculateResourceStatus
   surplus: 0.0, // 0% — reserved, not currently returned by calculateResourceStatus
 };
-
-// Categories that are eligible for points (Raw, Components, and Refined)
-const ELIGIBLE_CATEGORIES = ["Raw", "Components", "Refined"];
 
 export interface PointsCalculation {
   basePoints: number;
@@ -42,26 +38,13 @@ export function calculatePoints(
   resourceStatus: string,
   resourceCategory: string,
 ): PointsCalculation {
-  // No points for REMOVE actions or ineligible categories
-  if (
-    actionType === "REMOVE" ||
-    !ELIGIBLE_CATEGORIES.includes(resourceCategory)
-  ) {
+  // No points for REMOVE actions
+  if (actionType === "REMOVE") {
     return {
       basePoints: 0,
       resourceMultiplier,
       statusBonus: 0,
       finalPoints: 0,
-    };
-  }
-
-  // Special handling for Refined category - always 100 points flat
-  if (resourceCategory === "Refined") {
-    return {
-      basePoints: REFINED_ACTION_POINTS,
-      resourceMultiplier: 0, // Show as 0x for refined
-      statusBonus: 0,
-      finalPoints: REFINED_ACTION_POINTS,
     };
   }
 
