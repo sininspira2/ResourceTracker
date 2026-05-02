@@ -60,16 +60,16 @@ describe("calculatePoints", () => {
     expect(result.finalPoints).toBe(10000);
   });
 
-  it("should return fixed 2 points for Refined category regardless of status or multiplier", () => {
-    const critical = calculatePoints("ADD", 5000, 3, "critical", "Refined");
-    expect(critical.finalPoints).toBe(2);
-    const at = calculatePoints("ADD", 5000, 3, "at_target", "Refined");
-    expect(at.finalPoints).toBe(2);
+  it("should calculate Refined ADD actions using the standard formula", () => {
+    // base=500, ×3 mult=1500, ×1.1 critical bonus=1650
+    const result = calculatePoints("ADD", 5000, 3, "critical", "Refined");
+    expect(result.finalPoints).toBe(1650);
   });
 
-  it("should return 0 points for ineligible category", () => {
-    const result = calculatePoints("ADD", 5000, 2, "critical", "Blueprints");
-    expect(result.finalPoints).toBe(0);
+  it("should calculate points for previously-ineligible categories (e.g. Gear Blueprints)", () => {
+    // base=500, ×2 mult=1000, ×1.1 critical bonus=1100
+    const result = calculatePoints("ADD", 5000, 2, "critical", "Gear Blueprints");
+    expect(result.finalPoints).toBe(1100);
   });
 });
 
@@ -103,15 +103,15 @@ describe("awardPoints", () => {
     expect(mockDb.values).toHaveBeenCalled();
   });
 
-  it("should not create a leaderboard entry for the legacy 'Blueprints' category", async () => {
+  it("should create a leaderboard entry for the legacy 'Blueprints' category (now earns points)", async () => {
     const mockDb = {
       insert: jest.fn().mockReturnThis(),
       values: jest.fn().mockResolvedValue(undefined),
     };
 
     const { awardPoints } = await import("@/lib/leaderboard");
-    // Legacy "Blueprints" maps to "Gear Blueprints" which is an ineligible
-    // category, so no leaderboard entry should be created.
+    // Legacy "Blueprints" maps to "Gear Blueprints". All categories now earn points,
+    // so a leaderboard entry should be created.
     const result = await awardPoints(
       "test-user",
       "test-resource",
@@ -126,8 +126,9 @@ describe("awardPoints", () => {
       mockDb,
     );
 
-    expect(result.finalPoints).toBe(0);
-    expect(mockDb.insert).not.toHaveBeenCalled();
+    expect(result.finalPoints).toBeGreaterThan(0);
+    expect(mockDb.insert).toHaveBeenCalled();
+    expect(mockDb.values).toHaveBeenCalled();
   });
 });
 
