@@ -10,6 +10,19 @@ Removed from fork network due to original author repository being deleted, and d
 
 ---
 
+### [4.5.0] - 2026-05-01
+**Redesigned Resource Cards & Sparklines**
+
+#### ✨ Features
+* **Redesigned Grid Cards:** Completely overhauled resource grid cards for both desktop and mobile. The new layout features a status-keyed accent left border, inline status chips with colored indicator dots, large monospace quantity totals, and cleaner color-coded progress bars.
+* **Sparkline Trend Charts:** Introduced dynamic, responsive sparklines to resource grid cards to visualize 30-day historical trends (powered by a new batch fetch endpoint). To preserve UI layout consistency, cards with insufficient data display a blurred, deterministic synthetic curve paired with a "NOT ENOUGH HISTORICAL DATA" overlay.
+
+#### 🚀 Improvements
+* **Consistent Tier Badging:** Image thumbnails in the Table view now feature a tier pill overlaid on the corner to match the new grid card design.
+* **Enhanced Detail View:** The primary image container on the Resource Details page has been updated to be larger (160×160 px), rounded, and includes the new corner tier pill overlay.
+
+---
+
 ### [4.4.1] - 2026-04-30
 
 **Security dependency updates**
