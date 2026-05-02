@@ -8,25 +8,21 @@
       "type": "minor",
       "changes": [
         {
-          "type": "improvement",
-          "description": "Resource grid cards now display a status-keyed accent left border, tier pill overlaid on the image corner, inline status chip with colored dot, large monospace quantity totals, sparkline trend visualization, and a cleaner color-coded progress bar — in both desktop and mobile layouts."
-        },
-        {
-          "type": "improvement",
-          "description": "Table view image thumbnails now show the tier pill as a corner overlay, consistent with the grid cards."
-        },
-        {
-          "type": "improvement",
-          "description": "Resource details page image container is now larger (160×160 px), rounded, with a tier pill overlaid on the corner."
-        },
-        {
-          "type": "improvement",
-          "description": "Sparkline charts on resource grid cards now display real 30-day historical data fetched via a batch endpoint, with an all-time fallback for resources that have fewer than 2 data points in the window."
-        },
-        {
-          "type": "improvement",
-          "description": "Resource grid cards now always show a sparkline: resources with insufficient history display a deterministic pseudo-random synthetic curve (seeded from the resource ID) behind a blur and a small-caps 'NOT ENOUGH HISTORICAL DATA' overlay, keeping card layouts consistent. The sparkline is also responsive — wider on single-column (full-width) cards and narrower in multi-column grid layouts."
-        }
+        "type": "feature",
+        "description": "Resource grid cards have been completely redesigned for both desktop and mobile layouts. They now feature a status-keyed accent left border, an inline status chip with a colored dot, large monospace quantity totals, and a cleaner color-coded progress bar."
+      },
+      {
+        "type": "feature",
+        "description": "Introduced responsive sparkline trend visualizations to all resource grid cards. These charts fetch 30-day historical data via a batch endpoint, with an all-time fallback for sparse data. To maintain strict grid consistency, resources lacking sufficient history display a blurred, deterministic synthetic curve (seeded via resource ID) with a 'NOT ENOUGH HISTORICAL DATA' overlay."
+      },
+      {
+        "type": "improvement",
+        "description": "Table view image thumbnails now feature a tier pill overlaid on the corner, ensuring visual consistency with the new grid cards."
+      },
+      {
+        "type": "improvement",
+        "description": "The image container on the Resource Details page has been enlarged to 160×160 px, rounded, and updated to include the overlaid tier pill."
+      }
       ]
     },
     {
