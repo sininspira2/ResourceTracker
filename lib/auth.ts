@@ -226,6 +226,16 @@ export const authOptions: NextAuthOptions = {
               }
             }
           } else {
+            const body = await response.text().catch(() => "<unreadable>");
+            console.error(
+              "Discord guild member fetch failed:",
+              response.status,
+              response.statusText,
+              "guildId=",
+              guildId,
+              "body=",
+              body,
+            );
             token.userRoles = [];
             token.isInGuild = false;
             token.discordNickname = null;
