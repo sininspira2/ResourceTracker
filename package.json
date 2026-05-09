@@ -65,7 +65,7 @@
     "drizzle-kit": "^0.31.9",
     "eslint": "^10.3.0",
     "eslint-config-next": "16.2.4",
-    "jest": "^30.3.0",
+    "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.0",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
