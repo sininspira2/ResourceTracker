@@ -5,6 +5,7 @@ import {
   mapCategoryForRead,
   mapTransferDirectionForRead,
 } from "@/lib/resource-mapping";
+import { resolveDisplayNames } from "@/lib/users";
 
 export const dynamic = "force-dynamic";
 
@@ -97,6 +98,10 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(resourceHistory.createdAt))
       .limit(limit);
 
+    const displayNameMap = await resolveDisplayNames(
+      [...new Set(activity.map((a) => a.updatedBy))].filter(Boolean),
+    );
+
     const processedActivity = activity.map((entry) => {
       const loc1Amount =
         entry.changeAmountLocation1 ?? entry.changeAmountHagga ?? 0;
@@ -105,6 +110,7 @@ export async function GET(request: NextRequest) {
       const totalChangeAmount = loc1Amount + loc2Amount;
       return {
         ...entry,
+        updatedBy: displayNameMap[entry.updatedBy] || entry.updatedBy,
         resourceCategory: mapCategoryForRead(entry.resourceCategory),
         previousQuantityLocation1:
           entry.previousQuantityLocation1 ??

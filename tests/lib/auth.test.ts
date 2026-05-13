@@ -56,61 +56,25 @@ describe("auth helpers", () => {
   });
 
   describe("getUserIdentifier", () => {
-    const session = {
-      user: {
-        name: "testuser",
-        email: "test@example.com",
-        id: "123",
-        discordNickname: "Test",
-      },
-      expires: "1",
-    };
-
-    it("should return discordNickname if available", () => {
-      expect(getUserIdentifier(session as any)).toBe("Test");
+    it("should return the session user id (Discord ID)", () => {
+      const session = {
+        user: { id: "123456789", name: "testuser", discordNickname: "Test" },
+        expires: "1",
+      };
+      expect(getUserIdentifier(session as any)).toBe("123456789");
     });
 
-    it("should return name if discordNickname is not available", () => {
-      const newSession = {
-        ...session,
-        user: { ...session.user, discordNickname: null },
+    it("should return 'unknown' if session user id is absent", () => {
+      const session = {
+        user: { id: undefined, name: "testuser", discordNickname: "Test" },
+        expires: "1",
       };
-      expect(getUserIdentifier(newSession as any)).toBe("testuser");
+      expect(getUserIdentifier(session as any)).toBe("unknown");
     });
 
-    it("should return email if discordNickname and name are not available", () => {
-      const newSession = {
-        ...session,
-        user: { ...session.user, discordNickname: null, name: null },
-      };
-      expect(getUserIdentifier(newSession as any)).toBe("test@example.com");
-    });
-
-    it("should return id if discordNickname, name, and email are not available", () => {
-      const newSession = {
-        ...session,
-        user: {
-          ...session.user,
-          discordNickname: null,
-          name: null,
-          email: null,
-        },
-      };
-      expect(getUserIdentifier(newSession as any)).toBe("123");
-    });
-
-    it("should return 'unknown' if all are unavailable", () => {
-      const newSession = {
-        ...session,
-        user: {
-          ...session.user,
-          discordNickname: null,
-          name: null,
-          email: null,
-          id: null,
-        },
-      };
-      expect(getUserIdentifier(newSession as any)).toBe("unknown");
+    it("should return 'unknown' if session user is absent", () => {
+      const session = { user: undefined, expires: "1" };
+      expect(getUserIdentifier(session as any)).toBe("unknown");
     });
   });
 });

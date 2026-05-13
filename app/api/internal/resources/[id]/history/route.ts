@@ -5,6 +5,7 @@ import { db, resourceHistory } from "@/lib/db";
 import { eq, gte, desc, and } from "drizzle-orm";
 import { hasResourceAccess } from "@/lib/discord-roles";
 import { mapHistoryRowForRead } from "@/lib/resource-mapping";
+import { resolveDisplayNames } from "@/lib/users";
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +55,16 @@ export async function GET(
       .orderBy(desc(resourceHistory.createdAt))
       .limit(100); // Limit to reduce load
 
-    return NextResponse.json(history.map(mapHistoryRowForRead));
+    const displayNameMap = await resolveDisplayNames(
+      [...new Set(history.map((h) => h.updatedBy))].filter(Boolean),
+    );
+
+    const mapped = history.map((row) => ({
+      ...mapHistoryRowForRead(row),
+      updatedBy: displayNameMap[row.updatedBy] || row.updatedBy,
+    }));
+
+    return NextResponse.json(mapped);
   } catch (error) {
     console.error("Error fetching resource history:", error);
     return NextResponse.json(

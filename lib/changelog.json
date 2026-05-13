@@ -1,6 +1,26 @@
 {
-  "currentVersion": "4.5.0",
+  "currentVersion": "4.5.1",
   "releases": [
+    {
+      "version": "4.5.1",
+      "date": "2026-05-13",
+      "title": "Stable user IDs in history and leaderboard",
+      "type": "patch",
+      "changes": [
+        {
+          "type": "improvement",
+          "description": "Resource history, leaderboard, and resource 'last updated by' records now store the Discord user ID instead of the server nickname. Display names are resolved at read time from the users table, so nickname or username changes are automatically reflected going forward without rewriting history."
+        },
+        {
+          "type": "improvement",
+          "description": "Added a rolling 6-month cleanup of resource_history entries via a scheduled Vercel cron job (runs on the 1st of each month). History charts only go back 3 months and current quantities are always preserved in the resource table, so older entries are safe to prune."
+        },
+        {
+          "type": "bugfix",
+          "description": "Leaderboard and activity history entries recorded under a user's old nickname are still returned correctly through backward-compatible identifier lookup."
+        }
+      ]
+    },
     {
       "version": "4.5.0",
       "date": "2026-05-01",

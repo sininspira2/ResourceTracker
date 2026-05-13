@@ -114,9 +114,11 @@ describe("GET /api/user/activity", () => {
 
     expect(internalUrl.origin).toBe(baseUrl);
     expect(internalUrl.pathname).toBe("/api/internal/user/activity");
-    expect(internalUrl.searchParams.get("userId")).toBe("Test User");
+    // userId is now the Discord ID (session.user.id); old nicknames/names/email
+    // are passed as oldUserIds for backward compatibility with pre-migration history
+    expect(internalUrl.searchParams.get("userId")).toBe("user-123");
     expect(internalUrl.searchParams.get("oldUserIds")).toBe(
-      "user-123,test@example.com,Test User,unknown",
+      "Test User,test@example.com,unknown",
     );
 
     const fetchOptions = fetchCall[1];

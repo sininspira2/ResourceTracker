@@ -1762,7 +1762,7 @@ export default function ResourceDetailPage() {
                     onClick={() =>
                       router.push(`/dashboard/contributions/${entry.userId}`)
                     }
-                    title={`Click to view ${entry.userId}&apos;s detailed contributions`}
+                    title={`Click to view ${entry.displayName ?? entry.userId}&apos;s detailed contributions`}
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -1779,7 +1779,7 @@ export default function ResourceDetailPage() {
                         #{index + 1}
                       </div>
                       <div className="text-sm font-medium text-text-primary">
-                        {entry.userId}
+                        {entry.displayName ?? entry.userId}
                       </div>
                       <div className="text-xs text-text-quaternary">
                         ({entry.totalActions} actions)

@@ -27,11 +27,12 @@ export async function POST(request: NextRequest) {
   try {
     const userId = getUserIdentifier(session);
 
-    // For backward compatibility, also check for old user identifiers
+    // For backward compatibility, also check for old user identifiers.
+    // discordNickname was the primary stored value before the Discord-ID migration.
     const oldUserIds = [
-      session.user.id,
-      session.user.email,
+      session.user.discordNickname,
       session.user.name,
+      session.user.email,
       "unknown",
     ].filter(Boolean);
 
