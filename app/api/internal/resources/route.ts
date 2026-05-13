@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { db, resources } from "@/lib/db";
+import { db, resources, users } from "@/lib/db";
+import { inArray } from "drizzle-orm";
 import { hasResourceAccess } from "@/lib/discord-roles";
 import { mapResourceRowForRead } from "@/lib/resource-mapping";
 
@@ -27,8 +28,36 @@ export async function GET(request: NextRequest) {
 
   try {
     const allResources = await db.select().from(resources);
+    const mapped = allResources.map(mapResourceRowForRead);
 
-    return NextResponse.json(allResources.map(mapResourceRowForRead));
+    // Resolve Discord IDs in lastUpdatedBy to display names; entries stored
+    // before the migration (with nicknames) won't match and fall back as-is.
+    const updaterIds = [
+      ...new Set(mapped.map((r) => r.lastUpdatedBy as string)),
+    ].filter(Boolean);
+    let displayNameMap: Record<string, string> = {};
+    if (updaterIds.length > 0) {
+      const usersResult = await db
+        .select({
+          discordId: users.discordId,
+          customNickname: users.customNickname,
+          username: users.username,
+        })
+        .from(users)
+        .where(inArray(users.discordId, updaterIds));
+      displayNameMap = Object.fromEntries(
+        usersResult.map((u) => [u.discordId, u.customNickname || u.username]),
+      );
+    }
+
+    return NextResponse.json(
+      mapped.map((r) => ({
+        ...r,
+        lastUpdatedBy:
+          displayNameMap[r.lastUpdatedBy as string] ||
+          (r.lastUpdatedBy as string),
+      })),
+    );
   } catch (error) {
     console.error("Error fetching resources:", error);
     return NextResponse.json(

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, resourceHistory, resources } from "@/lib/db";
-import { eq, gte, desc, and, or } from "drizzle-orm";
+import { db, resourceHistory, resources, users } from "@/lib/db";
+import { eq, gte, desc, and, or, inArray } from "drizzle-orm";
 import {
   mapCategoryForRead,
   mapTransferDirectionForRead,
@@ -97,6 +97,26 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(resourceHistory.createdAt))
       .limit(limit);
 
+    // Resolve Discord IDs to display names; entries stored before the migration
+    // (with nicknames as updatedBy) won't match and fall back to the stored value.
+    const updaterIds = [...new Set(activity.map((a) => a.updatedBy))].filter(
+      Boolean,
+    );
+    let displayNameMap: Record<string, string> = {};
+    if (updaterIds.length > 0) {
+      const usersResult = await db
+        .select({
+          discordId: users.discordId,
+          customNickname: users.customNickname,
+          username: users.username,
+        })
+        .from(users)
+        .where(inArray(users.discordId, updaterIds));
+      displayNameMap = Object.fromEntries(
+        usersResult.map((u) => [u.discordId, u.customNickname || u.username]),
+      );
+    }
+
     const processedActivity = activity.map((entry) => {
       const loc1Amount =
         entry.changeAmountLocation1 ?? entry.changeAmountHagga ?? 0;
@@ -105,6 +125,7 @@ export async function GET(request: NextRequest) {
       const totalChangeAmount = loc1Amount + loc2Amount;
       return {
         ...entry,
+        updatedBy: displayNameMap[entry.updatedBy] || entry.updatedBy,
         resourceCategory: mapCategoryForRead(entry.resourceCategory),
         previousQuantityLocation1:
           entry.previousQuantityLocation1 ??

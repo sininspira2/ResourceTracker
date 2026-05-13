@@ -262,6 +262,10 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      // Explicitly surface the Discord user ID so getUserIdentifier() can
+      // use a stable, rename-proof identifier for all database records.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (session.user as any).id = token.sub;
       session.user = {
         ...session.user,
         roles: (token.userRoles || []) as string[],
@@ -328,20 +332,18 @@ export function getDisplayName(user: {
 }
 
 /**
- * Returns the best available identifier for a user, used for database tracking.
+ * Returns the Discord user ID for database tracking.
  *
- * Priority order: Discord nickname → Discord username → email → user ID → `"unknown"`.
+ * Uses the Discord user ID (token.sub) so that history records remain stable
+ * even when a user changes their nickname or username. Display names are
+ * resolved at read time via the users table.
+ *
+ * Falls back to `"unknown"` only if no session ID is present (e.g. dev agent
+ * sessions that have not been assigned a real Discord ID).
  *
  * @param session - The NextAuth session object
- * @returns A string identifier for the user
+ * @returns The Discord user ID (or dev agent ID), used as the stable identifier
  */
 export function getUserIdentifier(session: Session): string {
-  // Priority: Discord nickname > Discord username > email > id > fallback
-  return (
-    session.user?.discordNickname ??
-    session.user?.name ??
-    session.user?.email ??
-    session.user?.id ??
-    "unknown"
-  );
+  return session.user?.id ?? "unknown";
 }
