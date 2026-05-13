@@ -17,7 +17,7 @@ jest.mock("@/lib/db", () => ({
   resources: { id: "id" },
   resourceHistory: { resourceId: "resourceId" },
   leaderboard: { resourceId: "resourceId" },
-  users: { id: "id", username: "username", customNickname: "customNickname" },
+  users: { id: "id", discordId: "discordId", username: "username", customNickname: "customNickname" },
 }));
 jest.mock("@/lib/discord-roles");
 jest.mock("nanoid");
@@ -104,9 +104,7 @@ describe("API Routes: /api/resources/[id]", () => {
       };
       const updatedResource = { ...initialResource, quantityHagga: 120 };
       mockDbExecution
-        .mockResolvedValueOnce([
-          { username: "testuser", customNickname: "TestUser" },
-        ]) // User lookup
+        .mockResolvedValueOnce([{ discordId: "discord-user-2" }]) // User lookup
         .mockResolvedValueOnce([initialResource]) // First select in transaction
         .mockResolvedValueOnce(undefined) // update
         .mockResolvedValueOnce(undefined) // insert history
@@ -117,7 +115,7 @@ describe("API Routes: /api/resources/[id]", () => {
 
       expect(db.insert).toHaveBeenCalled();
       expect(db.values).toHaveBeenCalledWith(
-        expect.objectContaining({ updatedBy: "TestUser" }),
+        expect.objectContaining({ updatedBy: "discord-user-2" }),
       );
     });
 

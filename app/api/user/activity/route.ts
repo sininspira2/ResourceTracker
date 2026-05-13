@@ -22,10 +22,12 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const userId = getUserIdentifier(session);
+  // Include old-style identifiers (nicknames, usernames, email) so history
+  // recorded before the Discord-ID migration is still returned for this user.
   const oldUserIds = [
-    session.user.id,
-    session.user.email,
+    session.user.discordNickname,
     session.user.name,
+    session.user.email,
     "unknown",
   ]
     .filter(Boolean)

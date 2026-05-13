@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db, resources } from "@/lib/db";
 import { hasResourceAccess } from "@/lib/discord-roles";
 import { mapResourceRowForRead } from "@/lib/resource-mapping";
+import { resolveDisplayNames } from "@/lib/users";
 
 export const dynamic = "force-dynamic";
 
@@ -27,8 +28,24 @@ export async function GET(request: NextRequest) {
 
   try {
     const allResources = await db.select().from(resources);
+    const mapped = allResources.map(mapResourceRowForRead);
 
-    return NextResponse.json(allResources.map(mapResourceRowForRead));
+    const lastUpdatedByIds = mapped
+      .map((r) => r.lastUpdatedBy)
+      .filter((id): id is string => typeof id === "string" && id.length > 0);
+    const displayNameMap = await resolveDisplayNames([
+      ...new Set(lastUpdatedByIds),
+    ]);
+
+    return NextResponse.json(
+      mapped.map((r) => ({
+        ...r,
+        lastUpdatedBy:
+          typeof r.lastUpdatedBy === "string"
+            ? displayNameMap[r.lastUpdatedBy] || r.lastUpdatedBy
+            : r.lastUpdatedBy,
+      })),
+    );
   } catch (error) {
     console.error("Error fetching resources:", error);
     return NextResponse.json(

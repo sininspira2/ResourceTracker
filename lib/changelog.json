@@ -1,6 +1,26 @@
 {
-  "currentVersion": "4.5.0",
+  "currentVersion": "4.5.1",
   "releases": [
+    {
+      "version": "4.5.1",
+      "date": "2026-05-13",
+      "title": "Stable user IDs in history and leaderboard",
+      "type": "patch",
+      "changes": [
+        {
+          "type": "improvement",
+          "description": "Resource history, leaderboard, and resource 'last updated by' records now store the Discord user ID instead of the server nickname. Display names are resolved at read time from the users table, so nickname or username changes are automatically reflected going forward without rewriting history."
+        },
+        {
+          "type": "improvement",
+          "description": "Added a rolling 6-month cleanup of resource_history entries via a scheduled Vercel cron job (runs on the 1st of each month). History charts only go back 3 months and current quantities are always preserved in the resource table, so older entries are safe to prune."
+        },
+        {
+          "type": "bugfix",
+          "description": "Leaderboard and activity history entries recorded under a user's old nickname are still returned correctly through backward-compatible identifier lookup."
+        }
+      ]
+    },
     {
       "version": "4.5.0",
       "date": "2026-05-01",
@@ -8,21 +28,25 @@
       "type": "minor",
       "changes": [
         {
-          "type": "improvement",
-          "description": "Resource grid cards now display a status-keyed accent left border, tier pill overlaid on the image corner, inline status chip with colored dot, large monospace quantity totals, sparkline trend visualization, and a cleaner color-coded progress bar — in both desktop and mobile layouts."
-        },
-        {
-          "type": "improvement",
-          "description": "Table view image thumbnails now show the tier pill as a corner overlay, consistent with the grid cards."
-        },
-        {
-          "type": "improvement",
-          "description": "Resource details page image container is now larger (160×160 px), rounded, with a tier pill overlaid on the corner."
-        },
-        {
-          "type": "improvement",
-          "description": "Sparkline charts on resource grid cards now display real 30-day historical data fetched via a batch endpoint, with an all-time fallback for resources that have fewer than 2 data points in the window. Resources with no history show no sparkline."
-        }
+        "type": "feature",
+        "description": "Resource grid cards have been completely redesigned for both desktop and mobile layouts. They now feature a status-keyed accent left border, an inline status chip with a colored dot, large monospace quantity totals, and a cleaner color-coded progress bar."
+      },
+      {
+        "type": "feature",
+        "description": "Introduced responsive sparkline trend visualizations to all resource grid cards. These charts fetch 30-day historical data via a batch endpoint, with an all-time fallback for sparse data. To maintain strict grid consistency, resources lacking sufficient history display a blurred, deterministic synthetic curve (seeded via resource ID) with a 'NOT ENOUGH HISTORICAL DATA' overlay."
+      },
+      {
+        "type": "improvement",
+        "description": "Table view image thumbnails now feature a tier pill overlaid on the corner, ensuring visual consistency with the new grid cards."
+      },
+      {
+        "type": "improvement",
+        "description": "The image container on the Resource Details page has been enlarged to 160×160 px, rounded, and updated to include the overlaid tier pill."
+      },
+      {
+        "type": "improvement",
+        "description": "All resource categories now earn leaderboard points for ADD and SET actions. The Refined category no longer receives a fixed 2-point bonus — it uses the same quantity/multiplier/status-bonus formula as all other categories."
+      }
       ]
     },
     {

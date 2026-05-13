@@ -119,9 +119,10 @@ describe("PUT /api/resources/[id]/target", () => {
 
   it("should successfully update the target quantity", async () => {
     const initialResource = { id: "test-resource-id", targetQuantity: 50 };
+    // getUserIdentifier now returns session.user.id (Discord ID)
     const updatedData = {
       targetQuantity: 100,
-      lastUpdatedBy: "TestUser", // As derived by getUserIdentifier
+      lastUpdatedBy: "test-user-id",
       updatedAt: expect.any(Date),
     };
     const finalResource = { ...initialResource, ...updatedData };
@@ -146,7 +147,7 @@ describe("PUT /api/resources/[id]/target", () => {
     expect(mockDb.update).toHaveBeenCalledWith(resources);
     expect(mockDb.set).toHaveBeenCalledWith(updatedData);
     expect(body.targetQuantity).toBe(100);
-    expect(body.lastUpdatedBy).toBe("TestUser");
+    expect(body.lastUpdatedBy).toBe("test-user-id");
   });
 
   it("should return 500 on database error during initial fetch", async () => {

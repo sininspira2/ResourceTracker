@@ -290,10 +290,6 @@ export default function LeaderboardPage() {
               quantity
             </p>
             <p>
-              <strong>Refined Actions:</strong> Fixed 2 points for any action
-              (special category)
-            </p>
-            <p>
               <strong>Multipliers:</strong> Resources have different point
               multipliers (0.1x to 5x+)
             </p>
@@ -302,8 +298,7 @@ export default function LeaderboardPage() {
               Target +5%
             </p>
             <p>
-              <strong>Categories:</strong> Raw, Components, and Refined
-              categories earn points
+              <strong>Categories:</strong> All resource categories earn points
             </p>
           </div>
         </div>

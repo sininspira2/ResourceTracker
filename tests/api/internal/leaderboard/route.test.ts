@@ -4,6 +4,8 @@
 import { NextRequest } from "next/server";
 import { jest } from "@jest/globals";
 
+const mockResolveDisplayNames = jest.fn();
+
 describe("GET /api/internal/leaderboard", () => {
   let consoleErrorSpy: jest.SpyInstance;
 
@@ -11,6 +13,12 @@ describe("GET /api/internal/leaderboard", () => {
     jest.resetModules();
     jest.clearAllMocks();
     consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    // Default: no users matched → displayName falls back to userId
+    mockResolveDisplayNames.mockResolvedValue({});
+    jest.doMock("@/lib/users", () => ({
+      resolveDisplayNames: mockResolveDisplayNames,
+    }));
   });
 
   afterEach(() => {
@@ -47,15 +55,19 @@ describe("GET /api/internal/leaderboard", () => {
     });
   });
 
-  it("should call getLeaderboard with provided parameters", async () => {
+  it("should call getLeaderboard with provided parameters and resolve display names", async () => {
     const mockGetLeaderboard = jest.fn().mockResolvedValue({
-      rankings: [{ userId: "1", totalPoints: 100 }],
+      rankings: [{ userId: "discord-user-1", totalPoints: 100 }],
       total: 1,
     });
     jest.doMock("@/lib/leaderboard", () => ({
       ...jest.requireActual("@/lib/leaderboard"),
       getLeaderboard: mockGetLeaderboard,
     }));
+
+    mockResolveDisplayNames.mockResolvedValue({
+      "discord-user-1": "Player One",
+    });
 
     const { GET } = await import("@/app/api/internal/leaderboard/route");
     const request = new NextRequest(
@@ -67,7 +79,9 @@ describe("GET /api/internal/leaderboard", () => {
     expect(response.status).toBe(200);
     expect(mockGetLeaderboard).toHaveBeenCalledWith("7d", 10, 5);
     expect(body).toEqual({
-      leaderboard: [{ userId: "1", totalPoints: 100 }],
+      leaderboard: [
+        { userId: "discord-user-1", totalPoints: 100, displayName: "Player One" },
+      ],
       timeFilter: "7d",
       total: 1,
       page: 2,
@@ -75,6 +89,34 @@ describe("GET /api/internal/leaderboard", () => {
       totalPages: 1,
       hasNextPage: false,
       hasPrevPage: true,
+    });
+  });
+
+  it("falls back to userId when Discord ID has no matching user record", async () => {
+    const mockGetLeaderboard = jest.fn().mockResolvedValue({
+      rankings: [{ userId: "old-nickname", totalPoints: 50 }],
+      total: 1,
+    });
+    jest.doMock("@/lib/leaderboard", () => ({
+      ...jest.requireActual("@/lib/leaderboard"),
+      getLeaderboard: mockGetLeaderboard,
+    }));
+
+    // resolveDisplayNames returns empty map → displayName falls back to userId
+    mockResolveDisplayNames.mockResolvedValue({});
+
+    const { GET } = await import("@/app/api/internal/leaderboard/route");
+    const request = new NextRequest(
+      "http://localhost/api/internal/leaderboard",
+    );
+    const response = await GET(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.leaderboard[0]).toEqual({
+      userId: "old-nickname",
+      totalPoints: 50,
+      displayName: "old-nickname",
     });
   });
 

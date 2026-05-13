@@ -226,6 +226,16 @@ export const authOptions: NextAuthOptions = {
               }
             }
           } else {
+            const body = await response.text().catch(() => "<unreadable>");
+            console.error(
+              "Discord guild member fetch failed:",
+              response.status,
+              response.statusText,
+              "guildId=",
+              guildId,
+              "body=",
+              body,
+            );
             token.userRoles = [];
             token.isInGuild = false;
             token.discordNickname = null;
@@ -254,6 +264,10 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.user = {
         ...session.user,
+        // Surface the Discord user ID (token.sub) as session.user.id so
+        // getUserIdentifier() has a stable, rename-proof key for DB records.
+        // Cast is safe: token.sub is always set for authenticated sessions.
+        id: token.sub as string,
         roles: (token.userRoles || []) as string[],
         isInGuild: Boolean(token.isInGuild),
         discordNickname: token.discordNickname as string | null,
@@ -318,20 +332,18 @@ export function getDisplayName(user: {
 }
 
 /**
- * Returns the best available identifier for a user, used for database tracking.
+ * Returns the Discord user ID for database tracking.
  *
- * Priority order: Discord nickname → Discord username → email → user ID → `"unknown"`.
+ * Uses the Discord user ID (token.sub) so that history records remain stable
+ * even when a user changes their nickname or username. Display names are
+ * resolved at read time via the users table.
+ *
+ * Falls back to `"unknown"` only if no session ID is present (e.g. dev agent
+ * sessions that have not been assigned a real Discord ID).
  *
  * @param session - The NextAuth session object
- * @returns A string identifier for the user
+ * @returns The Discord user ID (or dev agent ID), used as the stable identifier
  */
 export function getUserIdentifier(session: Session): string {
-  // Priority: Discord nickname > Discord username > email > id > fallback
-  return (
-    session.user?.discordNickname ??
-    session.user?.name ??
-    session.user?.email ??
-    session.user?.id ??
-    "unknown"
-  );
+  return session.user?.id ?? "unknown";
 }

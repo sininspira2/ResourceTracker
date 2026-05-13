@@ -282,6 +282,59 @@ describe("ResourceTable", () => {
     });
   });
 
+  it("shows synthetic sparkline placeholders when resources have no history", async () => {
+    render(<ResourceTable userId="test-user" />);
+    await screen.findByText("Recent Updates");
+
+    // Sparklines API returns {} so all resources lack history; each card should
+    // render a synthetic placeholder with the data-testid marker.
+    await waitFor(() => {
+      const placeholders = screen.getAllByTestId("sparkline-placeholder");
+      expect(placeholders.length).toBe(mockResources.length);
+    });
+  });
+
+  it("replaces synthetic placeholder with real sparkline when history is available", async () => {
+    // Return sparkline data for resource id "1" (Iron Ore) only
+    global.fetch = jest.fn((url) => {
+      if (url.toString().includes("/api/resources/sparklines")) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ "1": [10, 20, 30, 40, 50] }),
+        });
+      }
+      if (url.toString().startsWith(RESOURCES_API_PATH)) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockResources),
+        });
+      }
+      if (url.toString().startsWith(USER_ACTIVITY_API_PATH)) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockActivity),
+        });
+      }
+      if (url.toString().startsWith(LEADERBOARD_API_PATH)) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockLeaderboard),
+        });
+      }
+      return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
+    }) as jest.Mock;
+
+    render(<ResourceTable userId="test-user" />);
+    await screen.findByText("Recent Updates");
+
+    // Resource "1" has data → real sparkline (no placeholder).
+    // The other 3 resources still show placeholders.
+    await waitFor(() => {
+      const placeholders = screen.getAllByTestId("sparkline-placeholder");
+      expect(placeholders).toHaveLength(mockResources.length - 1);
+    });
+  });
+
   it("switches between grid and table view", async () => {
     render(<ResourceTable userId="test-user" />);
     await screen.findByText("Recent Updates");

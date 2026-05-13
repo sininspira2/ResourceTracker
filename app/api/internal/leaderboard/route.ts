@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLeaderboard } from "@/lib/leaderboard";
+import { resolveDisplayNames } from "@/lib/users";
 
 export const dynamic = "force-dynamic";
 
@@ -42,8 +43,17 @@ export async function GET(request: NextRequest) {
 
     const result = await getLeaderboard(timeFilter, effectiveLimit, offset);
 
+    const displayNameMap = await resolveDisplayNames(
+      [...new Set(result.rankings.map((r) => r.userId))],
+    );
+
+    const rankingsWithNames = result.rankings.map((r) => ({
+      ...r,
+      displayName: displayNameMap[r.userId] || r.userId,
+    }));
+
     return NextResponse.json({
-      leaderboard: result.rankings,
+      leaderboard: rankingsWithNames,
       timeFilter,
       total: result.total,
       page,
