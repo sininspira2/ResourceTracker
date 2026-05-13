@@ -9,6 +9,7 @@ import { AppShell } from "@/app/components/AppShell";
 
 interface LeaderboardEntry {
   userId: string;
+  displayName: string;
   totalPoints: number;
   totalActions: number;
 }
@@ -217,7 +218,7 @@ export default function LeaderboardPage() {
                           </div>
                           <div>
                             <h3 className="font-medium text-text-primary">
-                              {entry.userId}
+                              {entry.displayName}
                             </h3>
                             <div className="mt-1 flex items-center gap-4 text-sm text-text-quaternary">
                               <span>{entry.totalActions} actions</span>
