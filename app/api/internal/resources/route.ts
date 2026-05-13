@@ -33,7 +33,9 @@ export async function GET(request: NextRequest) {
     const lastUpdatedByIds = mapped
       .map((r) => r.lastUpdatedBy)
       .filter((id): id is string => typeof id === "string" && id.length > 0);
-    const displayNameMap = await resolveDisplayNames([...new Set(lastUpdatedByIds)]);
+    const displayNameMap = await resolveDisplayNames([
+      ...new Set(lastUpdatedByIds),
+    ]);
 
     return NextResponse.json(
       mapped.map((r) => ({
