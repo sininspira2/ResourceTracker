@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db, resourceHistory } from "@/lib/db";
 import { lt } from "drizzle-orm";
 
@@ -11,30 +11,31 @@ export const dynamic = "force-dynamic";
  * The 6-month window is generous given that history charts only go back 3
  * months and the resource table always holds current state.
  *
- * Intended to be invoked by a Vercel Cron job. Not authenticated — only
- * callable internally via the cron scheduler (protected by Vercel's
- * infrastructure, not user-facing).
+ * Secured via `CRON_SECRET` as recommended by Vercel for cron routes:
+ * https://vercel.com/docs/cron-jobs/manage-cron-jobs#securing-cron-jobs
+ *
+ * Intended to be invoked by the Vercel Cron scheduler only.
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const cronSecret = process.env.CRON_SECRET;
+  if (
+    !cronSecret ||
+    request.headers.get("Authorization") !== `Bearer ${cronSecret}`
+  ) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const cutoff = new Date();
     cutoff.setMonth(cutoff.getMonth() - 6);
 
-    const result = await db
-      .delete(resourceHistory)
-      .where(lt(resourceHistory.createdAt, cutoff));
-
-    const rowsDeleted =
-      (result as unknown as { rowsAffected?: number }).rowsAffected ?? 0;
+    await db.delete(resourceHistory).where(lt(resourceHistory.createdAt, cutoff));
 
     console.log(
-      `[cleanup] Deleted ${rowsDeleted} resource_history entries older than ${cutoff.toISOString()}`,
+      `[cleanup] Pruned resource_history entries older than ${cutoff.toISOString()}`,
     );
 
-    return NextResponse.json({
-      deleted: rowsDeleted,
-      cutoff: cutoff.toISOString(),
-    });
+    return NextResponse.json({ cutoff: cutoff.toISOString() });
   } catch (error) {
     console.error("[cleanup] Failed to prune resource history:", error);
     return NextResponse.json(

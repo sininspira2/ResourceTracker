@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLeaderboard } from "@/lib/leaderboard";
-import { db, users } from "@/lib/db";
-import { inArray } from "drizzle-orm";
+import { resolveDisplayNames } from "@/lib/users";
 
 export const dynamic = "force-dynamic";
 
@@ -44,26 +43,9 @@ export async function GET(request: NextRequest) {
 
     const result = await getLeaderboard(timeFilter, effectiveLimit, offset);
 
-    // Resolve Discord IDs to display names; old entries (stored as nicknames)
-    // won't match discordId and fall back to the stored value.
-    const discordIds = result.rankings.map((r) => r.userId).filter(Boolean);
-    let displayNameMap: Record<string, string> = {};
-    if (discordIds.length > 0) {
-      const usersResult = await db
-        .select({
-          discordId: users.discordId,
-          customNickname: users.customNickname,
-          username: users.username,
-        })
-        .from(users)
-        .where(inArray(users.discordId, discordIds));
-      displayNameMap = Object.fromEntries(
-        usersResult.map((u) => [
-          u.discordId,
-          u.customNickname || u.username,
-        ]),
-      );
-    }
+    const displayNameMap = await resolveDisplayNames(
+      result.rankings.map((r) => r.userId).filter(Boolean),
+    );
 
     const rankingsWithNames = result.rankings.map((r) => ({
       ...r,

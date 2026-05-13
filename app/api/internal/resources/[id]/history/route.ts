@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { db, resourceHistory, users } from "@/lib/db";
-import { eq, gte, desc, and, inArray } from "drizzle-orm";
+import { db, resourceHistory } from "@/lib/db";
+import { eq, gte, desc, and } from "drizzle-orm";
 import { hasResourceAccess } from "@/lib/discord-roles";
 import { mapHistoryRowForRead } from "@/lib/resource-mapping";
+import { resolveDisplayNames } from "@/lib/users";
 
 export const dynamic = "force-dynamic";
 
@@ -54,25 +55,9 @@ export async function GET(
       .orderBy(desc(resourceHistory.createdAt))
       .limit(100); // Limit to reduce load
 
-    // Resolve Discord IDs to display names; entries stored before the migration
-    // (with nicknames as updatedBy) won't match and fall back to the stored value.
-    const updaterIds = [...new Set(history.map((h) => h.updatedBy))].filter(
-      Boolean,
+    const displayNameMap = await resolveDisplayNames(
+      [...new Set(history.map((h) => h.updatedBy))].filter(Boolean),
     );
-    let displayNameMap: Record<string, string> = {};
-    if (updaterIds.length > 0) {
-      const usersResult = await db
-        .select({
-          discordId: users.discordId,
-          customNickname: users.customNickname,
-          username: users.username,
-        })
-        .from(users)
-        .where(inArray(users.discordId, updaterIds));
-      displayNameMap = Object.fromEntries(
-        usersResult.map((u) => [u.discordId, u.customNickname || u.username]),
-      );
-    }
 
     const mapped = history.map((row) => ({
       ...mapHistoryRowForRead(row),

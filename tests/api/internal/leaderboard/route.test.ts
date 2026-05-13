@@ -4,7 +4,7 @@
 import { NextRequest } from "next/server";
 import { jest } from "@jest/globals";
 
-const mockDbSelect = jest.fn();
+const mockResolveDisplayNames = jest.fn();
 
 describe("GET /api/internal/leaderboard", () => {
   let consoleErrorSpy: jest.SpyInstance;
@@ -14,20 +14,10 @@ describe("GET /api/internal/leaderboard", () => {
     jest.clearAllMocks();
     consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-    // Mock db so the display-name lookup doesn't try a real connection.
-    // Return an empty users list so displayName falls back to userId.
-    mockDbSelect.mockReturnValue({
-      from: jest.fn().mockReturnValue({
-        where: jest.fn().mockResolvedValue([]),
-      }),
-    });
-    jest.doMock("@/lib/db", () => ({
-      db: { select: mockDbSelect },
-      users: {
-        discordId: "users.discordId",
-        customNickname: "users.customNickname",
-        username: "users.username",
-      },
+    // Default: no users matched → displayName falls back to userId
+    mockResolveDisplayNames.mockResolvedValue({});
+    jest.doMock("@/lib/users", () => ({
+      resolveDisplayNames: mockResolveDisplayNames,
     }));
   });
 
@@ -65,7 +55,7 @@ describe("GET /api/internal/leaderboard", () => {
     });
   });
 
-  it("should call getLeaderboard with provided parameters", async () => {
+  it("should call getLeaderboard with provided parameters and resolve display names", async () => {
     const mockGetLeaderboard = jest.fn().mockResolvedValue({
       rankings: [{ userId: "discord-user-1", totalPoints: 100 }],
       total: 1,
@@ -75,17 +65,8 @@ describe("GET /api/internal/leaderboard", () => {
       getLeaderboard: mockGetLeaderboard,
     }));
 
-    // Return a resolved display name for the Discord ID
-    mockDbSelect.mockReturnValue({
-      from: jest.fn().mockReturnValue({
-        where: jest.fn().mockResolvedValue([
-          {
-            discordId: "discord-user-1",
-            customNickname: "Player One",
-            username: "playerone",
-          },
-        ]),
-      }),
+    mockResolveDisplayNames.mockResolvedValue({
+      "discord-user-1": "Player One",
     });
 
     const { GET } = await import("@/app/api/internal/leaderboard/route");
@@ -121,12 +102,8 @@ describe("GET /api/internal/leaderboard", () => {
       getLeaderboard: mockGetLeaderboard,
     }));
 
-    // No user found for this entry (old pre-migration nickname)
-    mockDbSelect.mockReturnValue({
-      from: jest.fn().mockReturnValue({
-        where: jest.fn().mockResolvedValue([]),
-      }),
-    });
+    // resolveDisplayNames returns empty map → displayName falls back to userId
+    mockResolveDisplayNames.mockResolvedValue({});
 
     const { GET } = await import("@/app/api/internal/leaderboard/route");
     const request = new NextRequest(
