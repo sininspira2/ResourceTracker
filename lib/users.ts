@@ -14,7 +14,7 @@ import { inArray } from "drizzle-orm";
 export async function resolveDisplayNames(
   discordIds: (string | null | undefined)[],
 ): Promise<Record<string, string>> {
-  const ids = discordIds.filter((id): id is string => !!id);
+  const ids = [...new Set(discordIds.filter((id): id is string => !!id))];
   if (ids.length === 0) return {};
   const rows = await db
     .select({
