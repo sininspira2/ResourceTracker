@@ -30,7 +30,9 @@ export async function GET(request: NextRequest) {
     // current day doesn't exist in the target month (e.g. Aug 31 → March 2).
     const cutoff = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000);
 
-    await db.delete(resourceHistory).where(lt(resourceHistory.createdAt, cutoff));
+    await db
+      .delete(resourceHistory)
+      .where(lt(resourceHistory.createdAt, cutoff));
 
     console.log(
       `[cleanup] Pruned resource_history entries older than ${cutoff.toISOString()}`,
@@ -39,9 +41,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ cutoff: cutoff.toISOString() });
   } catch (error) {
     console.error("[cleanup] Failed to prune resource history:", error);
-    return NextResponse.json(
-      { error: "Cleanup failed" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Cleanup failed" }, { status: 500 });
   }
 }

@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     const result = await getLeaderboard(timeFilter, effectiveLimit, offset);
 
     const displayNameMap = await resolveDisplayNames(
-      result.rankings.map((r) => r.userId).filter(Boolean),
+      [...new Set(result.rankings.map((r) => r.userId))],
     );
 
     const rankingsWithNames = result.rankings.map((r) => ({

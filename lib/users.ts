@@ -12,9 +12,10 @@ import { inArray } from "drizzle-orm";
  * Accepts an empty array gracefully (returns an empty map without querying).
  */
 export async function resolveDisplayNames(
-  discordIds: string[],
+  discordIds: (string | null | undefined)[],
 ): Promise<Record<string, string>> {
-  if (discordIds.length === 0) return {};
+  const ids = discordIds.filter((id): id is string => !!id);
+  if (ids.length === 0) return {};
   const rows = await db
     .select({
       discordId: users.discordId,
@@ -22,7 +23,7 @@ export async function resolveDisplayNames(
       username: users.username,
     })
     .from(users)
-    .where(inArray(users.discordId, discordIds));
+    .where(inArray(users.discordId, ids));
   return Object.fromEntries(
     rows.map((u) => [u.discordId, u.customNickname || u.username]),
   );

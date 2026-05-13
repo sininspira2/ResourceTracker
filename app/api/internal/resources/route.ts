@@ -30,16 +30,18 @@ export async function GET(request: NextRequest) {
     const allResources = await db.select().from(resources);
     const mapped = allResources.map(mapResourceRowForRead);
 
-    const displayNameMap = await resolveDisplayNames(
-      [...new Set(mapped.map((r) => r.lastUpdatedBy as string))].filter(Boolean),
-    );
+    const lastUpdatedByIds = mapped
+      .map((r) => r.lastUpdatedBy)
+      .filter((id): id is string => typeof id === "string" && id.length > 0);
+    const displayNameMap = await resolveDisplayNames([...new Set(lastUpdatedByIds)]);
 
     return NextResponse.json(
       mapped.map((r) => ({
         ...r,
         lastUpdatedBy:
-          displayNameMap[r.lastUpdatedBy as string] ||
-          (r.lastUpdatedBy as string),
+          typeof r.lastUpdatedBy === "string"
+            ? displayNameMap[r.lastUpdatedBy] || r.lastUpdatedBy
+            : r.lastUpdatedBy,
       })),
     );
   } catch (error) {
