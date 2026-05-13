@@ -136,9 +136,11 @@ export async function PUT(
       // Use the Discord ID for stable tracking — display name resolved at read time
       effectiveUserId = targetUser[0].discordId;
 
-      // Append a human-readable audit note using the acting admin's display name
+      // Append a human-readable audit note using the acting admin's display name.
+      // Fallback to "Unknown Admin" so a raw Discord snowflake never surfaces in
+      // stored history if somehow both nickname and username are absent.
       const actingDisplayName =
-        session.user?.discordNickname || session.user?.name || actingUserIdentifier;
+        session.user?.discordNickname || session.user?.name || "Unknown Admin";
       const auditNote = ` (entered by ${actingDisplayName})`;
       if (reason) {
         const maxBase = 500 - auditNote.length;

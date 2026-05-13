@@ -262,12 +262,12 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      // Explicitly surface the Discord user ID so getUserIdentifier() can
-      // use a stable, rename-proof identifier for all database records.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (session.user as any).id = token.sub;
       session.user = {
         ...session.user,
+        // Surface the Discord user ID (token.sub) as session.user.id so
+        // getUserIdentifier() has a stable, rename-proof key for DB records.
+        // Cast is safe: token.sub is always set for authenticated sessions.
+        id: token.sub as string,
         roles: (token.userRoles || []) as string[],
         isInGuild: Boolean(token.isInGuild),
         discordNickname: token.discordNickname as string | null,

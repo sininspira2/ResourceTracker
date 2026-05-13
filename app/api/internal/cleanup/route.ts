@@ -26,8 +26,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const cutoff = new Date();
-    cutoff.setMonth(cutoff.getMonth() - 6);
+    // Use millisecond arithmetic to avoid setMonth() edge cases where the
+    // current day doesn't exist in the target month (e.g. Aug 31 → March 2).
+    const cutoff = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000);
 
     await db.delete(resourceHistory).where(lt(resourceHistory.createdAt, cutoff));
 
