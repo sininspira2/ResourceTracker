@@ -16,6 +16,7 @@ import {
   mapCategoryForRead,
   mapResourceRowForRead,
 } from "@/lib/resource-mapping";
+import { resolveDisplayNames } from "@/lib/users";
 
 /**
  * PUT /api/resources/[id]
@@ -274,6 +275,18 @@ export async function PUT(
         pointsCalculation,
       };
     });
+
+    if (result.resource?.lastUpdatedBy) {
+      const displayNameMap = await resolveDisplayNames([
+        result.resource.lastUpdatedBy,
+      ]);
+      result.resource = {
+        ...result.resource,
+        lastUpdatedBy:
+          displayNameMap[result.resource.lastUpdatedBy] ||
+          result.resource.lastUpdatedBy,
+      };
+    }
 
     return NextResponse.json(result, {
       headers: {
