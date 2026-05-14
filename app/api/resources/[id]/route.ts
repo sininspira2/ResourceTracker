@@ -277,15 +277,22 @@ export async function PUT(
     });
 
     if (result.resource?.lastUpdatedBy) {
-      const displayNameMap = await resolveDisplayNames([
-        result.resource.lastUpdatedBy,
-      ]);
-      result.resource = {
-        ...result.resource,
-        lastUpdatedBy:
-          displayNameMap[result.resource.lastUpdatedBy] ||
+      try {
+        const displayNameMap = await resolveDisplayNames([
           result.resource.lastUpdatedBy,
-      };
+        ]);
+        result.resource = {
+          ...result.resource,
+          lastUpdatedBy:
+            displayNameMap[result.resource.lastUpdatedBy] ||
+            result.resource.lastUpdatedBy,
+        };
+      } catch (error) {
+        console.error(
+          "Failed to resolve display name for lastUpdatedBy:",
+          error instanceof Error ? error.message : String(error),
+        );
+      }
     }
 
     return NextResponse.json(result, {
