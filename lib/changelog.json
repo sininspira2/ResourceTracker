@@ -1,6 +1,18 @@
 {
-  "currentVersion": "4.5.1",
+  "currentVersion": "4.5.2",
   "releases": [
+    {
+      "version": "4.5.2",
+      "date": "2026-05-14",
+      "title": "Fix resource card showing Discord ID after update",
+      "type": "patch",
+      "changes": [
+        {
+          "type": "bugfix",
+          "description": "Resource cards now immediately show the user's display name in the 'last updated by' field after an update, instead of briefly flashing the raw Discord ID until the next page refresh."
+        }
+      ]
+    },
     {
       "version": "4.5.1",
       "date": "2026-05-13",
