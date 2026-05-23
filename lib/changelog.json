@@ -1,6 +1,18 @@
 {
-  "currentVersion": "4.5.2",
+  "currentVersion": "4.6.0",
   "releases": [
+    {
+      "version": "4.6.0",
+      "date": "2026-05-23",
+      "title": "Upgrade to Next.js 16",
+      "type": "minor",
+      "changes": [
+        {
+          "type": "improvement",
+          "description": "Upgraded Next.js from 15.5.18 to 16.2.6. Renamed middleware.ts to proxy.ts per the new Next.js file convention, updated the experimental viewTransition flag in next.config.js, and aligned tsconfig.json with Next 16 defaults (jsx: react-jsx)."
+        }
+      ]
+    },
     {
       "version": "4.5.2",
       "date": "2026-05-14",
@@ -40,25 +52,25 @@
       "type": "minor",
       "changes": [
         {
-        "type": "feature",
-        "description": "Resource grid cards have been completely redesigned for both desktop and mobile layouts. They now feature a status-keyed accent left border, an inline status chip with a colored dot, large monospace quantity totals, and a cleaner color-coded progress bar."
-      },
-      {
-        "type": "feature",
-        "description": "Introduced responsive sparkline trend visualizations to all resource grid cards. These charts fetch 30-day historical data via a batch endpoint, with an all-time fallback for sparse data. To maintain strict grid consistency, resources lacking sufficient history display a blurred, deterministic synthetic curve (seeded via resource ID) with a 'NOT ENOUGH HISTORICAL DATA' overlay."
-      },
-      {
-        "type": "improvement",
-        "description": "Table view image thumbnails now feature a tier pill overlaid on the corner, ensuring visual consistency with the new grid cards."
-      },
-      {
-        "type": "improvement",
-        "description": "The image container on the Resource Details page has been enlarged to 160×160 px, rounded, and updated to include the overlaid tier pill."
-      },
-      {
-        "type": "improvement",
-        "description": "All resource categories now earn leaderboard points for ADD and SET actions. The Refined category no longer receives a fixed 2-point bonus — it uses the same quantity/multiplier/status-bonus formula as all other categories."
-      }
+          "type": "feature",
+          "description": "Resource grid cards have been completely redesigned for both desktop and mobile layouts. They now feature a status-keyed accent left border, an inline status chip with a colored dot, large monospace quantity totals, and a cleaner color-coded progress bar."
+        },
+        {
+          "type": "feature",
+          "description": "Introduced responsive sparkline trend visualizations to all resource grid cards. These charts fetch 30-day historical data via a batch endpoint, with an all-time fallback for sparse data. To maintain strict grid consistency, resources lacking sufficient history display a blurred, deterministic synthetic curve (seeded via resource ID) with a 'NOT ENOUGH HISTORICAL DATA' overlay."
+        },
+        {
+          "type": "improvement",
+          "description": "Table view image thumbnails now feature a tier pill overlaid on the corner, ensuring visual consistency with the new grid cards."
+        },
+        {
+          "type": "improvement",
+          "description": "The image container on the Resource Details page has been enlarged to 160×160 px, rounded, and updated to include the overlaid tier pill."
+        },
+        {
+          "type": "improvement",
+          "description": "All resource categories now earn leaderboard points for ADD and SET actions. The Refined category no longer receives a fixed 2-point bonus — it uses the same quantity/multiplier/status-bonus formula as all other categories."
+        }
       ]
     },
     {
